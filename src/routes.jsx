@@ -171,6 +171,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/warehouse_accessories',
+        element: lazy(() => import('./views/accessories/warehouse_accessory')),
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
+      },
+      {
+        exact: 'true',
         path: '/invoices',
         element: lazy(() => import('./views/stock/Index')),
         allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']

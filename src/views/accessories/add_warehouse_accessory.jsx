@@ -10,8 +10,6 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const [allProducts, setAllProducts] = useState([]);
   const mainColor = '#3f4d67';
-
-  // Modified initial state to include isLengthType flag
   const [items, setItems] = useState([{
     product_accessory_id: '',
     length: '',
@@ -20,7 +18,7 @@ const AddProduct = () => {
     box: '',
     quantity: '',
     bundle: '',
-    isLengthType: false  // New flag to control input type
+    isLengthType: false  
   }]);
 
   useEffect(() => {
@@ -69,7 +67,6 @@ const AddProduct = () => {
     setItems(prev => {
       const updated = [...prev];
       updated[index].isLengthType = !updated[index].isLengthType;
-      // Clear the values of the non-active fields
       if (updated[index].isLengthType) {
         updated[index].items = '';
         updated[index].box = '';
@@ -96,6 +93,8 @@ const AddProduct = () => {
       }),
       quantity: item.quantity
     }));
+
+console.log(payload);
 
     try {
       await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory`, payload, {
@@ -166,8 +165,6 @@ const AddProduct = () => {
                           onChange={() => handleToggleChange(index)}
                         />
                       </td>
-
-                      {/* Length & Unit (Enabled when isLengthType is true) */}
                       <td >
                         <Form.Control
                           type="number"
@@ -189,8 +186,6 @@ const AddProduct = () => {
                           <option value="millimeter">Millimeter</option>
                         </Form.Select>
                       </td>
-
-                      {/* Pcs & Boxes (Enabled when isLengthType is false) */}
                       <td>
                         <Form.Control
                           type="number"
@@ -209,8 +204,6 @@ const AddProduct = () => {
                           required={!item.isLengthType}
                         />
                       </td>
-
-                      {/* Bundle (Enabled when isLengthType is true) */}
                       <td>
                         <Form.Control
                           type="number"
@@ -220,8 +213,6 @@ const AddProduct = () => {
                           required={item.isLengthType}
                         />
                       </td>
-
-                      {/* Quantity (Always enabled) */}
                       <td>
                         <Form.Control
                           type="number"
@@ -230,7 +221,6 @@ const AddProduct = () => {
                           required
                         />
                       </td>
-
                       <td>
                         <Button
                           variant="danger"
