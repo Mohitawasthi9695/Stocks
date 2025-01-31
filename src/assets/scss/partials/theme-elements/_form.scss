@@ -1,12 +1,10 @@
-@use "../variables";
-
 /**  =====================
       Form Componant css start
 ==========================  **/
 
 .custom-select,
 .form-control {
-  background: variables.$theme-background;
+  background: $theme-background;
   padding: 10px 20px;
   font-size: 14px;
   height: auto;
@@ -25,7 +23,7 @@
   }
 
   &:focus {
-    background: variables.$theme-background;
+    background: $theme-background;
   }
 
   &::-moz-placeholder {
@@ -44,7 +42,7 @@
 /* input group start */
 
 .input-group {
-  background: variables.$theme-background;
+  background: $theme-background;
 
   .input-group-text {
     padding-left: 15px;

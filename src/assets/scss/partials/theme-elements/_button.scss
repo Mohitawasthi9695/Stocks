@@ -1,12 +1,10 @@
-@use '../mixins/buttons';
-@use "../variables";
-
+@import '../mixins/buttons';
 /**  =====================
       Button css start
 ==========================  **/
 .btn-theme,
 a.btn-theme {
-  background: variables.$theme-color;
+  background: $theme-color;
   color: #fff;
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
   border-color: #1de1c2;
@@ -16,35 +14,35 @@ a.btn-theme {
   &:active,
   &:focus,
   &:not(:disabled):not(.disabled):active {
-    background-image: variables.$theme-color;
+    background-image: $theme-color;
     color: #fff;
     box-shadow: none;
   }
 
   &.active {
     background-image: #fff !important;
-    color: variables.$default-color;
-    border: 1px solid variables.$theme-border;
+    color: $default-color;
+    border: 1px solid $theme-border;
     box-shadow: none;
   }
 }
 
 .btn-outline-theme {
   background-image: #fff !important;
-  color: variables.$default-color;
-  border: 1px solid variables.$theme-border;
+  color: $default-color;
+  border: 1px solid $theme-border;
   box-shadow: none;
 
   &:active,
   &:focus,
   &:not(:disabled):not(.disabled):active {
     background-image: #fff;
-    color: variables.$default-color;
-    border: 1px solid variables.$theme-border;
+    color: $default-color;
+    border: 1px solid $theme-border;
   }
 
   &.active {
-    background: variables.$theme-color !important;
+    background: $theme-color !important;
     color: #fff;
     box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
     border: 1px solid transparent;
@@ -52,7 +50,7 @@ a.btn-theme {
 }
 
 .btn-theme2 {
-  background: variables.$theme-color2;
+  background: $theme-color2;
   color: #fff;
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
   border: 1px solid transparent;
@@ -62,35 +60,35 @@ a.btn-theme {
   &:active,
   &:focus,
   &:not(:disabled):not(.disabled):active {
-    background-image: variables.$theme-color2;
+    background-image: $theme-color2;
     color: #fff;
     box-shadow: none;
   }
 
   &.active {
     background-image: #fff !important;
-    color: variables.$default-color;
-    border: 1px solid variables.$theme-border;
+    color: $default-color;
+    border: 1px solid $theme-border;
     box-shadow: none;
   }
 }
 
 .btn-outline-theme2 {
   background-image: #fff !important;
-  color: variables.$default-color;
-  border: 1px solid variables.$theme-border;
+  color: $default-color;
+  border: 1px solid $theme-border;
   box-shadow: none;
 
   &:active,
   &:focus,
   &:not(:disabled):not(.disabled):active {
     background-image: #fff;
-    color: variables.$default-color;
-    border: 1px solid variables.$theme-border;
+    color: $default-color;
+    border: 1px solid $theme-border;
   }
 
   &.active {
-    background: variables.$theme-color2 !important;
+    background: $theme-color2 !important;
     color: #fff;
     box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2);
     border: 1px solid transparent;
@@ -169,21 +167,21 @@ a.btn-theme {
 }
 
 /* Alternate buttons */
-@each $color, $value in variables.$theme-colors {
+@each $color, $value in $theme-colors {
   .btn-#{$color} {
-    @include buttons.button-variant-pc($value, $value);
+    @include button-variant-pc($value, $value);
   }
 }
 /* outline buttons */
-@each $color, $value in variables.$theme-colors {
+@each $color, $value in $theme-colors {
   .btn-outline-#{$color} {
-    @include buttons.button-outline-variant-pc($value);
+    @include button-outline-variant-pc($value);
   }
 }
 /* glow buttons */
-@each $color, $value in variables.$theme-colors {
+@each $color, $value in $theme-colors {
   .btn-glow-#{$color} {
-    @include buttons.button-glow-variant-pc($value);
+    @include button-glow-variant-pc($value);
   }
 }
 /**====== Button css end ======**/

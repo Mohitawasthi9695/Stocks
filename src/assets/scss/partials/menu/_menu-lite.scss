@@ -1,15 +1,13 @@
-@use "sass:color";
-@use "sass:list";
-@use "../variables";
-
 /* new logo start */
+@use 'sass:color';
+@use 'sass:list';
 
 .b-brand {
   display: flex;
   align-items: center;
 
   .b-bg {
-    background: variables.$theme-color;
+    background: $theme-color;
     border-radius: 10px;
     width: 35px;
     height: 35px;
@@ -64,14 +62,14 @@
   z-index: 1028;
   position: relative;
   display: flex;
-  min-height: variables.$header-height;
+  min-height: $header-height;
   padding: 0;
   position: relative;
   top: 0;
   background: transparent;
-  color: variables.$header-light-text-color;
-  width: calc(100% - #{variables.$Menu-width});
-  margin-left: variables.$Menu-width;
+  color: $header-light-text-color;
+  width: calc(100% - #{$Menu-width});
+  margin-left: $Menu-width;
   transition: all 0.3s ease-in-out;
 
   .m-header {
@@ -99,10 +97,10 @@
   a,
   .btn,
   &.dropdown-toggle {
-    color: variables.$header-light-text-color;
+    color: $header-light-text-color;
 
     &:hover {
-      color: variables.$primary-color;
+      color: $primary-color;
     }
   }
 
@@ -113,7 +111,7 @@
     display: inline-block;
 
     > li {
-      line-height: variables.$header-height;
+      line-height: $header-height;
       display: inline-block;
       padding: 0 12px;
 
@@ -199,8 +197,8 @@
         .search-btn {
           padding: 5px;
           margin-left: 5px;
-          background: variables.$primary-color;
-          border-color: variables.$primary-color;
+          background: $primary-color;
+          border-color: $primary-color;
 
           .input-group-text {
             color: #fff;
@@ -227,7 +225,7 @@
 
   .dropdown {
     .dropdown-toggle {
-      line-height: variables.$header-height;
+      line-height: $header-height;
       display: inline-block;
       padding-right: 15px;
 
@@ -272,7 +270,7 @@
         &:focus,
         &:hover {
           a {
-            color: variables.$theme-font-color;
+            color: $theme-font-color;
           }
         }
       }
@@ -284,7 +282,7 @@
         font-family: 'pct';
         position: absolute;
         left: -9px;
-        top: variables.$header-height - 8;
+        top: $header-height - 8;
         z-index: 1001;
         font-size: 40px;
         line-height: 0;
@@ -330,7 +328,7 @@
           }
 
           &.notification:hover {
-            background: color.adjust(variables.$primary-color, $alpha: -0.9);
+            background: color.scale($primary-color, $alpha: -90%);
           }
 
           p {
@@ -381,7 +379,7 @@
         border-radius: 0.25rem 0.25rem 0 0;
         padding: 15px;
         position: relative;
-        background: variables.$primary-color;
+        background: $primary-color;
 
         img {
           width: 40px;
@@ -409,7 +407,7 @@
 
         li {
           a {
-            color: variables.$theme-font-color;
+            color: $theme-font-color;
             font-size: 14px;
             padding: 10px 20px;
 
@@ -422,7 +420,7 @@
           &:active,
           &:focus,
           &:hover {
-            background: color.adjust(variables.$primary-color, $alpha: -0.9);
+            background: color.adjust($primary-color, $alpha: -0.9);
 
             > a {
               background: transparent;
@@ -434,7 +432,7 @@
 
     &.drp-user.show {
       &:before {
-        color: variables.$primary-color;
+        color: $primary-color;
       }
     }
   }
@@ -447,7 +445,7 @@
   align-items: center;
   justify-content: center;
   width: 37px;
-  height: variables.$header-height;
+  height: $header-height;
   position: absolute;
   right: 0;
   top: 0;
@@ -508,7 +506,7 @@
 }
 
 .navbar-brand {
-  background: variables.$menu-dark-background;
+  background: $menu-dark-background;
   font-size: 1.25rem;
 }
 
@@ -540,7 +538,7 @@
   }
 
   .datta-scroll.navbar-content {
-    height: calc(100vh - #{variables.$header-height});
+    height: calc(100vh - #{$header-height});
   }
 
   .header-logo {
@@ -548,9 +546,9 @@
     align-items: center;
     display: inline-flex;
     float: left;
-    height: variables.$header-height;
+    height: $header-height;
     text-align: center;
-    width: variables.$Menu-width;
+    width: $Menu-width;
     margin-right: 0;
     padding: 10px 20px;
     transition: all 0.3s ease-in-out;
@@ -577,7 +575,7 @@
     align-items: center;
     justify-content: center;
     width: 37px;
-    height: variables.$header-height;
+    height: $header-height;
     position: absolute;
     right: 10px;
     top: 0;
@@ -589,7 +587,7 @@
       display: block;
       width: 100%;
       height: 2.8px;
-      background-color: variables.$menu-dark-text-color;
+      background-color: $menu-dark-text-color;
       transition: all 0.3s ease-in-out;
       backface-visibility: hidden;
       border-radius: 2px;
@@ -600,7 +598,7 @@
         position: absolute;
         left: 0;
         height: 2.8px;
-        background-color: variables.$menu-dark-text-color;
+        background-color: $menu-dark-text-color;
         transition: all 0.3s;
         backface-visibility: hidden;
         border-radius: 2px;
@@ -787,19 +785,19 @@
     }
   }
 
-  width: variables.$Menu-width;
+  width: $Menu-width;
   height: 100vh;
   top: 0;
-  background: variables.$menu-dark-background;
-  color: variables.$menu-dark-text-color;
+  background: $menu-dark-background;
+  color: $menu-dark-text-color;
 
   .pcoded-submenu {
-    background: color.adjust(variables.$header-dark-background, $lightness: -3%);
+    background: color.scale($header-dark-background, $lightness: -9.2168674699%);
     padding: 15px 0;
   }
 
   a {
-    color: variables.$menu-dark-text-color;
+    color: $menu-dark-text-color;
   }
 
   .navbar-content,
@@ -809,12 +807,12 @@
   }
 
   &.navbar-collapsed {
-    width: variables.$Menu-collapsed-width;
+    width: $Menu-collapsed-width;
     height: 100%;
     transition: all 0.3s ease-in-out;
 
     .header-logo {
-      width: variables.$Menu-collapsed-width;
+      width: $Menu-collapsed-width;
 
       img {
         transform: rotateY(-90deg);
@@ -827,7 +825,7 @@
         transform: rotateY(0deg);
         transform-origin: 0 0;
         opacity: 1;
-        left: calc((#{variables.$Menu-collapsed-width} / 2) - 20px);
+        left: calc((#{$Menu-collapsed-width} / 2) - 20px);
       }
 
       .mobile-menu {
@@ -898,10 +896,10 @@
               content: '';
               position: absolute;
               top: 49px;
-              left: calc(calc(#{variables.$Menu-collapsed-width} / 2) - 3px);
+              left: calc(calc(#{$Menu-collapsed-width} / 2) - 3px);
               width: 1px;
               height: calc(100% - 49px);
-              background: color.adjust(variables.$menu-dark-text-color, $alpha: -0.8);
+              background: color.scale($menu-dark-text-color, $alpha: -80%);
             }
 
             li {
@@ -924,12 +922,12 @@
     }
 
     ~ .pcoded-header {
-      width: calc(100% - #{variables.$Menu-collapsed-width});
+      width: calc(100% - #{$Menu-collapsed-width});
     }
 
     ~ .pcoded-header,
     ~ .pcoded-main-container {
-      margin-left: variables.$Menu-collapsed-width;
+      margin-left: $Menu-collapsed-width;
     }
 
     .pcoded-badge {
@@ -940,7 +938,7 @@
     }
 
     &:hover {
-      width: variables.$Menu-width !important;
+      width: $Menu-width !important;
 
       .pcoded-badge {
         transition-delay: 0.3s;
@@ -949,7 +947,7 @@
       }
 
       .header-logo {
-        width: variables.$Menu-width;
+        width: $Menu-width;
 
         img {
           transform: rotateY(0deg);
@@ -1081,7 +1079,7 @@
         }
 
         > a {
-          background: color.adjust(variables.$menu-dark-background, $lightness: -6%);
+          background: color.scale($menu-dark-background, $lightness: -18.43%);
           color: #fff;
         }
       }
@@ -1103,7 +1101,7 @@
   &.navbar-collapsed:hover {
     ~ .pcoded-header,
     ~ .pcoded-main-container {
-      margin-left: variables.$Menu-collapsed-width;
+      margin-left: $Menu-collapsed-width;
 
       &:before {
         position: absolute;
@@ -1134,7 +1132,7 @@
   clear: both;
   float: unset;
   right: 0;
-  margin-left: variables.$Menu-width;
+  margin-left: $Menu-width;
   min-height: 100vh;
   transition: all 0.3s ease-in-out;
 }
@@ -1147,16 +1145,16 @@
 
 @media only screen and (max-width: 991px) {
   .pcoded-header {
-    background: variables.$header-dark-background;
-    color: variables.$header-dark-text-color;
+    background: $header-dark-background;
+    color: $header-dark-text-color;
 
     .input-group-text,
     a,
     dropdown-toggle {
-      color: variables.$header-light-text-color;
+      color: $header-light-text-color;
 
       &:hover {
-        color: variables.$primary-color;
+        color: $primary-color;
       }
     }
 
@@ -1176,7 +1174,7 @@
     .dropdown-menu,
     .dropdown-menu a,
     .search-close .input-group-text {
-      color: variables.$header-dark-background;
+      color: $header-dark-background;
     }
 
     .m-header {
@@ -1184,7 +1182,7 @@
       justify-content: flex-start;
       align-items: center;
       width: 100%;
-      height: variables.$header-height;
+      height: $header-height;
 
       .b-brand {
         margin-left: 20px;
@@ -1209,7 +1207,7 @@
   }
 
   .pcoded-navbar {
-    margin-left: -#{variables.$Menu-width};
+    margin-left: -#{$Menu-width};
     position: fixed;
     height: 100%;
     box-shadow: none;
@@ -1369,12 +1367,12 @@
 
 /* temp SCSS for document */
 
-@each $value in variables.$color-menu-name {
-  $i: list.index(variables.$color-menu-name, $value);
+@each $value in $color-menu-name {
+  $i: list.index($color-menu-name, $value);
 
   .nav-link {
     &.active.h-#{'' + $value} {
-      background: list.nth(variables.$color-menu-color, $i) !important;
+      background: list.nth($color-menu-color, $i) !important;
     }
   }
 }
