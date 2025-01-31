@@ -29,7 +29,7 @@ const Show_product = () => {
             'Content-Type': 'application/json'
           }
         });
-        const productsWithArea = response.data.filter((product) => (product.quantity) > 0).map((product) => {
+        const productsWithArea = response.data.filter((product) => product.quantity > 0).map((product) => {
           const areaM2 = product.length * product.width * product.quantity;
           const areaSqFt = areaM2 * 10.7639;
           return {
@@ -80,6 +80,11 @@ const Show_product = () => {
       sortable: true
     },
     {
+      name: 'Stock Code',
+      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      sortable: true
+    },
+    {
       name: 'Invoice no',
       selector: (row) => row.stock_invoice.invoice_no,
       sortable: true
@@ -89,6 +94,7 @@ const Show_product = () => {
       selector: (row) => row.stock_product.shadeNo,
       sortable: true
     },
+
     {
       name: 'Pur. Shade no',
       selector: (row) => row.stock_product.purchase_shade_no,
@@ -115,21 +121,6 @@ const Show_product = () => {
       sortable: true
     },
     {
-      name: 'Quantity',
-      selector: (row) => row.quantity,
-      sortable: true
-    },
-    {
-      name: 'Out Quantity',
-      selector: (row) => row.out_quantity ?? 0,
-      sortable: true,
-    },
-    {
-      name: 'Avaible Quantity',
-      selector: (row) => row.quantity - row.out_quantity,
-      sortable: true,
-    },
-    {
       name: 'Area(m.sq.)',
       selector: (row) => row.area,
       sortable: true
@@ -142,11 +133,6 @@ const Show_product = () => {
     {
       name: 'Rack No',
       selector: (row) => row.rack,
-      sortable: true
-    },
-    {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
       sortable: true
     },
     {
