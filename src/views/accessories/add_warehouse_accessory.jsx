@@ -18,7 +18,7 @@ const AddProduct = () => {
     box: '',
     quantity: '',
     bundle: '',
-    isLengthType: false  
+    isLengthType: false
   }]);
 
   useEffect(() => {
@@ -95,7 +95,7 @@ const AddProduct = () => {
       quantity: item.quantity
     }));
 
-console.log(payload);
+    console.log(payload);
 
     try {
       await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory`, payload, {
@@ -105,7 +105,7 @@ console.log(payload);
         }
       });
       toast.success('Stock added successfully');
-      navigate('/stocks');
+      navigate('/warehouse_accessories');
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'Error adding stock');
@@ -128,36 +128,35 @@ console.log(payload);
               <Table bordered responsive className="align-middle">
                 <thead className="text-white" style={{ backgroundColor: mainColor }}>
                   <tr>
-                    <th>Product</th>
-                    <th>Type</th>
-                    <th>Length</th>
-                    <th>Unit</th>
-                    <th>Pcs</th>
-                    <th>Boxes</th>
-                    <th>Bundle</th>
-                    <th>Quantity</th>
-                    <th>Action</th>
+                    <th style={{ width: "15%" }}>Product</th>
+                    <th style={{ width: "15%" }}>Type</th>
+                    <th style={{ width: "10%" }}>Length</th>
+                    <th style={{ width: "10%" }}>Unit</th>
+                    <th style={{ width: "10%" }}>Pcs</th>
+                    <th style={{ width: "10%" }}>Boxes</th>
+                    <th style={{ width: "10%" }}>Bundle</th>
+                    <th style={{ width: "10%" }}>Quantity</th>
+                    <th style={{ width: "5%" }}>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((item, index) => (
                     <tr key={index}>
-                      <td>
+                      <td style={{ width: "15%" }}>
                         <Form.Select
                           value={item.product_accessory_id}
-                          onChange={(e) => handleRowChange(index, 'product_accessory_id', e.target.value)}
+                          onChange={(e) => handleRowChange(index, "product_accessory_id", e.target.value)}
                           required
                         >
                           <option value="">Select Product</option>
-                          {allProducts.map(product => (
+                          {allProducts.map((product) => (
                             <option key={product.id} value={product.id}>
                               {product.accessory_name}
                             </option>
                           ))}
                         </Form.Select>
                       </td>
-
-                      <td>
+                      <td style={{ width: "10%" }}>
                         <Form.Check
                           type="switch"
                           id={`type-switch-${index}`}
@@ -166,19 +165,19 @@ console.log(payload);
                           onChange={() => handleToggleChange(index)}
                         />
                       </td>
-                      <td >
+                      <td style={{ width: "10%" }}>
                         <Form.Control
                           type="number"
                           value={item.length}
-                          onChange={(e) => handleRowChange(index, 'length', e.target.value)}
+                          onChange={(e) => handleRowChange(index, "length", e.target.value)}
                           disabled={!item.isLengthType}
                           required={item.isLengthType}
                         />
                       </td>
-                      <td>
+                      <td style={{ width: "10%" }}>
                         <Form.Select
                           value={item.unit}
-                          onChange={(e) => handleRowChange(index, 'unit', e.target.value)}
+                          onChange={(e) => handleRowChange(index, "unit", e.target.value)}
                           disabled={!item.isLengthType}
                           required={item.isLengthType}
                         >
@@ -187,42 +186,42 @@ console.log(payload);
                           <option value="millimeter">Millimeter</option>
                         </Form.Select>
                       </td>
-                      <td>
+                      <td style={{ width: "10%" }}>
                         <Form.Control
                           type="number"
                           value={item.items}
-                          onChange={(e) => handleRowChange(index, 'items', e.target.value)}
+                          onChange={(e) => handleRowChange(index, "items", e.target.value)}
                           disabled={item.isLengthType}
                           required={!item.isLengthType}
                         />
                       </td>
-                      <td>
+                      <td style={{ width: "10%" }}>
                         <Form.Control
                           type="number"
                           value={item.box}
-                          onChange={(e) => handleRowChange(index, 'box', e.target.value)}
+                          onChange={(e) => handleRowChange(index, "box", e.target.value)}
                           disabled={item.isLengthType}
                           required={!item.isLengthType}
                         />
                       </td>
-                      <td>
+                      <td style={{ width: "10%" }}>
                         <Form.Control
                           type="number"
                           value={item.bundle}
-                          onChange={(e) => handleRowChange(index, 'bundle', e.target.value)}
+                          onChange={(e) => handleRowChange(index, "bundle", e.target.value)}
                           disabled={!item.isLengthType}
                           required={item.isLengthType}
                         />
                       </td>
-                      <td>
+                      <td style={{ width: "10%" }}>
                         <Form.Control
                           type="number"
                           value={item.quantity}
-                          onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                          onChange={(e) => handleRowChange(index, "quantity", e.target.value)}
                           required
                         />
                       </td>
-                      <td>
+                      <td style={{ width: "5%" }}>
                         <Button
                           variant="danger"
                           onClick={() => handleDeleteRow(index)}
@@ -235,6 +234,7 @@ console.log(payload);
                   ))}
                 </tbody>
               </Table>
+
 
               <div className="text-center mt-4">
                 <Button
