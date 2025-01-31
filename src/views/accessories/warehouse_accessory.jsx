@@ -31,8 +31,8 @@ const WarehouseAccessoriesPage = () => {
             'Content-Type': 'application/json'
           }
         });
-        setAccessories(response.data);
-        setFilteredAccessories(response.data);
+        setAccessories(response.data.data);
+        setFilteredAccessories(response.data.data);
       } catch (error) {
         console.error(error);
         toast.error('Failed to fetch accessories.');
@@ -120,7 +120,7 @@ const WarehouseAccessoriesPage = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/warehouse/accessory/${accessoryId}`, {
+        const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory/${accessoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -148,7 +148,7 @@ const WarehouseAccessoriesPage = () => {
 
   const handleUpdateAccessory = async () => {
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/warehouse/accessory/${selectedAccessory.id}`, selectedAccessory, {
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory/${selectedAccessory.id}`, selectedAccessory, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'

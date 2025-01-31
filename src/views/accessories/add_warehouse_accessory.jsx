@@ -24,9 +24,10 @@ const AddProduct = () => {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
+        console.log(response.data);
         setAllProducts(response.data.data);
       } catch (error) {
         console.error(error);
@@ -149,8 +150,8 @@ console.log(payload);
                         >
                           <option value="">Select Product</option>
                           {allProducts.map(product => (
-                            <option key={product.accessory.id} value={product.accessory.id}>
-                              {product.accessory.accessory_name}
+                            <option key={product.id} value={product.id}>
+                              {product.accessory_name}
                             </option>
                           ))}
                         </Form.Select>
