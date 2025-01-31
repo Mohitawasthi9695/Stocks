@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Button, Badge, Modal, Form } from 'react-bootstrap';
+import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { FaEye, FaFileCsv, FaTrash, FaCheck } from 'react-icons/fa';
+import { MdEdit, MdDelete, MdCheckCircle, MdCancel, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
+import { FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import PdfPreview from 'components/PdfOutPreview';
+import GatePass from 'components/PdfPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { FaFileExcel } from 'react-icons/fa';
 
 const Index = () => {
     const [invoices, setInvoices] = useState([]);
@@ -19,22 +23,28 @@ const Index = () => {
     const [loading, setLoading] = useState(true);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [showPdfModal, setShowPdfModal] = useState(false);
-
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     }
                 });
-                console.log(response.data);
-                const invoicesDetails = response.data;
+                const invoicesDetails = response.data.data;
                 console.log(invoicesDetails);
                 setInvoiceAllDetails(invoicesDetails);
-                setInvoices(invoicesDetails);
-                setFilteredInvoices(invoicesDetails);
+                const filteredFields = invoicesDetails.map((gatepass) => ({
+                    gatepass_no: gatepass.gate_pass_no,
+                    id: gatepass.id,
+                    godownSupervisor: gatepass.godown_supervisors.name,
+                    warehouseSupervisor: gatepass.warehouse_supervisors.name,
+                    date: gatepass.gate_pass_date,
+                    total_amount: gatepass.total_amount
+                }));
+                setInvoices(filteredFields);
+                setFilteredInvoices(filteredFields);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -43,145 +53,159 @@ const Index = () => {
         };
         fetchInvoices();
     }, []);
+    const handleApprove = async (id) => {
+        try {
+            await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}/approve`, {}, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            toast.success('Gate pass approved successfully!');
+            setInvoices(prev => prev.map(inv => (inv.id === id ? { ...inv, status: 1 } : inv)));
+            setFilteredInvoices(prev => prev.map(inv => (inv.id === id ? { ...inv, status: 1 } : inv)));
+
+        } catch (error) {
+            toast.error('Failed to approve gate pass');
+        }
+    };
+    const handleReject = async (id) => {
+        try {
+            await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}/reject`, {}, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            toast.success('Gate pass rejected successfully!');
+            setInvoices(prev => prev.map(inv => (inv.id === id ? { ...inv, status: 0 } : inv)));
+            setFilteredInvoices(prev => prev.map(inv => (inv.id === id ? { ...inv, status: 0 } : inv)));
+        } catch (error) {
+            toast.error('Failed to reject gate pass');
+        }
+    };
+
+    useEffect(() => {
+        const lowercasedQuery = searchQuery.toLowerCase();
+        const filtered = invoices.filter((invoice) => invoice.godownSupervisor.toLowerCase().includes(lowercasedQuery));
+        setFilteredInvoices(filtered);
+    }, [searchQuery, invoices]);
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
     };
 
     const navigate = useNavigate();
-    const handleAction = async (invoiceId, status) => {
-        try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/godown/approved/${invoiceId}`,
-                { status},
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                }
-            );
-            const updatedInvoices = invoices.map((invoice) =>
-                invoice.id === invoiceId ? { ...invoice, status } : invoice
-            );
-            setInvoices(updatedInvoices);
-            setFilteredInvoices(updatedInvoices);
-        } catch (error) {
-            toast.error('Failed to update product status');
-            console.error('Error updating product status:', error);
-        }
-    };
 
     const columns = [
         {
             name: 'Invoice Number',
-            selector: (row) => row.invoice_no,
-            sortable: true,
+            selector: (row) => row.gatepass_no,
+            sortable: true
         },
         {
-            name: 'Product Name',
-            selector: (row) => row.products.name,
-            sortable: true,
+            name: 'Godown Supervisor Name',
+            selector: (row) => row.godownSupervisor,
+            sortable: true
         },
         {
-            name: 'Product Code',
-            selector: (row) => row.products.code,
-            sortable: true,
-        },
-        {
-            name: 'Shade No',
-            selector: (row) => row.products.shadeNo,
-            sortable: true,
-        },
-        {
-            name: 'Purchase Shade No',
-            selector: (row) => row.products.purchase_shade_no,
-            sortable: true,
+            name: 'WareHouser Supervisor',
+            selector: (row) => row.warehouseSupervisor,
+            sortable: true
         },
         {
             name: 'Date',
-            selector: (row) => row.date,  
-            sortable: true,
+            selector: (row) => row.date,
+            sortable: true
         },
         {
-            name: 'Length',
-            selector: (row) => Math.round(row.get_length),
+            name: 'Status',
+            selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
             sortable: true,
-        },
-        {
-            name: 'Width',
-            selector: (row) => Math.round(row.get_width),
-            sortable: true,
-        },
-        {
-            name: 'unit',
-            selector: (row) => row.unit,  
-            sortable: true,
+            cell: (row) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span
+                        className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                        style={{
+                            padding: '5px 10px',
+                            borderRadius: '8px',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {row.status === 1 ? 'Approved' : 'Pending'}
+                    </span>
+                </div>
+            )
         },
         {
             name: 'Action',
-            cell: (row) => {
-                const renderButtons = () => {
-                    switch (row.status) {
-                        case 0:
-                            return (
-                                <>
-                                    <Button
-                                        variant="outline-success"
-                                        size="sm"
-                                        className="me-2"
-                                        onClick={() => handleAction(row.id, 1)}
-                                    >
-                                        <FaCheck />
-                                    </Button>
-                                    <Button
-                                        variant="outline-danger"
-                                        size="sm"
-                                        onClick={() => handleAction(row.id, 2)}
-                                    >
-                                        <FaTrash />
-                                    </Button>
-                                </>
-                            );
-
-                        case 1:
-                            return (
-                                <span class="badge bg-success">Accepted</span>
-                            );
-
-                        case 2:
-                            return (
-                                <span class="badge bg-danger">Rejected</span>
-                            );
-                        case 3:
-                            return (
-                                <span class="badge bg-warning">Sold</span>
-                            );
-
-
-                        default:
-                            return null;
-                    }
-                };
-
-                return (
-                    <div className="d-flex align-items-center gap-2">
-                        {renderButtons()}
-                    </div>
-                );
-            },
+            cell: (row) => (
+                <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                    <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
+                        <MdCheckCircle />
+                    </Button>
+                    <Button variant="outline-danger" size="sm" onClick={() => handleReject(row.id)}>
+                        <MdCancel />
+                    </Button>
+                    <Button variant="outline-success" size="sm" className="me-2">
+                        <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
+                    </Button>
+                    {/* <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => {
+                            setSelectedInvoice(row.id);
+                            setShowPdfModal(true);
+                        }}
+                    >
+                        <MdPrint />
+                    </Button> */}
+                    <Button variant="outline-info" size="sm" onClick={() => exportToExcel(row)}>
+                        <FaFileExcel />
+                    </Button>
+                </div>
+            ),
+            width: '300px'
         }
-
     ];
 
-    const handleAddInvoice = () => {
-        navigate('/invoice-out');
+    const handleDelete = async (id) => {
+        try {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            });
+
+            if (result.isConfirmed) {
+                await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                setInvoices((prevInvoices) => prevInvoices.filter((invoice) => invoice.id !== id));
+                setFilteredInvoices((prevFilteredInvoices) => prevFilteredInvoices.filter((invoice) => invoice.id !== id));
+                Swal.fire('Deleted!', 'The Invoice has been deleted.', 'success');
+            }
+        } catch (error) {
+            console.error('Error deleting invoice:', error);
+            Swal.fire('Error!', 'There was a problem deleting the Invoice.', 'error');
+        }
     };
+
+    const handleAddInvoice = () => {
+        navigate('/add-invoice');
+    };
+
     const customStyles = {
         table: {
             style: {
-                borderCollapse: 'separate', 
-                borderSpacing: 0, 
-            },
+                borderCollapse: 'separate',
+                borderSpacing: 0
+            }
         },
         header: {
             style: {
@@ -190,8 +214,8 @@ const Index = () => {
                 fontSize: '18px',
                 fontWeight: 'bold',
                 padding: '15px',
-                borderRadius: '8px 8px 0 0', 
-            },
+                borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+            }
         },
         rows: {
             style: {
@@ -200,9 +224,9 @@ const Index = () => {
                 transition: 'background-color 0.3s ease',
                 '&:hover': {
                     backgroundColor: '#e6f4ea',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                },
-            },
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                }
+            }
         },
         headCells: {
             style: {
@@ -212,80 +236,67 @@ const Index = () => {
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
                 padding: '15px',
-                borderRight: '1px solid #e0e0e0', 
+                borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
             },
             lastCell: {
                 style: {
-                    borderRight: 'none', 
-                },
-            },
+                    borderRight: 'none' // Removes border for the last cell
+                }
+            }
         },
         cells: {
             style: {
                 fontSize: '14px',
                 color: '#333',
                 padding: '12px',
-                borderRight: '1px solid grey', 
-            },
+                borderRight: '1px solid grey' // Vertical lines between cells
+            }
         },
         pagination: {
             style: {
                 backgroundColor: '#3f4d67',
                 color: '#fff',
-                borderRadius: '0 0 8px 8px',
+                borderRadius: '0 0 8px 8px'
             },
             pageButtonsStyle: {
                 backgroundColor: 'transparent',
                 color: 'black',
                 border: 'none',
                 '&:hover': {
-                    backgroundColor: 'rgba(141, 49, 49, 0.2)',
+                    backgroundColor: 'rgba(255,255,255,0.2)'
                 },
                 '& svg': {
-                    fill: 'white',
+                    fill: 'white'
                 },
                 '&:focus': {
                     outline: 'none',
-                    boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-                },
-            },
-        },
+                    boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+                }
+            }
+        }
     };
 
-
-    const exportToCSV = () => {
-        const csv = Papa.unparse(filteredInvoices);
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        saveAs(blob, 'supplier_list.csv');
+    // Export data to Excel
+    const exportToExcel = (row) => {
+        const data = [row]; // Only export the selected row
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Invoice');
+        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+        const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+        saveAs(blob, `${row.gatepass_no}-Invoice.xlsx`);
     };
-    const exportToPDF = () => {
-        const doc = new jsPDF('landscape');
-        doc.text('Customers List', 20, 10);
-        doc.autoTable({
-            head: [
-                [
-                    'Invoice Number',
-                    'Customer Name',
-                    'Supplier Name',
-                    'Date',
-                    'Bank',
-                    'Total Amount',
-                ]
-            ],
-            body: filteredInvoices.map((row) => [
-                row.invoice_no,
-                row.supplier_name,
-                row.receiver_name,
-                row.date,
-                row.bank,
-                row.total_amount,
-            ])
-        });
-        doc.save('user_list.pdf');
-    };
+    function s2ab(s) {
+        const buf = new ArrayBuffer(s.length);
+        const view = new Uint8Array(buf);
+        for (let i = 0; i < s.length; i++) {
+            view[i] = s.charCodeAt(i) & 0xff;
+        }
+        return buf;
+    }
 
     return (
-        <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+        <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
             <div className="row mb-3">
                 <div className="col-md-4">
                     <input
@@ -321,17 +332,12 @@ const Index = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="card-body p-0" style={{ borderRadius: '8px' }}>
-                                <div className="d-flex justify-content-end">
-                                    <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                                        <FaFileCsv className="w-5 h-5 me-1" />
-                                        Export as CSV
-                                    </button>
-                                    <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                                        <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                                        Export as PDF
-                                    </button>
-                                </div>
+                            <div className="card-body p-0" style={{ backgroundColor: '#fff' }}>
+                                {/* <div className="card-header" style={{ background: 'transparent' }}>
+                  <div className="card-title">
+                    <h4 style={{ fontWeight: 'bold' }}>Invoices</h4>
+                  </div>
+                </div> */}
                                 <DataTable
                                     columns={columns}
                                     data={filteredInvoices}
@@ -340,20 +346,14 @@ const Index = () => {
                                     striped
                                     responsive
                                     customStyles={customStyles}
-                                    defaultSortFieldId={1}
                                 />
                             </div>
                         )}
                     </div>
                 </div>
             </div>
-            {invoiceAllDetails && selectedInvoice && (
-                <PdfPreview show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
-            )}
         </div>
     );
 };
 
 export default Index;
-
-
