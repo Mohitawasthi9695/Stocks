@@ -1,0 +1,23 @@
+@use "sass:list";
+@use "../variables";
+
+/**  =====================
+      Label & Badges css start
+==========================  **/
+
+.label {
+  padding: 4px 10px;
+  min-height: auto;
+  position: relative;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  @each $value in variables.$color-bt-name {
+    $i: list.index(variables.$color-bt-name, $value);
+
+    &.label-#{$value} {
+      background: list.nth(variables.$color-bt-color, $i);
+      color: #ffffff;
+    }
+  }
+}
+/**====== Label & Badges css end ======**/

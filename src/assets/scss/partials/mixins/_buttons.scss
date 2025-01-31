@@ -1,0 +1,82 @@
+@use "sass:color";
+@use "function";
+
+/* Button variants
+ Easily pump out default styles, as well as :hover, :focus, :active,
+ and disabled options for all buttons */
+@mixin button-variant-pc(
+  $background,
+  $border,
+  $hover-background: color.adjust($background, $lightness: -7.5%),
+  $hover-border: color.adjust($border, $lightness: -10%),
+  $active-background: color.adjust($background, $lightness: -10%),
+  $active-border: color.adjust($border, $lightness: -12.5%)
+) {
+  color: function.color-yiq($background);
+  background-color: $border;
+  border-color: $border;
+
+  &:hover {
+    color: function.color-yiq($hover-background);
+    background-color: $hover-background;
+    border-color: $hover-border;
+  }
+
+  &.disabled,
+  &:disabled {
+    color: function.color-yiq($background);
+    background-color: $background;
+    border-color: $border;
+  }
+
+  &:not(:disabled):not(.disabled).active,
+  &:not(:disabled):not(.disabled):active,
+  .show > &.dropdown-toggle {
+    color: function.color-yiq($active-background);
+    background-color: $active-background;
+    border-color: $active-border;
+  }
+}
+@mixin button-outline-variant-pc($color, $color-hover: function.color-yiq($color), $active-background: $color, $active-border: $color) {
+  color: $color;
+  background-color: transparent;
+  background-image: none;
+  border-color: $color;
+
+  &:hover {
+    color: function.color-yiq($color);
+    background-color: $active-background;
+    border-color: $active-border;
+  }
+
+  &.disabled,
+  &:disabled {
+    color: $color;
+    background-color: transparent;
+  }
+
+  &:not(:disabled):not(.disabled).active,
+  &:not(:disabled):not(.disabled):active,
+  .show > &.dropdown-toggle {
+    color: function.color-yiq($active-background);
+    background-color: $active-background;
+    border-color: $active-border;
+  }
+}
+@mixin button-glow-variant-pc($color, $color-hover: function.color-yiq($color), $active-background: $color, $active-border: $color) {
+  box-shadow:
+    0 1px 6px 2px color.adjust($color, $alpha: -0.44),
+    0 6px 11px 2px color.adjust($color, $alpha: -0.8);
+  &:hover {
+    box-shadow:
+      0 1px 4px 2px color.adjust($color, $alpha: -0.44),
+      0 4px 9px 2px color.adjust($color, $alpha: -0.9);
+  }
+  &:not(:disabled):not(.disabled).active,
+  &:not(:disabled):not(.disabled):active:focus,
+  .show > &.dropdown-toggle,
+  &.active,
+  &:focus {
+    box-shadow: none;
+  }
+}

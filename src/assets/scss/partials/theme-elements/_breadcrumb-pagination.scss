@@ -1,0 +1,32 @@
+@use "../variables";
+
+/**  =====================
+      Breadcrumbs & Pagination css start
+==========================  **/
+/* Breadcrumbs */
+
+.breadcrumb {
+  background-color: variables.$theme-background;
+  border-radius: 0;
+}
+
+.breadcrumb-item {
+  + .breadcrumb-item {
+    color: variables.$primary-color;
+  }
+
+  &.active {
+    color: variables.$theme-heading-color;
+  }
+}
+
+/* pagination */
+
+.page-item {
+  &.active .page-link {
+    color: #fff;
+    background-color: variables.$primary-color;
+    border-color: variables.$primary-color;
+  }
+}
+/**====== Breadcrumbs & Pagination css end ======**/

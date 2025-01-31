@@ -1,0 +1,17 @@
+id ,invoice_no,lot_no,shadeNo,width,length,unit,rack,type,warehouse
+,INV002,5896,B-70/02,2.8,50,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,2.8,60,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,3,60,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,2.8,50,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,2.8,50,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,2.1,30,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,2.8,50,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,2.8,40,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,2.5,70,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,2.8,60,meter,213,roll,Drawarka
+,INV002,5896,B-70/02,2.8,60,meter,213,roll,Drawarka
+,INV002,5896,B-70/03,4,50,meter,213,roll,Drawarka
+,INV002,5896,B-70/03,4,50,meter,213,roll,Drawarka
+,INV002,5896,B-70/03,2.8,30,meter,213,roll,Drawarka
+,INV002,5896,B-70/03,2.1,50,meter,213,roll,Drawarka
+,INV002,5896,B-70/03,2.8,50,meter,213,roll,Drawarka

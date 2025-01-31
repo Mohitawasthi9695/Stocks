@@ -1,0 +1,238 @@
+/* Default styles */
+.container {
+  // display: flex;
+  // justify-content: space-between;
+  margin: 10px 0;
+}
+
+.wrapper {
+  display: flex;
+  align-content: center;
+  // border: 1.5px solid;
+  width: 280px;
+  height: 45px;
+}
+button#reload-button {
+  font-size: 14px;
+  width: 60px;
+  background-color: crimson;
+  height: 40px;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4em;
+  color: #ffffff;
+  margin-top: 10px;
+}
+
+button#reload-button:hover {
+  background-color: rgb(46, 153, 46);
+}
+
+
+.rotating {
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+button#submit-button {
+  width: 100%;
+  color: #ffffff;
+  font-size: 1.5em;
+  border: none;
+  margin-top: 1em;
+  padding: 0.8em 0;
+  border-radius: 0.4em;
+  background-color: green;
+  cursor: pointer;
+}
+
+button#submit-button:hover {
+  background-color: rgb(53, 175, 53);
+}
+
+/* Media Queries for different screen sizes */
+
+@media only screen and (max-width: 600px) {
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-control {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .heading {
+    font-size: 12px;
+  }
+
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .wrapper {
+    width: 100%;
+    justify-content: center;
+  }
+
+  button.reload-icon-button {
+    margin-left: 0;
+  }
+
+  .btn-block {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .wrapper {
+    width: 100%;
+    height: auto;
+    margin: 10px 0;
+  }
+
+  canvas {
+    width: 100%;
+  }
+
+  button#reload-button {
+    width: 50px;
+    font-size: 12px;
+  }
+  .img-login{
+   display: none;
+  }
+
+  
+}
+
+/* Medium screens (tablets) */
+@media only screen and (max-width: 768px) {
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-control {
+    font-size: 16px;
+  }
+
+  .container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .btn-block {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .wrapper {
+    width: 240px;
+    margin: 10px 0;
+  }
+
+  button#reload-button {
+    width: 55px;
+    font-size: 13px;
+  }
+}
+
+/* Large screens (desktops) */
+@media only screen and (min-width: 1024px) {
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-control {
+    font-size: 13px;
+  }
+
+  .container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .btn-block {
+    width: auto;
+    padding: 14px 20px;
+    font-size: 18px;
+  }
+
+  .wrapper {
+    width: 200px;
+  }
+
+  button#reload-button {
+    width: 60px;
+  }
+
+ 
+}
+
+/* For max-width: 1124px (general adjustments for tablets) */
+@media (max-width: 1100px) {
+  .card-body {
+    padding: 20px 0px !important;
+    // width: 300px;
+  }
+}
+
+@media (max-width: 786px) {
+  .card-body{
+    
+    width: 100%;
+  }
+  .input-cap{
+    display: grid !important;
+  }
+  .spin{
+    position: absolute;
+    margin-left: 129px;
+    margin-top: -49px;
+  }
+}
+
+
+@media (max-width: 406px) {
+  .cap-text-dev{
+    margin-left: -20px;
+  }
+  .wrapper{
+    
+    width: 120px;
+    border: none;
+  }
+  #reload-button{
+    margin-right: 30px !important;
+  }
+  .input-login-div{
+    width: 158px !important;
+  }
+}
+
+
+/* Default styles */
+alert-danger {
+ --bs-alert-bg: none; 
+ --bs-alert-border-color: none; 
+ --bs-alert-link-color: none; 
+ --bs-alert-color: red;
+}
+
+.alert {
+--bs-alert-bg: transparent;
+ --bs-alert-padding-x: 0rem; 
+ --bs-alert-padding-y: 0rem; 
+ --bs-alert-margin-bottom: 0rem; 
+ --bs-alert-border: none;
+}

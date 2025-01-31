@@ -1,0 +1,295 @@
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import FormField from '../../components/FormField';
+import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload, FaUser, FaIdCard } from 'react-icons/fa';
+
+
+const AddProduct = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    shadeNo: '',
+    product_category_id: '', // Holds the selected category ID
+    purchase_shade_no: '',
+    status: 'Active',
+  });
+
+  const [categories, setCategories] = useState([]); // Holds the list of categories
+  const navigate = useNavigate();
+  const mainColor = '#3f4d67';
+
+  // Fetch product categories from API
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/products/category`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.data && response.data.data) {
+        setCategories(response.data.data);
+      } else {
+        toast.error('Categories data is not in the expected format');
+      }
+    } catch (error) {
+      toast.error('Error fetching categories');
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    console.log('Categories:', categories); // Debugging: Ensure categories are populated
+  }, [categories]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/products`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+
+      if (response.status >= 200 && response.status < 300) {
+        navigate('/shades');
+        toast.success('Product added successfully');
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (error) {
+      console.error('Error adding product:', error);
+      toast.error('Error adding product');
+    }
+  };
+  const [file, setFile] = useState(null);
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
+      if (!['xls', 'xlsx', 'csv'].includes(fileExtension)) {
+        toast.error('Unsupported file format. Please upload an .xls or .xlsx file.');
+        setFile(null);
+      } else {
+        setFile(selectedFile);
+      }
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    e.preventDefault();
+
+    if (!file) {
+      toast.error('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('csv_file', file);
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/product/import-csv`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      if (response.status === 201) {
+        toast.success('Stock added successfully');
+        setFile(null);
+        navigate('/shades');
+      }
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error.response?.data?.error || 'Error adding stock';
+      toast.error(errorMessage);
+    }
+  };
+  return (
+    <Container
+      fluid
+      className="pt-4 px-5"
+      style={{
+        border: '3px dashed #14ab7f',
+        borderRadius: '8px',
+        background: '#ff9d0014',
+      }}
+    >
+      <Row className="justify-content-center">
+        <div className="col-md-12 position-relative">
+          <h2 className="text-center mb-4 fw-bold text-primary">Invoice Items</h2>
+
+          <div
+            className="card shadow-lg border-0 mb-4 mx-auto"
+            style={{ borderRadius: '12px', maxWidth: '700px'}}
+          >
+            <div className="card-body p-4 mx-auto">
+              <div className="d-flex flex-column align-items-center">
+                <form onSubmit={handleFileUpload} encType="multipart/form-data" className="w-100">
+                  <div className="mb-3">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <label
+                        htmlFor="excel"
+                        className="form-label text-secondary fw-semibold"
+                        style={{ fontSize: '0.95rem' }}
+                      >
+                        Choose File
+                      </label>
+                      <div className="d-flex align-items-center gap-2">
+                        <FaFileExcel className="text-success fs-4" />
+                        <a href="/products.csv" download className="text-decoration-none">
+                          <FaDownload className="text-success fs-5" style={{ cursor: 'pointer' }} />
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="input-group">
+                      <input
+                        type="file"
+                        className="form-control form-control-sm rounded-start"
+                        name="excel"
+                        id="excel"
+                        onChange={handleFileChange}
+                        style={{ fontSize: '0.9rem' }}
+                      />
+                      <button
+                        type="submit"
+                        className="btn btn-success d-flex align-items-center gap-2 px-3"
+                        style={{ fontSize: '0.85rem' }}
+                      >
+                        <FaUpload />
+                        Upload
+                      </button>
+                    </div>
+                    <small className="form-text text-muted" style={{ fontSize: '0.8rem' }}>
+                      Supported formats: <strong>.xls, .xlsx, .csv</strong>
+                    </small>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Col md={12} lg={12}>
+          <Card
+            className="shadow-lg border-0"
+            style={{ borderRadius: '15px', overflow: 'hidden' }}
+          >
+            <div
+              className="p-4 text-white text-center"
+              style={{
+                backgroundColor: '#20B2AA',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <FaUserPlus size={40} className="me-3" />
+              <h2 className="m-0 text-white">Add New Product</h2>
+            </div>
+            <Card.Body className="p-5">
+              <Form onSubmit={handleSubmit}>
+                <Row>
+                <Col md={6}>
+                    {/* Dropdown for Product Category */}
+                    <Form.Group controlId="productCategory" style={{ marginBottom: '16px' }}>
+                      <Form.Label>
+                        <FaIdCard className="me-2" />
+                        Product Category
+                      </Form.Label>
+                      <Form.Control
+                        as="select"
+                        name="product_category_id"
+                        value={formData.product_category_id} // Bind to formData state
+                        onChange={handleChange} // Update formData state
+                        style={{
+                          border: '1px solid rgb(63, 77, 103)',
+                          zIndex: '10', // Ensure dropdown options are above other elements
+                        }}
+                      >
+                        <option value="">Select Category</option>
+                        {categories.length > 0 ? (
+                          categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                              {category.product_category}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>
+                            Loading Categories...
+                          </option>
+                        )}
+                      </Form.Control>
+                    </Form.Group>
+                    <FormField
+                      icon={FaIdCard}
+                      label="Purchase Shade Number"
+                      name="purchase_shade_no"
+                      value={formData.purchase_shade_no}
+                      onChange={handleChange}
+                    />
+                  </Col>
+                  <Col md={6}>
+                    <FormField
+                      icon={FaUser}
+                      label="Product Name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                    />
+                    <FormField
+                      icon={FaIdCard}
+                      label="Shade Number"
+                      name="shadeNo"
+                      value={formData.shadeNo}
+                      onChange={handleChange}
+                    />
+                  </Col>
+                  
+                </Row>
+
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="mt-4 d-block m-auto"
+                  style={{
+                    backgroundColor: mainColor,
+                    borderColor: mainColor,
+                    width: '10rem',
+                  }}
+                >
+                  <FaUserPlus className="me-2" /> Add Product
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+export default AddProduct;
