@@ -56,7 +56,7 @@ const ProductCategory = () => {
     }
   };
 
-  
+
   const deleteCategory = async (id) => {
     try {
       await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/category/${id}`, {
@@ -73,55 +73,85 @@ const ProductCategory = () => {
   };
 
   return (
-    <Container fluid className="pt-4 px-2" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <Container
+      fluid
+      className="pt-4 px-2"
+      style={{
+        border: "3px dashed #14ab7f",
+        borderRadius: "8px",
+        background: "#ff9d0014",
+      }}
+    >
       <Row>
         <Col md={12} lg={12} className="mt-3">
-          <div
-            className="card shadow-lg border-0 rounded-lg"
-            style={{ margin: '50px' }}
-          >
+          <div className="card shadow-lg border-0 rounded-lg" style={{ margin: "50px" }}>
             <h3
               className="text-center mb-4"
               style={{
-                backgroundColor: 'rgb(32, 178, 170)',
-                padding: '20px',
-                borderTopLeftRadius: '10px',
-                borderTopRightRadius: '10px',
-                marginTop: '-5px',
-                color: 'white',
+                backgroundColor: "rgb(32, 178, 170)",
+                padding: "20px",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+                marginTop: "-5px",
+                color: "white",
               }}
             >
               Product Category
             </h3>
-            <div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                }}
-              >
-                <div style={{ display: 'flex', marginBottom: '20px', width: '200px', padding: '20px' }}>
+
+            {/* Submit Section in a Separate Row */}
+            <Row className="justify-content-center">
+              <Col md={6} className="d-flex justify-content-center">
+                <div style={{ display: "flex", marginBottom: "20px", width: "100%", padding: "20px" }}>
                   <input
                     placeholder="Enter product category"
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    style={{ padding: '8px', marginRight: '10px', height: '45px', borderRadius: '10px' }}
+                    style={{
+                      padding: "8px",
+                      marginRight: "10px",
+                      height: "45px",
+                      borderRadius: "10px",
+                      width: "100%",
+                    }}
                   />
-                  <Button onClick={createCategory} variant="success" style={{ height: '45px' }}>
+                  <Button onClick={createCategory} variant="success" style={{ height: "45px" }}>
                     Submit
                   </Button>
                 </div>
+              </Col>
+            </Row>
 
-                <Table striped bordered hover style={{ width: '50%', margin: '25px' }}>
-                  <thead>
+            {/* Table Section */}
+            <Row>
+              <Col md={12}>
+                <Table striped bordered hover style={{ width: "80%", margin: "auto", marginBottom: "25px" }}>
+                  <thead className='text-center'>
                     <tr>
-                      <th>ID</th>
-                      <th>Product Category</th>
-                      <th>Actions</th>
+                      <th style={{
+                        backgroundColor: "rgb(32, 178, 170)",
+                        padding: "20px",
+                        borderTopLeftRadius: "10px",
+                        marginTop: "-5px",
+                        color: "white",
+                      }}>ID</th>
+                      <th style={{
+                        backgroundColor: "rgb(32, 178, 170)",
+                        padding: "20px",
+                        
+                        marginTop: "-5px",
+                        color: "white",
+                      }}>Product Category</th>
+                      <th style={{
+                        backgroundColor: "rgb(32, 178, 170)",
+                        padding: "20px",
+                        borderTopRightRadius: "10px",
+                        marginTop: "-5px",
+                        color: "white",
+                      }}>Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className='text-center'>
                     {categories.map((category) => (
                       <tr key={category.id}>
                         <td>{category.id}</td>
@@ -135,12 +165,13 @@ const ProductCategory = () => {
                     ))}
                   </tbody>
                 </Table>
-              </div>
-            </div>
+              </Col>
+            </Row>
           </div>
         </Col>
       </Row>
     </Container>
+
   );
 };
 
