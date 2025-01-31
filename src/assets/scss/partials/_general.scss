@@ -1,15 +1,14 @@
-@use "sass:color";
-@use "variables";
-
 /**  =====================
       Custom css start
 ==========================  **/
+@use 'sass:color';
+
 body {
-  font-family: variables.$theme-font-family;
-  font-size: variables.$theme-font-size;
-  color: variables.$theme-font-color;
+  font-family: $theme-font-family;
+  font-size: $theme-font-size;
+  color: $theme-font-color;
   font-weight: 400;
-  background: variables.$theme-background;
+  background: $theme-background;
   position: relative;
 }
 
@@ -33,7 +32,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: variables.$theme-heading-color;
+  color: $theme-heading-color;
   font-weight: 400;
 }
 
@@ -94,11 +93,11 @@ label {
 }
 
 .theme-bg {
-  background: variables.$theme-color;
+  background: $theme-color;
 }
 
 .theme-bg2 {
-  background: variables.$theme-color2;
+  background: $theme-color2;
 }
 
 /* ==========  card css start  =========== */
@@ -153,7 +152,7 @@ p.text-muted {
 
       &:after {
         content: '';
-        background-color: variables.$primary-color;
+        background-color: $primary-color;
         position: absolute;
         left: -25px;
         top: 0;
@@ -242,7 +241,7 @@ p.text-muted {
 
       i {
         margin: 0 auto;
-        color: variables.$primary-color;
+        color: $primary-color;
         font-size: 24px;
         align-items: center;
         display: flex;
@@ -314,7 +313,7 @@ p.text-muted {
 
     > a {
       padding: 5px;
-      color: variables.$theme-font-color;
+      color: $theme-font-color;
 
       i {
         font-size: 15px;
@@ -329,7 +328,7 @@ p.text-muted {
     &:active,
     &:focus,
     &:hover {
-      background: color.adjust(variables.$primary-color, $alpha: -0.9);
+      background: color.scale($primary-color, $alpha: -90%);
 
       > a {
         background: transparent;
@@ -397,12 +396,12 @@ p.text-muted {
 /* ================================    Blockquote Start  ===================== */
 
 .blockquote {
-  border-left: 0.25rem solid variables.$theme-border;
+  border-left: 0.25rem solid $theme-border;
   padding: 0.5rem 1rem;
 
   &.text-right {
     border-left: none;
-    border-right: 0.25rem solid variables.$theme-border;
+    border-right: 0.25rem solid $theme-border;
   }
 }
 

@@ -1,10 +1,7 @@
-@use "sass:color";
-@use "../variables";
-
 /**  =====================
       Chatting css start
 ==========================  **/
-
+@use "sass:color";
 .header-chat,
 .header-user-list {
   height: 100%;
@@ -52,7 +49,7 @@
         left: 73px;
         font-size: 25px;
         z-index: 1003;
-        color: variables.$success-color;
+        color: $success-color;
       }
 
       &:after {
@@ -71,7 +68,7 @@
 
     &.msg-open {
       &:after {
-        color: color.adjust(variables.$primary-color, $alpha: -0.9);
+        color: color.scale($primary-color, $alpha: -90%);
       }
     }
   }
@@ -109,7 +106,7 @@
     }
 
     &.active {
-      background: color.adjust(variables.$primary-color, $lightness: 45%);
+      background: color.scale($primary-color, $lightness: 87.93%);
     }
 
     .media-left {
@@ -142,7 +139,7 @@
       color: #fff;
       padding: 2px 0;
       text-align: center;
-      background: variables.$theme-color;
+      background: $theme-color;
     }
   }
 }
@@ -175,7 +172,7 @@
 
   .h-list-body {
     height: 100%;
-    background: color.adjust(variables.$primary-color, $lightness: 45%);
+    background: color.scale($primary-color, $lightness: 87.93%);
   }
 
   .h-list-footer {
@@ -185,7 +182,7 @@
     right: 0;
     padding: 20px 15px;
     z-index: 10;
-    background: color.adjust(variables.$primary-color, $lightness: 45%);
+    background: color.scale($primary-color, $lightness: 87.93%);
 
     .input-group {
       background: #fff;
@@ -336,7 +333,7 @@
     .chat-menu-content {
       > div {
         p {
-          background: variables.$theme-color;
+          background: $theme-color;
           color: #fff;
           border-radius: 4px;
           margin-bottom: 4px;
@@ -380,6 +377,6 @@
 
 @media only screen and (max-width: 991px) {
   .pcoded-header {
-    color: variables.$header-light-text-color;
+    color: $header-light-text-color;
   }
 }

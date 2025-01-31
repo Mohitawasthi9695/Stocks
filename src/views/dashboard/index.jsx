@@ -133,7 +133,7 @@ const DashDefault = () => {
       <Row>
         {dashSalesData.map((data, index) => {
           return (
-            <Col key={index} xl={6} xxl={4}>
+            <Col key={index} xl={6} xxl={3}>
               <Card>
                 <Card.Body>
                   <h6 className="mb-4">{data.title}</h6>
@@ -162,12 +162,40 @@ const DashDefault = () => {
             </Col>
           );
         })}
+        <Col md={6} xl={4}>
+          <Card className="card-event">
+            <Card.Body className="border-bottom">
+              <div className="row d-flex align-items-center">
+                <div className="col-auto">
+                  <i className="feather icon-zap f-30 text-c-green" />
+                </div>
+                <div className="col">
+                  <h3 className="f-w-300">{salesData.out_quantity}</h3>
+                  <span className="d-block text-uppercase">Total Out Roles</span>
+                </div>
+              </div>
+            </Card.Body>
+            <Card.Body>
+              <div className="row d-flex align-items-center">
+                <div className="col-auto">
+                  <i className="feather icon-activity f-30 text-c-blue" />
+                </div>
+                <div className="col">
+                  <h3 className="f-w-300">{salesData.today_out_quantity}</h3>
+                  <span className="d-block text-uppercase">Today Out Roles</span>
+                </div>
+              </div>
+
+            </Card.Body>
+          </Card>
+
+        </Col>
         <Col md={6} xl={8}>
           <Card className="Recent-Users widget-focus-lg">
             <Card.Header>
               <Card.Title as="h5">Recent Supplier</Card.Title>
             </Card.Header>
-            <Card.Body className="px-0 py-2">
+            <Card.Body className="">
               <div className="table-container">
                 <Table responsive hover className="recent-users no-scroll">
                   <thead>
@@ -220,34 +248,7 @@ const DashDefault = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col md={6} xl={4}>
-          <Card className="card-event">
-            <Card.Body className="border-bottom">
-              <div className="row d-flex align-items-center">
-                <div className="col-auto">
-                  <i className="feather icon-zap f-30 text-c-green" />
-                </div>
-                <div className="col">
-                  <h3 className="f-w-300">{salesData.out_quantity}</h3>
-                  <span className="d-block text-uppercase">Total Out Roles</span>
-                </div>
-              </div>
-            </Card.Body>
-            <Card.Body>
-              <div className="row d-flex align-items-center">
-                <div className="col-auto">
-                  <i className="feather icon-activity f-30 text-c-blue" />
-                </div>
-                <div className="col">
-                  <h3 className="f-w-300">{salesData.today_out_quantity}</h3>
-                  <span className="d-block text-uppercase">Today Out Roles</span>
-                </div>
-              </div>
-
-            </Card.Body>
-          </Card>
-
-        </Col>
+        
         <Col md={6} xl={6}>
           <Card className="d-flex flex-column align-items-center">
             <PieChartData />

@@ -1,24 +1,22 @@
-@use "sass:color";
-@use "../variables";
-
 /**  =====================
       Data Tables css start
 ==========================  **/
+@use 'sass:color';
 .table {
   color: #888;
   td,
   th {
-    border-top: 1px solid variables.$theme-border;
+    border-top: 1px solid $theme-border;
     white-space: nowrap;
     // padding: 1.05rem 0.75rem;
   }
 
   thead th {
-    border-bottom: 1px solid variables.$theme-border;
+    border-bottom: 1px solid $theme-border;
   }
 
   tbody + tbody {
-    border-top: 2px solid variables.$theme-border;
+    border-top: 2px solid $theme-border;
   }
 
   &.table-sm {
@@ -31,18 +29,18 @@
 /* Border versions */
 
 .table-bordered {
-  border: 1px solid variables.$theme-border;
+  border: 1px solid $theme-border;
 
   td,
   th {
-    border: 1px solid variables.$theme-border;
+    border: 1px solid $theme-border;
   }
 }
 /* Zebra-striping */
 
 .table-striped {
   tbody tr:nth-of-type(2n + 1) {
-    background-color: color.adjust(variables.$primary-color, $alpha: -0.95);
+    background-color: color.scale($primary-color, $alpha: -95%);
   }
 }
 /* Hover effect */
@@ -50,7 +48,7 @@
 .table-hover {
   tbody tr {
     &:hover {
-      background-color: color.adjust(variables.$primary-color, $alpha: -0.95);
+      background-color: color.scale($primary-color, $alpha: -95%);
     }
   }
 }

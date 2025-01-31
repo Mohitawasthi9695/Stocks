@@ -1,7 +1,6 @@
-@use "sass:meta";
 @import 'react-perfect-scrollbar/dist/css/styles.css';
-@include meta.load-css('ngx-perfect-scrollbar');
-@include meta.load-css('react-bootstrap/react-bootstrap');
+@import 'ngx-perfect-scrollbar';
+@import 'react-bootstrap/react-bootstrap';
 
 .pcoded-header .main-search .input-group-text {
   line-height: 1;
