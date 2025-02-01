@@ -31,6 +31,7 @@ const WarehouseAccessoriesPage = () => {
             'Content-Type': 'application/json'
           }
         });
+        console.log(response.data.data);
         setAccessories(response.data.data);
         setFilteredAccessories(response.data.data);
       } catch (error) {
@@ -63,8 +64,13 @@ const WarehouseAccessoriesPage = () => {
       sortable: true
     },
     {
-      name: 'Product Accessory ID',
-      selector: (row) => row.product_accessory_id,
+      name: 'Product Category',
+      selector: (row) => row.product_category,
+      sortable: true
+    },
+    {
+      name: 'Product Accessory',
+      selector: (row) => row.product_accessory_name,
       sortable: true
     },
     {
