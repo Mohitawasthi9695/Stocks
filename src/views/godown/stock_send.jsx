@@ -270,8 +270,9 @@ const Invoice_out = () => {
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
     { id: 'out_width', label: 'Width' },
+    { id: 'width_unit', label: ' Unit' },
     { id: 'out_length', label: 'Length' },
-    { id: 'unit', label: ' Unit' },
+    { id: 'length_unit', label: ' Unit' },
     { id: 'product_type', label: 'Type' },
     { id: 'out_quantity', label: 'Quantity' }
   ];
@@ -457,9 +458,10 @@ const Invoice_out = () => {
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
-                                    <td key="width">{row.out_width}</td>
                                     <td key="length">{row.out_length}</td>
-                                    <td key="unit">{row.unit}</td>
+                                    <td key="length_unit">{row.length_unit}</td>
+                                    <td key="width">{row.out_width}</td>
+                                    <td key="width_unit">{row.width_unit}</td>
                                     <td key="type">{row.product_type}</td>
                                     <td key="out_quantity">
                                       <input
