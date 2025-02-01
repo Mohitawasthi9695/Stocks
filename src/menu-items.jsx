@@ -44,6 +44,8 @@ const filterMenuItem = (menu) => {
           !(
             ['Sub_Supervisor'].includes(userName) &&
             [
+              'Accessory',
+              'products',
               'approve_operator',
               'invoice_operator_index',
               'generated_gate_pass',

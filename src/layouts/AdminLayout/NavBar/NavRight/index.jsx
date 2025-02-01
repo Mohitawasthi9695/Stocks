@@ -19,13 +19,13 @@ const NavRight = () => {
   const { dispatch, state } = useContext(AuthContext);
   const name = state.user.name;
   const role_id = state.user.role;
-  const role = role_id == 1?'admin': role_id == 2? 'supplier' : role_id == 3? 'operator':'user'
+  const role = role_id == 1 ? 'admin' : role_id == 2 ? 'supplier' : role_id == 3 ? 'operator' : 'user'
 
 
 
   const navigate = useNavigate();
-   const token = localStorage.getItem('token')
-  const handleLogout =  async () => {
+  const token = localStorage.getItem('token')
+  const handleLogout = async () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/logout`,
@@ -37,17 +37,17 @@ const NavRight = () => {
           },
         }
       );
-  
+
       if (response.status === 200) {
         console.log('Logged out successfully');
-  
+
         // Clear localStorage and update context state
         localStorage.clear();
-  
+
         dispatch({
           type: 'LOGOUT',
         });
-  
+
         // Navigate to login page
         navigate('/login');
       }
@@ -55,8 +55,8 @@ const NavRight = () => {
       console.error('Error during logout:', error.response?.data || error.message);
     }
   };
-   
-  
+
+
 
   const notiData = [
     {
@@ -190,7 +190,7 @@ const NavRight = () => {
                   </Link>
                 </ListGroup.Item> */}
                 <ListGroup.Item as="li" bsPrefix=" ">
-                  <Link onClick = {handleLogout} className="dropdown-item">
+                  <Link onClick={handleLogout} className="dropdown-item">
                     <i className="feather icon-lock" /> Logout
                   </Link>
                 </ListGroup.Item>
