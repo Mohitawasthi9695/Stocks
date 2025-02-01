@@ -20,7 +20,7 @@ File: style.css
         -   Invoice, Full Calender, File Upload,
 =================================================================================
 =================================================================================== */
-@import 'bootstrap/dist/css/bootstrap';
+@use 'bootstrap/dist/css/bootstrap';
 // General theme contents
 @import 'partials/variables';
 @import 'partials/general';

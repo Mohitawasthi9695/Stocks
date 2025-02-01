@@ -29,17 +29,9 @@ const Show_product = () => {
             'Content-Type': 'application/json'
           }
         });
-        const productsWithArea = response.data.filter((product) => (product.quantity) > 0).map((product) => {
-          const areaM2 = product.length * product.width * product.quantity;
-          const areaSqFt = areaM2 * 10.7639;
-          return {
-            ...product,
-            area: areaM2.toFixed(3), 
-            area_sq_ft: areaSqFt.toFixed(3), 
-          };
-        });
-        setProducts(productsWithArea);
-        setFilteredProducts(productsWithArea);
+        console.log(response.data);
+        setProducts(response.data);
+        setFilteredProducts(response.data);
       } catch (err) {
         console.log(err);
       } finally {
@@ -81,39 +73,50 @@ const Show_product = () => {
     },
     {
       name: 'Invoice no',
-      selector: (row) => row.stock_invoice.invoice_no,
+      selector: (row) => row.invoice_no,
+      sortable: true
+    },
+    {
+      name: 'Product Category',
+      selector: (row) => row.product_category_name,
       sortable: true
     },
     {
       name: 'Shade no',
-      selector: (row) => row.stock_product.shadeNo,
+      selector: (row) => row.shadeNo,
       sortable: true
     },
     {
       name: 'Pur. Shade no',
-      selector: (row) => row.stock_product.purchase_shade_no,
+      selector: (row) => row.purchase_shade_no,
       sortable: true
     },
     {
-      name: 'type',
+      name: 'Type',
       selector: (row) => row.type,
       sortable: true
     },
     {
       name: 'Length',
-      selector: (row) => row.length,
-      sortable: true
-    },
-    {
-      name: 'width',
-      selector: (row) => row.width,
+      selector: (row) => Number(row.length).toFixed(2),
       sortable: true
     },
     {
       name: 'Unit',
-      selector: (row) => row.unit,
+      selector: (row) => row.length_unit,
       sortable: true
     },
+    {
+      name: 'Width',
+      selector: (row) => Number(row.width).toFixed(2),
+      sortable: true
+    },
+    {
+      name: 'Unit',
+      selector: (row) => row.width_unit,
+      sortable: true
+    },
+
     {
       name: 'Quantity',
       selector: (row) => row.quantity,
@@ -122,31 +125,11 @@ const Show_product = () => {
     {
       name: 'Out Quantity',
       selector: (row) => row.out_quantity ?? 0,
-      sortable: true,
-    },
-    {
-      name: 'Avaible Quantity',
-      selector: (row) => row.quantity - row.out_quantity,
-      sortable: true,
-    },
-    {
-      name: 'Area(m.sq.)',
-      selector: (row) => row.area,
-      sortable: true
-    },
-    {
-      name: 'Area(sq.ft.)',
-      selector: (row) => row.area_sq_ft,
       sortable: true
     },
     {
       name: 'Rack No',
       selector: (row) => row.rack,
-      sortable: true
-    },
-    {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
       sortable: true
     },
     {
@@ -209,11 +192,11 @@ const Show_product = () => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!'
     });
-  
+
     if (!result.isConfirmed) {
       return; // Exit if user cancels
     }
-  
+
     try {
       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/${productId}`, {
         headers: {
@@ -229,7 +212,7 @@ const Show_product = () => {
       toast.error('Failed to delete Product');
     }
   };
-  
+
   const customStyles = {
     header: {
       style: {
@@ -290,7 +273,7 @@ const Show_product = () => {
       }
     }
   };
-  
+
   const totalArea = filteredProducts.reduce((acc, product) => acc + (Number(product.area) || 0), 0);
   const totalAreaSqFt = filteredProducts.reduce((acc, product) => acc + (Number(product.area_sq_ft) || 0), 0);
 
@@ -347,74 +330,74 @@ const Show_product = () => {
         </div>
       </div>
       {/* Edit Product Modal */}
-<Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>Edit Product</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form>
-      <Form.Group className="mb-3">
-        <Form.Label>Lot Number</Form.Label>
-        <Form.Control
-          type="text"
-          name="lot_no"
-          value={selectedProduct?.lot_no || ''}
-          onChange={handleChange}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Length</Form.Label>
-        <Form.Control
-          type="number"
-          step="0.01"
-          name="length"
-          value={selectedProduct?.length || ''}
-          onChange={handleChange}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Width</Form.Label>
-        <Form.Control
-          type="number"
-          step="0.01"
-          name="width"
-          value={selectedProduct?.width || ''}
-          onChange={handleChange}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Unit</Form.Label>
-        <Form.Control
-          type="read-only"
-          name="unit"
-          value={selectedProduct?.unit || ''}
-          disabled={true}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Type</Form.Label>
-        <Form.Control
-          type="text"
-          name="type"
-          value={selectedProduct?.type || ''}
-          onChange={handleChange}
-          
-        />
-      </Form.Group>
-    </Form>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-      Close
-    </Button>
-    <Button variant="primary" onClick={handleUpdateProduct}>
-      Save Changes
-    </Button>
-  </Modal.Footer>
-</Modal>
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Lot Number</Form.Label>
+              <Form.Control
+                type="text"
+                name="lot_no"
+                value={selectedProduct?.lot_no || ''}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Length</Form.Label>
+              <Form.Control
+                type="number"
+                step="0.01"
+                name="length"
+                value={selectedProduct?.length || ''}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Width</Form.Label>
+              <Form.Control
+                type="number"
+                step="0.01"
+                name="width"
+                value={selectedProduct?.width || ''}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Unit</Form.Label>
+              <Form.Control
+                type="read-only"
+                name="unit"
+                value={selectedProduct?.unit || ''}
+                disabled={true}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Type</Form.Label>
+              <Form.Control
+                type="text"
+                name="type"
+                value={selectedProduct?.type || ''}
+                onChange={handleChange}
+
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleUpdateProduct}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
     </div>
-    
+
   );
 };
 

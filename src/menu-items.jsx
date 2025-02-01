@@ -200,9 +200,16 @@ const menuItems = {
             },
             {
               id: 'add_warehouse_accessory',
-              title: 'Warehouse Accessories',
+              title: 'Add WareAccessories',
               type: 'item',
               url: '/add_warehouse_accessories', 
+              icon: 'feather icon-package',
+            },
+            {
+              id: 'warehouse_accessory',
+              title: 'Warehouse Accessories',
+              type: 'item',
+              url: '/warehouse_accessories', 
               icon: 'feather icon-package',
             }
           ]

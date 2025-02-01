@@ -171,6 +171,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/warehouse_accessories',
+        element: lazy(() => import('./views/accessories/warehouse_accessory')),
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
+      },
+      {
+        exact: 'true',
         path: '/invoices',
         element: lazy(() => import('./views/stock/Index')),
         allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
@@ -305,6 +311,12 @@ const routes = [
         path: '/accessory/gatepassview',
         element: lazy(() => import('./views/accessories/generated_gatepass')),
         allowedRoles: ['superadmin','admin','supervisor','sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/show-gatepass_details/:id',
+        element: lazy(() => import('./views/godown/godown_gate_pass_detail')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
