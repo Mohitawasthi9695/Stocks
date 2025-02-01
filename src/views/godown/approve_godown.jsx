@@ -41,7 +41,8 @@ const Index = () => {
                     godownSupervisor: gatepass.godown_supervisors.name,
                     warehouseSupervisor: gatepass.warehouse_supervisors.name,
                     date: gatepass.gate_pass_date,
-                    total_amount: gatepass.total_amount
+                    total_amount: gatepass.total_amount,
+                    status: gatepass.status // Include status field
                 }));
                 setInvoices(filteredFields);
                 setFilteredInvoices(filteredFields);
