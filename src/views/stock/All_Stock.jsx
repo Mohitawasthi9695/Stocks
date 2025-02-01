@@ -66,7 +66,7 @@ const ShowProduct = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
     },
     {
       name: 'Lot No',
@@ -74,28 +74,38 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Invoice No',
-      selector: (row) => row.invoice_no || 'N/A',
+      name: 'Invoice no',
+      selector: (row) => row.invoice_no,
       sortable: true
     },
     {
-      name: 'Date',
-      selector: (row) => row.stock_invoice?.date || 'N/A',
-      sortable: true,
-    },
-    {
-      name: 'Shade No',
-      selector: (row) => row.stock_product?.shadeNo || 'N/A',
+      name: 'Product Category',
+      selector: (row) => row.product_category_name,
       sortable: true
     },
     {
-      name: 'Pur. Shade No',
-      selector: (row) => row.stock_product?.purchase_shade_no || 'N/A',
+      name: 'Shade no',
+      selector: (row) => row.shadeNo,
+      sortable: true
+    },
+    {
+      name: 'Pur. Shade no',
+      selector: (row) => row.purchase_shade_no,
+      sortable: true
+    },
+    {
+      name: 'Type',
+      selector: (row) => row.type,
       sortable: true
     },
     {
       name: 'Length',
       selector: (row) => Number(row.length).toFixed(2),
+      sortable: true
+    },
+    {
+      name: 'Unit',
+      selector: (row) => row.length_unit,
       sortable: true
     },
     {
@@ -105,7 +115,7 @@ const ShowProduct = () => {
     },
     {
       name: 'Unit',
-      selector: (row) => row.unit,
+      selector: (row) => row.width_unit,
       sortable: true
     },
     {
