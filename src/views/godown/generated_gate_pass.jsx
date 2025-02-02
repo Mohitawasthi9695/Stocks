@@ -13,7 +13,9 @@
 // import Swal from 'sweetalert2';
 // import * as XLSX from 'xlsx';
 // import { saveAs } from 'file-saver';
-// import {FaFileExcel } from 'react-icons/fa';
+// import { FaFileExcel } from 'react-icons/fa';
+// import { jsPDF } from "jspdf";
+// import autoTable from "jspdf-autotable";
 
 // const Index = () => {
 //   const [invoices, setInvoices] = useState([]);
@@ -41,7 +43,7 @@
 //           godownSupervisor: gatepass.godown_supervisors.name,
 //           warehouseSupervisor: gatepass.warehouse_supervisors.name,
 //           date: gatepass.gate_pass_date,
-//           total_amount: gatepass.total_amount,
+//           total_amount: gatepass.total_amount
 //         }));
 //         setInvoices(filteredFields);
 //         setFilteredInvoices(filteredFields);
@@ -62,6 +64,22 @@
 
 //   const handleSearch = (e) => {
 //     setSearchQuery(e.target.value);
+//   };
+
+//   // handle download pdf
+//   const downloadRowAsPDF = (row) => {
+//     const doc = new jsPDF();
+
+//     doc.setFontSize(16);
+//     doc.text("User Information", 14, 15);
+
+//     doc.autoTable({
+//       startY: 25,
+//       head: [["Invoice Number", "Godown Supervisor Name", "WareHouser Supervisor", "Date"]],
+//       body: [[row.gatepass_no ,row.godownSupervisor, row.warehouseSupervisor, row.date]],
+//     });
+
+//     doc.save(`User_${row.name}.pdf`);
 //   };
 
 //   const navigate = useNavigate();
@@ -110,30 +128,23 @@
 //       name: 'Action',
 //       cell: (row) => (
 //         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
-//           <Button
-//             variant="outline-warning"
-//             size="sm"
-//             className="me-2"
-//             onClick={() => navigate(`/add-product/${row.id}/${row.gatepass_no}`)}
-//           >
-//             <MdAdd />
-//           </Button>
 //           <Button variant="outline-success" size="sm" className="me-2">
-//             <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
+//             <FaEye onClick={() => navigate(`/show-gatepass_details/${row.gatepass_no}`)} />
 //           </Button>
-//           <Button
-//             variant="outline-primary"
-//             size="sm"
-//             onClick={() => {
-//               setSelectedInvoice(row.id);
-//               setShowPdfModal(true);
-//             }}
-//           >
-//             <Button  size="sm" onClick={() => handlePrint(row)}>
-//             <MdPrint />
-//           </Button>
-//           </Button>
-//           <Button variant="outline-info" size="sm" onClick={() => exportToExcel(row)}>
+
+//              <Button
+//                       variant="outline-primary"
+//                       size="sm"
+//                       onClick={() => {
+//                         setSelectedInvoice(row.id);
+//                         setShowPdfModal(true);
+//                         console.log(row.id);
+//                       }}
+//                     >
+//                       <MdPrint />
+//                     </Button>
+
+//           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
 //             <FaFileExcel />
 //           </Button>
 //           <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
@@ -141,43 +152,86 @@
 //           </Button>
 //         </div>
 //       ),
-//       width: '340px' 
+//       width: '300px'
 //     }
 //   ];
 //   const handlePrint = (row) => {
-//     const printWindow = window.open('', '', 'width=800,height=600');
-//     printWindow.document.write(`
+//     // Find the full invoice details from invoiceAllDetails using the row id
+//     const fullInvoice = invoiceAllDetails.find(invoice => invoice.id === row.id);
+
+//     if (!fullInvoice || !fullInvoice.godowns) {
+//       console.error("Godown data not found for this row:", row);
+//       return;
+//     }
+
+//     // Create the content for the print view
+//     let printContent = `
 //       <html>
-//       <head>
-//         <title>Print Invoice</title>
-//         <style>
-//           body { font-family: Arial, sans-serif; padding: 20px; }
-//           h2 { text-align: center; }
-//           table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-//           th, td { border: 1px solid black; padding: 8px; text-align: left; }
-//         </style>
-//       </head>
-//       <body>
-//         <h2>Invoice Details</h2>
-//         <table>
-//           <tr><th>Invoice Number</th><td>${row.gatepass_no}</td></tr>
-//           <tr><th>Godown Supervisor</th><td>${row.godownSupervisor}</td></tr>
-//           <tr><th>Warehouse Supervisor</th><td>${row.warehouseSupervisor}</td></tr>
-//           <tr><th>Date</th><td>${row.date}</td></tr>
-//           <tr><th>Total Amount</th><td>${row.total_amount}</td></tr>
-//           <tr><th>Product Category</th><td>${row.product_category}</td></tr>
-//           <tr><th>Product Shade No</th><td>${row.product_shadeNo}</td></tr>
-          
-//         </table>
-//         <script>
-//           window.onload = function() { window.print(); window.close(); }
-//         </script>
-//       </body>
+//         <head>
+//           <title>Gate Pass ${row.gatepass_no}</title>
+//           <style>
+//             body { font-family: Arial, sans-serif; padding: 20px; }
+//             table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+//             th, td { border: 1px solid black; padding: 8px; text-align: left; }
+//             th { background-color: #f2f2f2; }
+//           </style>
+//         </head>
+//         <body>
+//           <h2>Gate Pass Details</h2>
+//           <table>
+//             <tr><th>Invoice Number</th><td>${row.gatepass_no}</td></tr>
+//             <tr><th>Godown Supervisor</th><td>${row.godownSupervisor}</td></tr>
+//             <tr><th>Warehouse Supervisor</th><td>${row.warehouseSupervisor}</td></tr>
+//             <tr><th>Date</th><td>${row.date}</td></tr>
+//           </table>
+//           <h3>Items:</h3>
+//           <table>
+//             <thead>
+//               <tr>
+//                 <th>Product Type</th>
+//                 <th>Lot No</th>
+//                 <th>Stock Code</th>
+//                 <th>Width</th>
+//                 <th>Length</th>
+//                 <th>Available Height</th>
+//                 <th>Available Width</th>
+//                 <th>Quantity</th>
+//                 <th>Supervisor</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//     `;
+
+//     // Loop through godowns and print the full data for Excel
+//     fullInvoice.godowns.forEach((godown) => {
+//       printContent += `
+//         <tr>
+//           <td>${godown.product_type}</td>
+//           <td>${godown.lot_no}</td>
+//           <td>${godown.stock_code}</td>
+//           <td>${godown.get_width}</td>
+//           <td>${godown.get_length}</td>
+//           <td>${godown.available_height}</td>
+//           <td>${godown.available_width}</td>
+//           <td>${godown.get_quantity}</td>
+//           <td>${fullInvoice.warehouse_supervisors.name}</td>
+//         </tr>
+//       `;
+//     });
+
+//     printContent += `
+//             </tbody>
+//           </table>
+//         </body>
 //       </html>
-//     `);
+//     `;
+
+//     // Open a new window and print the content
+//     const printWindow = window.open("", "_blank");
+//     printWindow.document.write(printContent);
 //     printWindow.document.close();
+//     printWindow.print();
 //   };
-  
 
 //   const handleDelete = async (id) => {
 //     try {
@@ -288,36 +342,40 @@
 //     }
 //   };
 
-//   // Export data to Excel
-//   const exportToExcel = (row) => {
-//     const data = [{
-//       'Invoice Number': row.gatepass_no,
-//       'Godown Supervisor Name': row.godownSupervisor,
-//       'Warehouse Supervisor': row.warehouseSupervisor,
-//       'Date': row.date,
-//       'Status': row.status === 1 ? 'Approved' : 'Pending',
-//       'Total Amount': row.total_amount // Added total items/amount
-//     }];
-  
-//     const ws = XLSX.utils.json_to_sheet(data);
-//     const wb = XLSX.utils.book_new();
-//     XLSX.utils.book_append_sheet(wb, ws, 'Invoice');
-//     const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-//     const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
-//     saveAs(blob, `${row.gatepass_no}-Invoice.xlsx`);
-//   };
-  
-  
+//   const downloadExcel = (row) => {
+//     // Find the full invoice details from invoiceAllDetails
+//     const fullInvoice = invoiceAllDetails.find(invoice => invoice.id === row.id);
 
-//   // Helper function to convert string to array buffer
-//   function s2ab(s) {
-//     const buf = new ArrayBuffer(s.length);
-//     const view = new Uint8Array(buf);
-//     for (let i = 0; i < s.length; i++) {
-//       view[i] = s.charCodeAt(i) & 0xff;
+//     if (!fullInvoice || !fullInvoice.godowns) {
+//       console.error("Godown data not found for this row:", row);
+//       return;
 //     }
-//     return buf;
-//   }
+
+//     // Extract required data
+//     const extractedData = fullInvoice.godowns.map((godown) => ({
+//       GatePassNo: fullInvoice.gate_pass_no,   // Displayed in table
+//       Date: fullInvoice.gate_pass_date,       // Displayed in table
+//       ProductType: godown.product_type,       // Displayed in table
+//       LotNo: godown.lot_no,                   // Displayed in table
+
+//       // Hidden Columns (only in Excel)
+//       StockCode: godown.stock_code,
+//       Width: godown.get_width,
+//       Length: godown.get_length,
+//       AvailableHeight: godown.available_height,
+//       AvailableWidth: godown.available_width,
+//       Quantity: godown.get_quantity,
+//       Supervisor: fullInvoice.warehouse_supervisors.name,
+//     }));
+
+//     // Create a worksheet
+//     const ws = XLSX.utils.json_to_sheet(extractedData);
+//     const wb = XLSX.utils.book_new();
+//     XLSX.utils.book_append_sheet(wb, ws, "GatePassData");
+
+//     // Save as an Excel file
+//     XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
+//   };
 
 //   return (
 //     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -357,11 +415,6 @@
 //               </div>
 //             ) : (
 //               <div className="card-body p-0" style={{ backgroundColor: '#fff' }}>
-//                 {/* <div className="card-header" style={{ background: 'transparent' }}>
-//                   <div className="card-title">
-//                     <h4 style={{ fontWeight: 'bold' }}>Invoices</h4>
-//                   </div>
-//                 </div> */}
 //                 <DataTable
 //                   columns={columns}
 //                   data={filteredInvoices}
@@ -376,13 +429,17 @@
 //           </div>
 //         </div>
 //       </div>
+//       {showPdfModal && selectedInvoice && (
+//       <GatePass
+//         invoiceData={selectedInvoice} // Pass the full row data
+//         onClose={() => setShowPdfModal(false)}
+//       />
+//     )};
 //     </div>
 //   );
 // };
 
 // export default Index;
-
-
 
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
@@ -400,8 +457,8 @@ import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { FaFileExcel } from 'react-icons/fa';
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -457,12 +514,12 @@ const Index = () => {
     const doc = new jsPDF();
 
     doc.setFontSize(16);
-    doc.text("User Information", 14, 15);
+    doc.text('User Information', 14, 15);
 
     doc.autoTable({
       startY: 25,
-      head: [["Invoice Number", "Godown Supervisor Name", "WareHouser Supervisor", "Date"]],
-      body: [[row.gatepass_no ,row.godownSupervisor, row.warehouseSupervisor, row.date]],
+      head: [['Invoice Number', 'Godown Supervisor Name', 'WareHouser Supervisor', 'Date']],
+      body: [[row.gatepass_no, row.godownSupervisor, row.warehouseSupervisor, row.date]]
     });
 
     doc.save(`User_${row.name}.pdf`);
@@ -515,12 +572,32 @@ const Index = () => {
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
           <Button variant="outline-success" size="sm" className="me-2">
-            <FaEye onClick={() => navigate(`/show-gatepass_details/${row.id}`)} />
+            <FaEye onClick={() => navigate(`/show-gatepass_details/${row.gatepass_no}`)} />
           </Button>
-          
-          <Button variant="outline-secondary" size="sm" onClick={() => handlePrint(row)}>
-        <MdPrint />
-      </Button>
+
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={() => {
+              setSelectedInvoice(row.gatepass_no);
+              setShowPdfModal(true);
+              console.log(row.gatepass_no);
+            }}
+          >
+            <MdPrint />
+          </Button>
+          {/* <Button
+  variant="outline-primary"
+  size="sm"
+  onClick={() => {
+    setSelectedInvoice(row.gatepass_no);  // Set the selected invoice
+    handlePrint(row); // Directly trigger the print action
+    console.log(row.gatepass_no);
+  }}
+>
+  <MdPrint />
+</Button>
+ */}
 
           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
             <FaFileExcel />
@@ -535,13 +612,13 @@ const Index = () => {
   ];
   const handlePrint = (row) => {
     // Find the full invoice details from invoiceAllDetails using the row id
-    const fullInvoice = invoiceAllDetails.find(invoice => invoice.id === row.id);
-  
+    const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
+
     if (!fullInvoice || !fullInvoice.godowns) {
-      console.error("Godown data not found for this row:", row);
+      console.error('Godown data not found for this row:', row);
       return;
     }
-  
+
     // Create the content for the print view
     let printContent = `
       <html>
@@ -579,7 +656,7 @@ const Index = () => {
             </thead>
             <tbody>
     `;
-  
+
     // Loop through godowns and print the full data for Excel
     fullInvoice.godowns.forEach((godown) => {
       printContent += `
@@ -596,21 +673,21 @@ const Index = () => {
         </tr>
       `;
     });
-  
+
     printContent += `
             </tbody>
           </table>
         </body>
       </html>
     `;
-  
+
     // Open a new window and print the content
-    const printWindow = window.open("", "_blank");
+    const printWindow = window.open('', '_blank');
     printWindow.document.write(printContent);
     printWindow.document.close();
     printWindow.print();
   };
-  
+
   const handleDelete = async (id) => {
     try {
       const result = await Swal.fire({
@@ -720,23 +797,22 @@ const Index = () => {
     }
   };
 
-
   const downloadExcel = (row) => {
     // Find the full invoice details from invoiceAllDetails
-    const fullInvoice = invoiceAllDetails.find(invoice => invoice.id === row.id);
-  
+    const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
+
     if (!fullInvoice || !fullInvoice.godowns) {
-      console.error("Godown data not found for this row:", row);
+      console.error('Godown data not found for this row:', row);
       return;
     }
-  
+
     // Extract required data
     const extractedData = fullInvoice.godowns.map((godown) => ({
-      GatePassNo: fullInvoice.gate_pass_no,   // Displayed in table
-      Date: fullInvoice.gate_pass_date,       // Displayed in table
-      ProductType: godown.product_type,       // Displayed in table
-      LotNo: godown.lot_no,                   // Displayed in table
-  
+      GatePassNo: fullInvoice.gate_pass_no, // Displayed in table
+      Date: fullInvoice.gate_pass_date, // Displayed in table
+      ProductType: godown.product_type, // Displayed in table
+      LotNo: godown.lot_no, // Displayed in table
+
       // Hidden Columns (only in Excel)
       StockCode: godown.stock_code,
       Width: godown.get_width,
@@ -744,20 +820,17 @@ const Index = () => {
       AvailableHeight: godown.available_height,
       AvailableWidth: godown.available_width,
       Quantity: godown.get_quantity,
-      Supervisor: fullInvoice.warehouse_supervisors.name,
+      Supervisor: fullInvoice.warehouse_supervisors.name
     }));
-  
+
     // Create a worksheet
     const ws = XLSX.utils.json_to_sheet(extractedData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "GatePassData");
-  
+    XLSX.utils.book_append_sheet(wb, ws, 'GatePassData');
+
     // Save as an Excel file
     XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
   };
-  
-  
-  
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -797,11 +870,6 @@ const Index = () => {
               </div>
             ) : (
               <div className="card-body p-0" style={{ backgroundColor: '#fff' }}>
-                {/* <div className="card-header" style={{ background: 'transparent' }}>
-                  <div className="card-title">
-                    <h4 style={{ fontWeight: 'bold' }}>Invoices</h4>
-                  </div>
-                </div> */}
                 <DataTable
                   columns={columns}
                   data={filteredInvoices}
@@ -817,11 +885,12 @@ const Index = () => {
         </div>
       </div>
       {showPdfModal && selectedInvoice && (
-      <GatePass
-        invoiceData={selectedInvoice} // Pass the full row data
-        onClose={() => setShowPdfModal(false)}
-      />
-    )};
+        <GatePass
+          invoiceData={selectedInvoice} // Pass the full row data
+          onClose={() => setShowPdfModal(false)}
+        />
+      )}
+      
     </div>
   );
 };

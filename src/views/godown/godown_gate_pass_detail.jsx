@@ -25,48 +25,47 @@ const Show_product = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
           }
-        );
+        });
 
-        // Extracting `godowns` data from API response
         const godownData = response.data.data.flatMap((item) =>
           item.godowns.map((godown) => ({
             id: godown.id,
             gate_pass_no: item.gate_pass_no,
             gate_pass_date: item.gate_pass_date,
-            warehouse_supervisor: item.warehouse_supervisors?.name || "N/A",
-            godown_supervisor: item.godown_supervisors?.name || "N/A",
+            warehouse_supervisor: item.warehouse_supervisors?.name || 'N/A',
+            godown_supervisor: item.godown_supervisors?.name || 'N/A',
             lot_no: godown.lot_no,
             width: parseFloat(godown.get_width).toFixed(2),
             length: parseFloat(godown.get_length).toFixed(2),
             quantity: godown.get_quantity,
             unit: godown.unit,
             type: godown.type,
-            rack: godown.rack || "N/A",
+            rack: godown.rack || 'N/A',
             area: (godown.get_length * godown.get_width).toFixed(3), // Area in m²
-            area_sq_ft: (godown.get_length * godown.get_width * 10.7639).toFixed(3), // Area in ft²
+            area_sq_ft: (godown.get_length * godown.get_width * 10.7639).toFixed(3) // Area in ft²
           }))
         );
 
-        setProducts(godownData);
-        setFilteredProducts(godownData);
+        // Filter products to only include those with a matching gate_pass_no
+        const filteredData = godownData.filter((product) => product.gate_pass_no === id);
+
+        setProducts(filteredData);
+        setFilteredProducts(filteredData);
       } catch (err) {
         console.error(err);
-        toast.error("Failed to fetch data.");
+        toast.error('Failed to fetch data.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchProductData();
-  }, []);
+  }, [id]); // Ensure this effect re-runs when `id` changes
 
   // Update filtered Products when the search query changes
   useEffect(() => {
@@ -87,39 +86,35 @@ const Show_product = () => {
   const navigate = useNavigate();
 
   const columns = [
-    { name: "Sr No", selector: (_, index) => index + 1, sortable: true },
-    { name: "Gate Pass No", selector: (row) => row.gate_pass_no, sortable: true },
-    { name: "Gate Pass Date", selector: (row) => row.gate_pass_date, sortable: true },
-    { name: "Warehouse Supervisor", selector: (row) => row.warehouse_supervisor, sortable: true },
-    { name: "Godown Supervisor", selector: (row) => row.godown_supervisor, sortable: true },
-    { name: "Lot No", selector: (row) => row.lot_no, sortable: true },
-    { name: "Type", selector: (row) => row.type, sortable: true },
-    { name: "Length", selector: (row) => row.length, sortable: true },
-    { name: "Width", selector: (row) => row.width, sortable: true },
-    { name: "Quantity", selector: (row) => row.quantity, sortable: true },
-    { name: "Unit", selector: (row) => row.unit, sortable: true },
-    { name: "Rack No", selector: (row) => row.rack, sortable: true },
-    { name: "Area (m²)", selector: (row) => row.area, sortable: true },
-    { name: "Area (sq.ft.)", selector: (row) => row.area_sq_ft, sortable: true },
-    
+    { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
+    { name: 'Gate Pass No', selector: (row) => row.gate_pass_no, sortable: true },
+    { name: 'Gate Pass Date', selector: (row) => row.gate_pass_date, sortable: true },
+    { name: 'Warehouse Supervisor', selector: (row) => row.warehouse_supervisor, sortable: true },
+    { name: 'Godown Supervisor', selector: (row) => row.godown_supervisor, sortable: true },
+    { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
+    { name: 'Type', selector: (row) => row.type, sortable: true },
+    { name: 'Length', selector: (row) => row.length, sortable: true },
+    { name: 'Width', selector: (row) => row.width, sortable: true },
+    { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
+    { name: 'Unit', selector: (row) => row.unit, sortable: true },
+    { name: 'Rack No', selector: (row) => row.rack, sortable: true },
+    { name: 'Area (m²)', selector: (row) => row.area, sortable: true },
+    { name: 'Area (sq.ft.)', selector: (row) => row.area_sq_ft, sortable: true }
   ];
-
 
   const handleEdit = (product) => {
     setSelectedProduct(product);
     setShowEditModal(true);
   };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSelectedProduct((prevProduct) => ({
       ...prevProduct,
-      [name]: value,
+      [name]: value
     }));
   };
 
-  
   const handleUpdateProduct = async () => {
     try {
       const response = await axios.put(
@@ -131,7 +126,7 @@ const Show_product = () => {
           }
         }
       );
-  
+
       if (response.status === 200) {
         setProducts((prev) => prev.map((prod) => (prod.id === selectedProduct.id ? { ...prod, ...selectedProduct } : prod)));
         setFilteredProducts((prev) => prev.map((prod) => (prod.id === selectedProduct.id ? { ...prod, ...selectedProduct } : prod)));
@@ -145,7 +140,6 @@ const Show_product = () => {
       toast.error('Error updating product!');
     }
   };
-  
 
   const handleDelete = async (productId) => {
     const result = await Swal.fire({
@@ -157,11 +151,11 @@ const Show_product = () => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!'
     });
-  
+
     if (!result.isConfirmed) {
       return; // Exit if user cancels
     }
-  
+
     try {
       const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass${productId}`, {
         headers: {
@@ -177,7 +171,7 @@ const Show_product = () => {
       toast.error('Failed to delete Product');
     }
   };
-  
+
   const customStyles = {
     header: {
       style: {
@@ -186,20 +180,20 @@ const Show_product = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 8px 8px'
+      }
     },
     rows: {
       style: {
         backgroundColor: '#f0fff4',
         borderBottom: '1px solid #e0e0e0',
-        
+
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -209,33 +203,32 @@ const Show_product = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0',
-      },
+        borderRight: '1px solid #e0e0e0'
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid #e0e0e0',
-      },
+        borderRight: '1px solid #e0e0e0'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: '#fff',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
-        },
-      },
-    },
+          backgroundColor: 'rgba(255,255,255,0.2)'
+        }
+      }
+    }
   };
-  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -280,81 +273,50 @@ const Show_product = () => {
                   customStyles={customStyles}
                   defaultSortFieldId={1}
                 />
-                
               </div>
             )}
           </div>
         </div>
       </div>
       {/* Edit Product Modal */}
-<Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>Edit Product</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form>
-      <Form.Group className="mb-3">
-        <Form.Label>Lot Number</Form.Label>
-        <Form.Control
-          type="text"
-          name="lot_no"
-          value={selectedProduct?.lot_no || ''}
-          onChange={handleChange}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Length</Form.Label>
-        <Form.Control
-          type="number"
-          step="0.01"
-          name="length"
-          value={selectedProduct?.length || ''}
-          onChange={handleChange}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Width</Form.Label>
-        <Form.Control
-          type="number"
-          step="0.01"
-          name="width"
-          value={selectedProduct?.width || ''}
-          onChange={handleChange}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Unit</Form.Label>
-        <Form.Control
-          type="read-only"
-          name="unit"
-          value={selectedProduct?.unit || ''}
-          disabled={true}
-        />
-      </Form.Group>
-      <Form.Group className="mb-3">
-        <Form.Label>Type</Form.Label>
-        <Form.Control
-          type="text"
-          name="type"
-          value={selectedProduct?.type || ''}
-          onChange={handleChange}
-          
-        />
-      </Form.Group>
-    </Form>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-      Close
-    </Button>
-    <Button variant="primary" onClick={handleUpdateProduct}>
-      Save Changes
-    </Button>
-  </Modal.Footer>
-</Modal>
-
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Lot Number</Form.Label>
+              <Form.Control type="text" name="lot_no" value={selectedProduct?.lot_no || ''} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Length</Form.Label>
+              <Form.Control type="number" step="0.01" name="length" value={selectedProduct?.length || ''} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Width</Form.Label>
+              <Form.Control type="number" step="0.01" name="width" value={selectedProduct?.width || ''} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Unit</Form.Label>
+              <Form.Control type="read-only" name="unit" value={selectedProduct?.unit || ''} disabled={true} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Type</Form.Label>
+              <Form.Control type="text" name="type" value={selectedProduct?.type || ''} onChange={handleChange} />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleUpdateProduct}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
-    
   );
 };
 
