@@ -184,7 +184,7 @@ const Invoice_out = () => {
       const updatedRows = prevSelectedRows.map((row) => {
         if (row.warehouse_accessory_id === id) {
           const updatedRow = { ...row, [field]: value };
-          if (field === 'box') {
+          if (field === 'box_bundle') {
             updatedRow.out_quantity = (Number(updatedRow.items) || 0) * (Number(value) || 0);
           }
           return updatedRow;
@@ -256,8 +256,8 @@ const Invoice_out = () => {
     { id: 'lot_no', label: 'LOT No' },
     { id: 'items', label: 'Items' },
     { id: 'out_length', label: 'Length' },
-    { id: 'unit', label: ' Unit' },
-    { id: 'box', label: 'Box/Bundle' },
+    { id: 'length_unit', label: 'Unit' },
+    { id: 'box_bundle', label: 'Box/Bundle' },
     { id: 'out_quantity', label: 'Quantity' }
   ];
 
@@ -441,17 +441,17 @@ const Invoice_out = () => {
                                     <td key="lot_no">{row.lot_no || '-'}</td>
                                     <td key="items">{row.items || '-'}</td> 
                                     <td key="out_length">{row.out_length || '-'}</td> 
-                                    <td key="unit">{row.unit || '-'}</td> 
-                                    <td key="box">
+                                    <td key="length_unit">{row.length_unit || '-'}</td> 
+                                    <td key="box_bundle">
                                       <input
                                         type="number"
                                         className="form-control"
                                         style={{ width: '5rem', paddingInline: '10px' }}
-                                        value={row.box || ''}
-                                        onChange={(e) => handleInputChange(row.warehouse_accessory_id, 'box', e.target.value)}
+                                        value={row.box_bundle || ''}
+                                        onChange={(e) => handleInputChange(row.warehouse_accessory_id, 'box_bundle', e.target.value)}
                                       />
                                     </td>
-                                    <td key="out_quantity">{(row.box || 0) * (row.items || 0)}</td> {/* Dynamic Out Quantity */}
+                                    <td key="out_quantity">{(row.box_bundle || 0) * (row.items || 0)}</td>
                                   </tr>
                                 ))}
                               </tbody>
