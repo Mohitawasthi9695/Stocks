@@ -90,6 +90,11 @@ const WarehouseAccessoriesPage = () => {
       sortable: true
     },
     {
+      name: 'Out Quantity',
+      selector: (row) => row.out_quantity,
+      sortable: true
+    },
+    {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
