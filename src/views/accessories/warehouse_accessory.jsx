@@ -25,7 +25,7 @@ const WarehouseAccessoriesPage = () => {
   useEffect(() => {
     const fetchAccessories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -122,7 +122,7 @@ const WarehouseAccessoriesPage = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory/${accessoryId}`, {
+        const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory/${accessoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -150,7 +150,7 @@ const WarehouseAccessoriesPage = () => {
 
   const handleUpdateAccessory = async () => {
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory/${selectedAccessory.id}`, selectedAccessory, {
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory/${selectedAccessory.id}`, selectedAccessory, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'

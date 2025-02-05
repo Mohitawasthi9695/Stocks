@@ -110,7 +110,7 @@ const Invoice_out = () => {
   useEffect(() => {
     const fetchInvoiceNo = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepassno`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepassno`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'

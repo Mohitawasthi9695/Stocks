@@ -26,7 +26,7 @@ const Show_product = () => {
     const fetchProductData = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass/${id}`,
+          `${import.meta.env.VITE_API_BASE_URL}/api/accessory/getStockgatepass/${id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -36,31 +36,22 @@ const Show_product = () => {
         );
         console.log(response.data.data);
         const godownData = response.data.data.flatMap((item) =>
-          item.godowns.map((godown) => {
-            const width = parseFloat(godown.get_width).toFixed(2);
-            const length = parseFloat(godown.get_length).toFixed(2);
-            
-            const area = godown.type === "roll" ? (godown.get_length * godown.get_width).toFixed(3) : null;
-            const area_sq_ft = godown.type === "roll" ? (godown.get_length * godown.get_width * 10.7639).toFixed(3) : null;
-        
-            return {
-              id: godown.id,
-              gate_pass_no: item.gate_pass_no,
-              gate_pass_date: item.gate_pass_date,
-              warehouse_supervisor: item.warehouse_supervisors?.name || "N/A",
-              godown_supervisor: item.godown_supervisors?.name || "N/A",
-              lot_no: godown.lot_no,
-              stock_code: godown.stock_code,
-              width,
-              length,
-              quantity: godown.get_quantity,
-              length_unit: godown.length_unit,
-              width_unit: godown.width_unit,
-              type: godown.type,
-              rack: godown.rack || "N/A",
-              area,
-              area_sq_ft
-            };
+          item.godown_accessories.map((godown_accessory) => {
+           
+              return {
+                id: godown_accessory.id,
+                gate_pass_no: item.gate_pass_no,
+                gate_pass_date: item.gate_pass_date,
+                warehouse_supervisor: item.warehouse_supervisors?.name || "N/A",
+                godown_supervisor: item.godown_supervisors?.name || "N/A",
+                lot_no: godown_accessory.lot_no || "N/A",
+                stock_code: godown_accessory.stock_code || "N/A", 
+                length: godown_accessory.length || "N/A",
+                items: godown_accessory.items || "N/A",
+                box_bundle: godown_accessory.box_bundle || "N/A",
+                quantity: godown_accessory.quantity || "N/A",
+                length_unit: godown_accessory.length_unit || "N/A", 
+              };
           })
         );
         setProducts(godownData);
@@ -81,8 +72,7 @@ const Show_product = () => {
     const filtered = products.filter(
       (product) =>
         product.lot_no.toLowerCase().includes(lowercasedQuery) ||
-        product.type.toLowerCase().includes(lowercasedQuery) ||
-        product.unit.toLowerCase().includes(lowercasedQuery)
+        product.length_unit.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -101,13 +91,10 @@ const Show_product = () => {
     { name: "Godown Supervisor", selector: (row) => row.godown_supervisor, sortable: true },
     { name: "Stock Code", selector: (row) => row.stock_code, sortable: true },
     { name: "Lot No", selector: (row) => row.lot_no, sortable: true },
-    { name: "Type", selector: (row) => row.type, sortable: true },
     { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: "Pcs", selector: (row) => row.items, sortable: true },
+    { name: "Box/Bundle", selector: (row) => row.box_bundle, sortable: true },
     { name: "Quantity", selector: (row) => row.quantity, sortable: true },
-    { name: "Area (m²)", selector: (row) => row.area, sortable: true },
-    { name: "Area (sq.ft.)", selector: (row) => row.area_sq_ft, sortable: true },
-    
   ];
 
 

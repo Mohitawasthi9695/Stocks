@@ -3,12 +3,12 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdCheckCircle, MdCancel, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
+import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
 import { FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import StockGatePass from 'components/StockGatePass';
+import GatePass from 'components/GatePass';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
@@ -26,7 +26,7 @@ const Index = () => {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/getStockgatepass`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ const Index = () => {
                     warehouseSupervisor: gatepass.warehouse_supervisors.name,
                     date: gatepass.gate_pass_date,
                     total_amount: gatepass.total_amount,
-                    status: gatepass.status // Include status field
+                    status,
                 }));
                 setInvoices(filteredFields);
                 setFilteredInvoices(filteredFields);
@@ -54,35 +54,6 @@ const Index = () => {
         };
         fetchInvoices();
     }, []);
-    const handleApprove = async (id) => {
-        try {
-            await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}/approve`, {}, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            toast.success('Gate pass approved successfully!');
-            setInvoices(prev => prev.map(inv => (inv.id === id ? { ...inv, status: 1 } : inv)));
-            setFilteredInvoices(prev => prev.map(inv => (inv.id === id ? { ...inv, status: 1 } : inv)));
-
-        } catch (error) {
-            toast.error('Failed to approve gate pass');
-        }
-    };
-    const handleReject = async (id) => {
-        try {
-            await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}/reject`, {}, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            });
-            toast.success('Gate pass rejected successfully!');
-            setInvoices(prev => prev.map(inv => (inv.id === id ? { ...inv, status: 0 } : inv)));
-            setFilteredInvoices(prev => prev.map(inv => (inv.id === id ? { ...inv, status: 0 } : inv)));
-        } catch (error) {
-            toast.error('Failed to reject gate pass');
-        }
-    };
 
     useEffect(() => {
         const lowercasedQuery = searchQuery.toLowerCase();
@@ -153,16 +124,12 @@ const Index = () => {
                         <></>
                     )}
 
-                    <Button variant="outline-success" size="sm" className="me-2">
-                        <FaEye onClick={() => navigate(`/show-gatepass_details/${row.id}`)} />
-                    </Button>
                     <Button
                         variant="outline-primary"
                         size="sm"
                         onClick={() => {
                             setSelectedInvoice(row.id);
                             setShowPdfModal(true);
-                            console.log(row.id);
                         }}
                     >
                         <MdPrint />
@@ -170,15 +137,47 @@ const Index = () => {
                     <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
                         <FaFileExcel />
                     </Button>
-
-
+                    <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+                        <MdDelete />
+                    </Button>
                 </div>
             ),
             width: '250px'
         }
     ];
 
+    const handleDelete = async (id) => {
+        try {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            });
 
+            if (result.isConfirmed) {
+                await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                setInvoices((prevInvoices) => prevInvoices.filter((invoice) => invoice.id !== id));
+                setFilteredInvoices((prevFilteredInvoices) => prevFilteredInvoices.filter((invoice) => invoice.id !== id));
+                Swal.fire('Deleted!', 'The Invoice has been deleted.', 'success');
+            }
+        } catch (error) {
+            console.error('Error deleting invoice:', error);
+            Swal.fire('Error!', 'There was a problem deleting the Invoice.', 'error');
+        }
+    };
+
+    const handleAddInvoice = () => {
+        navigate('/add-invoice');
+    };
 
     const customStyles = {
         table: {
@@ -216,7 +215,7 @@ const Index = () => {
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
                 padding: '10px',
-                borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
+                borderRight: '1px solid #e0e0e0'
             },
             lastCell: {
                 style: {
@@ -229,7 +228,7 @@ const Index = () => {
                 fontSize: '14px',
                 color: '#333',
                 padding: '12px',
-                borderRight: '1px solid grey' // Vertical lines between cells
+                borderRight: '1px solid grey'
             }
         },
         pagination: {
@@ -257,34 +256,37 @@ const Index = () => {
     };
 
     const downloadExcel = (row) => {
+        // Find the full invoice details from invoiceAllDetails
         const fullInvoice = invoiceAllDetails.find(invoice => invoice.id === row.id);
 
-        if (!fullInvoice || !fullInvoice.godowns) {
-            console.error("Godown data not found for this row:", row);
+        if (!fullInvoice || !fullInvoice.godown_accessories) {
+            console.error("Godown accessories data not found for this row:", row);
             return;
         }
 
         // Extract required data
-        const extractedData = fullInvoice.godowns.map((godown) => ({
+        const extractedData = fullInvoice.godown_accessories.map((accessory) => ({
             GatePassNo: fullInvoice.gate_pass_no,
             Date: fullInvoice.gate_pass_date,
-            ProductType: godown.product_type,
-            LotNo: godown.lot_no,
-            ProductName: godown.products.name,
-            ShadeNo: godown.products.shadeNo,
-            StockCode: godown.stock_code,
-            Width: godown.get_width,
-            Length: godown.get_length,
-            AvailableHeight: godown.available_height,
-            AvailableWidth: godown.available_width,
-            Quantity: godown.get_quantity,
+            ProductAccessoryID: accessory.product_accessory_id, // New field
+            LotNo: accessory.lot_no,
+            StockCode: accessory.stock_code,
+            Length: accessory.length,
+            LengthUnit: accessory.length_unit,
+            Pcs: accessory.items,
+            Box_Bundle: accessory.box_bundle,
+            Quantity: accessory.quantity,
             Supervisor: fullInvoice.warehouse_supervisors.name,
+            GodownSupervisor: fullInvoice.godown_supervisors.name,
         }));
         const ws = XLSX.utils.json_to_sheet(extractedData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "GatePassData");
+
+        // Write the Excel file
         XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
     };
+
 
     return (
         <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -299,6 +301,11 @@ const Index = () => {
                         className="pe-5 ps-2 py-2"
                         style={{ borderRadius: '5px' }}
                     />
+                </div>
+                <div className="col-md-8 text-end">
+                    <Button variant="primary" onClick={handleAddInvoice}>
+                        <MdPersonAdd className="me-2" /> Add Invoice
+                    </Button>
                 </div>
             </div>
             <div className="row">
@@ -334,7 +341,7 @@ const Index = () => {
                 </div>
             </div>
             {invoiceAllDetails && selectedInvoice && (
-                <StockGatePass show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
+                <GatePass show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
             )}
         </div>
     );

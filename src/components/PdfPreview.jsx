@@ -278,11 +278,6 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                   <Text style={styles.termsText}>3. Subject to local jurisdiction</Text>
                   <Text style={styles.termsText}>4. E.&O.E.</Text>
                 </View>
-
-                {/* <View style={styles.footerColumn}>
-                  <View style={styles.qrCode} />
-                  <Text style={styles.signatureText}>Invoice QR Code</Text>
-                </View> */}
                 <View style={styles.footerColumn}>
                   <View style={styles.signatureBox} />
                   <Text style={styles.signatureText}>Supplier's Signature</Text>

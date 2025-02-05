@@ -71,7 +71,7 @@ const Invoice_out = () => {
 
     if (categoryId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/${categoryId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${categoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ const Invoice_out = () => {
       if (!selectedCategoryId) return; 
 
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepass/shadeno/${selectedCategoryId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${selectedCategoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -109,14 +109,14 @@ const Invoice_out = () => {
   useEffect(() => {
     const fetchInvoiceNo = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepassno`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gatepassno`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
         console.log('log', response.data.data);
-        const invoiceData = response.data.data; // Ensure this is the correct structure
+        const invoiceData = response.data.data;
         SetInvoiceNo(invoiceData);
         setFormData((prevData) => ({
           ...prevData,
@@ -131,26 +131,43 @@ const Invoice_out = () => {
 
   const handleShadeNoChange = async (event) => {
     setLoading(true);
-    const selectedShadeId = event.target.value; // Get selected shade ID
+    const selectedShadeId = event.target.value; 
 
     if (selectedShadeId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/${selectedShadeId}`, {
+        setLoading(true);
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/getstocks/${selectedShadeId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
+    
         setLoading(false);
-        console.log('Fetched Product Data:', response.data.data);
-        setProducts(response.data.data); // ✅ Ensure this updates the state
+    
+        // Check if the response has data
+        if (response.data && response.data.data) {
+          console.log('Fetched Product Data:', response.data.data);
+          setProducts(response.data.data);
+        } else {
+          toast.error("No products found.");
+          setProducts([]); // Reset product list
+        }
+    
       } catch (error) {
         setLoading(false);
-        console.error('Error fetching product data:', error);
+        if (error.response) {
+          console.error('Error fetching product data:', error.response.data.message);
+          toast.error(error.response.data.message || "Something went wrong.");
+        } else {
+          console.error('Network error:', error);
+          toast.error("Network error. Please try again.");
+        }
+        setProducts([]); 
       }
     } else {
-      setProducts([]); // Reset when no shade is selected
-    }
+      setProducts([]); 
+    }    
   };
 
   useEffect(() => {
@@ -248,7 +265,7 @@ const Invoice_out = () => {
 
       toast.success('Stocks out successfully');
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Error adding user';
+      const errorMessage = error.response?.data?.message || 'Error adding stock';
 
       await Swal.fire({
         title: 'Error!',
@@ -381,7 +398,7 @@ const Invoice_out = () => {
                         <option value="">Select</option>
                         {shadeNo.map((shade) => (
                           <option key={shade.id} value={shade.id}>
-                            {shade.name}
+                            {shade.shadeNo}
                           </option>
                         ))}
                       </Form.Control>

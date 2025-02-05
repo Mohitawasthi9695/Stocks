@@ -7,7 +7,7 @@ const PrivateRoute = ({ children }) => {
 
   // Wait for initialization
   if (!state.isInitialized) {
-    return <div>Loading...</div>; // You can replace this with a loader
+    return <div>Loading...</div>;
   }
 
   // Check login status

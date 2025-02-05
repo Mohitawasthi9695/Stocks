@@ -3,6 +3,7 @@ import { Table, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 const ProductCategory = () => {
   const [categories, setCategories] = useState([]);
@@ -12,7 +13,6 @@ const ProductCategory = () => {
     fetchCategories();
   }, []);
 
-  // Fetch product categories from the API
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products/category`, {
@@ -27,7 +27,6 @@ const ProductCategory = () => {
     }
   };
 
-  // Create a new product category
   const createCategory = async () => {
     if (!newCategory.trim()) {
       toast.error('Please enter a category name');
@@ -44,134 +43,164 @@ const ProductCategory = () => {
           },
         }
       );
-
-      // Add the new category to the state
-      const newCat = response.data.data; // Ensure this matches the API response structure
+      const newCat = response.data.data;
       setCategories([...categories, newCat]);
-
-      setNewCategory(''); // Clear the input field
+      setNewCategory('');
       toast.success('Category created successfully!');
     } catch (error) {
       toast.error('Error creating category');
     }
   };
 
-
   const deleteCategory = async (id) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/category/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
+      // Display confirmation modal
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#20B2AA',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
       });
-      setCategories(categories.filter((cat) => cat.id !== id));
-      toast.success('Category deleted successfully!');
+
+      if (result.isConfirmed) {
+        // Attempt to delete category
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/category/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Update state on successful deletion
+        setCategories(categories.filter((cat) => cat.id !== id));
+        
+        // Show success messages
+        toast.success('Category deleted successfully');
+        Swal.fire('Deleted!', 'The category has been deleted.', 'success');
+      }
     } catch (error) {
-      toast.error('Error deleting category');
+      // Log error for debugging
+      console.error('Error deleting category:', error);
+
+      // Provide user feedback
+      if (error.response?.data?.message) {
+        toast.error(`Failed to delete category: ${error.response.data.message}`);
+      } else {
+        toast.error('An unexpected error occurred while deleting the category.');
+      }
+
+      // Display error notification
+      Swal.fire('Error!', 'There was a problem deleting the category.', 'error');
     }
   };
 
   return (
-    <Container
-      fluid
-      className="pt-4 px-2"
-      style={{
-        border: "3px dashed #14ab7f",
-        borderRadius: "8px",
-        background: "#ff9d0014",
-      }}
-    >
-      <Row>
-        <Col md={12} lg={12} className="mt-3">
-          <div className="card shadow-lg border-0 rounded-lg" style={{ margin: "50px" }}>
-            <h3
-              className="text-center mb-4"
-              style={{
-                backgroundColor: "rgb(32, 178, 170)",
-                padding: "20px",
-                borderTopLeftRadius: "10px",
-                borderTopRightRadius: "10px",
-                marginTop: "-5px",
-                color: "white",
-              }}
-            >
-              Product Category
-            </h3>
+    <Container fluid className="p-3">
+      <div className="card shadow-sm border-0">
+        {/* Header */}
+        <div style={{
+          backgroundColor: "#20B2AA",
+          padding: "12px",
+          borderTopLeftRadius: "4px",
+          borderTopRightRadius: "4px",
+        }}>
+          <h4 className="text-white text-center m-0">Product Category</h4>
+        </div>
 
-            {/* Submit Section in a Separate Row */}
-            <Row className="justify-content-center">
-              <Col md={6} className="d-flex justify-content-center">
-                <div style={{ display: "flex", marginBottom: "20px", width: "100%", padding: "20px" }}>
-                  <input
-                    placeholder="Enter product category"
-                    value={newCategory}
-                    onChange={(e) => setNewCategory(e.target.value)}
+        {/* Input Section */}
+        <div className="px-3 py-3">
+          <Row className="justify-content-center g-0">
+            <Col xs={12} md={8} lg={6}>
+              <div className="d-flex">
+                <input
+                  type="text"
+                  placeholder="Enter product category"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  className="form-control"
+                  style={{
+                    height: "38px",
+                    borderRadius: "4px 0 0 4px",
+                  }}
+                />
+                <Button 
+                  onClick={createCategory}
+                  variant="success"
+                  style={{
+                    borderRadius: "0 4px 4px 0",
+                    backgroundColor: "#20B2AA",
+                    border: "none",
+                    height: "38px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px"
+                  }}
+                >
+                  <FaPlus size={14} /> Add
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        </div>
+
+        {/* Table Section */}
+        <div className="px-3 pb-3">
+          <Table hover bordered className="mb-0">
+            <thead>
+              <tr>
+                <th className="text-center" 
                     style={{
-                      padding: "8px",
-                      marginRight: "10px",
-                      height: "45px",
-                      borderRadius: "10px",
-                      width: "100%",
-                    }}
-                  />
-                  <Button onClick={createCategory} variant="success" style={{ height: "45px" }}>
-                    Submit
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-
-            {/* Table Section */}
-            <Row>
-              <Col md={12}>
-                <Table striped bordered hover style={{ width: "80%", margin: "auto", marginBottom: "25px" }}>
-                  <thead className='text-center'>
-                    <tr>
-                      <th style={{
-                        backgroundColor: "rgb(32, 178, 170)",
-                        padding: "20px",
-                        borderTopLeftRadius: "10px",
-                        marginTop: "-5px",
-                        color: "white",
-                      }}>ID</th>
-                      <th style={{
-                        backgroundColor: "rgb(32, 178, 170)",
-                        padding: "20px",
-                        
-                        marginTop: "-5px",
-                        color: "white",
-                      }}>Product Category</th>
-                      <th style={{
-                        backgroundColor: "rgb(32, 178, 170)",
-                        padding: "20px",
-                        borderTopRightRadius: "10px",
-                        marginTop: "-5px",
-                        color: "white",
-                      }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className='text-center'>
-                    {categories.map((category) => (
-                      <tr key={category.id}>
-                        <td>{category.id}</td>
-                        <td>{category.product_category}</td>
-                        <td>
-                          <Button onClick={() => deleteCategory(category.id)} variant="danger">
-                            <FaTrash /> Delete
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </Col>
-            </Row>
-          </div>
-        </Col>
-      </Row>
+                      backgroundColor: "#20B2AA",
+                      color: "white",
+                      width: "80px",
+                      padding: "10px"
+                    }}>ID</th>
+                <th className="text-center" 
+                    style={{
+                      backgroundColor: "#20B2AA",
+                      color: "white",
+                      padding: "10px"
+                    }}>Category Name</th>
+                <th className="text-center" 
+                    style={{
+                      backgroundColor: "#20B2AA",
+                      color: "white",
+                      width: "120px",
+                      padding: "10px"
+                    }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories.map((category) => (
+                <tr key={category.id}>
+                  <td className="text-center align-middle">{category.id}</td>
+                  <td className="text-center align-middle">{category.product_category}</td>
+                  <td className="text-center" style={{ padding: "6px" }}>
+                    <Button
+                      onClick={() => deleteCategory(category.id)}
+                      variant="danger"
+                      size="sm"
+                      style={{
+                        padding: "4px 8px",
+                        fontSize: "14px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "5px"
+                      }}
+                    >
+                      <FaTrash size={12} /> Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      </div>
     </Container>
-
   );
 };
 
