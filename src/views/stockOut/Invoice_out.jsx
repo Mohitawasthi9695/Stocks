@@ -104,22 +104,6 @@ const Invoice_out = () => {
       }
     }
   };
-  useEffect(() => {
-    const fetchShadeNo = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/available`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        setShadeNo(response.data.data);
-      } catch (error) {
-        console.error('Error fetching product data:', error);
-      }
-    };
-    fetchShadeNo();
-  }, []);
 
   useEffect(() => {
     const fetchInvoiceNo = async () => {
@@ -156,13 +140,28 @@ const Invoice_out = () => {
         });
         setLoading(false);
 
-        console.log(response.data.data);
-        setProducts(response.data.data);
+        // Check if the response has data
+        if (response.data && response.data.data) {
+          console.log('Fetched Product Data:', response.data.data);
+          setProducts(response.data.data);
+        } else {
+          toast.error("No products found.");
+          setProducts([]); // Reset product list
+        }
+
       } catch (error) {
-        console.error('Error fetching product data:', error);
+        setLoading(false);
+        if (error.response) {
+          console.error('Error fetching product data:', error.response.data.message);
+          toast.error(error.response.data.message || "Something went wrong.");
+        } else {
+          console.error('Network error:', error);
+          toast.error("Network error. Please try again.");
+        }
+        setProducts([]);
       }
     } else {
-      setProducts(null);
+      setProducts([]);
     }
   };
 
@@ -207,48 +206,7 @@ const Invoice_out = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleInputChange = (id, field, value) => {
-    setSelectedRows((prevSelectedRows) => {
-      const updatedRows = prevSelectedRows.map((row) => {
-        if (row.stock_available_id === id) {
-          const updatedRow = { ...row, [field]: value };
-
-          if (field === 'out_length' || field === 'out_width' || field === 'unit') {
-            const lengthInFeet =
-              updatedRow.unit === 'meter'
-                ? Number(updatedRow.out_length) * 3.28084
-                : updatedRow.unit === 'inches'
-                  ? Number(updatedRow.out_length) / 12 // Convert inches to feet
-                  : Number(updatedRow.out_length); // Default to feet
-
-            const widthInFeet =
-              updatedRow.unit === 'meter'
-                ? Number(updatedRow.out_width) * 3.28084 // Convert meters to feet
-                : updatedRow.unit === 'inches'
-                  ? Number(updatedRow.out_width) / 12 // Convert inches to feet
-                  : Number(updatedRow.out_width); // Default to feet
-
-            updatedRow.area = (lengthInFeet * widthInFeet).toFixed(2); // Calculate area
-          }
-
-          if (field === 'rate' || field === 'out_length' || field === 'out_width' || field === 'unit') {
-            updatedRow.amount = (Number(updatedRow.area || 0) * Number(updatedRow.rate || 0)).toFixed(2);
-          }
-
-          return updatedRow;
-        }
-        return row;
-      });
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        out_products: updatedRows
-      }));
-
-      return updatedRows;
-    });
-  };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -268,24 +226,28 @@ const Invoice_out = () => {
   };
 
   const columns = [
+    { id: 'product_category', label: 'Product Category' },
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
+    { id: 'product_type', label: 'Type' },
     { id: 'stock_code', label: 'Stock Code' },
     { id: 'out_width', label: 'Width' },
+    { id: 'width_unit', label: 'W Unit' },
     { id: 'out_length', label: 'Length' },
-    { id: 'unit', label: ' Unit' },
-    { id: 'area_sq_ft', label: 'Area(sqft)' },
-    { id: 'product_type', label: 'Type' }
+    { id: 'length_unit', label: 'L Unit' },
+    { id: 'out_quantity', label: 'Quantity' },
+    { id: 'area', label: 'Area' },
+
   ];
 
   const handleCheckboxChange = (id) => {
     setSelectedRows((prevSelected) => {
-      const isAlreadySelected = prevSelected.some((row) => row.stock_available_id === id);
+      const isAlreadySelected = prevSelected.some((row) => row.godown_id === id);
 
       const updatedSelectedRows = isAlreadySelected
-        ? prevSelected.filter((row) => row.stock_available_id !== id)
-        : [...prevSelected, products.find((p) => p.stock_available_id === id)];
+        ? prevSelected.filter((row) => row.godown_id !== id)
+        : [...prevSelected, products.find((p) => p.godown_id === id)];
 
       console.log(updatedSelectedRows);
       setFormData((prevFormData) => ({
@@ -520,7 +482,7 @@ const Invoice_out = () => {
                                       {/* Empty header for checkbox column */}
                                       <input
                                         type="checkbox"
-                                      // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.stock_available_id) : [])}
+                                      // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.godown_id) : [])}
                                       // checked={selectedRows.length === products.length}
                                       />
                                     </th>
@@ -533,9 +495,9 @@ const Invoice_out = () => {
                                 </thead>
                                 <tbody>
                                   {products.map((row) => (
-                                    <tr key={row.stock_available_id}>
+                                    <tr key={row.godown_id}>
                                       <td>
-                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.stock_available_id)} />
+                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.godown_id)} />
                                       </td>
                                       {columns.map((column) => (
                                         <td key={column.id}>{row[column.id]}</td>
@@ -566,80 +528,25 @@ const Invoice_out = () => {
                               </thead>
                               <tbody>
                                 {selectedRows.map((row) => (
-                                  <tr key={row.stock_available_id}>
+                                  <tr key={row.godown_id}>
+                                    <td key="product_category">{row.product_category}</td>
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
-                                    <td key="lot_no">
-                                      <input
-                                        type="text"
-                                        value={row.lot_no || ''}
-                                        className="py-2"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'lot_no', e.target.value)}
-                                      />
-                                    </td>
-                                    <td key="Stock Code">
-                                      <td key="pur_shadeNo">{row.stock_code}</td>
-                                    </td>
-                                    <td key="width">
-                                      <input
-                                        type="text"
-                                        max={Number(row.out_width)}
-                                        value={row.out_width || ''}
-                                        className="py-2"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_width', e.target.value)}
-                                      />
-                                    </td>
-                                    <td key="length">
-                                      <input
-                                        type="text"
-                                        max={Number(row.out_length)}
-                                        value={row.out_length || ''}
-                                        className="py-2"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_length', e.target.value)}
-                                      />
-                                    </td>
-                                    <td key="unit">
-                                      <select
-                                        className="form-control"
-                                        style={{ width: '5rem', paddingInline: '10px' }}
-                                        value={row.unit || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'unit', e.target.value)}
-                                      >
-                                        <option value="" disabled>
-                                          Select
-                                        </option>
-                                        <option value="meter">meter</option>
-                                        <option value="inches">inches</option>
-                                      </select>
-                                    </td>
-                                    <td key="area">
-                                      <input
-                                        type="text"
-                                        value={row.area || ''}
-                                        className="py-2"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'area', e.target.value)}
-                                      />
-                                    </td>
-                                    <td key="type">
-                                      <select
-                                        className="form-control"
-                                        style={{ width: '5rem', paddingInline: '10px' }}
-                                        value={row.product_type || ''}
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'product_type', e.target.value)}
-                                      >
-                                        <option value="" disabled>
-                                          Select
-                                        </option>
-                                        <option value="roll">Roll</option>
-                                        <option value="box">Box</option>
-                                      </select>
-                                    </td>
+                                    <td key="lot_no">{row.lot_no}</td>
+                                    <td key="type">{row.product_type}</td>
+                                    <td key="stock_code">{row.stock_code}</td>
+                                    <td key="out_width">{row.out_width}</td>
+                                    <td key="width_unit">{row.width_unit}</td>
+                                    <td key="out_length">{row.out_length}</td>
+                                    <td key="length_unit">{row.length_unit}</td>
+                                    <td key="out_quantity">{row.out_quantity}</td>
+                                    <td key="area">{row.out_length * row.out_width}</td>
                                     <td key="rate">
                                       <input
                                         type="text"
                                         value={row.rate || ''}
                                         className="py-2"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'rate', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.godown_id, 'rate', e.target.value)}
                                       />
                                     </td>
                                     <td key="amount">
@@ -647,7 +554,7 @@ const Invoice_out = () => {
                                         type="text"
                                         value={row.amount || ''}
                                         className="py-2"
-                                        onChange={(e) => handleInputChange(row.stock_available_id, 'amount', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.godown_id, 'amount', e.target.value)}
                                       />
                                     </td>
                                   </tr>
