@@ -20,7 +20,8 @@ const AddProduct = () => {
       length: '',
       rack: '',
       warehouse: '',
-      unit: '',
+      length_unit: '',
+      width_unit: '',
       type: '',
       quantity: 1,
     }
@@ -58,7 +59,8 @@ const AddProduct = () => {
         length: '',
         rack: '',
         warehouse: '',
-        unit: '',
+        length_unit: '',
+        width_unit: '',
         type: '',
         quantity: 1
       }
@@ -91,7 +93,7 @@ const AddProduct = () => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
-      if (!['xls', 'xlsx','csv'].includes(fileExtension)) {
+      if (!['xls', 'xlsx', 'csv'].includes(fileExtension)) {
         toast.error('Unsupported file format. Please upload an .xls or .xlsx file.');
         setFile(null);
       } else {
@@ -247,6 +249,7 @@ const AddProduct = () => {
                         <th style={{ width: '120px' }}>Pur. Shade No</th>
                         <th style={{ width: '100px' }}>LOT No</th>
                         <th style={{ width: '100px' }}>Width</th>
+                        <th style={{ width: '150px' }}>Unit</th>
                         <th style={{ width: '100px' }}>Length</th>
                         <th style={{ width: '150px' }}>Unit</th>
                         <th style={{ width: '170px' }}>Type</th>
@@ -303,6 +306,18 @@ const AddProduct = () => {
                           </td>
                           <td>
                             <Form.Control
+                              as="select"
+                              value={item.width_unit}
+                              onChange={(e) => handleRowChange(index, 'width_unit', e.target.value)}
+                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                            >
+                              <option value="">Select Unit</option>
+                              <option value="meter">Meter</option>
+                              <option value="millimeter">Millimeter</option>
+                            </Form.Control>
+                          </td>
+                          <td>
+                            <Form.Control
                               type="number"
                               value={item.length}
                               onChange={(e) => handleRowChange(index, 'length', e.target.value)}
@@ -312,8 +327,8 @@ const AddProduct = () => {
                           <td>
                             <Form.Control
                               as="select"
-                              value={item.unit}
-                              onChange={(e) => handleRowChange(index, 'unit', e.target.value)}
+                              value={item.length_unit}
+                              onChange={(e) => handleRowChange(index, 'length_unit', e.target.value)}
                               style={{ fontSize: '0.9rem', height: '3rem' }}
                             >
                               <option value="">Select Unit</option>
@@ -321,6 +336,7 @@ const AddProduct = () => {
                               <option value="millimeter">Millimeter</option>
                             </Form.Control>
                           </td>
+                          
                           <td>
                             <Form.Control
                               as="select"
@@ -333,7 +349,7 @@ const AddProduct = () => {
                               <option value="box">Box</option>
                             </Form.Control>
                           </td>
-                          
+
                           <td>
                             <Form.Control
                               type="text"

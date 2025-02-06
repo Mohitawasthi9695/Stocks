@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
 
 });
 
-const GatePass = ({ show, onHide, invoiceData, id }) => {
+const StockGatePass = ({ show, onHide, invoiceData, id }) => {
     const invoice = invoiceData.find((invoice) => invoice.id === id);
 
     return (
@@ -139,9 +139,7 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                                     </View>
                                     <View style={styles.row}>
                                         <Text style={styles.label}>Status:</Text>
-                                        <Text style={styles.value}>
-                                            {invoice.status === 0 ? 'Pending' : 'Completed'}
-                                        </Text>
+                                        <Text style={styles.value}>{invoice.status === 0 ? 'Pending' : 'Completed'}</Text>
                                     </View>
                                 </View>
 
@@ -164,36 +162,41 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                                 </View>
                             </View>
 
-                            {/* Godown Accessories Information */}
+                            {/* Godowns Information */}
                             <View style={styles.borderBox}>
-                                <Text style={styles.sectionTitle}>Godown Accessories:</Text>
+                                <Text style={styles.sectionTitle}>Stock Godowns Details :</Text>
                                 <View style={styles.table}>
                                     <View style={styles.tableHeader}>
+                                        <Text style={styles.tableCell}>Product Name</Text>
+                                        <Text style={styles.tableCell}>Product ShadeNo</Text>
+                                        <Text style={styles.tableCell}>Stock Code</Text>
+                                        <Text style={styles.tableCell}>Product Type</Text>
                                         <Text style={styles.tableCell}>Lot No</Text>
+                                        <Text style={styles.tableCell}>Width</Text>
                                         <Text style={styles.tableCell}>Length</Text>
-                                        <Text style={styles.tableCell}>Items</Text>
-                                        <Text style={styles.tableCell}>Box Bundle</Text>
                                         <Text style={styles.tableCell}>Quantity</Text>
                                     </View>
-                                    {invoice.godown_accessories.map((accessory, index) => (
+                                    {invoice.godowns.map((godown, index) => (
                                         <View key={index} style={styles.tableRow}>
-                                            <Text style={styles.tableCell}>{accessory.lot_no}</Text>
-                                            <Text style={styles.tableCell}>{accessory.length}{accessory.length_unit}</Text>
-                                            <Text style={styles.tableCell}>{accessory.items}</Text>
-                                            <Text style={styles.tableCell}>{accessory.box_bundle}</Text>
-                                            <Text style={styles.tableCell}>{accessory.quantity}</Text>
+                                            <Text style={styles.tableCell}>{godown.products.name}</Text>
+                                            <Text style={styles.tableCell}>{godown.products.shadeNo}</Text>
+                                            <Text style={styles.tableCell}>{godown.stock_code}</Text>
+                                            <Text style={styles.tableCell}>{godown.product_type}</Text>
+                                            <Text style={styles.tableCell}>{godown.lot_no}</Text>
+                                            <Text style={styles.tableCell}>{godown.get_width}</Text>
+                                            <Text style={styles.tableCell}>{godown.get_length}</Text>
+                                            <Text style={styles.tableCell}>{godown.get_quantity}</Text>
                                         </View>
                                     ))}
                                 </View>
                             </View>
+
+                            {/* Total Section */}
                             <View style={styles.totalSection}>
                                 <View style={styles.row}>
                                     <Text style={styles.label}>Total Quantity:</Text>
                                     <Text style={styles.value}>
-                                        {invoice.godown_accessories.reduce(
-                                            (total, accessory) => total + parseInt(accessory.quantity, 10),
-                                            0
-                                        )}
+                                        {invoice.godowns.reduce((total, godown) => total + godown.get_quantity, 0)}
                                     </Text>
                                 </View>
                             </View>
@@ -215,7 +218,7 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                                     <Text style={styles.signatureText}>Receiver's Signature</Text>
                                     <Text style={styles.signatureText}>With Stamp</Text>
                                 </View>
-                            </View>
+                                </View>
                         </Page>
                     </Document>
                 </PDFViewer>
@@ -225,5 +228,4 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
 };
 
 
-
-export default GatePass;
+export default StockGatePass;

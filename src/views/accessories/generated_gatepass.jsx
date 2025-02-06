@@ -8,7 +8,7 @@ import { FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import GatePass from 'components/PdfPreview';
+import GatePass from 'components/GatePass';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
@@ -26,7 +26,7 @@ const Index = () => {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getAccessorygatepass`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/getStockgatepass`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
@@ -110,16 +110,8 @@ const Index = () => {
             name: 'Action',
             cell: (row) => (
                 <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
-                    <Button
-                        variant="outline-warning"
-                        size="sm"
-                        className="me-2"
-                        onClick={() => navigate(`/add-product/${row.id}/${row.gatepass_no}`)}
-                    >
-                        <MdAdd />
-                    </Button>
                     <Button variant="outline-success" size="sm" className="me-2">
-                        <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
+                        <FaEye onClick={() => navigate(`/accessory/gatepass_details/${row.id}`)} />
                     </Button>
                     <Button
                         variant="outline-primary"
@@ -131,7 +123,7 @@ const Index = () => {
                     >
                         <MdPrint />
                     </Button>
-                    <Button variant="outline-info" size="sm" onClick={() => exportToExcel(row)}>
+                    <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
                         <FaFileExcel />
                     </Button>
                     <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
@@ -139,7 +131,7 @@ const Index = () => {
                     </Button>
                 </div>
             ),
-            width: '300px'
+            width: '250px'
         }
     ];
 
@@ -189,7 +181,7 @@ const Index = () => {
                 color: '#fff',
                 fontSize: '18px',
                 fontWeight: 'bold',
-                padding: '15px',
+                padding: '10px',
                 borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
             }
         },
@@ -211,8 +203,8 @@ const Index = () => {
                 fontSize: '12px',
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
-                padding: '15px',
-                borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
+                padding: '10px',
+                borderRight: '1px solid #e0e0e0' 
             },
             lastCell: {
                 style: {
@@ -225,7 +217,7 @@ const Index = () => {
                 fontSize: '14px',
                 color: '#333',
                 padding: '12px',
-                borderRight: '1px solid grey' // Vertical lines between cells
+                borderRight: '1px solid grey'
             }
         },
         pagination: {
@@ -252,26 +244,40 @@ const Index = () => {
         }
     };
 
-    // Export data to Excel
-    const exportToExcel = (row) => {
-        const data = [row]; // Only export the selected row
-        const ws = XLSX.utils.json_to_sheet(data);
+    const downloadExcel = (row) => {
+        // Find the full invoice details from invoiceAllDetails
+        const fullInvoice = invoiceAllDetails.find(invoice => invoice.id === row.id);
+
+        if (!fullInvoice || !fullInvoice.godown_accessories) {
+            console.error("Godown accessories data not found for this row:", row);
+            return;
+        }
+
+        // Extract required data
+        const extractedData = fullInvoice.godown_accessories.map((accessory) => ({
+            GatePassNo: fullInvoice.gate_pass_no,
+            Date: fullInvoice.gate_pass_date,
+            ProductAccessoryID: accessory.product_accessory_id, // New field
+            LotNo: accessory.lot_no,
+            StockCode: accessory.stock_code,
+            Length: accessory.length,
+            LengthUnit: accessory.length_unit,
+            Pcs: accessory.items,
+            Box_Bundle: accessory.box_bundle,
+            Quantity: accessory.quantity,
+            Supervisor: fullInvoice.warehouse_supervisors.name,
+            GodownSupervisor: fullInvoice.godown_supervisors.name,
+        }));
+
+        // Create the worksheet from the extracted data
+        const ws = XLSX.utils.json_to_sheet(extractedData);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Invoice');
-        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-        const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
-        saveAs(blob, `${row.gatepass_no}-Invoice.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, "GatePassData");
+
+        // Write the Excel file
+        XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
     };
 
-    // Helper function to convert string to array buffer
-    function s2ab(s) {
-        const buf = new ArrayBuffer(s.length);
-        const view = new Uint8Array(buf);
-        for (let i = 0; i < s.length; i++) {
-            view[i] = s.charCodeAt(i) & 0xff;
-        }
-        return buf;
-    }
 
     return (
         <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -311,11 +317,6 @@ const Index = () => {
                             </div>
                         ) : (
                             <div className="card-body p-0" style={{ backgroundColor: '#fff' }}>
-                                {/* <div className="card-header" style={{ background: 'transparent' }}>
-                  <div className="card-title">
-                    <h4 style={{ fontWeight: 'bold' }}>Invoices</h4>
-                  </div>
-                </div> */}
                                 <DataTable
                                     columns={columns}
                                     data={filteredInvoices}
@@ -330,6 +331,9 @@ const Index = () => {
                     </div>
                 </div>
             </div>
+            {invoiceAllDetails && selectedInvoice && (
+                <GatePass show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
+            )}
         </div>
     );
 };

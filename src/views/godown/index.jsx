@@ -84,19 +84,48 @@ const Index = () => {
         { name: "Width", selector: (row) => `${Number(row.width).toFixed(2)}  ${row.width_unit}`, sortable: true },
         {
             name: 'Avaible Length',
-            selector: (row) => Number(row.area).toFixed(2),
+            selector: (row) =>`${Number(row.available_height).toFixed(2)}  ${row.length_unit}`,
             sortable: true
         },
         {
-            name: 'Area (m²)',
-            selector: (row) => Number(row.area).toFixed(2),
+            name: 'Total Area (sq. ft.)',
+            selector: (row) => row.total_area_sq,
             sortable: true
         },
         {
             name: 'Area (sq. ft.)',
-            selector: (row) => Number(row.area_sq_ft).toFixed(2),
+            selector: (row) => row.area_sq_ft,
             sortable: true
-        }
+        },
+        {
+            name: 'Total Area (m²)',
+            selector: (row) => row.total_area,
+            sortable: true
+        },
+        {
+            name: 'Area (m²)',
+            selector: (row) => row.area,
+            sortable: true
+        },
+        {
+            name: 'Status',
+            selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+            sortable: true,
+            cell: (row) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span
+                        className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                        style={{
+                            padding: '5px 10px',
+                            borderRadius: '8px',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {row.status === 1 ? 'Approved' : 'Pending'}
+                    </span>
+                </div>
+            )
+        },
     ];
 
     const handleAddInvoice = () => {
