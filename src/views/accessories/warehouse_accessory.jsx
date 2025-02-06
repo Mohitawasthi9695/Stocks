@@ -59,8 +59,8 @@ const WarehouseAccessoriesPage = () => {
 
   const columns = [
     {
-      name: 'ID',
-      selector: (row) => row.id,
+      name: 'Sr No',
+      selector: (_, index) => index + 1,
       sortable: true
     },
     {
@@ -73,29 +73,25 @@ const WarehouseAccessoriesPage = () => {
       selector: (row) => row.product_accessory_name,
       sortable: true
     },
-    {
-      name: 'Length',
-      selector: (row) => row.length ?? 'N/A',
-      sortable: true
-    },
-    {
-      name: 'Unit',
-      selector: (row) => row.unit ?? 'N/A',
-      sortable: true
-    },
+    { name: "Length", selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Items',
-      selector: (row) => row.items ?? 'N/A',
+      selector: (row) => row.items,
       sortable: true
     },
     {
-      name: 'Box',
-      selector: (row) => row.box ?? 'N/A',
+      name: 'Box/Bundle',
+      selector: (row) => row.box_bundle,
       sortable: true
     },
     {
       name: 'Quantity',
-      selector: (row) => row.quantity ?? 'N/A',
+      selector: (row) => row.quantity,
+      sortable: true
+    },
+    {
+      name: 'Out Quantity',
+      selector: (row) => row.out_quantity,
       sortable: true
     },
     {

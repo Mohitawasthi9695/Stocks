@@ -251,11 +251,6 @@ const LoginPage = () => {
       right: '50px',
       borderRadius: '60px',
     },
-    buttonShowMore_main: {
-      width: "100%",
-      textAlign: "center"
-    },
-
     container: {
       width: '100%',
       maxWidth: '400px',

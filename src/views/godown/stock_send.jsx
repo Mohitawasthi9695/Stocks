@@ -270,9 +270,9 @@ const Invoice_out = () => {
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
     { id: 'out_width', label: 'Width' },
-    { id: 'width_unit', label: ' Unit' },
+    { id: 'width_unit', label: 'W Unit' },
     { id: 'out_length', label: 'Length' },
-    { id: 'length_unit', label: ' Unit' },
+    { id: 'length_unit', label: 'L Unit' },
     { id: 'product_type', label: 'Type' },
     { id: 'out_quantity', label: 'Quantity' }
   ];
