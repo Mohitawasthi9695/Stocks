@@ -25,12 +25,13 @@ const WarehouseAccessoriesPage = () => {
   useEffect(() => {
     const fetchAccessories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
+        console.log(response.data.data);
         setAccessories(response.data.data);
         setFilteredAccessories(response.data.data);
       } catch (error) {
@@ -58,38 +59,39 @@ const WarehouseAccessoriesPage = () => {
 
   const columns = [
     {
-      name: 'ID',
-      selector: (row) => row.id,
+      name: 'Sr No',
+      selector: (_, index) => index + 1,
       sortable: true
     },
     {
-      name: 'Product Accessory ID',
-      selector: (row) => row.product_accessory_id,
+      name: 'Product Category',
+      selector: (row) => row.product_category,
       sortable: true
     },
     {
-      name: 'Length',
-      selector: (row) => row.length ?? 'N/A',
+      name: 'Product Accessory',
+      selector: (row) => row.product_accessory_name,
       sortable: true
     },
-    {
-      name: 'Unit',
-      selector: (row) => row.unit ?? 'N/A',
-      sortable: true
-    },
+    { name: "Length", selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Items',
-      selector: (row) => row.items ?? 'N/A',
+      selector: (row) => row.items,
       sortable: true
     },
     {
-      name: 'Box',
-      selector: (row) => row.box ?? 'N/A',
+      name: 'Box/Bundle',
+      selector: (row) => row.box_bundle,
       sortable: true
     },
     {
       name: 'Quantity',
-      selector: (row) => row.quantity ?? 'N/A',
+      selector: (row) => row.quantity,
+      sortable: true
+    },
+    {
+      name: 'Out Quantity',
+      selector: (row) => row.out_quantity,
       sortable: true
     },
     {
@@ -120,7 +122,7 @@ const WarehouseAccessoriesPage = () => {
       });
 
       if (result.isConfirmed) {
-        const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory/${accessoryId}`, {
+        const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory/${accessoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -148,7 +150,7 @@ const WarehouseAccessoriesPage = () => {
 
   const handleUpdateAccessory = async () => {
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/warehouse/accessory/${selectedAccessory.id}`, selectedAccessory, {
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory/${selectedAccessory.id}`, selectedAccessory, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'

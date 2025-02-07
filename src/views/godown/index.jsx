@@ -30,15 +30,7 @@ const Index = () => {
                     }
                 });
                 console.log(response.data);
-                const invoicesDetails = response.data.data.map((product) => {
-                    const areaM2 = product.get_length * product.get_width;
-                    const areaSqFt = areaM2 * 10.7639;
-                    return {
-                        ...product,
-                        area: areaM2.toFixed(3),
-                        area_sq_ft: areaSqFt.toFixed(3)
-                    };
-                });
+                const invoicesDetails = response.data.data;
                 console.log(invoicesDetails);
                 setInvoiceAllDetails(invoicesDetails);
                 setInvoices(invoicesDetails);
@@ -57,37 +49,15 @@ const Index = () => {
     };
 
     const navigate = useNavigate();
-    const handleAction = async (invoiceId, status) => {
-        try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/godown/approved/${invoiceId}`,
-                { status },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                }
-            );
-            const updatedInvoices = invoices.map((invoice) =>
-                invoice.id === invoiceId ? { ...invoice, status } : invoice
-            );
-            setInvoices(updatedInvoices);
-            setFilteredInvoices(updatedInvoices);
-        } catch (error) {
-            toast.error('Failed to update product status');
-            console.error('Error updating product status:', error);
-        }
-    };
-
     const columns = [
         {
             name: 'GatePass Number',
-            selector: (row) => row.gatepasses.gate_pass_no,
+            selector: (row) => row.gate_pass_no,
             sortable: true,
         },
         {
             name: 'Product Category',
-            selector: (row) => row.products.name,
+            selector: (row) => row.product_category,
             sortable: true,
         },
         {
@@ -97,44 +67,65 @@ const Index = () => {
         },
         {
             name: 'Shade No',
-            selector: (row) => row.products.shadeNo,
+            selector: (row) => row.shade_no,
             sortable: true,
         },
         {
             name: 'Purchase Shade No',
-            selector: (row) => row.products.purchase_shade_no,
+            selector: (row) => row.purchase_shade_no,
             sortable: true,
         },
         {
             name: 'Date',
-            selector: (row) => row.date,
+            selector: (row) => row.gate_pass_date,
             sortable: true,
         },
+        { name: "Length", selector: (row) => `${Number(row.length).toFixed(2)}  ${row.length_unit}`, sortable: true },
+        { name: "Width", selector: (row) => `${Number(row.width).toFixed(2)}  ${row.width_unit}`, sortable: true },
         {
-            name: 'Length',
-            selector: (row) =>  Number(row.get_length).toFixed(2),
-            sortable: true,
+            name: 'Avaible Length',
+            selector: (row) =>`${Number(row.available_height).toFixed(2)}  ${row.length_unit}`,
+            sortable: true
         },
         {
-            name: 'Width',
-            selector: (row) => Number(row.get_width).toFixed(2),
-            sortable: true,
-        },
-        {
-            name: 'unit',
-            selector: (row) => row.unit,
-            sortable: true,
-        },
-        {
-            name: 'Area (m²)',
-            selector: (row) => Number(row.area).toFixed(2),
+            name: 'Total Area (sq. ft.)',
+            selector: (row) => row.total_area_sq,
             sortable: true
         },
         {
             name: 'Area (sq. ft.)',
-            selector: (row) => Number(row.area_sq_ft).toFixed(2),
+            selector: (row) => row.area_sq_ft,
             sortable: true
-        }
+        },
+        {
+            name: 'Total Area (m²)',
+            selector: (row) => row.total_area,
+            sortable: true
+        },
+        {
+            name: 'Area (m²)',
+            selector: (row) => row.area,
+            sortable: true
+        },
+        {
+            name: 'Status',
+            selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+            sortable: true,
+            cell: (row) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span
+                        className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                        style={{
+                            padding: '5px 10px',
+                            borderRadius: '8px',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {row.status === 1 ? 'Approved' : 'Pending'}
+                    </span>
+                </div>
+            )
+        },
     ];
 
     const handleAddInvoice = () => {

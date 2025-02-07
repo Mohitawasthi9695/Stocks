@@ -1,37 +1,31 @@
 const user = JSON.parse(localStorage.getItem('user'));
-const userName = user?.name;
+const userRole = user.roles;
+console.log(userRole);
+
 const filterMenuItem = (menu) => {
   const filterItems = (items) =>
     items
-      .filter((item) => !(['Admin'].includes(userName) && ['users'].includes(item.id)))
+      .filter((item) => !(['Admin'].includes(userRole) && ['users'].includes(item.id)))
       .filter(
         (item) =>
           !(
-            ['Operator'].includes(userName) &&
+            ['Operator'].includes(userRole) &&
             [
-              'godown_stock',
-              ,
-              'generated_gate_pass',
-              'approve_godown',
-              'invoice_out_index',
-              'users',
-              'suppliers',
-              'purchaser',
-              'products',
-              'stockin',
-              'invoice_out'
+
             ].includes(item.id)
           )
       )
       .filter(
         (item) =>
           !(
-            ['Supervisor'].includes(userName) &&
+            ['supervisor'].includes(userRole) &&
             [
               'approve_godown',
               'stockout',
               'users',
               'purchaser',
+              'GodownAccessories',
+              'GoDownGatePass',
               'customers',
               'stock_to_godown',
               'approve_operator',
@@ -42,22 +36,39 @@ const filterMenuItem = (menu) => {
       .filter(
         (item) =>
           !(
-            ['Sub_Supervisor'].includes(userName) &&
+            ['sub_supervisor'].includes(userRole) &&
             [
-              'approve_operator',
-              'invoice_operator_index',
-              'generated_gate_pass',
-              'stockin',
               'usersGroup',
+              'products',
+              'Accessory',
+              'stockin',
+              'Warehouse_Accessories',
+              'stockout',
+              'WarehouseGatePass',
+              'stockout'
+            ].includes(item.id)
+          )
+      )
+      .filter(
+        (item) =>
+          !(
+            ['operator'].includes(userRole) &&
+            [
+              'approve_godown',
               'users',
               'purchaser',
+              'GodownAccessories',
+              'GoDownGatePass',
               'customers',
-              'invoice_out',
-              'invoice_out_stock',
               'stock_to_godown',
-              'Invoice',
-              'All Out Stock',
-              'Send To Godown'
+              'approve_operator',
+              'godown_stock',
+              'usersGroup',
+              'products',
+              'Accessory',
+              'stockin',
+              'Warehouse_Accessories',
+              'WarehouseGatePass',
             ].includes(item.id)
           )
       )
@@ -104,7 +115,6 @@ const menuItems = {
               type: 'item',
               url: '/users'
             },
-
             {
               id: 'suppliers',
               title: 'Suppliers',
@@ -140,11 +150,11 @@ const menuItems = {
           id: 'products-id',
           title: 'Products',
           icon: 'feather icon-package',
-          type: 'collapse', 
-          style: { 
-            boxShadow: '0px 4px 6px rgba(19, 15, 15, 0.1)', 
-            borderRadius: '8px', 
-            padding: '10px', 
+          type: 'collapse',
+          style: {
+            boxShadow: '0px 4px 6px rgba(19, 15, 15, 0.1)',
+            borderRadius: '8px',
+            padding: '10px',
             backgroundColor: '#ffffff',
           },
           children: [
@@ -152,14 +162,14 @@ const menuItems = {
               id: 'category1',
               title: ' Product',
               type: 'item',
-              url: '/shades', 
+              url: '/shades',
               icon: 'feather icon-package',
             },
             {
               id: 'category2',
               title: ' Products Category',
               type: 'item',
-              url: '/product_category', 
+              url: '/product_category',
               icon: 'feather icon-package',
             }
           ]
@@ -176,11 +186,11 @@ const menuItems = {
           id: 'accessories',
           title: 'Accessories',
           icon: 'feather icon-package',
-          type: 'collapse', 
-          style: { 
-            boxShadow: '0px 4px 6px rgba(19, 15, 15, 0.1)', 
-            borderRadius: '8px', 
-            padding: '10px', 
+          type: 'collapse',
+          style: {
+            boxShadow: '0px 4px 6px rgba(19, 15, 15, 0.1)',
+            borderRadius: '8px',
+            padding: '10px',
             backgroundColor: '#ffffff',
           },
           children: [
@@ -188,28 +198,21 @@ const menuItems = {
               id: 'accessoriesadd',
               title: 'Add Accessories',
               type: 'item',
-              url: '/add_accessories', 
+              url: '/add_accessories',
               icon: 'feather icon-package',
             },
             {
               id: 'accessories_record',
               title: 'Accessories',
               type: 'item',
-              url: '/accessories_record', 
+              url: '/accessories_record',
               icon: 'feather icon-package',
             },
             {
               id: 'add_warehouse_accessory',
               title: 'Add WareAccessories',
               type: 'item',
-              url: '/add_warehouse_accessories', 
-              icon: 'feather icon-package',
-            },
-            {
-              id: 'warehouse_accessory',
-              title: 'Warehouse Accessories',
-              type: 'item',
-              url: '/warehouse_accessories', 
+              url: '/add_warehouse_accessories',
               icon: 'feather icon-package',
             }
           ]
@@ -244,40 +247,27 @@ const menuItems = {
             },
             {
               id: 'all_stocks',
-              title: 'Purchase Stocks',
+              title: 'Stocks',
               icon: 'feather icon-clipboard',
               type: 'collapse',
               children: [
                 {
                   id: 'purchase_id1',
-                  title: 'Roll Purchase Stocks',
+                  title: 'Roll Stocks',
                   icon: 'feather icon-list',
                   type: 'item',
                   url: '/all-stocks',
                 },
                 {
                   id: 'purchase_id2',
-                  title: 'Box Purchase Stocks',
+                  title: 'Box Stocks',
                   icon: 'feather icon-list',
                   type: 'item',
                   url: '/box_All_Stock',
                 },
               ]
             },
-            {
-              id: 'old_stock',
-              title: 'Old Stock',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/stocks/add-radius'
-            },
-            {
-              id: 'all_old_stock',
-              title: 'All Old Stock',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/stocks/old-stock'
-            }
+
           ]
         }
       ]
@@ -328,45 +318,93 @@ const menuItems = {
       ]
     },
     {
-      id: 'GoDown',
-      title: 'Go Down Out',
+      id: 'WarehouseGatePass',
+      title: 'Godown GatePass',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'send_to_godown',
-          title: 'Stocks Out Godown',
+          title: 'GatePass',
           type: 'collapse',
           icon: 'feather icon-box',
 
           children: [
             {
-              id: 'invoice_out',
-              title: 'GatePass',
+              id: 'create_gate_pass',
+              title: 'Add GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/stockout/godown'
             },
             {
-              id: 'approve_godown',
-              title: 'Approve Godown',
+              id: 'generated_gate_pass',
+              title: 'View Gate Pass',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/generated_gate_pass'
+            },
+          ]
+        }
+      ]
+    },
+    {
+      id: 'GoDownGatePass',
+      title: 'Stock GatePass',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'godown_gatepass',
+          title: 'GatePass',
+          type: 'collapse',
+          icon: 'feather icon-box',
+
+          children: [
+            {
+              id: 'approve_stock',
+              title: 'Stock GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/approve/godown'
             },
             {
-              id: 'generated_gate_pass',
-              title: 'Generated Gate Pass',
+              id: 'approve_accessory',
+              title: 'Accessory GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
-              url: '/generated_gate_pass'
+              url: '/approve/accessory'
             },
+          ]
+        }
+      ]
+    },
+    {
+      id: 'GodownAccessories',
+      title: 'Stock',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'godown_stock',
+          title: 'Stocks GatePass',
+          type: 'collapse',
+          icon: 'feather icon-box',
+
+          children: [
             {
               id: 'godown_stock',
-              title: 'Godown Stocks',
+              title: 'Product Stocks',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/stocks/godown'
+            },
+            {
+              id: 'godown_accessory',
+              title: 'Accessory Stocks',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/view_approve_gatepass'
             }
           ]
         }
@@ -386,61 +424,30 @@ const menuItems = {
           children: [
             {
               id: 'invoice_out',
-              title: 'GatePass',
+              title: 'Add GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/accessory/gatepass'
             },
             {
               id: 'accessory_out_index',
-              title: 'Accessory GatePass',
+              title: 'View GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/accessory/gatepassview'
             },
+            ,
+            {
+              id: 'warehouse_accessory',
+              title: 'Warehouse Accessories',
+              type: 'item',
+              url: '/warehouse_accessories',
+              icon: 'feather icon-package',
+            }
           ]
         }
       ]
     }
-    // {
-    //   id: "quotation_in",
-    //   title: "Quotation IN",
-    //   type: "group",
-    //   icon: "icon-ui",
-    //   children: [
-    //     {
-    //       id: "quotation",
-    //       title: "Quotation",
-    //       type: "collapse",
-    //       icon: "feather icon-box",
-    //       children: [
-    //         {
-    //           id: "operator",
-    //           title: "Operator",
-    //           icon: 'feather icon-users',
-    //           type: "item",
-    //           url: "/operator",
-
-    //         },
-    //         {
-    //           id: "quotation_invoice",
-    //           title: "Quotation Invoice",
-    //           icon: 'feather icon-file-minus',
-    //           type: "item",
-    //           url: "/quotation",
-    //         },
-    //         {
-    //                         id: 'approve_operator',
-    //                         title: 'Approve Operator',
-    //                         icon: 'feather icon-file-plus',
-    //                         type: 'item',
-    //                         url: '/approve_operator',
-
-    //                       },
-    //       ],
-    //     },
-    //   ],
-    // },
   ]
 };
 
