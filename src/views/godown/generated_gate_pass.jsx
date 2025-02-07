@@ -459,6 +459,7 @@ import { saveAs } from 'file-saver';
 import { FaFileExcel } from 'react-icons/fa';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import PdfPreview from 'components/PdfPreview';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -509,7 +510,7 @@ const Index = () => {
     setSearchQuery(e.target.value);
   };
 
-  // handle download pdf
+ 
   const downloadRowAsPDF = (row) => {
     const doc = new jsPDF();
 
@@ -586,19 +587,6 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
-          {/* <Button
-  variant="outline-primary"
-  size="sm"
-  onClick={() => {
-    setSelectedInvoice(row.gatepass_no);  // Set the selected invoice
-    handlePrint(row); // Directly trigger the print action
-    console.log(row.gatepass_no);
-  }}
->
-  <MdPrint />
-</Button>
- */}
-
           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
             <FaFileExcel />
           </Button>
@@ -611,15 +599,12 @@ const Index = () => {
     }
   ];
   const handlePrint = (row) => {
-    // Find the full invoice details from invoiceAllDetails using the row id
     const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
 
     if (!fullInvoice || !fullInvoice.godowns) {
       console.error('Godown data not found for this row:', row);
       return;
     }
-
-    // Create the content for the print view
     let printContent = `
       <html>
         <head>
@@ -657,7 +642,7 @@ const Index = () => {
             <tbody>
     `;
 
-    // Loop through godowns and print the full data for Excel
+  
     fullInvoice.godowns.forEach((godown) => {
       printContent += `
         <tr>
@@ -681,7 +666,6 @@ const Index = () => {
       </html>
     `;
 
-    // Open a new window and print the content
     const printWindow = window.open('', '_blank');
     printWindow.document.write(printContent);
     printWindow.document.close();
@@ -884,13 +868,10 @@ const Index = () => {
           </div>
         </div>
       </div>
-      {showPdfModal && selectedInvoice && (
-        <GatePass
-          invoiceData={selectedInvoice} // Pass the full row data
-          onClose={() => setShowPdfModal(false)}
-        />
+      {showPdfModal && selectedInvoice && <GatePass invoiceData={selectedInvoice} onClose={() => setShowPdfModal(false)} />}
+      {invoiceAllDetails && selectedInvoice && (
+        <PdfPreview show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
       )}
-      
     </div>
   );
 };
