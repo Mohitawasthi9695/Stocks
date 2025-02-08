@@ -22,6 +22,7 @@ const AddProduct = () => {
       warehouse: '',
       length_unit: '',
       width_unit: '',
+      pcs:'',
       type: '',
       quantity: 1,
     }
@@ -62,6 +63,7 @@ const AddProduct = () => {
         length_unit: '',
         width_unit: '',
         type: '',
+        pcs:'',
         quantity: 1
       }
     ]);
@@ -248,14 +250,15 @@ const AddProduct = () => {
                         <th style={{ width: '150px' }}>Shade No</th>
                         <th style={{ width: '120px' }}>Pur. Shade No</th>
                         <th style={{ width: '100px' }}>LOT No</th>
-                        <th style={{ width: '100px' }}>Width</th>
+                        <th style={{ width: '150px' }}>Width</th>
                         <th style={{ width: '150px' }}>Unit</th>
-                        <th style={{ width: '100px' }}>Length</th>
+                        <th style={{ width: '170px' }}>Length</th>
                         <th style={{ width: '150px' }}>Unit</th>
-                        <th style={{ width: '170px' }}>Type</th>
-                        <th style={{ width: '90px' }}>Rack</th>
+                        <th style={{ width: '150px' }}>Pcs</th>  
+                        <th style={{ width: '150px' }}>Quantity</th>
+                        <th style={{ width: '120px' }}>Type</th>
+                        <th style={{ width: '150px' }}>Rack</th>
                         <th style={{ width: '190px' }}>Warehouse</th>
-                        <th style={{ width: '80px' }}>Quantity</th>
                         <th style={{ width: '120px' }}>Actions</th>
                       </tr>
                     </thead>
@@ -313,7 +316,9 @@ const AddProduct = () => {
                             >
                               <option value="">Select Unit</option>
                               <option value="meter">Meter</option>
-                              <option value="millimeter">Millimeter</option>
+                              <option value="inches">Inch</option>
+                              <option value="feet">Feet</option>
+                              <option value="mm">MM</option>
                             </Form.Control>
                           </td>
                           <td>
@@ -333,10 +338,26 @@ const AddProduct = () => {
                             >
                               <option value="">Select Unit</option>
                               <option value="meter">Meter</option>
-                              <option value="millimeter">Millimeter</option>
+                              <option value="inches">Inch</option>
+                              <option value="feet">Feet</option>
                             </Form.Control>
                           </td>
-                          
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={item.pcs}
+                              onChange={(e) => handleRowChange(index, 'pcs', e.target.value)}
+                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                            />
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="number"
+                              value={item.quantity}
+                              onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                            />
+                          </td>
                           <td>
                             <Form.Control
                               as="select"
@@ -370,14 +391,7 @@ const AddProduct = () => {
                               <option value="Gujarat">Gujarat</option>
                             </Form.Control>
                           </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.quantity}
-                              onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            />
-                          </td>
+                          
                           <td>
                             <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
                               <FaTrash />

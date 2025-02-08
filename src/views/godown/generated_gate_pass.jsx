@@ -85,11 +85,10 @@ const Index = () => {
       ProductName: godown.products.name,                  
       ShadeNo: godown.products.shadeNo,                  
       StockCode: godown.stock_code,
-      Width: godown.get_width,
-      Length: godown.get_length,
-      AvailableHeight: godown.available_height,
-      AvailableWidth: godown.available_width,
-      Quantity: godown.get_quantity,
+      Width: godown.width,
+      Length: godown.length,
+      Pcs:godown.pcs,
+      Quantity: godown.quantity,
       Supervisor: fullInvoice.warehouse_supervisors.name,
     }));
     const ws = XLSX.utils.json_to_sheet(extractedData);

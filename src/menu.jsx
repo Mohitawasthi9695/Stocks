@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';  // Assuming you're using Redux for s
 import menuItems from './menu-items';  // Import your menu items
 
 const Menu = () => {
-  const currentUserRole = useSelector(state => state.user.role);  // Get the current user's role
-
+  const currentUserRole = useSelector(state => state.user.roles); 
+console
   // Function to filter menu items based on the user's role
   const filterMenuItems = (items) => {
     return items

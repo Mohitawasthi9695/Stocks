@@ -110,6 +110,11 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      name: 'Pcs',
+      selector: (row) => row.pcs,
+      sortable: true
+    },
+    {
       name: 'Quantity',
       selector: (row) => row.quantity,
       sortable: true,
