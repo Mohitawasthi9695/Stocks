@@ -262,7 +262,7 @@ const SuppliersPage = () => {
   };
 
   const handleAddUser = () => {
-    navigate('/add-Accessories');
+    navigate('/add_accessories');
   };
 
   const handleChange = (e) => {
