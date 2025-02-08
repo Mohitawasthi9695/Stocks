@@ -14,8 +14,9 @@ import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { FaFileExcel } from 'react-icons/fa';
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import PdfPreview from 'components/PdfPreview';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -144,7 +145,7 @@ const Index = () => {
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
           <Button variant="outline-success" size="sm" className="me-2">
-            <FaEye onClick={() => navigate(`/show-gatepass_details/${row.id}`)} />
+            <FaEye onClick={() => navigate(`/show-gatepass_details/${row.gatepass_no}`)} />
           </Button>
 
           <Button
@@ -279,12 +280,7 @@ const Index = () => {
     }
   };
 
-
-
-
-
-
-  return (
+return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">

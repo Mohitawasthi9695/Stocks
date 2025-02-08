@@ -282,9 +282,9 @@ const Invoice_out = () => {
 
   const columns = [
 
-    { id: 'product_category', label: 'Product Category' },
-    { id: 'product_shadeNo', label: 'Shade No' },
-    { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
+      { id: 'product_category', label: 'Product Category' },
+      { id: 'product_shadeNo', label: 'Shade No' },
+      { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
     { id: 'out_width', label: 'Width' },
     { id: 'width_unit', label: 'W Unit' },

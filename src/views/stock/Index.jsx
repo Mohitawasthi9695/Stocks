@@ -104,9 +104,6 @@ const Index = () => {
           <Button variant="outline-success" size="sm" className="me-2">
             <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
           </Button>
-          {/* <Button variant="outline-danger" size="sm">
-            <MdDelete />
-          </Button> */}
           <Button
             variant="outline-primary"
             size="sm"
