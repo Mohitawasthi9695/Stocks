@@ -37,11 +37,11 @@ const Show_product = () => {
         console.log(response.data.data);
         const godownData = response.data.data.flatMap((item) =>
           item.godowns.map((godown) => {
-            const width = parseFloat(godown.get_width).toFixed(2);
-            const length = parseFloat(godown.get_length).toFixed(2);
+            const width = parseFloat(godown.width).toFixed(2);
+            const length = parseFloat(godown.length).toFixed(2);
             
-            const area = godown.type === "roll" ? (godown.get_length * godown.get_width).toFixed(3) : null;
-            const area_sq_ft = godown.type === "roll" ? (godown.get_length * godown.get_width * 10.7639).toFixed(3) : null;
+            const area = godown.type === "roll" ? (godown.length * godown.width).toFixed(3) : null;
+            const area_sq_ft = godown.type === "roll" ? (godown.length * godown.width * 10.7639).toFixed(3) : null;
         
             return {
               id: godown.id,
@@ -53,7 +53,8 @@ const Show_product = () => {
               stock_code: godown.stock_code,
               width,
               length,
-              quantity: godown.get_quantity,
+              pcs:godown.pcs,
+              quantity: godown.quantity,
               length_unit: godown.length_unit,
               width_unit: godown.width_unit,
               type: godown.type,
@@ -104,6 +105,7 @@ const Show_product = () => {
     { name: "Type", selector: (row) => row.type, sortable: true },
     { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: "Pcs", selector: (row) => row.pcs, sortable: true },
     { name: "Quantity", selector: (row) => row.quantity, sortable: true },
     { name: "Area (m²)", selector: (row) => row.area, sortable: true },
     { name: "Area (sq.ft.)", selector: (row) => row.area_sq_ft, sortable: true },
