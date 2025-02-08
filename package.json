@@ -56,6 +56,7 @@
     "react-switch": "^7.1.0",
     "react-toastify": "^11.0.2",
     "recharts": "^2.15.0",
+    "styled-components": "^6.1.15",
     "sweetalert2": "^11.15.10",
     "vite": "^5.2.0",
     "vite-jsconfig-paths": "^2.0.1",
