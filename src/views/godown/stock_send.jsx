@@ -67,7 +67,7 @@ const Invoice_out = () => {
   const handleCategoryChange = async (event) => {
     const categoryId = event.target.value;
     setSelectedCategoryId(categoryId);
-    setShadeNo([]); 
+    setShadeNo([]);
 
     if (categoryId) {
       try {
@@ -86,7 +86,7 @@ const Invoice_out = () => {
   };
   useEffect(() => {
     const fetchShadeNo = async () => {
-      if (!selectedCategoryId) return; 
+      if (!selectedCategoryId) return;
 
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${selectedCategoryId}`, {
@@ -131,7 +131,7 @@ const Invoice_out = () => {
 
   const handleShadeNoChange = async (event) => {
     setLoading(true);
-    const selectedShadeId = event.target.value; 
+    const selectedShadeId = event.target.value;
 
     if (selectedShadeId) {
       try {
@@ -142,32 +142,31 @@ const Invoice_out = () => {
             'Content-Type': 'application/json'
           }
         });
-    
+
         setLoading(false);
-    
+
         // Check if the response has data
         if (response.data && response.data.data) {
           console.log('Fetched Product Data:', response.data.data);
           setProducts(response.data.data);
         } else {
-          toast.error("No products found.");
+          toast.error('No products found.');
           setProducts([]); // Reset product list
         }
-    
       } catch (error) {
         setLoading(false);
         if (error.response) {
           console.error('Error fetching product data:', error.response.data.message);
-          toast.error(error.response.data.message || "Something went wrong.");
+          toast.error(error.response.data.message || 'Something went wrong.');
         } else {
           console.error('Network error:', error);
-          toast.error("Network error. Please try again.");
+          toast.error('Network error. Please try again.');
         }
-        setProducts([]); 
+        setProducts([]);
       }
     } else {
-      setProducts([]); 
-    }    
+      setProducts([]);
+    }
   };
 
   useEffect(() => {
@@ -201,7 +200,7 @@ const Invoice_out = () => {
         if (row.stock_available_id === id) {
           const updatedRow = { ...row, [field]: value };
 
-          if (field === 'out_length' || field === 'out_width' || field === 'unit') {
+          if (field === 'length' || field === 'width' || field === 'unit') {
             const lengthInFeet =
               updatedRow.unit === 'meter'
                 ? Number(updatedRow.out_length) * 3.28084
@@ -281,16 +280,16 @@ const Invoice_out = () => {
   };
 
   const columns = [
-
-      { id: 'product_category', label: 'Product Category' },
-      { id: 'product_shadeNo', label: 'Shade No' },
-      { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
+    { id: 'product_category', label: 'Product Category' },
+    { id: 'product_shadeNo', label: 'Shade No' },
+    { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
-    { id: 'out_width', label: 'Width' },
+    { id: 'width', label: 'Width' },
     { id: 'width_unit', label: 'W Unit' },
-    { id: 'out_length', label: 'Length' },
+    { id: 'length', label: 'Length' },
     { id: 'length_unit', label: 'L Unit' },
-    { id: 'product_type', label: 'Type' },
+    { id: 'type', label: 'Type' },
+    { id: 'pcs', label: 'Pcs' },
     { id: 'out_quantity', label: 'Quantity' }
   ];
 
@@ -392,7 +391,7 @@ const Invoice_out = () => {
                         id="shadeNo"
                         className="form-select px-2"
                         style={{ width: '8rem', minWidth: 'fit-content' }}
-                        disabled={!selectedCategoryId} 
+                        disabled={!selectedCategoryId}
                         onChange={handleShadeNoChange}
                       >
                         <option value="">Select</option>
@@ -475,11 +474,12 @@ const Invoice_out = () => {
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
-                                    <td key="length">{row.out_length}</td>
+                                    <td key="length">{row.length}</td>
                                     <td key="length_unit">{row.length_unit}</td>
-                                    <td key="width">{row.out_width}</td>
+                                    <td key="width">{row.width}</td>
                                     <td key="width_unit">{row.width_unit}</td>
-                                    <td key="type">{row.product_type}</td>
+                                    <td key="type">{row.type}</td>
+                                    <td key="pcs">{row.pcs}</td>
                                     <td key="out_quantity">
                                       <input
                                         type="number"

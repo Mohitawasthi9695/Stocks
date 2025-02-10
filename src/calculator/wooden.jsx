@@ -65,9 +65,9 @@ function App() {
         </form>
         <div className="w-dis-field">
           <h3 className="w-data-field">
-            <span>Number of Wooden Strips:</span>
+            <span style={{fontSize:"21px"}}>Number of Wooden Strips:</span>
             {result !== null && (
-              <span className="w-result">
+              <span className="w-result" style={{color:"blue"}}>
                 {result.slice(0, -2)}
                 <span
                   style={{

@@ -116,7 +116,11 @@ const Show_product = () => {
       selector: (row) => row.width_unit,
       sortable: true
     },
-
+    {
+      name: 'Pcs',
+      selector: (row) => row.pcs,
+      sortable: true
+    },
     {
       name: 'Quantity',
       selector: (row) => row.quantity,
@@ -154,27 +158,19 @@ const Show_product = () => {
     const { name, value } = e.target;
     setSelectedProduct((prevProduct) => ({
       ...prevProduct,
-      [name]: value,
+      [name]: value
     }));
   };
   const handleUpdateProduct = async () => {
     try {
       console.log(selectedProduct);
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/stocks/${selectedProduct.id}`,
-        selectedProduct,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/${selectedProduct.id}`, selectedProduct, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      );
-      console.log(response.data)
-      setProducts((prevProducts) =>
-        prevProducts.map((products) =>
-          products.id === selectedProduct.id ? selectedProduct : products
-        )
-      );
+      });
+      console.log(response.data);
+      setProducts((prevProducts) => prevProducts.map((products) => (products.id === selectedProduct.id ? selectedProduct : products)));
       toast.success('Product updated successfully!');
       setShowEditModal(false);
     } catch (error) {
@@ -338,51 +334,23 @@ const Show_product = () => {
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Lot Number</Form.Label>
-              <Form.Control
-                type="text"
-                name="lot_no"
-                value={selectedProduct?.lot_no || ''}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" name="lot_no" value={selectedProduct?.lot_no || ''} onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Length</Form.Label>
-              <Form.Control
-                type="number"
-                step="0.01"
-                name="length"
-                value={selectedProduct?.length || ''}
-                onChange={handleChange}
-              />
+              <Form.Control type="number" step="0.01" name="length" value={selectedProduct?.length || ''} onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Width</Form.Label>
-              <Form.Control
-                type="number"
-                step="0.01"
-                name="width"
-                value={selectedProduct?.width || ''}
-                onChange={handleChange}
-              />
+              <Form.Control type="number" step="0.01" name="width" value={selectedProduct?.width || ''} onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Unit</Form.Label>
-              <Form.Control
-                type="read-only"
-                name="unit"
-                value={selectedProduct?.unit || ''}
-                disabled={true}
-              />
+              <Form.Control type="read-only" name="unit" value={selectedProduct?.unit || ''} disabled={true} />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Type</Form.Label>
-              <Form.Control
-                type="text"
-                name="type"
-                value={selectedProduct?.type || ''}
-                onChange={handleChange}
-
-              />
+              <Form.Control type="text" name="type" value={selectedProduct?.type || ''} onChange={handleChange} />
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -395,9 +363,7 @@ const Show_product = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </div>
-
   );
 };
 

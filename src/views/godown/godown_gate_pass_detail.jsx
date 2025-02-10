@@ -298,6 +298,35 @@ const Show_product = () => {
         });
 
         const godownData = response.data.data.flatMap((item) =>
+<<<<<<< HEAD
+          item.godowns.map((godown) => {
+            const width = parseFloat(godown.width).toFixed(2);
+            const length = parseFloat(godown.length).toFixed(2);
+            
+            const area = godown.type === "roll" ? (godown.length * godown.width).toFixed(3) : null;
+            const area_sq_ft = godown.type === "roll" ? (godown.length * godown.width * 10.7639).toFixed(3) : null;
+        
+            return {
+              id: godown.id,
+              gate_pass_no: item.gate_pass_no,
+              gate_pass_date: item.gate_pass_date,
+              warehouse_supervisor: item.warehouse_supervisors?.name || "N/A",
+              godown_supervisor: item.godown_supervisors?.name || "N/A",
+              lot_no: godown.lot_no,
+              stock_code: godown.stock_code,
+              width,
+              length,
+              pcs:godown.pcs,
+              quantity: godown.quantity,
+              length_unit: godown.length_unit,
+              width_unit: godown.width_unit,
+              type: godown.type,
+              rack: godown.rack || "N/A",
+              area,
+              area_sq_ft
+            };
+          })
+=======
           item.godowns.map((godown) => ({
             id: godown.id,
             gate_pass_no: item.gate_pass_no,
@@ -314,6 +343,7 @@ const Show_product = () => {
             area: (godown.get_length * godown.get_width).toFixed(3), // Area in m²
             area_sq_ft: (godown.get_length * godown.get_width * 10.7639).toFixed(3) // Area in ft²
           }))
+>>>>>>> 4aa369009fc888200f47d34af54fa2ab7072ae19
         );
 
         // Filter products to only include those with a matching gate_pass_no
