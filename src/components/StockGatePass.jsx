@@ -174,6 +174,7 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                         <Text style={styles.tableCell}>Lot No</Text>
                                         <Text style={styles.tableCell}>Width</Text>
                                         <Text style={styles.tableCell}>Length</Text>
+                                        <Text style={styles.tableCell}>Pcs</Text>
                                         <Text style={styles.tableCell}>Quantity</Text>
                                     </View>
                                     {invoice.godowns.map((godown, index) => (
@@ -183,9 +184,10 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                             <Text style={styles.tableCell}>{godown.stock_code}</Text>
                                             <Text style={styles.tableCell}>{godown.product_type}</Text>
                                             <Text style={styles.tableCell}>{godown.lot_no}</Text>
-                                            <Text style={styles.tableCell}>{godown.get_width}</Text>
-                                            <Text style={styles.tableCell}>{godown.get_length}</Text>
-                                            <Text style={styles.tableCell}>{godown.get_quantity}</Text>
+                                            <Text style={styles.tableCell}>{godown.width}</Text>
+                                            <Text style={styles.tableCell}>{godown.length}</Text>
+                                            <Text style={styles.tableCell}>{godown.pcs}</Text>
+                                            <Text style={styles.tableCell}>{godown.quantity}</Text>
                                         </View>
                                     ))}
                                 </View>
@@ -196,7 +198,7 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                 <View style={styles.row}>
                                     <Text style={styles.label}>Total Quantity:</Text>
                                     <Text style={styles.value}>
-                                        {invoice.godowns.reduce((total, godown) => total + godown.get_quantity, 0)}
+                                        {invoice.godowns.reduce((total, godown) => total + godown.quantity, 0)}
                                     </Text>
                                 </View>
                             </View>

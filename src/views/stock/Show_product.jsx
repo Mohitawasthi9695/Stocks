@@ -116,7 +116,11 @@ const Show_product = () => {
       selector: (row) => row.width_unit,
       sortable: true
     },
-
+    {
+      name: 'Pcs',
+      selector: (row) => row.pcs,
+      sortable: true
+    },
     {
       name: 'Quantity',
       selector: (row) => row.quantity,
