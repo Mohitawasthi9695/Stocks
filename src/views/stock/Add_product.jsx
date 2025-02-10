@@ -22,9 +22,9 @@ const AddProduct = () => {
       warehouse: '',
       length_unit: '',
       width_unit: '',
-      pcs:'',
+      pcs: '',
       type: '',
-      quantity: 1,
+      quantity: 1
     }
   ]);
   const [allProducts, setAllProducts] = useState([]);
@@ -63,7 +63,7 @@ const AddProduct = () => {
         length_unit: '',
         width_unit: '',
         type: '',
-        pcs:'',
+        pcs: '',
         quantity: 1
       }
     ]);
@@ -254,7 +254,7 @@ const AddProduct = () => {
                         <th style={{ width: '150px' }}>Unit</th>
                         <th style={{ width: '170px' }}>Length</th>
                         <th style={{ width: '150px' }}>Unit</th>
-                        <th style={{ width: '150px' }}>Pcs</th>  
+                        <th style={{ width: '150px' }}>Pcs</th>
                         <th style={{ width: '150px' }}>Quantity</th>
                         <th style={{ width: '120px' }}>Type</th>
                         <th style={{ width: '150px' }}>Rack</th>
@@ -391,7 +391,7 @@ const AddProduct = () => {
                               <option value="Gujarat">Gujarat</option>
                             </Form.Control>
                           </td>
-                          
+
                           <td>
                             <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
                               <FaTrash />
