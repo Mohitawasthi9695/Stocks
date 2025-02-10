@@ -41,6 +41,10 @@ const Invoice_out = () => {
   const [formData, setFormData] = useState({
     invoice_no: '',
     date: today,
+    vehicle_no: '',
+    place_of_supply: '',
+    driver_name: '',
+    driver_phone: '',
     warehouse_supervisor_id: warehouse_supervisor_id,
     godown_supervisor_id: '',
     out_products: []
@@ -67,7 +71,7 @@ const Invoice_out = () => {
   const handleCategoryChange = async (event) => {
     const categoryId = event.target.value;
     setSelectedCategoryId(categoryId);
-    setShadeNo([]); 
+    setShadeNo([]);
 
     if (categoryId) {
       try {
@@ -86,7 +90,7 @@ const Invoice_out = () => {
   };
   useEffect(() => {
     const fetchShadeNo = async () => {
-      if (!selectedCategoryId) return; 
+      if (!selectedCategoryId) return;
 
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${selectedCategoryId}`, {
@@ -131,7 +135,7 @@ const Invoice_out = () => {
 
   const handleShadeNoChange = async (event) => {
     setLoading(true);
-    const selectedShadeId = event.target.value; 
+    const selectedShadeId = event.target.value;
 
     if (selectedShadeId) {
       try {
@@ -142,9 +146,9 @@ const Invoice_out = () => {
             'Content-Type': 'application/json'
           }
         });
-    
+
         setLoading(false);
-    
+
         // Check if the response has data
         if (response.data && response.data.data) {
           console.log('Fetched Product Data:', response.data.data);
@@ -153,7 +157,7 @@ const Invoice_out = () => {
           toast.error("No products found.");
           setProducts([]); // Reset product list
         }
-    
+
       } catch (error) {
         setLoading(false);
         if (error.response) {
@@ -163,11 +167,11 @@ const Invoice_out = () => {
           console.error('Network error:', error);
           toast.error("Network error. Please try again.");
         }
-        setProducts([]); 
+        setProducts([]);
       }
     } else {
-      setProducts([]); 
-    }    
+      setProducts([]);
+    }
   };
 
   useEffect(() => {
@@ -282,9 +286,9 @@ const Invoice_out = () => {
 
   const columns = [
 
-      { id: 'product_category', label: 'Product Category' },
-      { id: 'product_shadeNo', label: 'Shade No' },
-      { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
+    { id: 'product_category', label: 'Product Category' },
+    { id: 'product_shadeNo', label: 'Shade No' },
+    { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
     { id: 'width', label: 'Width' },
     { id: 'width_unit', label: 'W Unit' },
@@ -349,6 +353,8 @@ const Invoice_out = () => {
                 <Row>
                   <Col md={4}>
                     <FormField icon={FaFileInvoice} label="GatePass No" name="invoice_no" value={invoice_no} readOnly />
+                    <FormField icon={FaFileInvoice} label="vehicle_no" name="vehicle_no" value={vehicle_no} 
+                     onChange={(e) => handleInputChange(row.vehicle_no, 'vehicle_no', e.target.value)} />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
@@ -393,7 +399,7 @@ const Invoice_out = () => {
                         id="shadeNo"
                         className="form-select px-2"
                         style={{ width: '8rem', minWidth: 'fit-content' }}
-                        disabled={!selectedCategoryId} 
+                        disabled={!selectedCategoryId}
                         onChange={handleShadeNoChange}
                       >
                         <option value="">Select</option>

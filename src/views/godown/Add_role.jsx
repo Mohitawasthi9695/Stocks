@@ -23,7 +23,6 @@ const AddProduct = () => {
     ]);
     const [allProducts, setAllProducts] = useState([]);
 
-    // Fetch all products for dropdown
     useEffect(() => {
         const fetchAllProducts = async () => {
             try {

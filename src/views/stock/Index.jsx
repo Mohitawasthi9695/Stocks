@@ -102,7 +102,7 @@ const Index = () => {
             <MdAdd />
           </Button>
           <Button variant="outline-success" size="sm" className="me-2">
-            <FaEye onClick={() => navigate(`/show-product/${row.id}`)} />
+            <FaEye onClick={() => navigate(`/show_product/${row.id}`)} />
           </Button>
           <Button
             variant="outline-primary"

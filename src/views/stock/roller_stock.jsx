@@ -20,15 +20,24 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/boxstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/rollerstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log('stocks data:', response.data);
-        setProducts(response.data);
-        setFilteredProducts(response.data);
+        const productsWithArea = response.data.map((product) => {
+          const areaM2 = product.length * product.width;
+          const areaSqFt = areaM2 * 10.7639;
+          return {
+            ...product,
+            area: areaM2.toFixed(3),
+            area_sq_ft: areaSqFt.toFixed(3)
+          };
+        });
+        setProducts(productsWithArea);
+        setFilteredProducts(productsWithArea);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -110,32 +119,46 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Pcs',
-      selector: (row) => row.pcs,
-      sortable: true
-    },
-    {
       name: 'Quantity',
       selector: (row) => row.quantity,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Out Quantity',
       selector: (row) => row.out_quantity ?? 0,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Avaible Quantity',
       selector: (row) => row.quantity - row.out_quantity,
-      sortable: true,
+      sortable: true
+    },
+    {
+      name: 'Total Length',
+      selector: (row) => Number(row.length * row.quantity).toFixed(2),
+      sortable: true
+    },
+    {
+      name: 'Issue Length',
+      selector: (row) => Number(row.length * row.out_quantity).toFixed(2),
+      sortable: true
+    },
+    {
+      name: 'Area (m²)',
+      selector: (row) => row.area,
+      sortable: true
+    },
+    {
+      name: 'Area (sq. ft.)',
+      selector: (row) => row.area_sq_ft,
+      sortable: true
     },
     {
       name: 'Warehouse',
       selector: (row) => row.warehouse,
-      sortable: true,
+      sortable: true
     },
   ];
-
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
       'Sr No': index + 1,
@@ -150,15 +173,16 @@ const ShowProduct = () => {
       'Length': row.length,
       'Width': row.width,
       'Unit': row.unit,
+      'Area (m²)': row.area,
+      'Area (sq. ft.)': row.area_sq_ft
     }));
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
-
   const exportToPDF = () => {
     const doc = new jsPDF();
-    doc.text('Stocks List', 20, 10);
+    doc.text('stocks List', 20, 10);
     doc.autoTable({
       head: [
         [
@@ -173,8 +197,10 @@ const ShowProduct = () => {
           'Length',
           'Width',
           'Unit',
-          'Warehouse',
-        ],
+          'Area (m²)',
+          'Area (sq. ft.)',
+          'Warehouse'
+        ]
       ],
       body: filteredProducts.map((row, index) => [
         index + 1,
@@ -188,8 +214,10 @@ const ShowProduct = () => {
         row.length,
         row.width,
         row.unit,
-        row.warehouse,
-      ]),
+        row.area,
+        row.area_sq_ft,
+        row.Warehouse
+      ])
     });
     doc.save('stocks_list.pdf');
   };
@@ -270,6 +298,7 @@ const ShowProduct = () => {
     },
   };
 
+
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -281,15 +310,18 @@ const ShowProduct = () => {
             value={searchQuery}
             onChange={handleSearch}
             className="form-control"
+            style={{ borderRadius: '5px' }}
           />
         </div>
         <div className="col-md-8">
           <div className="d-flex justify-content-end">
-            <button className="btn btn-info" onClick={exportToCSV}>
-              <FaFileCsv className="w-5 h-5 me-1" /> Export as CSV
+            <button type="button" className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" />
+              Export as CSV
             </button>
-            <button className="btn btn-info" onClick={exportToPDF}>
-              <AiOutlineFilePdf className="w-5 h-5 me-1" /> Export as PDF
+            <button type="button" className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              Export as PDF
             </button>
           </div>
         </div>
@@ -297,16 +329,30 @@ const ShowProduct = () => {
       <div className="row">
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
+
             {loading ? (
-              <Skeleton count={10} />
+              <div>
+                {[...Array(8)].map((_, index) => (
+                  <div key={index} style={{ display: 'flex', gap: '10px', padding: '10px' }}>
+                    <Skeleton width={50} height={20} />
+                    <Skeleton width={200} height={20} />
+                    <Skeleton width={200} height={20} />
+                  </div>
+                ))}
+              </div>
             ) : (
-              <DataTable
-                columns={columns}
-                data={filteredProducts}
-                pagination
-                highlightOnHover
-                customStyles={customStyles}
-              />
+              <div className="card-body p-0">
+                <DataTable
+                  columns={columns}
+                  data={filteredProducts}
+                  pagination
+                  highlightOnHover
+                  striped
+                  responsive
+                  customStyles={customStyles}
+                  defaultSortFieldId={1}
+                />
+              </div>
             )}
           </div>
         </div>

@@ -1,7 +1,5 @@
 const user = JSON.parse(localStorage.getItem('user'));
 const userRole = user.roles;
-console.log(userRole);
-
 const filterMenuItem = (menu) => {
   const filterItems = (items) =>
     items
@@ -252,18 +250,32 @@ const menuItems = {
               type: 'collapse',
               children: [
                 {
-                  id: 'purchase_id1',
-                  title: 'Roll Stocks',
+                  id: 'roller_stock',
+                  title: 'Roller Stocks',
                   icon: 'feather icon-list',
                   type: 'item',
-                  url: '/all-stocks',
+                  url: '/roller_stock',
                 },
                 {
-                  id: 'purchase_id2',
-                  title: 'Box Stocks',
+                  id: 'wooden_stock',
+                  title: 'Wooden Stocks',
                   icon: 'feather icon-list',
                   type: 'item',
-                  url: '/box_All_Stock',
+                  url: '/wooden_stock',
+                },
+                {
+                  id: 'vertical_stock',
+                  title: 'Vertical Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/vertical_stock',
+                },
+                {
+                  id: 'honeycomb_stock',
+                  title: 'HoneyComb Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/honeycomb_stock',
                 },
               ]
             },

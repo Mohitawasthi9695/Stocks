@@ -182,10 +182,10 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                             <Text style={styles.tableCell}>{godown.products.name}</Text>
                                             <Text style={styles.tableCell}>{godown.products.shadeNo}</Text>
                                             <Text style={styles.tableCell}>{godown.stock_code}</Text>
-                                            <Text style={styles.tableCell}>{godown.product_type}</Text>
+                                            <Text style={styles.tableCell}>{godown.type}</Text>
                                             <Text style={styles.tableCell}>{godown.lot_no}</Text>
-                                            <Text style={styles.tableCell}>{godown.width}</Text>
-                                            <Text style={styles.tableCell}>{godown.length}</Text>
+                                            <Text style={styles.tableCell}>{godown.width} {godown.width_unit}</Text>
+                                            <Text style={styles.tableCell}>{godown.length} {godown.length_unit}</Text>
                                             <Text style={styles.tableCell}>{godown.pcs}</Text>
                                             <Text style={styles.tableCell}>{godown.quantity}</Text>
                                         </View>

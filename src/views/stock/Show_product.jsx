@@ -40,8 +40,6 @@ const Show_product = () => {
     };
     fetchProductData();
   }, [id]);
-
-  // Update filtered Products when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter(
@@ -98,22 +96,12 @@ const Show_product = () => {
     },
     {
       name: 'Length',
-      selector: (row) => Number(row.length).toFixed(2),
-      sortable: true
-    },
-    {
-      name: 'Unit',
-      selector: (row) => row.length_unit,
+      selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
     },
     {
       name: 'Width',
-      selector: (row) => Number(row.width).toFixed(2),
-      sortable: true
-    },
-    {
-      name: 'Unit',
-      selector: (row) => row.width_unit,
+      selector: (row) =>`${Number(row.width).toFixed(2)} ${row.width_unit}`,
       sortable: true
     },
     {
@@ -127,22 +115,9 @@ const Show_product = () => {
       sortable: true
     },
     {
-      name: 'Out Quantity',
-      selector: (row) => row.out_quantity ?? 0,
-      sortable: true
-    },
-    {
-      name: 'Rack No',
-      selector: (row) => row.rack,
-      sortable: true
-    },
-    {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
-            <MdEdit />
-          </Button>
           <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
             <MdDelete />
           </Button>
@@ -150,42 +125,6 @@ const Show_product = () => {
       )
     }
   ];
-  const handleEdit = (product) => {
-    setSelectedProduct(product);
-    setShowEditModal(true);
-  };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSelectedProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
-  };
-  const handleUpdateProduct = async () => {
-    try {
-      console.log(selectedProduct);
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/stocks/${selectedProduct.id}`,
-        selectedProduct,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-      console.log(response.data)
-      setProducts((prevProducts) =>
-        prevProducts.map((products) =>
-          products.id === selectedProduct.id ? selectedProduct : products
-        )
-      );
-      toast.success('Product updated successfully!');
-      setShowEditModal(false);
-    } catch (error) {
-      toast.error('Error updating Product!');
-    }
-  };
-
   const handleDelete = async (productId) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -198,7 +137,7 @@ const Show_product = () => {
     });
 
     if (!result.isConfirmed) {
-      return; // Exit if user cancels
+      return; 
     }
 
     try {
@@ -246,14 +185,14 @@ const Show_product = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px'
+        padding: '20px'
       }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '12px'
+        padding: '15px'
       }
     },
     footer: {
@@ -277,9 +216,6 @@ const Show_product = () => {
       }
     }
   };
-
-  const totalArea = filteredProducts.reduce((acc, product) => acc + (Number(product.area) || 0), 0);
-  const totalAreaSqFt = filteredProducts.reduce((acc, product) => acc + (Number(product.area_sq_ft) || 0), 0);
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -324,82 +260,11 @@ const Show_product = () => {
                   customStyles={customStyles}
                   defaultSortFieldId={1}
                 />
-                <div className="d-flex justify-content-between p-3 bg-light border-top">
-                  <span>Total Area (m.sq.): {totalArea.toFixed(2)}</span>
-                  <span>Total Area (sq.ft.): {totalAreaSqFt.toFixed(2)}</span>
-                </div>
               </div>
             )}
           </div>
         </div>
       </div>
-      {/* Edit Product Modal */}
-      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Product</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Lot Number</Form.Label>
-              <Form.Control
-                type="text"
-                name="lot_no"
-                value={selectedProduct?.lot_no || ''}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Length</Form.Label>
-              <Form.Control
-                type="number"
-                step="0.01"
-                name="length"
-                value={selectedProduct?.length || ''}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Width</Form.Label>
-              <Form.Control
-                type="number"
-                step="0.01"
-                name="width"
-                value={selectedProduct?.width || ''}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Unit</Form.Label>
-              <Form.Control
-                type="read-only"
-                name="unit"
-                value={selectedProduct?.unit || ''}
-                disabled={true}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Type</Form.Label>
-              <Form.Control
-                type="text"
-                name="type"
-                value={selectedProduct?.type || ''}
-                onChange={handleChange}
-
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleUpdateProduct}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
     </div>
 
   );

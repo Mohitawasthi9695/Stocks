@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
@@ -19,28 +20,15 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/woodenstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
         console.log('stocks data:', response.data);
-        const productsWithArea = response.data
-          .filter((product) => product.qty > 0)
-          .map((product) => {
-            const areaM2 = product.available_height * product.width * product.qty;
-            const areaSqFt = areaM2 * 10.7639;
-            return {
-              ...product,
-              area: areaM2.toFixed(3),
-              area_sq_ft: areaSqFt.toFixed(3)
-            };
-          });
-
-
-        setProducts(productsWithArea);
-        setFilteredProducts(productsWithArea);
+        setProducts(response.data);
+        setFilteredProducts(response.data);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -54,7 +42,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['available_width', 'available_height', 'invoice_no', 'lot_no']
+      ['width', 'length', 'invoice_no', 'lot_no']
         .map((key) => product[key]?.toString()?.toLowerCase() || '')
         .some((value) => value.includes(lowercasedQuery))
     );
@@ -69,85 +57,103 @@ const ShowProduct = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
     },
     {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
-    }, {
-      name: 'Stock Code',
-      selector: (row) => `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+    },
+    {
+      name: 'Invoice no',
+      selector: (row) => row.invoice_no,
       sortable: true
     },
     {
-      name: 'Invoice No',
-      selector: (row) => row.stock_invoice?.invoice_no || 'N/A',
+      name: 'Product Category',
+      selector: (row) => row.product_category_name,
       sortable: true
     },
     {
-      name: 'Date',
-      selector: (row) => row.stock_invoice?.date || 'N/A',
+      name: 'Shade no',
+      selector: (row) => row.shadeNo,
       sortable: true
     },
     {
-      name: 'Shade No',
-      selector: (row) => row.stock_product?.shadeNo || 'N/A',
+      name: 'Pur. Shade no',
+      selector: (row) => row.purchase_shade_no,
       sortable: true
     },
     {
-      name: 'Pur. Shade No',
-      selector: (row) => row.stock_product?.purchase_shade_no || 'N/A',
-      sortable: true
-    },
-    {
-      name: 'Purchased Length',
-      selector: (row) => row.length,
+      name: 'Type',
+      selector: (row) => row.type,
       sortable: true
     },
     {
       name: 'Length',
-      selector: (row) => row.available_height,
+      selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
     },
     {
       name: 'Width',
-      selector: (row) => row.width,
+      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
       sortable: true
     },
     {
-      name: 'Unit',
-      selector: (row) => row.unit,
+      name: 'Pcs',
+      selector: (row) => row.pcs,
       sortable: true
     },
     {
-      name: 'Area (m²)',
-      selector: (row) => row.area,
-      sortable: true
+      name: 'Quantity',
+      selector: (row) => row.quantity,
+      sortable: true,
     },
     {
-      name: 'Area (sq. ft.)',
-      selector: (row) => row.area_sq_ft,
-      sortable: true
+      name: 'Out Quantity',
+      selector: (row) => row.out_quantity ?? 0,
+      sortable: true,
+    },
+    {
+      name: 'Avaible Quantity',
+      selector: (row) => row.quantity - row.out_quantity,
+      sortable: true,
     },
     {
       name: 'Warehouse',
       selector: (row) => row.warehouse,
-      sortable: true
+      sortable: true,
     },
   ];
+
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredProducts);
+    const csvData = filteredProducts.map((row, index) => ({
+      'Sr No': index + 1,
+      'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
+      'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
+      'Lot No': row.lot_no,
+      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
+      'Date': row.stock_invoice?.date || 'N/A',
+      'Shade No': row.stock_product?.shadeNo || 'N/A',
+      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Length': row.length,
+      'Width': row.width,
+      'Unit': row.unit,
+    }));
+    const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
+
   const exportToPDF = () => {
     const doc = new jsPDF();
-    doc.text('stocks List', 20, 10);
+    doc.text('Stocks List', 20, 10);
     doc.autoTable({
       head: [
         [
           'Sr No',
+          'User Name',
           'Lot No',
           'Stock Code',
           'Invoice No',
@@ -157,24 +163,23 @@ const ShowProduct = () => {
           'Length',
           'Width',
           'Unit',
-          'Area (m²)',
-          'Area (sq. ft.)'
-        ]
+          'Warehouse',
+        ],
       ],
-      body: filteredProducts.map((row) => [
-        row.index,
+      body: filteredProducts.map((row, index) => [
+        index + 1,
+        JSON.parse(localStorage.getItem('user')).username || 'N/A',
         row.lot_no,
         `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
         row.stock_invoice?.invoice_no || 'N/A',
         row.stock_invoice?.date || 'N/A',
         row.stock_product?.shadeNo || 'N/A',
         row.stock_product?.purchase_shade_no || 'N/A',
-        row.available_height,
+        row.length,
         row.width,
         row.unit,
-        row.area,
-        row.area_sq_ft
-      ])
+        row.warehouse,
+      ]),
     });
     doc.save('stocks_list.pdf');
   };
@@ -255,7 +260,6 @@ const ShowProduct = () => {
     },
   };
 
-
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -267,46 +271,32 @@ const ShowProduct = () => {
             value={searchQuery}
             onChange={handleSearch}
             className="form-control"
-            style={{ borderRadius: '5px' }}
           />
+        </div>
+        <div className="col-md-8">
+          <div className="d-flex justify-content-end">
+            <button className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" /> Export as CSV
+            </button>
+            <button className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" /> Export as PDF
+            </button>
+          </div>
         </div>
       </div>
       <div className="row">
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
-            <div className="d-flex justify-content-end">
-              <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                <FaFileCsv className="w-5 h-5 me-1" />
-                Export as CSV
-              </button>
-              <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                Export as PDF
-              </button>
-            </div>
             {loading ? (
-              <div>
-                {[...Array(8)].map((_, index) => (
-                  <div key={index} style={{ display: 'flex', gap: '10px', padding: '10px' }}>
-                    <Skeleton available_width={50} height={20} />
-                    <Skeleton available_width={200} height={20} />
-                    <Skeleton available_width={200} height={20} />
-                  </div>
-                ))}
-              </div>
+              <Skeleton count={10} />
             ) : (
-              <div className="card-body p-0">
-                <DataTable
-                  columns={columns}
-                  data={filteredProducts}
-                  pagination
-                  highlightOnHover
-                  striped
-                  responsive
-                  customStyles={customStyles}
-                  defaultSortFieldId={1}
-                />
-              </div>
+              <DataTable
+                columns={columns}
+                data={filteredProducts}
+                pagination
+                highlightOnHover
+                customStyles={customStyles}
+              />
             )}
           </div>
         </div>
