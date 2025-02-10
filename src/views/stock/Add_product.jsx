@@ -29,7 +29,7 @@ const AddProduct = () => {
       width_unit: '',
       pcs: '',
       type: '',
-      quantity: 1,
+      quantity: 1
     }
   ]);
   useEffect(() => {

@@ -154,18 +154,17 @@ const Invoice_out = () => {
           console.log('Fetched Product Data:', response.data.data);
           setProducts(response.data.data);
         } else {
-          toast.error("No products found.");
+          toast.error('No products found.');
           setProducts([]); // Reset product list
         }
-
       } catch (error) {
         setLoading(false);
         if (error.response) {
           console.error('Error fetching product data:', error.response.data.message);
-          toast.error(error.response.data.message || "Something went wrong.");
+          toast.error(error.response.data.message || 'Something went wrong.');
         } else {
           console.error('Network error:', error);
-          toast.error("Network error. Please try again.");
+          toast.error('Network error. Please try again.');
         }
         setProducts([]);
       }
@@ -285,7 +284,6 @@ const Invoice_out = () => {
   };
 
   const columns = [
-
     { id: 'product_category', label: 'Product Category' },
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
