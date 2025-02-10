@@ -1,5 +1,5 @@
 const user = JSON.parse(localStorage.getItem('user'));
-const userRole = user.roles;
+const userRole = user?.roles;
 const filterMenuItem = (menu) => {
   const filterItems = (items) =>
     items
