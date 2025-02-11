@@ -1,0 +1,17 @@
+id ,invoice_no,lot_no,shadeNo,width,length,unit,rack,type,shadeNo,shade001
+,INV002,5896,Shade001,2.8,50,meter,213,roll,demo,demo1
+,INV002,5896,Shade001,2.8,60,meter,213,roll,,
+,INV002,5896,Shade001,3,60,meter,213,roll,,
+,INV002,5896,Shade001,2.8,50,meter,213,roll,,
+,INV002,5896,Shade001,2.8,50,meter,213,roll,,
+,INV002,5896,Shade001,2.1,30,meter,213,roll,,
+,INV002,5896,Shade001,2.8,50,meter,213,roll,,
+,INV002,5896,Shade001,2.8,40,meter,213,roll,,
+,INV002,5896,Shade001,2.5,70,meter,213,roll,,
+,INV002,5896,Shade002,2.8,60,meter,213,roll,,
+,INV002,5896,Shade003,2.8,60,meter,213,roll,,
+,INV002,5896,Shade003,4,50,meter,213,roll,,
+,INV002,5896,Shade003,4,50,meter,213,roll,,
+,INV002,5896,Shade003,2.8,30,meter,213,roll,,
+,INV002,5896,Shade003,2.1,50,meter,213,roll,,
+,INV002,5896,Shade003,2.8,50,meter,213,roll,,
