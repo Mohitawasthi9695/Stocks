@@ -1,0 +1,80 @@
+.w-body{
+    display: grid;
+    place-items: center;
+    text-align: center;
+    margin-top: 80px;
+  }
+  
+  .w-inner{
+    width: 500px;
+    border-radius: 20px;
+    background-color: rgb(179, 226, 226);
+    align-content: center;
+  }
+  
+  .w-field{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .w-dis-field{
+    display: flex;
+    justify-content: center;
+    height: 120px;
+  }
+  
+  .w-input-field{
+    height: 28px;
+    padding: 4px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: 1px solid rgb(99, 94, 94);
+  }
+  
+  .w-input-drop{
+    height: 30px;
+    margin-top: 5px;
+    padding-left: 10px;
+    border-radius: 10px;
+    border: 1px solid rgb(99, 94, 94);
+    padding-right: 10px;
+  }
+  
+  .w-button {
+    background-color: #008080; /* Teal color */
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 20%;
+    border-radius: 5px; /* Rounded corners */
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-bottom: 30px;
+    margin-top: 20px;
+  }
+  
+  .w-button:hover {
+    background-color: #006666; /* Darker teal on hover */
+    transform: scale(1.05); /* Slight scale effect */
+  }
+  
+  .w-data-field {
+    width: 300px;
+    background-color: #fff;
+    padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    align-items: flex-start; /* Align text to the left */
+  }
+  
+  .w-result {
+    font-size: 20px; /* Adjust font size */
+    font-weight: bold;
+    margin-top: 5px; /* Adds space below the heading */
+  }
+  

@@ -69,6 +69,18 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/calculator_vertical',
+        element: lazy(() => import('./calculator/calculator_vertical')),
+        allowedRoles:  ['superadmin','admin','supervisor', ,'sub_supervisor','operator']
+      },
+      {
+        exact: 'true',
+        path: '/wooden',
+        element: lazy(() => import('./calculator/wooden')),
+        allowedRoles:  ['superadmin','admin','supervisor', ,'sub_supervisor','operator']
+      },
+      {
+        exact: 'true',
         path: '/users',
         element: lazy(() => import('./views/users/Index')),
         allowedRoles:  ['superadmin','admin']
