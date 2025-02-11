@@ -18,7 +18,7 @@ const AddProduct = () => {
     {
       invoice_no: no,
       lot_no: '',
-      product_category_id: 3,
+      product_category_id: 1,
       product_id: '',
       purchase_shadeNo: '',
       width: '',
@@ -89,7 +89,7 @@ const AddProduct = () => {
       {
         invoice_no: no,
         lot_no: '',
-        product_category_id: 3,
+        product_category_id: 1,
         product_id: '',
         purchase_shadeNo: '',
         width: '',

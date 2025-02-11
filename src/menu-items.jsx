@@ -1,18 +1,10 @@
 const user = JSON.parse(localStorage.getItem('user'));
-const userRole = user.roles;
+const userRole = user?.roles;
 const filterMenuItem = (menu) => {
   const filterItems = (items) =>
     items
       .filter((item) => !(['Admin'].includes(userRole) && ['users'].includes(item.id)))
-      .filter(
-        (item) =>
-          !(
-            ['Operator'].includes(userRole) &&
-            [
-
-            ].includes(item.id)
-          )
-      )
+      .filter((item) => !(['Operator'].includes(userRole) && [].includes(item.id)))
       .filter(
         (item) =>
           !(
@@ -66,7 +58,7 @@ const filterMenuItem = (menu) => {
               'Accessory',
               'stockin',
               'Warehouse_Accessories',
-              'WarehouseGatePass',
+              'WarehouseGatePass'
             ].includes(item.id)
           )
       )
@@ -133,7 +125,7 @@ const menuItems = {
               icon: 'feather icon-user-check',
               type: 'item',
               url: '/customers'
-            },
+            }
           ]
         }
       ]
@@ -153,7 +145,7 @@ const menuItems = {
             boxShadow: '0px 4px 6px rgba(19, 15, 15, 0.1)',
             borderRadius: '8px',
             padding: '10px',
-            backgroundColor: '#ffffff',
+            backgroundColor: '#ffffff'
           },
           children: [
             {
@@ -161,14 +153,14 @@ const menuItems = {
               title: ' Product',
               type: 'item',
               url: '/shades',
-              icon: 'feather icon-package',
+              icon: 'feather icon-package'
             },
             {
               id: 'category2',
               title: ' Products Category',
               type: 'item',
               url: '/product_category',
-              icon: 'feather icon-package',
+              icon: 'feather icon-package'
             }
           ]
         }
@@ -189,7 +181,7 @@ const menuItems = {
             boxShadow: '0px 4px 6px rgba(19, 15, 15, 0.1)',
             borderRadius: '8px',
             padding: '10px',
-            backgroundColor: '#ffffff',
+            backgroundColor: '#ffffff'
           },
           children: [
             {
@@ -197,21 +189,21 @@ const menuItems = {
               title: 'Add Accessories',
               type: 'item',
               url: '/add_accessories',
-              icon: 'feather icon-package',
+              icon: 'feather icon-package'
             },
             {
               id: 'accessories_record',
               title: 'Accessories',
               type: 'item',
               url: '/accessories_record',
-              icon: 'feather icon-package',
+              icon: 'feather icon-package'
             },
             {
               id: 'add_warehouse_accessory',
               title: 'Add WareAccessories',
               type: 'item',
               url: '/add_warehouse_accessories',
-              icon: 'feather icon-package',
+              icon: 'feather icon-package'
             }
           ]
         }
@@ -254,32 +246,31 @@ const menuItems = {
                   title: 'Roller Stocks',
                   icon: 'feather icon-list',
                   type: 'item',
-                  url: '/roller_stock',
+                  url: '/roller_stock'
                 },
                 {
                   id: 'wooden_stock',
                   title: 'Wooden Stocks',
                   icon: 'feather icon-list',
                   type: 'item',
-                  url: '/wooden_stock',
+                  url: '/wooden_stock'
                 },
                 {
                   id: 'vertical_stock',
                   title: 'Vertical Stocks',
                   icon: 'feather icon-list',
                   type: 'item',
-                  url: '/vertical_stock',
+                  url: '/vertical_stock'
                 },
                 {
                   id: 'honeycomb_stock',
                   title: 'HoneyComb Stocks',
                   icon: 'feather icon-list',
                   type: 'item',
-                  url: '/honeycomb_stock',
-                },
+                  url: '/honeycomb_stock'
+                }
               ]
-            },
-
+            }
           ]
         }
       ]
@@ -355,7 +346,7 @@ const menuItems = {
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/generated_gate_pass'
-            },
+            }
           ]
         }
       ]
@@ -386,7 +377,7 @@ const menuItems = {
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/approve/accessory'
-            },
+            }
           ]
         }
       ]
@@ -454,7 +445,7 @@ const menuItems = {
               title: 'Warehouse Accessories',
               type: 'item',
               url: '/warehouse_accessories',
-              icon: 'feather icon-package',
+              icon: 'feather icon-package'
             }
           ]
         }
