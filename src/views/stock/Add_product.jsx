@@ -5,6 +5,8 @@ import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { title } from 'process';
+import Swal from 'sweetalert2';
 
 const AddProduct = () => {
   const { id, no } = useParams();
@@ -171,6 +173,20 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to create new field?',
+      icon: "question",
+      showCancelButton : "true",
+      cancelButtonColor : "#d33",
+      confirmButtonColor : '#20B2AA',
+      confirmButtonText: 'Yes, create it!'
+    })
+
+    if(result.isConfirmed) {
+      return;
+    }
 
     const payload = items.map((item) => ({
       ...item,

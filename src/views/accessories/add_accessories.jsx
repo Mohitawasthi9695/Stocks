@@ -9,6 +9,7 @@ import { FaUser, FaFileExcel, FaDownload, FaUpload, FaIdCard } from 'react-icons
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 
+
 const AddAccessory = () => {
   const [formData, setFormData] = useState({
     product_category_id: '',
@@ -55,6 +56,21 @@ const AddAccessory = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+
+        const result = await Swal.fire({
+          title: 'Are you sure?',
+          text: 'Do you want to create this category?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#20B2AA',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, create it!'
+        });
+    
+        if (!result.isConfirmed) {
+          return;
+        }
 
     try {
       console.log('Submitting data:', formData); // Debugging log
