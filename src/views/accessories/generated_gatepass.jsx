@@ -165,7 +165,7 @@ const Index = () => {
   };
 
   const handleAddInvoice = () => {
-    navigate('/add-invoice');
+    navigate('/accessory/gatepass');
   };
 
   const customStyles = {
@@ -208,7 +208,7 @@ const Index = () => {
       },
       lastCell: {
         style: {
-          borderRight: 'none' // Removes border for the last cell
+          borderRight: 'none' 
         }
       }
     },
@@ -294,7 +294,7 @@ const Index = () => {
         </div>
         <div className="col-md-8 text-end">
           <Button variant="primary" onClick={handleAddInvoice}>
-            <MdPersonAdd className="me-2" /> Add Invoice
+            <MdPersonAdd className="me-2" /> Add Gate Pass
           </Button>
         </div>
       </div>

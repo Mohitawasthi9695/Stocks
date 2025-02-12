@@ -114,13 +114,13 @@ const menuItems = {
             backgroundColor: '#ffffff'
           },
           children: [
-            {
-              id: 'accessoriesadd',
-              title: 'Add Accessories',
-              type: 'item',
-              url: '/add_accessories',
-              icon: 'feather icon-package'
-            },
+            // {
+            //   id: 'accessoriesadd',
+            //   title: 'Add Accessories',
+            //   type: 'item',
+            //   url: '/add_accessories',
+            //   icon: 'feather icon-package'
+            // },
             {
               id: 'accessories_record',
               title: 'Accessories',
@@ -130,9 +130,9 @@ const menuItems = {
             },
             {
               id: 'add_warehouse_accessory',
-              title: 'Add WareAccessories',
+              title: 'Warehouse Accessories',
               type: 'item',
-              url: '/add_warehouse_accessories',
+              url: '/warehouse_accessories',
               icon: 'feather icon-package'
             }
           ]
@@ -368,18 +368,21 @@ const menuItems = {
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/accessory/gatepassview'
-            },
-            ,
-            {
-              id: 'warehouse_accessory',
-              title: 'Warehouse Accessories',
-              type: 'item',
-              url: '/warehouse_accessories',
-              icon: 'feather icon-package'
             }
+
+            // {
+            //   id: 'warehouse_accessory',
+            //   title: 'Warehouse Accessories',
+            //   type: 'item',
+            //   url: '/warehouse_accessories',
+            //   icon: 'feather icon-package'
+            // }
           ]
         }
       ]
     }
   ]
 };
+
+
+export default menuItems; 
