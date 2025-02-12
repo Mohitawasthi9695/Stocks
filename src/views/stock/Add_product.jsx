@@ -5,6 +5,8 @@ import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { title } from 'process';
+import Swal from 'sweetalert2';
 
 const AddProduct = () => {
   const { id, no } = useParams();

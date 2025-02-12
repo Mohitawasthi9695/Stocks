@@ -54,8 +54,6 @@ const Index = () => {
     };
     fetchInvoices();
   }, []);
-
-  //   Update filtered users when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = invoices.filter((invoice) => invoice.supplier_name.toLowerCase().includes(lowercasedQuery));
@@ -115,6 +113,7 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
+        
           <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
             <MdDelete />
           </Button>

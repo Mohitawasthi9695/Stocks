@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import FormField from '../../components/FormField';
-
+import Swal from 'sweetalert2';
 import {
     FaUser,
     FaIdCard,
@@ -40,7 +40,21 @@ const AddSupplier = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Create a FormData object for file upload
+        const result = await Swal.fire({
+            title : 'Are you sure?',
+            text : 'Do you want to create new supplier?',
+            icon : 'question',
+            showCancelButton : 'true',
+            confirmButtonColor : '#20B2AA',
+            cancelButtonColor : '#d33',
+            confirmButtonText : 'Yes, create it!'
+        })
+
+        if(result.isConfirmed) {
+            return;
+        }
+
+
         const submitData = new FormData();
         submitData.append('name', formData.name);
         submitData.append('gst_no', formData.gst_no);

@@ -3,6 +3,7 @@ import { Table, Form, Button, Card, Container, Row, Col } from 'react-bootstrap'
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import { FaUser, FaUserPlus, FaTrash, FaPlus } from 'react-icons/fa';
 import {
   FaFileInvoice,
@@ -20,6 +21,7 @@ import {
 import FormField from '../../components/FormField';
 import { error } from 'jquery';
 import { color } from 'd3';
+import { title } from 'process';
 
 const Add_inoice = () => {
   const today = new Date().toISOString().split('T')[0];
@@ -87,6 +89,21 @@ const Add_inoice = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const result = await Swal.fire({
+      title : 'Are you sure?',
+      text : 'Do you want to add new field?',
+      icon : 'question',
+      showCancelButton : 'true',
+      cancelButtonColor : '#d33',
+      confirmButtonColor : '#20b2AA',
+      confirmButtonText : 'Yes, create it!'
+    })
+
+    if(!result.isConfirmed){
+      return;
+    }
+    
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice`, formData, {
         headers: {
