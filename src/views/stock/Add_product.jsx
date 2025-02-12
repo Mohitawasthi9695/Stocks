@@ -25,7 +25,7 @@ const AddProduct = () => {
       purchase_shadeNo: '',
       width: '',
       length: '',
-      rack: '',
+      // rack: '',
       warehouse: '',
       length_unit: '',
       width_unit: '',
@@ -64,17 +64,14 @@ const AddProduct = () => {
 
   const fetchAllProducts = async (categoryId) => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${categoryId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${categoryId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      );
+      });
       setAllProducts(response.data.data);
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error('Error fetching products:', error);
     }
   };
 
@@ -83,7 +80,6 @@ const AddProduct = () => {
       fetchAllProducts(selectedCategoryId);
     }
   }, [selectedCategoryId]);
-
 
   const handleAddRow = () => {
     setItems((prevItems) => [
@@ -96,7 +92,7 @@ const AddProduct = () => {
         purchase_shadeNo: '',
         width: '',
         length: '',
-        rack: '',
+        // rack: '',
         warehouse: '',
         length_unit: '',
         width_unit: '',
@@ -231,7 +227,6 @@ const AddProduct = () => {
       toast.error('Error downloading the file');
     }
   };
-
   return (
     <Container fluid className="pt-4 px-2" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center">
@@ -310,6 +305,7 @@ const AddProduct = () => {
                         <th style={{ width: '150px' }}>Quantity</th>
                         <th style={{ width: '120px' }}>Type</th>
                         <th style={{ width: '190px' }}>Warehouse</th>
+                        {/* <th style={{ width: '190px' }}>Rack</th> */}
                         <th style={{ width: '120px' }}>Actions</th>
                       </tr>
                     </thead>
@@ -326,7 +322,6 @@ const AddProduct = () => {
                               className="form-select px-2"
                               style={{ width: '8rem', minItems: 'fit-content', color: 'black' }}
                               onChange={handleCategoryChange}
-                              
                             >
                               <option value="">Select</option>
                               {categories.map((category) => (
@@ -450,7 +445,14 @@ const AddProduct = () => {
                               <option value="Gujarat">Gujarat</option>
                             </Form.Control>
                           </td>
-
+                          {/* <td>
+                            <Form.Control
+                              type="number"
+                              value={item.rack}
+                              onChange={(e) => handleRowChange(index, 'rack', e.target.value)}
+                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                            />
+                          </td> */}
                           <td>
                             <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
                               <FaTrash />

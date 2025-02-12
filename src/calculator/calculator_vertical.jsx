@@ -1,4 +1,4 @@
-import './vertical.css';
+import './calculator_vertical.css';
 import { useState } from 'react';
 
 function App() {

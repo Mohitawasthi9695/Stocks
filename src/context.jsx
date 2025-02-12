@@ -1,74 +1,3 @@
-const user = JSON.parse(localStorage.getItem('user'));
-const userRole = user?.roles;
-const filterMenuItem = (menu) => {
-  const filterItems = (items) =>
-    items
-      .filter((item) => !(['Admin'].includes(userRole) && ['users'].includes(item.id)))
-      .filter((item) => !(['Operator'].includes(userRole) && [].includes(item.id)))
-      .filter(
-        (item) =>
-          !(
-            ['supervisor'].includes(userRole) &&
-            [
-              'approve_godown',
-              'stockout',
-              'users',
-              'purchaser',
-              'GodownAccessories',
-              'GoDownGatePass',
-              'customers',
-              'stock_to_godown',
-              'approve_operator',
-              'godown_stock'
-            ].includes(item.id)
-          )
-      )
-      .filter(
-        (item) =>
-          !(
-            ['sub_supervisor'].includes(userRole) &&
-            [
-              'usersGroup',
-              'products',
-              'Accessory',
-              'stockin',
-              'Warehouse_Accessories',
-              'stockout',
-              'WarehouseGatePass',
-              'stockout'
-            ].includes(item.id)
-          )
-      )
-      .filter(
-        (item) =>
-          !(
-            ['operator'].includes(userRole) &&
-            [
-              'approve_godown',
-              'users',
-              'purchaser',
-              'GodownAccessories',
-              'GoDownGatePass',
-              'suppliers',
-              // 'customers',
-              'stock_to_godown',
-              'approve_operator',
-              'godown_stock',
-              // 'usersGroup',
-              'products',
-              'Accessory',
-              'stockin',
-              'Warehouse_Accessories',
-              'WarehouseGatePass'
-            ].includes(item.id)
-          )
-      )
-      .map((item) => (item.children ? { ...item, children: filterItems(item.children) } : item));
-
-  return { ...menu, items: filterItems(menu.items) };
-};
-
-// Menu items
 const menuItems = {
   items: [
     {
@@ -203,8 +132,8 @@ const menuItems = {
               id: 'add_warehouse_accessory',
               title: 'Add WareAccessories',
               type: 'item',
-              url: '/warehouse_accessories',
-              icon: 'feather icon-package',
+              url: '/add_warehouse_accessories',
+              icon: 'feather icon-package'
             }
           ]
         }
@@ -454,10 +383,3 @@ const menuItems = {
     }
   ]
 };
-
-// Filter the menu items
-const filteredMenuItems = filterMenuItem(menuItems);
-
-export default filteredMenuItems;
-
-

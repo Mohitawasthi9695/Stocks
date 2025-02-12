@@ -19,7 +19,7 @@ const NavLeft = () => {
         <ListGroup.Item as="li" bsPrefix=" " className={navItemClass.join(' ')}>
           <Dropdown align={'start'}>
             <Dropdown.Toggle variant={'link'} id="dropdown-basic">
-              Digital Calculator
+              Calculator
             </Dropdown.Toggle>
             <ul>
               <Dropdown.Menu>
