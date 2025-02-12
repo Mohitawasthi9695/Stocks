@@ -345,7 +345,7 @@ const routes = [
       {
         exact: 'true',
         path: '/contexts',
-        element: lazy(() => import('./context')),
+        element: lazy(() => import('./menuitems')),
         allowedRoles:  ['superadmin','admin', 'supervisor','sub_supervisor']
       },
       {

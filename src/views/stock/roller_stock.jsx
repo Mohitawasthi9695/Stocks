@@ -26,8 +26,15 @@ const ShowProduct = () => {
             'Content-Type': 'application/json'
           }
         });
+  
         console.log('stocks data:', response.data);
-        const productsWithArea = response.data.map((product) => {
+  
+        // Filter only "roller" products
+        const rollerProducts = response.data.filter(
+          (product) => product.product_category_name.toLowerCase() === 'roller'
+        );
+  
+        const productsWithArea = rollerProducts.map((product) => {
           const areaM2 = product.length * product.width;
           const areaSqFt = areaM2 * 10.7639;
           return {
@@ -36,6 +43,7 @@ const ShowProduct = () => {
             area_sq_ft: areaSqFt.toFixed(3)
           };
         });
+  
         setProducts(productsWithArea);
         setFilteredProducts(productsWithArea);
       } catch (error) {
@@ -44,9 +52,10 @@ const ShowProduct = () => {
         setLoading(false);
       }
     };
-
+  
     fetchStocksData();
   }, []);
+0  
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();

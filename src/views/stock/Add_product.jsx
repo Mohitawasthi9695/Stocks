@@ -167,23 +167,10 @@ const AddProduct = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to create new field?',
-      icon: "question",
-      showCancelButton : "true",
-      cancelButtonColor : "#d33",
-      confirmButtonColor : '#20B2AA',
-      confirmButtonText: 'Yes, create it!'
-    })
-
-    if(result.isConfirmed) {
-      return;
-    }
-
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      console.log('Submitting form with:', items); 
+    
     const payload = items.map((item) => ({
       ...item,
       invoice_id: id,
