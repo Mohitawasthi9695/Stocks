@@ -41,8 +41,8 @@ const Index = () => {
         const filteredFields = invoicesDetails.map((gatepass) => ({
           gatepass_no: gatepass.gate_pass_no,
           id: gatepass.id,
-          godownSupervisor: gatepass.godown_supervisors.name,
-          warehouseSupervisor: gatepass.warehouse_supervisors.name,
+          godownSupervisor: gatepass.godown_supervisor.name,
+          warehouseSupervisor: gatepass.warehouse_supervisor.name,
           date: gatepass.gate_pass_date,
           total_amount: gatepass.total_amount
         }));
@@ -71,13 +71,13 @@ const Index = () => {
   const downloadExcel = (row) => {
     const fullInvoice = invoiceAllDetails.find(invoice => invoice.id === row.id);
   
-    if (!fullInvoice || !fullInvoice.godowns) {
+    if (!fullInvoice || !fullInvoice.all_stocks) {
       console.error("Godown data not found for this row:", row);
       return;
     }
   
     // Extract required data
-    const extractedData = fullInvoice.godowns.map((godown) => ({
+    const extractedData = fullInvoice.all_stocks.map((godown) => ({
       GatePassNo: fullInvoice.gate_pass_no,   
       Date: fullInvoice.gate_pass_date,       
       ProductType: godown.product_type,       
@@ -144,7 +144,7 @@ const Index = () => {
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
           <Button variant="outline-success" size="sm" className="me-2">
-            <FaEye onClick={() => navigate(`/show-gatepass_details/${row.gatepass_no}`)} />
+            <FaEye onClick={() => navigate(`/show-gatepass_details/${row.id}`)} />
           </Button>
 
           <Button
@@ -183,7 +183,7 @@ const Index = () => {
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}`, {
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/all_stocks/gatepass/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

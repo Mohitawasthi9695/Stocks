@@ -25,40 +25,38 @@ const Show_product = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
 
+        console.log(response.data.data);
         const godownData = response.data.data.flatMap((item) =>
-          item.godowns.map((godown) => {
-            const width = parseFloat(godown.width).toFixed(2);
-            const length = parseFloat(godown.length).toFixed(2);
+          item.all_stocks.map((all_stocks) => {
+            const width = parseFloat(all_stocks.width).toFixed(2);
+            const length = parseFloat(all_stocks.length).toFixed(2);
             return {
-              id: godown.id,
+              id: all_stocks.id,
               gate_pass_no: item.gate_pass_no,
               gate_pass_date: item.gate_pass_date,
-              lot_no: godown.lot_no,
-              stock_code: godown.stock_code,
+              lot_no: all_stocks.lot_no,
+              stock_code: all_stocks.stock_code,
               width,
               length,
-              pcs:godown.pcs,
-              quantity: godown.quantity,
-              length_unit: godown.length_unit,
-              width_unit: godown.width_unit,
-              type: godown.type,
-              rack: godown.rack || "N/A",
+              pcs:all_stocks.pcs,
+              quantity: all_stocks.quantity,
+              length_unit: all_stocks.length_unit,
+              width_unit: all_stocks.width_unit,
+              type: all_stocks.type,
+              rack: all_stocks.rack || "N/A",
             };
           })
         );
-
-        // Filter products to only include those with a matching gate_pass_no
-        const filteredData = godownData.filter((product) => product.gate_pass_no === id);
-
-        setProducts(filteredData);
-        setFilteredProducts(filteredData);
+       
+        setProducts(godownData);
+        setFilteredProducts(godownData);
       } catch (err) {
         console.error(err);
         toast.error('Failed to fetch data.');
@@ -94,10 +92,9 @@ const Show_product = () => {
     { name: "Gate Pass Date", selector: (row) => row.gate_pass_date, sortable: true },
     { name: "Stock Code", selector: (row) => row.stock_code, sortable: true },
     { name: "Lot No", selector: (row) => row.lot_no, sortable: true },
-    { name: "Type", selector: (row) => row.type, sortable: true },
     { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
-    { name: "Pcs", selector: (row) => row.pcs, sortable: true },
+    { name: "Pcs", selector: (row) => row.pcs??1, sortable: true },
     { name: "Quantity", selector: (row) => row.quantity, sortable: true },
   ];
 
@@ -117,7 +114,7 @@ const Show_product = () => {
   const handleUpdateProduct = async () => {
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/godowns/updateStock/${selectedProduct.id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/all_stocks/updateStock/${selectedProduct.id}`,
         selectedProduct,
         {
           headers: {
@@ -156,7 +153,7 @@ const Show_product = () => {
     }
 
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass${productId}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/all_stocks/getStockgatepass${productId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }

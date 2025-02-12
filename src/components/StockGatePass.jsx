@@ -148,7 +148,7 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                     <Text style={styles.sectionTitle}>Warehouse Supervisor:</Text>
                                     <View style={styles.row}>
                                         <Text style={styles.label}>Name:</Text>
-                                        <Text style={styles.value}>{invoice.warehouse_supervisors.name}</Text>
+                                        <Text style={styles.value}>{invoice.warehouse_supervisor.name}</Text>
                                     </View>
                                 </View>
 
@@ -157,7 +157,7 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                     <Text style={styles.sectionTitle}>Godown Supervisor:</Text>
                                     <View style={styles.row}>
                                         <Text style={styles.label}>Name:</Text>
-                                        <Text style={styles.value}>{invoice.godown_supervisors.name}</Text>
+                                        <Text style={styles.value}>{invoice.godown_supervisor.name}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -170,24 +170,22 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                         <Text style={styles.tableCell}>Product Name</Text>
                                         <Text style={styles.tableCell}>Product ShadeNo</Text>
                                         <Text style={styles.tableCell}>Stock Code</Text>
-                                        <Text style={styles.tableCell}>Product Type</Text>
                                         <Text style={styles.tableCell}>Lot No</Text>
                                         <Text style={styles.tableCell}>Width</Text>
                                         <Text style={styles.tableCell}>Length</Text>
                                         <Text style={styles.tableCell}>Pcs</Text>
                                         <Text style={styles.tableCell}>Quantity</Text>
                                     </View>
-                                    {invoice.godowns.map((godown, index) => (
+                                    {invoice.all_stocks.map((all_stock, index) => (
                                         <View key={index} style={styles.tableRow}>
-                                            <Text style={styles.tableCell}>{godown.products.name}</Text>
-                                            <Text style={styles.tableCell}>{godown.products.shadeNo}</Text>
-                                            <Text style={styles.tableCell}>{godown.stock_code}</Text>
-                                            <Text style={styles.tableCell}>{godown.type}</Text>
-                                            <Text style={styles.tableCell}>{godown.lot_no}</Text>
-                                            <Text style={styles.tableCell}>{godown.width} {godown.width_unit}</Text>
-                                            <Text style={styles.tableCell}>{godown.length} {godown.length_unit}</Text>
-                                            <Text style={styles.tableCell}>{godown.pcs}</Text>
-                                            <Text style={styles.tableCell}>{godown.quantity}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.products.name}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.products.shadeNo}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.stock_code}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.lot_no}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.width} {all_stock.width_unit}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.length} {all_stock.length_unit}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.pcs??1}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.quantity}</Text>
                                         </View>
                                     ))}
                                 </View>
@@ -198,7 +196,7 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                 <View style={styles.row}>
                                     <Text style={styles.label}>Total Quantity:</Text>
                                     <Text style={styles.value}>
-                                        {invoice.godowns.reduce((total, godown) => total + godown.quantity, 0)}
+                                        {invoice.all_stocks.reduce((total, all_stock) => total + all_stock.quantity, 0)}
                                     </Text>
                                 </View>
                             </View>
