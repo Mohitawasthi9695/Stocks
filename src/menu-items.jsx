@@ -459,5 +459,3 @@ const menuItems = {
 const filteredMenuItems = filterMenuItem(menuItems);
 
 export default filteredMenuItems;
-
-
