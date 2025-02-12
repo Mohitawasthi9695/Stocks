@@ -250,7 +250,7 @@ const WarehouseAccessoriesPage = () => {
           />
         </div>
         <div className="col-md-8 text-end">
-          <Button variant="primary" onClick={() => navigate('/add_warehouse_accessory')}>
+          <Button variant="primary" onClick={() => navigate('/add_warehouse_accessories')}>
             <MdPersonAdd className="me-2" /> Add Warehouse Accessory
           </Button>
         </div>

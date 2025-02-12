@@ -211,9 +211,6 @@ const AddAccessory = () => {
                     </label>
                     <div className="d-flex align-items-center gap-2">
                       <FaFileExcel className="text-success fs-4" />
-                      {/* <a href="/products.csv" download className="text-decoration-none">
-                        <FaDownload className="text-success fs-5" style={{ cursor: 'pointer' }} />
-                      </a> */}
                       <Button
                         onClick={handleDownloads}
                         style={{
