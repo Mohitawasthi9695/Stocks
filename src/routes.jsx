@@ -125,7 +125,7 @@ const routes = [
         exact: 'true',
         path: '/customers',
         element: lazy(() => import('./views/customer/Index')),
-        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
+        allowedRoles:  ['superadmin', 'admin',,'supervisor','operator']
       },
       {
         exact: 'true',
@@ -340,6 +340,12 @@ const routes = [
         exact: 'true',
         path: '/show-gatepass_details/:id',
         element: lazy(() => import('./views/godown/godown_gate_pass_detail')),
+        allowedRoles:  ['superadmin','admin', 'supervisor','sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/contexts',
+        element: lazy(() => import('./context')),
         allowedRoles:  ['superadmin','admin', 'supervisor','sub_supervisor']
       },
       {
