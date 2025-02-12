@@ -150,17 +150,17 @@ const menuItems = {
           },
           children: [
             {
-              id: 'category1',
-              title: ' Product',
-              type: 'item',
-              url: '/shades',
-              icon: 'feather icon-package'
-            },
-            {
               id: 'category2',
               title: ' Products Category',
               type: 'item',
               url: '/product_category',
+              icon: 'feather icon-package'
+            },
+            {
+              id: 'category1',
+              title: ' Product',
+              type: 'item',
+              url: '/shades',
               icon: 'feather icon-package'
             }
           ]
@@ -216,18 +216,18 @@ const menuItems = {
           icon: 'feather icon-box',
           children: [
             {
-              id: 'list_stock',
-              title: 'List',
-              icon: 'feather icon-list',
-              type: 'item',
-              url: '/invoices'
-            },
-            {
               id: 'add_invoice',
               title: 'Add Invoice',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/add-invoice'
+            },
+            {
+              id: 'list_stock',
+              title: 'List',
+              icon: 'feather icon-list',
+              type: 'item',
+              url: '/invoices'
             },
             {
               id: 'all_stocks',

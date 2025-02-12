@@ -5,8 +5,6 @@ import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { title } from 'process';
-import Swal from 'sweetalert2';
 
 const AddProduct = () => {
   const { id, no } = useParams();
@@ -25,7 +23,7 @@ const AddProduct = () => {
       purchase_shadeNo: '',
       width: '',
       length: '',
-      // rack: '',
+      rack: '',
       warehouse: '',
       length_unit: '',
       width_unit: '',
@@ -52,10 +50,17 @@ const AddProduct = () => {
     fetchCategories();
   }, []);
 
-  const handleCategoryChange = async (event) => {
+  const handleCategoryChange = (event, index) => {
     const categoryId = event.target.value;
     setSelectedCategoryId(categoryId);
     setAllProducts([]);
+
+    setItems((prevItems) => {
+      const updatedItems = [...prevItems];
+      updatedItems[index].product_category_id = categoryId;
+      updatedItems[index].product_id = ''; // Reset product selection
+      return updatedItems;
+    });
 
     if (categoryId) {
       fetchAllProducts(categoryId);
@@ -92,7 +97,7 @@ const AddProduct = () => {
         purchase_shadeNo: '',
         width: '',
         length: '',
-        // rack: '',
+        rack: '',
         warehouse: '',
         length_unit: '',
         width_unit: '',
@@ -170,20 +175,6 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to create new field?',
-      icon: "question",
-      showCancelButton : "true",
-      cancelButtonColor : "#d33",
-      confirmButtonColor : '#20B2AA',
-      confirmButtonText: 'Yes, create it!'
-    })
-
-    if(result.isConfirmed) {
-      return;
-    }
-
     const payload = items.map((item) => ({
       ...item,
       invoice_id: id,
@@ -227,6 +218,7 @@ const AddProduct = () => {
       toast.error('Error downloading the file');
     }
   };
+
   return (
     <Container fluid className="pt-4 px-2" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center">
@@ -305,7 +297,6 @@ const AddProduct = () => {
                         <th style={{ width: '150px' }}>Quantity</th>
                         <th style={{ width: '120px' }}>Type</th>
                         <th style={{ width: '190px' }}>Warehouse</th>
-                        {/* <th style={{ width: '190px' }}>Rack</th> */}
                         <th style={{ width: '120px' }}>Actions</th>
                       </tr>
                     </thead>
@@ -318,10 +309,10 @@ const AddProduct = () => {
                           <td>
                             <Form.Control
                               as="select"
-                              id="product_category_id"
+                              value={item.product_category_id}
                               className="form-select px-2"
-                              style={{ width: '8rem', minItems: 'fit-content', color: 'black' }}
-                              onChange={handleCategoryChange}
+                              style={{ width: '8rem', color: 'black' }}
+                              onChange={(e) => handleCategoryChange(e, index)}
                             >
                               <option value="">Select</option>
                               {categories.map((category) => (
@@ -445,14 +436,7 @@ const AddProduct = () => {
                               <option value="Gujarat">Gujarat</option>
                             </Form.Control>
                           </td>
-                          {/* <td>
-                            <Form.Control
-                              type="number"
-                              value={item.rack}
-                              onChange={(e) => handleRowChange(index, 'rack', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            />
-                          </td> */}
+
                           <td>
                             <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
                               <FaTrash />
