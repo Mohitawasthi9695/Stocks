@@ -19,42 +19,24 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/rollerstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/honeycombstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-  
         console.log('stocks data:', response.data);
-  
-        // Filter only "roller" products
-        const rollerProducts = response.data.filter(
-          (product) => product.product_category_name.toLowerCase() === 'honey comb'
-        );
-  
-        const productsWithArea = rollerProducts.map((product) => {
-          const areaM2 = product.length * product.width;
-          const areaSqFt = areaM2 * 10.7639;
-          return {
-            ...product,
-            area: areaM2.toFixed(3),
-            area_sq_ft: areaSqFt.toFixed(3)
-          };
-        });
-  
-        setProducts(productsWithArea);
-        setFilteredProducts(productsWithArea);
+        setProducts(response.data);
+        setFilteredProducts(response.data);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchStocksData();
   }, []);
-  
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
