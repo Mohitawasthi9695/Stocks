@@ -197,7 +197,7 @@ const menuItems = {
               title: 'Warehouse Accessories',
               type: 'item',
               url: '/warehouse_accessories',
-              icon: 'feather icon-package'
+              icon: 'feather icon-package',
             }
           ]
         }

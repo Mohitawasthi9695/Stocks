@@ -55,7 +55,7 @@ function App() {
               <label>Strip Thickness:</label>
               <select className="w-input-drop" onChange={handleChange} name="stripThickness">
                 <option value="50">50mm</option>
-                <option value="31">31mm</option>
+                <option value="31">35mm</option>
               </select>
             </div>
           </div>

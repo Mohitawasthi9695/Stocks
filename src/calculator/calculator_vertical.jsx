@@ -64,8 +64,8 @@ function App() {
     let totalLength = 0;
 
     if (widthInInches > 0) {
-      calculateStrip = widthInInches / 3.7;
-      calculateStrip = Math.round(calculateStrip);
+      calculateStrip = ((widthInInches * 2.54) / 9);
+      calculateStrip = calculateStrip.toFixed(2);
     }
 
     if (heightInInches > 0) {
