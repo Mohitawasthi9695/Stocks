@@ -20,7 +20,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/honeycombstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownhoneycombstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
@@ -60,13 +60,18 @@ const ShowProduct = () => {
       sortable: true,
     },
     {
+      name: 'Stock Code',
+      selector: (row) => row.stock_code,
+      sortable: true
+    },
+    {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
     },
     {
-      name: 'Invoice no',
-      selector: (row) => row.invoice_no,
+      name: 'GatePass no',
+      selector: (row) => row.gate_pass_no,
       sortable: true
     },
     {
@@ -84,21 +89,8 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    {
-      name: 'Type',
-      selector: (row) => row.type,
-      sortable: true
-    },
-    {
-      name: 'Length',
-      selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
-      sortable: true
-    },
-    {
-      name: 'Width',
-      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
-      sortable: true
-    },
+    { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     {
       name: 'Pcs',
       selector: (row) => row.pcs,

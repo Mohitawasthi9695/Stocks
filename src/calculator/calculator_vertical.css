@@ -1,0 +1,76 @@
+
+.cal-body1{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+  }
+  
+  .cal-body{
+    background-color: aquamarine;
+    padding: 10px 50px 50px 50px;
+    width: 400px;
+    /* margin-top: 50px; */
+    border-radius: 20px;
+  }
+  
+  .cal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .cal-button {
+    text-align: center;
+    align-items: center;
+  }
+  
+  .input-field {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Hover effect */
+  .input-field:hover {
+    border-color: #007BFF;
+  }
+  
+  /* Focus effect */
+  .input-field:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+  }
+  
+  .cal-tex {
+    font-size: 15px;  /* Slightly larger for better readability */
+    font-weight: 500;  /* Stronger emphasis */
+    color: #222;  /* Darker for a premium feel */
+    display: block;  /* Ensures proper spacing *
+    text-transform: capitalize;  /* Keeps proper formatting */
+    letter-spacing: 0.5px;  /* Adds slight spacing for clarity */
+  }
+  
+  .unit-dropdown{
+    padding-left: 10px;
+    margin-left: 20px;
+    height: 40px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  
+  
+  

@@ -28,7 +28,7 @@ const ShowProduct = () => {
         });
         console.log('stocks data:', response.data);
         const productsWithArea = response.data.map((product) => {
-          const areaM2 = product.length * product.width;
+          const areaM2 = product.length * product.width*product.quantity;
           const areaSqFt = areaM2 * 10.7639;
           return {
             ...product,
@@ -100,22 +100,12 @@ const ShowProduct = () => {
     },
     {
       name: 'Length',
-      selector: (row) => Number(row.length).toFixed(2),
-      sortable: true
-    },
-    {
-      name: 'Unit',
-      selector: (row) => row.length_unit,
+      selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
     },
     {
       name: 'Width',
-      selector: (row) => Number(row.width).toFixed(2),
-      sortable: true
-    },
-    {
-      name: 'Unit',
-      selector: (row) => row.width_unit,
+      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
       sortable: true
     },
     {

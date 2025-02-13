@@ -231,6 +231,30 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/godown/roller_stock',
+        element: lazy(() => import('./views/godown/roller_stock')),
+        allowedRoles:  ['superadmin','admin', 'supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/godown/wooden_stock',
+        element: lazy(() => import('./views/godown/wooden_stock')),
+        allowedRoles:  ['superadmin','admin', 'supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/godown/vertical_stock',
+        element: lazy(() => import('./views/godown/vertical_stock')),
+        allowedRoles:  ['superadmin','admin', 'supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/godown/honeycomb_stock',
+        element: lazy(() => import('./views/godown/honeycomb_stock')),
+        allowedRoles:  ['superadmin','admin', 'supervisor']
+      },
+      {
+        exact: 'true',
         path: '/invoice-out',
         element: lazy(() => import('./views/stockOut/Invoice_out')),
         allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
