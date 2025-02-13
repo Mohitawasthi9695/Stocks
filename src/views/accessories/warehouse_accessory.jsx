@@ -44,9 +44,7 @@ const WarehouseAccessoriesPage = () => {
 
   useEffect(() => {
     const filtered = accessories.filter((accessory) =>
-      Object.values(accessory).some((value) =>
-        value ? value.toString().toLowerCase().includes(searchQuery.toLowerCase()) : false
-      )
+      Object.values(accessory).some((value) => (value ? value.toString().toLowerCase().includes(searchQuery.toLowerCase()) : false))
     );
     setFilteredAccessories(filtered);
   }, [searchQuery, accessories]);
@@ -73,7 +71,7 @@ const WarehouseAccessoriesPage = () => {
       selector: (row) => row.product_accessory_name,
       sortable: true
     },
-    { name: "Length", selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
+    { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Items',
       selector: (row) => row.items,
@@ -150,12 +148,16 @@ const WarehouseAccessoriesPage = () => {
 
   const handleUpdateAccessory = async () => {
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory/${selectedAccessory.id}`, selectedAccessory, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory/${selectedAccessory.id}`,
+        selectedAccessory,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
         }
-      });
+      );
 
       if (response.status === 200) {
         toast.success('Accessory updated successfully!');
@@ -180,6 +182,12 @@ const WarehouseAccessoriesPage = () => {
   };
 
   const customStyles = {
+    table: {
+      style: {
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0 // Removes spacing between cells
+      }
+    },
     header: {
       style: {
         backgroundColor: '#2E8B57',
@@ -187,8 +195,8 @@ const WarehouseAccessoriesPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px',
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -197,9 +205,9 @@ const WarehouseAccessoriesPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -209,36 +217,53 @@ const WarehouseAccessoriesPage = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
+      lastCell: {
+        style: {
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: '#fff',
+        color: 'black', // Makes the arrows white
+        border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
-      },
-    },
+        '& svg': {
+          fill: 'white'
+        },
+        '&:focus': {
+          outline: 'none',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
-          <label htmlFor="search" className='me-2'>Search: </label>
+          <label htmlFor="search" className="me-2">
+            Search:{' '}
+          </label>
           <input
             type="text"
             placeholder="Search accessories"
@@ -256,15 +281,7 @@ const WarehouseAccessoriesPage = () => {
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={filteredAccessories}
-        pagination
-        highlightOnHover
-        striped
-        responsive
-        customStyles={customStyles}
-      />
+      <DataTable columns={columns} data={filteredAccessories} pagination highlightOnHover striped responsive customStyles={customStyles} />
 
       {showEditModal && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
@@ -285,56 +302,33 @@ const WarehouseAccessoriesPage = () => {
 
               <Form.Group className="mb-3">
                 <Form.Label>Length</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="length"
-                  value={selectedAccessory?.length || ''}
-                  onChange={handleChange}
-                />
+                <Form.Control type="number" name="length" value={selectedAccessory?.length || ''} onChange={handleChange} />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Unit</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="unit"
-                  value={selectedAccessory?.unit || ''}
-                  onChange={handleChange}
-                />
+                <Form.Control type="text" name="unit" value={selectedAccessory?.unit || ''} onChange={handleChange} />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Items</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="items"
-                  value={selectedAccessory?.items || ''}
-                  onChange={handleChange}
-                />
+                <Form.Control type="number" name="items" value={selectedAccessory?.items || ''} onChange={handleChange} />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Box</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="box"
-                  value={selectedAccessory?.box || ''}
-                  onChange={handleChange}
-                />
+                <Form.Control type="number" name="box" value={selectedAccessory?.box || ''} onChange={handleChange} />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Quantity</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="quantity"
-                  value={selectedAccessory?.quantity || ''}
-                  onChange={handleChange}
-                />
+                <Form.Control type="number" name="quantity" value={selectedAccessory?.quantity || ''} onChange={handleChange} />
               </Form.Group>
 
               <div className="d-flex justify-content-end">
-                <Button variant="primary" onClick={handleUpdateAccessory}>Save Changes</Button>
+                <Button variant="primary" onClick={handleUpdateAccessory}>
+                  Save Changes
+                </Button>
               </div>
             </Form>
           </Modal.Body>

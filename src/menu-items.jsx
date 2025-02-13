@@ -215,7 +215,7 @@ const menuItems = {
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
-            {
+             {
               id: 'add_invoice',
               title: 'Add Invoice',
               icon: 'feather icon-file-plus',
