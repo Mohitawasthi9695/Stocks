@@ -18,7 +18,7 @@ const AddProduct = () => {
     {
       invoice_no: no,
       lot_no: '',
-      product_category_id: 1,
+      product_category_id:'',
       product_id: '',
       purchase_shadeNo: '',
       width: '',
@@ -50,20 +50,34 @@ const AddProduct = () => {
     fetchCategories();
   }, []);
 
-  const handleCategoryChange = (event, index) => {
+  const handleCategoryChange = async (event, index) => {
     const categoryId = event.target.value;
-    setSelectedCategoryId(categoryId);
-    setAllProducts([]);
 
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
       updatedItems[index].product_category_id = categoryId;
-      updatedItems[index].product_id = ''; // Reset product selection
+      updatedItems[index].product_id = ''; 
+      updatedItems[index].purchase_shadeNo = ''; 
       return updatedItems;
     });
 
     if (categoryId) {
-      fetchAllProducts(categoryId);
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${categoryId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        // Update only the products list for the specific row
+        setItems((prevItems) => {
+          const updatedItems = [...prevItems];
+          updatedItems[index].products = response.data.data; 
+          return updatedItems;
+        });
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
     }
   };
 
@@ -92,7 +106,7 @@ const AddProduct = () => {
       {
         invoice_no: no,
         lot_no: '',
-        product_category_id: 1,
+        product_category_id: '',
         product_id: '',
         purchase_shadeNo: '',
         width: '',
@@ -116,12 +130,10 @@ const AddProduct = () => {
   const handleRowChange = (index, field, value) => {
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
-      if (field === 'product_id') {
-        const selectedProduct = allProducts.find((product) => product.id === parseInt(value));
-        if (selectedProduct) {
-          updatedItems[index].product_id = value;
-          updatedItems[index].purchase_shadeNo = selectedProduct.purchase_shade_no;
-        }
+      if (field === "product_id") {
+        const selectedProduct = updatedItems[index].products.find((product) => product.id === parseInt(value));
+        updatedItems[index].product_id = value;
+        updatedItems[index].purchase_shadeNo = selectedProduct ? selectedProduct.purchase_shade_no : "";
       } else {
         updatedItems[index][field] = value;
       }
@@ -330,7 +342,7 @@ const AddProduct = () => {
                               style={{ fontSize: '0.9rem', height: '3rem' }}
                             >
                               <option value="">Select Shade No.</option>
-                              {allProducts.map((product) => (
+                              {item.products?.map((product) => (
                                 <option key={product.id} value={product.id}>
                                   {product.shadeNo}
                                 </option>

@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
     ...initialState,
     isLoggedIn: !!localStorage.getItem('token'),
     token: localStorage.getItem('token') || null,
-    user: JSON.parse(localStorage.getItem('user')) || null,
+    user: JSON.parse(localStorage.getItem('user')) || null
   });
 
   useEffect(() => {
@@ -23,9 +23,5 @@ export const AuthProvider = ({ children }) => {
     }
   }, [state]);
 
-  return (
-    <AuthContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ state, dispatch }}>{children}</AuthContext.Provider>;
 };

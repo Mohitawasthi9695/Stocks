@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Row, Col, Alert, Button, Spinner } from 'react-bootstrap'; 
+import { Row, Col, Alert, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -11,18 +11,19 @@ const JWTLogin = () => {
   const [captchaText, setCaptchaText] = useState('');
   const [userCaptchaInput, setUserCaptchaInput] = useState('');
   const [captchaError, setCaptchaError] = useState('');
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
   const canvasRef = useRef(null);
 
-  const generateRandomChar = (min, max) =>
-    String.fromCharCode(Math.floor(Math.random() * (max - min + 1) + min));
+  const generateRandomChar = (min, max) => String.fromCharCode(Math.floor(Math.random() * (max - min + 1) + min));
 
   const generateCaptchaText = () => {
     let captcha = '';
     for (let i = 0; i < 6; i++) {
       const randomType = Math.floor(Math.random() * 3);
-      if (randomType === 0) captcha += generateRandomChar(65, 90); // Uppercase
-      else if (randomType === 1) captcha += generateRandomChar(97, 122); // Lowercase
+      if (randomType === 0)
+        captcha += generateRandomChar(65, 90); // Uppercase
+      else if (randomType === 1)
+        captcha += generateRandomChar(97, 122); // Lowercase
       else captcha += generateRandomChar(48, 57); // Numbers
     }
     return captcha;
@@ -37,11 +38,7 @@ const JWTLogin = () => {
     const colors = ['#2c3e50', '#e74c3c', '#8e44ad'];
     for (let i = 0; i < captcha.length; i++) {
       ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
-      ctx.fillText(
-        captcha[i],
-        25 + i * 25,
-        Math.random() * 10 + 30
-      );
+      ctx.fillText(captcha[i], 25 + i * 25, Math.random() * 10 + 30);
     }
 
     for (let i = 0; i < 5; i++) {
@@ -71,10 +68,10 @@ const JWTLogin = () => {
 
   const handleLogin = async (values, { setSubmitting, setErrors }) => {
     try {
-      console.log("User Input:", values);
-      console.log("Captcha Text:", captchaText);
-      console.log("User Captcha Input:", userCaptchaInput);
-      
+      console.log('User Input:', values);
+      console.log('Captcha Text:', captchaText);
+      console.log('User Captcha Input:', userCaptchaInput);
+
       if (userCaptchaInput !== captchaText) {
         setCaptchaError('Incorrect captcha');
         setSubmitting(false);
@@ -88,20 +85,16 @@ const JWTLogin = () => {
 
       const requestData = {
         email: values.email,
-        password: values.password,
+        password: values.password
       };
       console.log('Request Data:', requestData);
 
       // Attempt to login
-      const response = await axios.post(
-        `${API_BASE_URL}/api/login`,
-        requestData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.post(`${API_BASE_URL}/api/login`, requestData, {
+        headers: {
+          'Content-Type': 'application/json'
         }
-      );
+      });
 
       // Check the API response status and log the response
       console.log('API Response:', response);
@@ -112,7 +105,7 @@ const JWTLogin = () => {
 
         dispatch({
           type: 'LOGIN',
-          payload: { user, token },
+          payload: { user, token }
         });
 
         localStorage.setItem('token', token);
@@ -127,16 +120,16 @@ const JWTLogin = () => {
     } catch (error) {
       // Improved error handling with more detailed logging
       console.error('Login failed:', error);
-      console.log("Error response:", error.response);
+      console.log('Error response:', error.response);
 
       setErrors({
-        submit: error.response?.data?.message || 'Something went wrong. Please try again.',
+        submit: error.response?.data?.message || 'Something went wrong. Please try again.'
       });
 
       if (!error.response) {
         // Network or CORS issue
         setErrors({
-          submit: 'There was an issue connecting to the server. Please check your network or try again later.',
+          submit: 'There was an issue connecting to the server. Please check your network or try again later.'
         });
       } else {
         // Server-side error
@@ -152,11 +145,11 @@ const JWTLogin = () => {
       initialValues={{
         email: 'super@gmail.com',
         password: 'Password#678',
-        submit: null,
+        submit: null
       }}
       validationSchema={Yup.object().shape({
         email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-        password: Yup.string().max(255).required('Password is required'),
+        password: Yup.string().max(255).required('Password is required')
       })}
       onSubmit={handleLogin}
     >
@@ -164,7 +157,9 @@ const JWTLogin = () => {
         <div className={`container ${errors.submit || captchaError ? 'error' : ''}`}>
           <form noValidate onSubmit={handleSubmit}>
             <div className="form-group mb-3">
-              <label htmlFor="email" className="text-start w-100 text-black">Email</label>
+              <label htmlFor="email" className="text-start w-100 text-black">
+                Email
+              </label>
               <input
                 className="form-control"
                 name="email"
@@ -174,11 +169,13 @@ const JWTLogin = () => {
                 type="email"
                 value={values.email}
               />
-              {touched.email && errors.email && <small className="text-danger form-text" >{errors.email}</small>}
+              {touched.email && errors.email && <small className="text-danger form-text">{errors.email}</small>}
             </div>
 
             <div className="form-group mb-4">
-              <label htmlFor="password" className="text-start w-100 text-black">Password</label>
+              <label htmlFor="password" className="text-start w-100 text-black">
+                Password
+              </label>
               <input
                 className="form-control"
                 name="password"
@@ -188,18 +185,21 @@ const JWTLogin = () => {
                 type="password"
                 value={values.password}
               />
-              {touched.password && errors.password && <small className="text-danger form-text" >{errors.password}</small>}
+              {touched.password && errors.password && <small className="text-danger form-text">{errors.password}</small>}
             </div>
 
-            <div className='input-cap' style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '15px',
-              marginBottom: '20px',
-              padding: '15px',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-            }}>
+            <div
+              className="input-cap"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '15px',
+                marginBottom: '20px',
+                padding: '15px',
+                border: '1px solid #ddd',
+                borderRadius: '8px'
+              }}
+            >
               <canvas
                 ref={canvasRef}
                 width="200"
@@ -207,12 +207,12 @@ const JWTLogin = () => {
                 style={{
                   border: '2px solid #ccc',
                   borderRadius: '5px',
-                  width:"130px"
+                  width: '130px'
                 }}
               />
               <button
                 type="button"
-                className='spin'
+                className="spin"
                 onClick={() => {
                   setIsLoading(true);
                   setTimeout(() => {
@@ -227,7 +227,7 @@ const JWTLogin = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '5px',
+                  padding: '5px'
                 }}
               >
                 {isLoading ? (
@@ -260,12 +260,16 @@ const JWTLogin = () => {
                   border: '1px solid #ccc',
                   borderRadius: '5px',
                   textAlign: 'center',
-                  width: '100%',
+                  width: '100%'
                 }}
               />
             </div>
 
-            {captchaError && <small className="text-danger" style={{position:"absolute",marginLeft:"-60px"}}>{captchaError}</small>}
+            {captchaError && (
+              <small className="text-danger" style={{ position: 'absolute', marginLeft: '-60px' }}>
+                {captchaError}
+              </small>
+            )}
 
             {errors.submit && (
               <Col sm={12}>
@@ -275,13 +279,7 @@ const JWTLogin = () => {
 
             <Row style={{ width: '100%', textAlign: 'center', marginTop: '50px' }}>
               <Col mt={2}>
-                <Button
-                  className="btn-block mb-4"
-                  disabled={isSubmitting}
-                  size="large"
-                  type="submit"
-                  variant="primary"
-                >
+                <Button className="btn-block mb-4" disabled={isSubmitting} size="large" type="submit" variant="primary">
                   {isSubmitting ? 'Logging in...' : 'Login'}
                 </Button>
               </Col>
