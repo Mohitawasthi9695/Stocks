@@ -24,11 +24,9 @@ const AddProduct = () => {
       width: '',
       length: '',
       rack: '',
-      warehouse: '',
       length_unit: '',
       width_unit: '',
-      pcs: '',
-      type: '',
+      pcs: 1,
       quantity: 1
     }
   ]);
@@ -112,11 +110,10 @@ const AddProduct = () => {
         width: '',
         length: '',
         rack: '',
-        warehouse: '',
         length_unit: '',
         width_unit: '',
         type: '',
-        pcs: '',
+        pcs: 1,
         quantity: 1
       }
     ]);
@@ -298,18 +295,16 @@ const AddProduct = () => {
                       <tr className="text-white text-center">
                         <th style={{ width: '150px' }}>Invoice No</th>
                         <th style={{ width: '150px' }}>ProductName</th>
-                        <th style={{ width: '150px' }}>Shade No</th>
+                        <th style={{ width: '200px' }}>Shade No</th>
                         <th style={{ width: '120px' }}>Pur. Shade No</th>
-                        <th style={{ width: '100px' }}>LOT No</th>
+                        <th style={{ width: '150px' }}>LOT No</th>
                         <th style={{ width: '150px' }}>Width</th>
                         <th style={{ width: '150px' }}>Unit</th>
-                        <th style={{ width: '170px' }}>Length</th>
+                        <th style={{ width: '150px' }}>Length</th>
                         <th style={{ width: '150px' }}>Unit</th>
-                        <th style={{ width: '150px' }}>Pcs</th>
+                        <th style={{ width: '120px' }}>Pcs</th>
                         <th style={{ width: '150px' }}>Quantity</th>
-                        <th style={{ width: '120px' }}>Type</th>
-                        <th style={{ width: '190px' }}>Warehouse</th>
-                        <th style={{ width: '120px' }}>Actions</th>
+                        <th style={{ width: '80px' }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -424,31 +419,6 @@ const AddProduct = () => {
                               style={{ fontSize: '0.9rem', height: '3rem' }}
                             />
                           </td>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.type}
-                              onChange={(e) => handleRowChange(index, 'type', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            >
-                              <option value="">Select Type</option>
-                              <option value="roll">Roll</option>
-                              <option value="box">Box</option>
-                            </Form.Control>
-                          </td>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.warehouse}
-                              onChange={(e) => handleRowChange(index, 'warehouse', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            >
-                              <option value="">Select Warehouse</option>
-                              <option value="Dwarka">Dwarka</option>
-                              <option value="Gujarat">Gujarat</option>
-                            </Form.Control>
-                          </td>
-
                           <td>
                             <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
                               <FaTrash />

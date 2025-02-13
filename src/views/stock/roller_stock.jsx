@@ -94,11 +94,6 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Type',
-      selector: (row) => row.type,
-      sortable: true
-    },
-    {
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
@@ -142,12 +137,7 @@ const ShowProduct = () => {
       name: 'Area (sq. ft.)',
       selector: (row) => row.area_sq_ft,
       sortable: true
-    },
-    {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
-      sortable: true
-    },
+    }
   ];
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({

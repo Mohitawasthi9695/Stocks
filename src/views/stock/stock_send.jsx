@@ -295,7 +295,6 @@ const Invoice_out = () => {
     { id: 'width_unit', label: 'W Unit' },
     { id: 'length', label: 'Length' },
     { id: 'length_unit', label: 'L Unit' },
-    { id: 'type', label: 'Type' },
     { id: 'pcs', label: 'Pcs' },
     { id: 'out_quantity', label: 'Quantity' }
   ];
@@ -494,7 +493,6 @@ const Invoice_out = () => {
                                     <td key="length_unit">{row.length_unit}</td>
                                     <td key="width">{row.width}</td>
                                     <td key="width_unit">{row.width_unit}</td>
-                                    <td key="type">{row.type}</td>
                                     <td key="pcs">{row.pcs}</td>
                                     <td key="out_quantity">
                                       <input

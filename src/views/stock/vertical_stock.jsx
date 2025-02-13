@@ -85,18 +85,8 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Type',
-      selector: (row) => row.type,
-      sortable: true
-    },
-    {
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
-      sortable: true
-    },
-    {
-      name: 'Width',
-      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
       sortable: true
     },
     {
@@ -118,12 +108,7 @@ const ShowProduct = () => {
       name: 'Avaible Quantity',
       selector: (row) => row.quantity - row.out_quantity,
       sortable: true,
-    },
-    {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
-      sortable: true,
-    },
+    }
   ];
 
   const exportToCSV = () => {
