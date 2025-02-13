@@ -182,7 +182,7 @@ const AddProduct = () => {
       const errorMessage = error.response?.data?.error || 'Error adding stock';
       toast.error(errorMessage);
     }
-  };
+  };E
 
   const handleSubmit = async (e) => {
     e.preventDefault();
