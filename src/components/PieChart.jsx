@@ -18,7 +18,7 @@ const PieChartData = () => {
 
         // Transform barData to match pie chart format
         const transformedData = response.data.data.map((item) => ({
-          name: item.product_name,
+          name: item.shadeNo,
           value: item.stock_in - item.stock_out, // Use the difference between stock_in and stock_out as an example
         }));
 

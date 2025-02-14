@@ -107,7 +107,26 @@ const ShowProduct = () => {
       name: 'Avaible Pcs',
       selector: (row) => (row.pcs)-(row.out_pcs),
       sortable: true
-    }
+    },
+    {
+      name: 'Status',
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      sortable: true,
+      cell: (row) => (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span
+                  className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                  style={{
+                      padding: '5px 10px',
+                      borderRadius: '8px',
+                      whiteSpace: 'nowrap'
+                  }}
+              >
+                  {row.status === 1 ? 'Approved' : 'Pending'}
+              </span>
+          </div>
+      )
+  },
   ];
 
   const exportToCSV = () => {
