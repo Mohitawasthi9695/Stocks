@@ -90,11 +90,6 @@ const Show_product = () => {
       sortable: true
     },
     {
-      name: 'Type',
-      selector: (row) => row.type,
-      sortable: true
-    },
-    {
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
