@@ -60,8 +60,13 @@ const ShowProduct = () => {
       sortable: true,
     },
     {
-      name: 'Lot No',
-      selector: (row) => row.lot_no,
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
+      name: 'Vendor name',
+      selector: (row) => row.supplier,
       sortable: true
     },
     {
@@ -72,6 +77,11 @@ const ShowProduct = () => {
     {
       name: 'Product Category',
       selector: (row) => row.product_category_name,
+      sortable: true
+    },
+    {
+      name: 'Lot No',
+      selector: (row) => row.lot_no,
       sortable: true
     },
     {
@@ -122,12 +132,13 @@ const ShowProduct = () => {
       'Sr No': index + 1,
       'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
       'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
+      'Vendor' : row.supplier,
       'Lot No': row.lot_no,
-      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      'Date': row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Shade number' : row.shadeNo,
+      // 'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      'Purchase Shade no.' : row.purchase_shade_no,
+      'Invoice No': row.invoice_no,
+      'Date': row.date,
       'Length': row.length,
       'Width': row.width,
       'Unit': row.unit,
