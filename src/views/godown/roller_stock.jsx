@@ -20,7 +20,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/rollerstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -28,7 +28,7 @@ const ShowProduct = () => {
         });
         console.log('stocks data:', response.data);
         const productsWithArea = response.data.map((product) => {
-          const areaM2 = product.length * product.width*product.quantity;
+          const areaM2 = product.length * product.width;
           const areaSqFt = areaM2 * 10.7639;
           return {
             ...product,
@@ -69,13 +69,18 @@ const ShowProduct = () => {
       sortable: true,
     },
     {
+      name: 'Stock Code',
+      selector: (row) => row.stock_code,
+      sortable: true
+    },
+    {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
     },
     {
-      name: 'Invoice no',
-      selector: (row) => row.invoice_no,
+      name: 'GatePass no',
+      selector: (row) => row.gate_pass_no,
       sortable: true
     },
     {
@@ -93,46 +98,8 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    {
-      name: 'Type',
-      selector: (row) => row.type,
-      sortable: true
-    },
-    {
-      name: 'Length',
-      selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
-      sortable: true
-    },
-    {
-      name: 'Width',
-      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
-      sortable: true
-    },
-    {
-      name: 'Quantity',
-      selector: (row) => row.quantity,
-      sortable: true
-    },
-    {
-      name: 'Out Quantity',
-      selector: (row) => row.out_quantity ?? 0,
-      sortable: true
-    },
-    {
-      name: 'Avaible Quantity',
-      selector: (row) => row.quantity - row.out_quantity,
-      sortable: true
-    },
-    {
-      name: 'Total Length',
-      selector: (row) => Number(row.length * row.quantity).toFixed(2),
-      sortable: true
-    },
-    {
-      name: 'Issue Length',
-      selector: (row) => Number(row.length * row.out_quantity).toFixed(2),
-      sortable: true
-    },
+    { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     {
       name: 'Area (m²)',
       selector: (row) => row.area,
@@ -144,9 +111,23 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
-      sortable: true
+        name: 'Status',
+        selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+        sortable: true,
+        cell: (row) => (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span
+                    className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                    style={{
+                        padding: '5px 10px',
+                        borderRadius: '8px',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    {row.status === 1 ? 'Approved' : 'Pending'}
+                </span>
+            </div>
+        )
     },
   ];
   const exportToCSV = () => {

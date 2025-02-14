@@ -133,7 +133,7 @@ const ProductCategory = () => {
         <div className="px-3 py-3">
           <Row className="justify-content-center g-0">
             <Col xs={12} md={8} lg={6}>
-              <div className="d-flex">
+              {/* <div className="d-flex">
                 <input
                   type="text"
                   placeholder="Enter product category"
@@ -160,7 +160,7 @@ const ProductCategory = () => {
                 >
                   <FaPlus size={14} /> Add
                 </Button>
-              </div>
+              </div> */}
             </Col>
           </Row>
         </div>
@@ -209,7 +209,7 @@ const ProductCategory = () => {
                 <tr key={category.id}>
                   <td className="text-center align-middle">{category.id}</td>
                   <td className="text-center align-middle">{category.product_category}</td>
-                  <td className="text-center" style={{ padding: '6px' }}>
+                  {/* <td className="text-center" style={{ padding: "6px" }}>
                     <Button
                       onClick={() => deleteCategory(category.id)}
                       variant="danger"
@@ -224,7 +224,7 @@ const ProductCategory = () => {
                     >
                       <FaTrash size={12} /> Delete
                     </Button>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

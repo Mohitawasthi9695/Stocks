@@ -20,24 +20,15 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/rollerstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownwoodenstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
         console.log('stocks data:', response.data);
-        const productsWithArea = response.data.map((product) => {
-          const areaM2 = product.length * product.width*product.quantity;
-          const areaSqFt = areaM2 * 10.7639;
-          return {
-            ...product,
-            area: areaM2.toFixed(3),
-            area_sq_ft: areaSqFt.toFixed(3)
-          };
-        });
-        setProducts(productsWithArea);
-        setFilteredProducts(productsWithArea);
+        setProducts(response.data);
+        setFilteredProducts(response.data);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -72,10 +63,16 @@ const ShowProduct = () => {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
+    }
+    ,
+    {
+      name: 'Stock Code',
+      selector: (row) => row.stock_code,
+      sortable: true
     },
     {
-      name: 'Invoice no',
-      selector: (row) => row.invoice_no,
+      name: 'GatePass no',
+      selector: (row) => row.gate_pass_no,
       sortable: true
     },
     {
@@ -93,62 +90,26 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
+    { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     {
-      name: 'Type',
-      selector: (row) => row.type,
+      name: 'Pcs',
+      selector: (row) => row.pcs,
       sortable: true
     },
     {
-      name: 'Length',
-      selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
+      name: 'Sold Pcs',
+      selector: (row) => row.out_pcs,
       sortable: true
     },
+    ,
     {
-      name: 'Width',
-      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
+      name: 'Avaible Pcs',
+      selector: (row) => (row.pcs)-(row.out_pcs),
       sortable: true
-    },
-    {
-      name: 'Quantity',
-      selector: (row) => row.quantity,
-      sortable: true
-    },
-    {
-      name: 'Out Quantity',
-      selector: (row) => row.out_quantity ?? 0,
-      sortable: true
-    },
-    {
-      name: 'Avaible Quantity',
-      selector: (row) => row.quantity - row.out_quantity,
-      sortable: true
-    },
-    {
-      name: 'Total Length',
-      selector: (row) => Number(row.length * row.quantity).toFixed(2),
-      sortable: true
-    },
-    {
-      name: 'Issue Length',
-      selector: (row) => Number(row.length * row.out_quantity).toFixed(2),
-      sortable: true
-    },
-    {
-      name: 'Area (m²)',
-      selector: (row) => row.area,
-      sortable: true
-    },
-    {
-      name: 'Area (sq. ft.)',
-      selector: (row) => row.area_sq_ft,
-      sortable: true
-    },
-    {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
-      sortable: true
-    },
+    }
   ];
+
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
       'Sr No': index + 1,
@@ -163,16 +124,15 @@ const ShowProduct = () => {
       'Length': row.length,
       'Width': row.width,
       'Unit': row.unit,
-      'Area (m²)': row.area,
-      'Area (sq. ft.)': row.area_sq_ft
     }));
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
+
   const exportToPDF = () => {
     const doc = new jsPDF();
-    doc.text('stocks List', 20, 10);
+    doc.text('Stocks List', 20, 10);
     doc.autoTable({
       head: [
         [
@@ -187,10 +147,8 @@ const ShowProduct = () => {
           'Length',
           'Width',
           'Unit',
-          'Area (m²)',
-          'Area (sq. ft.)',
-          'Warehouse'
-        ]
+          'Warehouse',
+        ],
       ],
       body: filteredProducts.map((row, index) => [
         index + 1,
@@ -204,10 +162,8 @@ const ShowProduct = () => {
         row.length,
         row.width,
         row.unit,
-        row.area,
-        row.area_sq_ft,
-        row.Warehouse
-      ])
+        row.warehouse,
+      ]),
     });
     doc.save('stocks_list.pdf');
   };
@@ -225,7 +181,7 @@ const ShowProduct = () => {
         color: '#fff',
         fontSize: '18px',
         fontWeight: 'bold',
-        padding: '15px',
+        padding: '10px',
         borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
       },
     },
@@ -247,7 +203,7 @@ const ShowProduct = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '15px',
+        padding: '10px',
         borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
       },
       lastCell: {
@@ -288,7 +244,6 @@ const ShowProduct = () => {
     },
   };
 
-
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -300,18 +255,15 @@ const ShowProduct = () => {
             value={searchQuery}
             onChange={handleSearch}
             className="form-control"
-            style={{ borderRadius: '5px' }}
           />
         </div>
         <div className="col-md-8">
           <div className="d-flex justify-content-end">
-            <button type="button" className="btn btn-info" onClick={exportToCSV}>
-              <FaFileCsv className="w-5 h-5 me-1" />
-              Export as CSV
+            <button className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" /> Export as CSV
             </button>
-            <button type="button" className="btn btn-info" onClick={exportToPDF}>
-              <AiOutlineFilePdf className="w-5 h-5 me-1" />
-              Export as PDF
+            <button className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" /> Export as PDF
             </button>
           </div>
         </div>
@@ -319,30 +271,16 @@ const ShowProduct = () => {
       <div className="row">
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
-
             {loading ? (
-              <div>
-                {[...Array(8)].map((_, index) => (
-                  <div key={index} style={{ display: 'flex', gap: '10px', padding: '10px' }}>
-                    <Skeleton width={50} height={20} />
-                    <Skeleton width={200} height={20} />
-                    <Skeleton width={200} height={20} />
-                  </div>
-                ))}
-              </div>
+              <Skeleton count={10} />
             ) : (
-              <div className="card-body p-0">
-                <DataTable
-                  columns={columns}
-                  data={filteredProducts}
-                  pagination
-                  highlightOnHover
-                  striped
-                  responsive
-                  customStyles={customStyles}
-                  defaultSortFieldId={1}
-                />
-              </div>
+              <DataTable
+                columns={columns}
+                data={filteredProducts}
+                pagination
+                highlightOnHover
+                customStyles={customStyles}
+              />
             )}
           </div>
         </div>

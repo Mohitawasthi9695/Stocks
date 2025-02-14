@@ -23,14 +23,14 @@ const Index = () => {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godown`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     }
                 });
                 console.log(response.data);
-                const invoicesDetails = response.data.data;
+                const invoicesDetails = response.data;
                 console.log(invoicesDetails);
                 setInvoiceAllDetails(invoicesDetails);
                 setInvoices(invoicesDetails);
@@ -57,7 +57,7 @@ const Index = () => {
         },
         {
             name: 'Product Category',
-            selector: (row) => row.product_category,
+            selector: (row) => row.product_category_name,
             sortable: true,
         },
         {
@@ -67,7 +67,7 @@ const Index = () => {
         },
         {
             name: 'Shade No',
-            selector: (row) => row.shade_no,
+            selector: (row) => row.shadeNo,
             sortable: true,
         },
         {
@@ -84,12 +84,12 @@ const Index = () => {
         { name: "Width", selector: (row) => `${Number(row.width).toFixed(2)}  ${row.width_unit}`, sortable: true },
         {
             name: 'Avaible Length',
-            selector: (row) =>`${Number(row.available_height).toFixed(2)}  ${row.length_unit}`,
+            selector: (row) =>`${Number(row.available_length).toFixed(2)}  ${row.length_unit}`,
             sortable: true
         },
         {
             name: 'Total Area (sq. ft.)',
-            selector: (row) => row.total_area_sq,
+            selector: (row) => row.total_area_sq_ft,
             sortable: true
         },
         {
@@ -99,12 +99,12 @@ const Index = () => {
         },
         {
             name: 'Total Area (m²)',
-            selector: (row) => row.total_area,
+            selector: (row) => row.total_area_m2,
             sortable: true
         },
         {
             name: 'Area (m²)',
-            selector: (row) => row.area,
+            selector: (row) => row.area_m2,
             sortable: true
         },
         {

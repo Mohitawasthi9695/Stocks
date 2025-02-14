@@ -408,6 +408,50 @@ const menuItems = {
       ]
     },
     {
+      id: 'godownStock',
+      title: 'Godown Stocks',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+            {
+              id: 'all_stocks',
+              title: 'Stocks',
+              icon: 'feather icon-clipboard',
+              type: 'collapse',
+              children: [
+                {
+                  id: 'roller_stock',
+                  title: 'Roller Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/godown/roller_stock',
+                },
+                {
+                  id: 'wooden_stock',
+                  title: 'Wooden Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/godown/wooden_stock',
+                },
+                {
+                  id: 'vertical_stock',
+                  title: 'Vertical Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/godown/vertical_stock',
+                },
+                {
+                  id: 'honeycomb_stock',
+                  title: 'HoneyComb Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/godown/honeycomb_stock',
+                },
+          ]
+        }
+      ]
+    },
+    {
       id: 'Warehouse_Accessories',
       title: 'Warehouse Accessories',
       type: 'group',
