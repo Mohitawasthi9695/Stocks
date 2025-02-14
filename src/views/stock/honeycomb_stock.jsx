@@ -113,12 +113,7 @@ const ShowProduct = () => {
       name: 'Avaible Quantity',
       selector: (row) => row.quantity - row.out_quantity,
       sortable: true,
-    },
-    {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
-      sortable: true,
-    },
+    }
   ];
 
   const exportToCSV = () => {

@@ -89,6 +89,7 @@ const ShowProduct = () => {
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
     },
+    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     {
       name: 'Pcs',
       selector: (row) => row.pcs,
