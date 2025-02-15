@@ -70,13 +70,19 @@ const Index = () => {
 
   const columns = [
     {
-      name: 'Invoice Number',
-      selector: (row) => row.invoice_no,
+      name: 'Date',
+      selector: (row) => new Date(row.date).toLocaleDateString('en-GB'), // Format: DD/MM/YYYY
       sortable: true
     },
+    
     {
       name: 'Supplier Name',
       selector: (row) => row.supplier_name,
+      sortable: true
+    },
+    {
+      name: 'Invoice Number',
+      selector: (row) => row.invoice_no,
       sortable: true
     },
     {
@@ -84,11 +90,7 @@ const Index = () => {
       selector: (row) => row.agent,
       sortable: true
     },
-    {
-      name: 'Date',
-      selector: (row) => row.date,
-      sortable: true
-    },
+    
     {
       name: 'Total Amount',
       selector: (row) => row.total_amount,
