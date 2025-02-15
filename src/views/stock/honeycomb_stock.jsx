@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
@@ -85,11 +84,6 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Type',
-      selector: (row) => row.type,
-      sortable: true
-    },
-    {
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
@@ -117,11 +111,6 @@ const ShowProduct = () => {
     {
       name: 'Avaible Quantity',
       selector: (row) => row.quantity - row.out_quantity,
-      sortable: true,
-    },
-    {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
       sortable: true,
     },
   ];
@@ -163,7 +152,6 @@ const ShowProduct = () => {
           'Length',
           'Width',
           'Unit',
-          'Warehouse',
         ],
       ],
       body: filteredProducts.map((row, index) => [
@@ -178,7 +166,7 @@ const ShowProduct = () => {
         row.length,
         row.width,
         row.unit,
-        row.warehouse,
+        // row.warehouse,
       ]),
     });
     doc.save('stocks_list.pdf');

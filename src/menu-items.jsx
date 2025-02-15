@@ -197,7 +197,7 @@ const menuItems = {
               title: 'Warehouse Accessories',
               type: 'item',
               url: '/warehouse_accessories',
-              icon: 'feather icon-package',
+              icon: 'feather icon-package'
             }
           ]
         }
@@ -215,7 +215,7 @@ const menuItems = {
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
-             {
+            {
               id: 'add_invoice',
               title: 'Add Invoice',
               icon: 'feather icon-file-plus',
@@ -413,40 +413,40 @@ const menuItems = {
       type: 'group',
       icon: 'icon-ui',
       children: [
+        {
+          id: 'all_stocks',
+          title: 'Stocks',
+          icon: 'feather icon-clipboard',
+          type: 'collapse',
+          children: [
             {
-              id: 'all_stocks',
-              title: 'Stocks',
-              icon: 'feather icon-clipboard',
-              type: 'collapse',
-              children: [
-                {
-                  id: 'roller_stock',
-                  title: 'Roller Stocks',
-                  icon: 'feather icon-list',
-                  type: 'item',
-                  url: '/godown/roller_stock',
-                },
-                {
-                  id: 'wooden_stock',
-                  title: 'Wooden Stocks',
-                  icon: 'feather icon-list',
-                  type: 'item',
-                  url: '/godown/wooden_stock',
-                },
-                {
-                  id: 'vertical_stock',
-                  title: 'Vertical Stocks',
-                  icon: 'feather icon-list',
-                  type: 'item',
-                  url: '/godown/vertical_stock',
-                },
-                {
-                  id: 'honeycomb_stock',
-                  title: 'HoneyComb Stocks',
-                  icon: 'feather icon-list',
-                  type: 'item',
-                  url: '/godown/honeycomb_stock',
-                },
+              id: 'roller_stock',
+              title: 'Roller Stocks',
+              icon: 'feather icon-list',
+              type: 'item',
+              url: '/godown/roller_stock'
+            },
+            {
+              id: 'wooden_stock',
+              title: 'Wooden Stocks',
+              icon: 'feather icon-list',
+              type: 'item',
+              url: '/godown/wooden_stock'
+            },
+            {
+              id: 'vertical_stock',
+              title: 'Vertical Stocks',
+              icon: 'feather icon-list',
+              type: 'item',
+              url: '/godown/vertical_stock'
+            },
+            {
+              id: 'honeycomb_stock',
+              title: 'HoneyComb Stocks',
+              icon: 'feather icon-list',
+              type: 'item',
+              url: '/godown/honeycomb_stock'
+            }
           ]
         }
       ]
@@ -483,10 +483,6 @@ const menuItems = {
     }
   ]
 };
-
-// Filter the menu items
 const filteredMenuItems = filterMenuItem(menuItems);
 
 export default filteredMenuItems;
-
-
