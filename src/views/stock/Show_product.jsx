@@ -65,6 +65,11 @@ const Show_product = () => {
       sortable: true
     },
     {
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true

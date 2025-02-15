@@ -69,6 +69,12 @@ const ShowProduct = () => {
       sortable: true,
     },
     {
+      name: 'Date',
+      selector: (row) => 
+        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
+      sortable: true
+    },
+    {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
