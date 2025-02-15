@@ -27,8 +27,8 @@ const ShowProduct = () => {
           },
         });
         console.log('stocks data:', response.data);
-        setProducts(response.data.data);
-        setFilteredProducts(response.data.data);
+        setProducts(response.data);
+        setFilteredProducts(response.data);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -91,7 +91,7 @@ const ShowProduct = () => {
       sortable: true
     },
     { name: "ToTal Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: "RollLength", selector: (row) => `${row.get_length}  ${row.length_unit}`, sortable: true },
+    { name: "RollLength", selector: (row) => `${row.roll_length?? '_______'}  ${row.length_unit}`, sortable: true },
     {
       name: 'Issue Length',
       selector: (row) => row.out_length ?? 0,
@@ -99,7 +99,12 @@ const ShowProduct = () => {
     },
     {
       name: 'Avaible Quantity',
-      selector: (row) => row.get_length - row.out_length,
+      selector: (row) => row.roll_length - row.out_length,
+      sortable: true,
+    },
+    {
+      name: 'Rack',
+      selector: (row) => row.rack?? '__________',
       sortable: true,
     },
     {

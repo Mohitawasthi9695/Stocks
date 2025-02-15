@@ -10,12 +10,14 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import { FiSave } from 'react-icons/fi';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [rackInputs, setRackInputs] = useState({});
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -29,6 +31,11 @@ const ShowProduct = () => {
         console.log('stocks data:', response.data);
         setProducts(response.data);
         setFilteredProducts(response.data);
+        const initialRackInputs = {};
+        productsWithArea.forEach(product => {
+          initialRackInputs[product.id] = product.rack || '';
+        });
+        setRackInputs(initialRackInputs);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -49,6 +56,38 @@ const ShowProduct = () => {
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 
+  const handleRackChange = (id, value) => {
+    setRackInputs(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+  const handleRackUpdate = async (id) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock/${id}`,
+        { rack: rackInputs[id] },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        const updatedProducts = products.map(product =>
+          product.id === id ? { ...product, rack: rackInputs[id] } : product
+        );
+        setProducts(updatedProducts);
+        setFilteredProducts(updatedProducts);
+        toast.success('Rack updated successfully!');
+      }
+    } catch (error) {
+      console.error('Error updating rack:', error);
+      toast.error('Failed to update rack. Please try again.');
+    }
+  };
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -105,28 +144,51 @@ const ShowProduct = () => {
     ,
     {
       name: 'Avaible Pcs',
-      selector: (row) => (row.pcs)-(row.out_pcs),
+      selector: (row) => (row.pcs) - (row.out_pcs),
       sortable: true
+    },
+    {
+      name: 'Rack',
+      cell: row => (
+        <div className="d-flex align-items-center gap-2">
+          <input
+            type="text"
+            value={rackInputs[row.id] || ''}
+            onChange={(e) => handleRackChange(row.id, e.target.value)}
+            className="form-control form-control-sm"
+            style={{ width: '100px' }}
+          />
+          <button
+            className="btn btn-sm btn-success"
+            onClick={() => handleRackUpdate(row.id)}
+            title="Update Rack"
+          >
+            <FiSave size={16} />
+          </button>
+        </div>
+      ),
+      sortable: false,
+      width: '200px'
     },
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
       cell: (row) => (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span
-                  className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
-                  style={{
-                      padding: '5px 10px',
-                      borderRadius: '8px',
-                      whiteSpace: 'nowrap'
-                  }}
-              >
-                  {row.status === 1 ? 'Approved' : 'Pending'}
-              </span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span
+            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {row.status === 1 ? 'Approved' : 'Pending'}
+          </span>
+        </div>
       )
-  },
+    },
   ];
 
   const exportToCSV = () => {

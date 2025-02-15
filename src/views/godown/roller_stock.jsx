@@ -6,16 +6,19 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import axios from 'axios';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
+import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import { FiSave } from 'react-icons/fi';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [rackInputs, setRackInputs] = useState({});
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -38,6 +41,11 @@ const ShowProduct = () => {
         });
         setProducts(productsWithArea);
         setFilteredProducts(productsWithArea);
+        const initialRackInputs = {};
+        productsWithArea.forEach(product => {
+          initialRackInputs[product.id] = product.rack || '';
+        });
+        setRackInputs(initialRackInputs);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -61,7 +69,37 @@ const ShowProduct = () => {
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
+  const handleRackChange = (id, value) => {
+    setRackInputs(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+  const handleRackUpdate = async (id) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock/${id}`,
+        { rack: rackInputs[id] },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
+      if (response.status === 200) {
+        const updatedProducts = products.map(product =>
+          product.id === id ? { ...product, rack: rackInputs[id] } : product
+        );
+        setProducts(updatedProducts);
+        toast.success('Rack updated successfully!');
+      }
+    } catch (error) {
+      console.error('Error updating rack:', error);
+      toast.error('Failed to update rack. Please try again.');
+    }
+  };
   const columns = [
     {
       name: 'Sr No',
@@ -98,8 +136,9 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: "Total Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: "Length", selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Area (m²)',
       selector: (row) => row.area,
@@ -111,23 +150,46 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-        name: 'Status',
-        selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
-        sortable: true,
-        cell: (row) => (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span
-                    className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
-                    style={{
-                        padding: '5px 10px',
-                        borderRadius: '8px',
-                        whiteSpace: 'nowrap'
-                    }}
-                >
-                    {row.status === 1 ? 'Approved' : 'Pending'}
-                </span>
-            </div>
-        )
+      name: 'Rack',
+      cell: row => (
+        <div className="d-flex align-items-center gap-2">
+          <input
+            type="text"
+            value={rackInputs[row.id] || ''}
+            onChange={(e) => handleRackChange(row.id, e.target.value)}
+            className="form-control form-control-sm"
+            style={{ width: '100px' }}
+          />
+          <button
+            className="btn btn-sm btn-success"
+            onClick={() => handleRackUpdate(row.id)}
+            title="Update Rack"
+          >
+            <FiSave size={16} />
+          </button>
+        </div>
+      ),
+      sortable: false,
+      width: '200px'
+    },
+    {
+      name: 'Status',
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      sortable: true,
+      cell: (row) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span
+            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {row.status === 1 ? 'Approved' : 'Pending'}
+          </span>
+        </div>
+      )
     },
   ];
   const exportToCSV = () => {
