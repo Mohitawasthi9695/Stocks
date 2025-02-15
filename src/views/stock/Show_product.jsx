@@ -70,6 +70,11 @@ const Show_product = () => {
       sortable: true
     },
     {
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
       name: 'Invoice no',
       selector: (row) => row.invoice_no,
       sortable: true
