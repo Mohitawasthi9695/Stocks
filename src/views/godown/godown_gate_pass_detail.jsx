@@ -85,7 +85,7 @@ const Show_product = () => {
   };
 
   const navigate = useNavigate();
-
+  const unitText = '4 feet';
   const columns = [
     { name: "Sr No", selector: (_, index) => index + 1, sortable: true },
     { name: "Gate Pass No", selector: (row) => row.gate_pass_no, sortable: true },
@@ -94,6 +94,7 @@ const Show_product = () => {
     { name: "Lot No", selector: (row) => row.lot_no, sortable: true },
     { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    // { name: "Width", selector: (row) => `  ${unitText}`, sortable: true },
     { name: "Pcs", selector: (row) => row.pcs??1, sortable: true },
     { name: "Quantity", selector: (row) => row.quantity, sortable: true },
   ];
@@ -167,7 +168,7 @@ const Show_product = () => {
       toast.error('Failed to delete Product');
     }
   };
-
+  
   const customStyles = {
     header: {
       style: {

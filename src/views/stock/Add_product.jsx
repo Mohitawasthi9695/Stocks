@@ -23,6 +23,7 @@ const AddProduct = () => {
       purchase_shadeNo: '',
       width: '',
       length: '',
+      date: '',
       rack: '',
       length_unit: '',
       width_unit: '',
@@ -54,8 +55,8 @@ const AddProduct = () => {
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
       updatedItems[index].product_category_id = categoryId;
-      updatedItems[index].product_id = ''; 
-      updatedItems[index].purchase_shadeNo = ''; 
+      updatedItems[index].product_id = '';
+      updatedItems[index].purchase_shadeNo = '';
       return updatedItems;
     });
 
@@ -70,7 +71,7 @@ const AddProduct = () => {
         // Update only the products list for the specific row
         setItems((prevItems) => {
           const updatedItems = [...prevItems];
-          updatedItems[index].products = response.data.data; 
+          updatedItems[index].products = response.data.data;
           return updatedItems;
         });
       } catch (error) {
@@ -109,6 +110,7 @@ const AddProduct = () => {
         purchase_shadeNo: '',
         width: '',
         length: '',
+        date: '',
         rack: '',
         length_unit: '',
         width_unit: '',
@@ -127,10 +129,10 @@ const AddProduct = () => {
   const handleRowChange = (index, field, value) => {
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
-      if (field === "product_id") {
+      if (field === 'product_id') {
         const selectedProduct = updatedItems[index].products.find((product) => product.id === parseInt(value));
         updatedItems[index].product_id = value;
-        updatedItems[index].purchase_shadeNo = selectedProduct ? selectedProduct.purchase_shade_no : "";
+        updatedItems[index].purchase_shadeNo = selectedProduct ? selectedProduct.purchase_shade_no : '';
       } else {
         updatedItems[index][field] = value;
       }
@@ -228,6 +230,16 @@ const AddProduct = () => {
     }
   };
 
+  // handle date
+  const handleDateChange = (event, index) => {
+    const newDate = event.target.value;
+    setItems((prevItems) => {
+      const updatedItems = [...prevItems];
+      updatedItems[index].date = newDate; // Update the date field
+      return updatedItems;
+    });
+  };
+
   return (
     <Container fluid className="pt-4 px-2" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center">
@@ -297,6 +309,7 @@ const AddProduct = () => {
                         <th style={{ width: '150px' }}>ProductName</th>
                         <th style={{ width: '200px' }}>Shade No</th>
                         <th style={{ width: '120px' }}>Pur. Shade No</th>
+                        <th style={{ width: '150px' }}>Date</th>
                         <th style={{ width: '150px' }}>LOT No</th>
                         <th style={{ width: '150px' }}>Width</th>
                         <th style={{ width: '150px' }}>Unit</th>
@@ -350,6 +363,15 @@ const AddProduct = () => {
                               value={item.purchase_shadeNo}
                               disabled
                               style={{ fontSize: '0.9rem', height: '3rem' }}
+                            />
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="date"
+                              value={item.date}
+                              className="form-control px-2"
+                              style={{ width: '8rem', color: 'black' }}
+                              onChange={(e) => handleDateChange(e, index)} // Add this function
                             />
                           </td>
                           <td>

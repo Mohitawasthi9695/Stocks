@@ -210,10 +210,17 @@ const Add_inoice = () => {
                     />
                     <FormField
                       icon={FaPercentage}
-                      label="CGST(%)"
+                      label="SGST(%)"
                       name="sgst_percentage"
                       value={formData.sgst_percentage}
                       onChange={handleChange}
+                    />
+                    <FormField
+                      icon={FaPercentage}
+                      label="IGST(%)"
+                      name="igst_percentage"
+                      // value={formData.sgst_percentage}
+                      // onChange={handleChange}
                     />
                   </Col>
                 </Row>
