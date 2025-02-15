@@ -18,7 +18,7 @@ const AddProduct = () => {
     {
       invoice_no: no,
       lot_no: '',
-      product_category_id: '',
+      product_category_id:'',
       product_id: '',
       purchase_shadeNo: '',
       width: '',
@@ -27,7 +27,7 @@ const AddProduct = () => {
       rack: '',
       length_unit: '',
       width_unit: '',
-      pcs: 1,
+      pcs: '',
       quantity: 1
     }
   ]);
@@ -112,10 +112,11 @@ const AddProduct = () => {
         length: '',
         date: '',
         rack: '',
+        // warehouse: '',
         length_unit: '',
         width_unit: '',
-        type: '',
-        pcs: 1,
+        // type: '',
+        pcs: '',
         quantity: 1
       }
     ]);
@@ -317,7 +318,7 @@ const AddProduct = () => {
                         <th style={{ width: '150px' }}>Unit</th>
                         <th style={{ width: '120px' }}>Pcs</th>
                         <th style={{ width: '150px' }}>Quantity</th>
-                        <th style={{ width: '80px' }}>Actions</th>
+                        <th style={{ width: '120px' }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>

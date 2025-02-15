@@ -7,7 +7,7 @@ import { FaUser, FaUserPlus, FaTrash, FaPlus } from 'react-icons/fa';
 import Skeleton from 'react-loading-skeleton';
 import DataTable from 'react-data-table-component';
 import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
-
+import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
 import {
   FaFileInvoice,
@@ -209,6 +209,22 @@ const Invoice_out = () => {
  
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const result = await Swal.fire({
+      title : 'Are you sure?',
+      text : 'Do you want to create new Invoice?',
+      icon : 'question',
+      showCancelButton : 'true',
+      cancelButtonColor : '#d33',
+      confirmButtonColor : '#20B2AA',
+      confirmButtonText : 'Yes, create it!'
+    })
+
+
+    if(result.isConfirmed){
+      return;
+    }
+
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
         headers: {

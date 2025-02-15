@@ -94,7 +94,7 @@ const SuppliersPage = () => {
   const columns = [
     {
       name: 'Sr No',
-      selector: (_, index) => index + 1,
+      selector: (_, index) => (index < 10 ? index + 1 : 'Max 10000'),
       sortable: true,
     },
     {
