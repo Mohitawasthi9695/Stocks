@@ -72,6 +72,11 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
       name: 'Shade no',
       selector: (row) => row.shadeNo,
       sortable: true
@@ -254,17 +259,17 @@ const ShowProduct = () => {
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {loading ? (
               <Skeleton count={10} />
-            ) : 
-            (
-              <>
-                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles}/>
-                {searchQuery && (
-                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
-                    Total Boxes: {totalBoxes}
-                  </div>
-                )}
-              </>
-            )
+            ) :
+              (
+                <>
+                  <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+                  {searchQuery && (
+                    <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                      Total Boxes: {totalBoxes}
+                    </div>
+                  )}
+                </>
+              )
             }
           </div>
         </div>
