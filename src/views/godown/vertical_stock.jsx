@@ -39,15 +39,13 @@ const ShowProduct = () => {
     fetchStocksData();
   }, []);
 
-  useEffect(() => {
-    const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
-        .some((value) => value.includes(lowercasedQuery))
-    );
-    setFilteredProducts(filtered);
-  }, [searchQuery, products]);
+ useEffect(() => {
+     const lowercasedQuery = searchQuery.toLowerCase();
+     const filtered = products.filter((product) =>
+       Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
+     );
+     setFilteredProducts(filtered);
+   }, [searchQuery, products]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -261,6 +259,7 @@ const ShowProduct = () => {
       },
     },
   };
+  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -292,6 +291,7 @@ const ShowProduct = () => {
             {loading ? (
               <Skeleton count={10} />
             ) : (
+              <>
               <DataTable
                 columns={columns}
                 data={filteredProducts}
@@ -299,6 +299,12 @@ const ShowProduct = () => {
                 highlightOnHover
                 customStyles={customStyles}
               />
+              {searchQuery && (
+                <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                  Total Boxes: {totalBoxes}
+                </div>
+              )}
+              </>
             )}
           </div>
         </div>
