@@ -90,11 +90,6 @@ const Show_product = () => {
       sortable: true
     },
     {
-      name: 'Type',
-      selector: (row) => row.type,
-      sortable: true
-    },
-    {
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
@@ -185,6 +180,12 @@ const Show_product = () => {
   };
 
   const customStyles = {
+    table: {
+      style: {
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0 // Removes spacing between cells
+      }
+    },
     header: {
       style: {
         backgroundColor: '#2E8B57',
@@ -192,7 +193,7 @@ const Show_product = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px'
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
       }
     },
     rows: {
@@ -213,20 +214,21 @@ const Show_product = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '20px'
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
+      },
+      lastCell: {
+        style: {
+          borderRight: 'none' // Removes border for the last cell
+        }
       }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '15px'
-      }
-    },
-    footer: {
-      style: {
-        fontWeight: 'bold',
-        textAlign: 'right'
+        padding: '12px',
+        borderRight: '1px solid grey' // Vertical lines between cells
       }
     },
     pagination: {
@@ -237,9 +239,17 @@ const Show_product = () => {
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: '#fff',
+        color: 'black', // Makes the arrows white
+        border: 'none',
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)'
+        },
+        '& svg': {
+          fill: 'white'
+        },
+        '&:focus': {
+          outline: 'none',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
         }
       }
     }

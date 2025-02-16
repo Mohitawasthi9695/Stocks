@@ -296,14 +296,14 @@ const AddProduct = () => {
                       <tr className="text-white text-center">
                         <th style={{ width: '150px' }}>Invoice No</th>
                         <th style={{ width: '150px' }}>ProductName</th>
-                        <th style={{ width: '150px' }}>Shade No</th>
+                        <th style={{ width: '200px' }}>Shade No</th>
                         <th style={{ width: '120px' }}>Pur. Shade No</th>
-                        <th style={{ width: '100px' }}>LOT No</th>
+                        <th style={{ width: '150px' }}>LOT No</th>
                         <th style={{ width: '150px' }}>Width</th>
                         <th style={{ width: '150px' }}>Unit</th>
-                        <th style={{ width: '170px' }}>Length</th>
+                        <th style={{ width: '150px' }}>Length</th>
                         <th style={{ width: '150px' }}>Unit</th>
-                        <th style={{ width: '150px' }}>Pcs</th>
+                        <th style={{ width: '120px' }}>Pcs</th>
                         <th style={{ width: '150px' }}>Quantity</th>
                         <th style={{ width: '120px' }}>Actions</th>
                       </tr>

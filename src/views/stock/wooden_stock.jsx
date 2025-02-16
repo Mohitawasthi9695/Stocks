@@ -41,9 +41,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
-        .some((value) => value.includes(lowercasedQuery))
+      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -59,8 +57,13 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'Lot No',
-      selector: (row) => row.lot_no,
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
+      name: 'Vendor name',
+      selector: (row) => row.supplier,
       sortable: true
     },
     {
@@ -71,6 +74,11 @@ const ShowProduct = () => {
     {
       name: 'Product Category',
       selector: (row) => row.product_category_name,
+      sortable: true
+    },
+    {
+      name: 'Lot No',
+      selector: (row) => row.lot_no,
       sortable: true
     },
     {
@@ -120,6 +128,7 @@ const ShowProduct = () => {
       'Sr No': index + 1,
       'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
       'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
+      Vendor: row.supplier,
       'Lot No': row.lot_no,
       'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
@@ -233,6 +242,7 @@ const ShowProduct = () => {
       }
     }
   };
+  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -257,7 +267,14 @@ const ShowProduct = () => {
             {loading ? (
               <Skeleton count={10} />
             ) : (
-              <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+              <>
+                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+                {searchQuery && (
+                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                    Total Boxes: {totalBoxes}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

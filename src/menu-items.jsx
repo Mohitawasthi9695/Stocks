@@ -12,6 +12,7 @@ const filterMenuItem = (menu) => {
             [
               'approve_godown',
               'stockout',
+              'godownStock',
               'users',
               'purchaser',
               'GodownAccessories',

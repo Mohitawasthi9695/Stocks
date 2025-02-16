@@ -90,33 +90,42 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: "ToTal Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: "RollLength", selector: (row) => `${row.roll_length?? '_______'}  ${row.length_unit}`, sortable: true },
     {
-      name: 'Pcs',
-      selector: (row) => row.pcs,
-      sortable: true
-    },
-    {
-      name: 'Quantity',
-      selector: (row) => row.quantity,
-      sortable: true,
-    },
-    {
-      name: 'Out Quantity',
-      selector: (row) => row.out_quantity ?? 0,
+      name: 'Issue Length',
+      selector: (row) => row.out_length ?? 0,
       sortable: true,
     },
     {
       name: 'Avaible Quantity',
-      selector: (row) => row.quantity - row.out_quantity,
+      selector: (row) => row.roll_length - row.out_length,
       sortable: true,
     },
     {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
+      name: 'Rack',
+      selector: (row) => row.rack?? '__________',
       sortable: true,
     },
+    {
+      name: 'Status',
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      sortable: true,
+      cell: (row) => (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span
+                  className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                  style={{
+                      padding: '5px 10px',
+                      borderRadius: '8px',
+                      whiteSpace: 'nowrap'
+                  }}
+              >
+                  {row.status === 1 ? 'Approved' : 'Pending'}
+              </span>
+          </div>
+      )
+  },
   ];
 
   const exportToCSV = () => {
