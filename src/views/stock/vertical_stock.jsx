@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
@@ -10,12 +9,14 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedColumns, setSelectedColumns] = useState([]);
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -23,8 +24,8 @@ const ShowProduct = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/verticalstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log('stocks data:', response.data);
         setProducts(response.data);
@@ -53,70 +54,114 @@ const ShowProduct = () => {
     setSearchQuery(e.target.value);
   };
 
-  const columns = [
+  const allColumns = [
     {
+      id: 'sr_no',
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
-    },
-    {
-      name: 'Date',
-      selector: (row) => 
-        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
       sortable: true
     },
     {
+      id: 'date',
+      name: 'Date',
+      selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
+      sortable: true
+    },
+    {
+      id: 'lot_no',
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
     },
     {
+      id: 'invoice_no',
       name: 'Invoice no',
       selector: (row) => row.invoice_no,
       sortable: true
     },
     {
+      id: 'product_category_name',
       name: 'Product Category',
       selector: (row) => row.product_category_name,
       sortable: true
     },
     {
+      id: 'shadeNo',
       name: 'Shade no',
       selector: (row) => row.shadeNo,
       sortable: true
     },
     {
+      id: 'purchase_shade_no',
       name: 'Pur. Shade no',
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
     {
+      id: 'length',
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
     },
-    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     {
-      name: 'Pcs',
-      selector: (row) => row.pcs,
+      id: 'width',
+      name: 'Width',
+      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
       sortable: true
     },
     {
+      id: 'quantity',
       name: 'Quantity',
       selector: (row) => row.quantity,
-      sortable: true,
+      sortable: true
     },
     {
+      id: 'out_quantity',
       name: 'Out Quantity',
       selector: (row) => row.out_quantity ?? 0,
-      sortable: true,
+      sortable: true
     },
     {
-      name: 'Avaible Quantity',
+      id: 'available_quantity',
+      name: 'Available Quantity',
       selector: (row) => row.quantity - row.out_quantity,
-      sortable: true,
+      sortable: true
+    },
+    {
+      id: 'total_length',
+      name: 'Total Length',
+      selector: (row) => Number(row.length * row.quantity).toFixed(2),
+      sortable: true
+    },
+    {
+      id: 'issue_length',
+      name: 'Issue Length',
+      selector: (row) => Number(row.length * row.out_quantity).toFixed(2),
+      sortable: true
+    },
+    {
+      id: 'area',
+      name: 'Area (m²)',
+      selector: (row) => row.area,
+      sortable: true
+    },
+    {
+      id: 'area_sq_ft',
+      name: 'Area (sq. ft.)',
+      selector: (row) => row.area_sq_ft,
+      sortable: true
     }
   ];
+
+  useEffect(() => {
+    setSelectedColumns(allColumns.map((col) => col.id));
+  }, []);
+
+  const filteredColumns = allColumns.filter((col) => selectedColumns.includes(col.id));
+
+  const handleColumnToggle = (columnId) => {
+    setSelectedColumns((prev) => (prev.includes(columnId) ? prev.filter((id) => id !== columnId) : [...prev, columnId]));
+  };
 
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
@@ -126,12 +171,12 @@ const ShowProduct = () => {
       'Lot No': row.lot_no,
       'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      'Date': row.stock_invoice?.date || 'N/A',
+      Date: row.stock_invoice?.date || 'N/A',
       'Shade No': row.stock_product?.shadeNo || 'N/A',
       'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
-      'Length': row.length,
-      'Width': row.width,
-      'Unit': row.unit,
+      Length: row.length,
+      Width: row.width,
+      Unit: row.unit
     }));
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -155,8 +200,8 @@ const ShowProduct = () => {
           'Length',
           'Width',
           'Unit',
-          'Warehouse',
-        ],
+          'Warehouse'
+        ]
       ],
       body: filteredProducts.map((row, index) => [
         index + 1,
@@ -170,8 +215,8 @@ const ShowProduct = () => {
         row.length,
         row.width,
         row.unit,
-        row.warehouse,
-      ]),
+        row.warehouse
+      ])
     });
     doc.save('stocks_list.pdf');
   };
@@ -180,8 +225,8 @@ const ShowProduct = () => {
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
-      },
+        borderSpacing: 0 // Removes spacing between cells
+      }
     },
     header: {
       style: {
@@ -190,8 +235,8 @@ const ShowProduct = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -200,9 +245,9 @@ const ShowProduct = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -212,58 +257,51 @@ const ShowProduct = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
-        },
-      },
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
         '& svg': {
-          fill: 'white',
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
-          <input
-            type="text"
-            placeholder="Search..."
-            id="search"
-            value={searchQuery}
-            onChange={handleSearch}
-            className="form-control"
-          />
+          <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
         </div>
         <div className="col-md-8">
           <div className="d-flex justify-content-end">
@@ -273,6 +311,20 @@ const ShowProduct = () => {
             <button className="btn btn-info" onClick={exportToPDF}>
               <AiOutlineFilePdf className="w-5 h-5 me-1" /> Export as PDF
             </button>
+          </div >
+          <div className="col-md-0 d-flex justify-content-end" >
+          <DropdownButton title="Display Columns" variant="secondary">
+            <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              {allColumns.map((col) => (
+                <Dropdown.Item key={col.id} as="div" onClick={(e) => e.stopPropagation()}>
+                  <label className="d-flex align-items-center" style={{ cursor: 'pointer' }}>
+                    <input type="checkbox" checked={selectedColumns.includes(col.id)} onChange={() => handleColumnToggle(col.id)} />
+                    <span className="ms-2">{col.name}</span>
+                  </label>
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </DropdownButton>
           </div>
         </div>
       </div>
@@ -282,13 +334,7 @@ const ShowProduct = () => {
             {loading ? (
               <Skeleton count={10} />
             ) : (
-              <DataTable
-                columns={columns}
-                data={filteredProducts}
-                pagination
-                highlightOnHover
-                customStyles={customStyles}
-              />
+              <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
             )}
           </div>
         </div>

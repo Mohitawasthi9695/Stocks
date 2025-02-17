@@ -14,8 +14,8 @@ import { text } from 'd3';
 
 const Show_product = () => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -45,16 +45,16 @@ const Show_product = () => {
               stock_code: all_stocks.stock_code,
               width,
               length,
-              pcs:all_stocks.pcs,
+              pcs: all_stocks.pcs,
               quantity: all_stocks.quantity,
               length_unit: all_stocks.length_unit,
               width_unit: all_stocks.width_unit,
               type: all_stocks.type,
-              rack: all_stocks.rack || "N/A",
+              rack: all_stocks.rack || 'N/A'
             };
           })
         );
-       
+
         setProducts(godownData);
         setFilteredProducts(godownData);
       } catch (err) {
@@ -87,16 +87,17 @@ const Show_product = () => {
   const navigate = useNavigate();
   const unitText = '4 feet';
   const columns = [
-    { name: "Sr No", selector: (_, index) => index + 1, sortable: true },
-    { name: "Gate Pass No", selector: (row) => row.gate_pass_no, sortable: true },
-    { name: "Gate Pass Date", selector: (row) => row.gate_pass_date, sortable: true },
-    { name: "Stock Code", selector: (row) => row.stock_code, sortable: true },
-    { name: "Lot No", selector: (row) => row.lot_no, sortable: true },
-    { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
+    { name: 'Gate Pass No', selector: (row) => row.gate_pass_no, sortable: true },
+    { name: 'Gate Pass Date', selector: (row) => row.gate_pass_date, sortable: true },
+    { name: 'Stock Code', selector: (row) => row.stock_code, sortable: true },
+    { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
+    { name: 'Rack No', selector: (row) => row.rack, sortable: true },
+    { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     // { name: "Width", selector: (row) => `  ${unitText}`, sortable: true },
-    { name: "Pcs", selector: (row) => row.pcs??1, sortable: true },
-    { name: "Quantity", selector: (row) => row.quantity, sortable: true },
+    { name: 'Pcs', selector: (row) => row.pcs ?? 1, sortable: true },
+    { name: 'Quantity', selector: (row) => row.quantity, sortable: true }
   ];
 
   const handleEdit = (product) => {
@@ -168,7 +169,7 @@ const Show_product = () => {
       toast.error('Failed to delete Product');
     }
   };
-  
+
   const customStyles = {
     header: {
       style: {
