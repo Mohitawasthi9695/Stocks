@@ -200,7 +200,7 @@ const Index = () => {
   };
 
   const handleAddInvoice = () => {
-    navigate('/add-invoice');
+    navigate('/stockout/godown');
   };
 
   const customStyles = {
@@ -295,7 +295,7 @@ return (
         </div>
         <div className="col-md-8 text-end">
           <Button variant="primary" onClick={handleAddInvoice}>
-            <MdPersonAdd className="me-2" /> Add Invoice
+            <MdPersonAdd className="me-2" /> Add Gate pass
           </Button>
         </div>
       </div>
