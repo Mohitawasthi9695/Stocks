@@ -24,8 +24,8 @@ const ShowProduct = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/woodenstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log('stocks data:', response.data);
         setProducts(response.data);
@@ -318,19 +318,16 @@ const ShowProduct = () => {
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {loading ? (
               <Skeleton count={10} />
-            ) : 
-            (
-              // <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+            ) : (
               <>
-              <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
-              {searchQuery && (
-                <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
-                  Total Boxes: {totalBoxes}
-                </div>
-              )}
-            </>
-            )
-            }
+                <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+                {searchQuery && (
+                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                    Total Boxes: {totalBoxes}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
