@@ -72,23 +72,23 @@ const Index = () => {
       selector: (row) => new Date(row.date).toLocaleDateString('en-GB'), // Format: DD/MM/YYYY
       sortable: true
     },
-    
-    {
-      name: 'Supplier Name',
-      selector: (row) => row.supplier_name,
-      sortable: true
-    },
     {
       name: 'Invoice Number',
       selector: (row) => row.invoice_no,
       sortable: true
     },
     {
+      name: 'Supplier Name',
+      selector: (row) => row.supplier_name,
+      sortable: true
+    },
+
+    {
       name: 'Receiver Name',
       selector: (row) => row.agent,
       sortable: true
     },
-    
+
     {
       name: 'Total Amount',
       selector: (row) => row.total_amount,
@@ -115,13 +115,13 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
-        
+
           <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
             <MdDelete />
           </Button>
         </div>
       ),
-       width: '220px'
+      width: '220px'
     }
   ];
 
@@ -165,7 +165,7 @@ const Index = () => {
       Swal.fire('Error!', 'There was a problem deleting the Invoice.', 'error');
     }
   };
- const handleAddInvoice = () => {
+  const handleAddInvoice = () => {
     navigate('/add-invoice');
   };
 

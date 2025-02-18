@@ -40,7 +40,7 @@ const Invoice_out = () => {
     invoice_no: '',
     date: '',
     customer_id: '',
-    receiver_id: '',
+    company_id: '',
     place_of_supply: '',
     vehicle_no: '',
     station: '',
@@ -186,7 +186,7 @@ const Invoice_out = () => {
   useEffect(() => {
     const fetchReceiverData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/peoples?people_type=Supplier`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/peoples?people_type=Company`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -207,54 +207,76 @@ const Invoice_out = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
- 
+  const handleInputChange = (godown_id, field, value) => {
+    setSelectedRows((prevSelectedRows) => {
+      const updatedRows = prevSelectedRows.map((row) =>
+        row.godown_id === godown_id ? { ...row, [field]: value } : row
+      );
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        out_products: updatedRows
+      }));
+
+      return updatedRows;
+    });
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const result = await Swal.fire({
-      title : 'Are you sure?',
-      text : 'Do you want to create new Invoice?',
-      icon : 'question',
-      showCancelButton : 'true',
-      cancelButtonColor : '#d33',
-      confirmButtonColor : '#20B2AA',
-      confirmButtonText : 'Yes, create it!'
-    })
+      title: 'Are you sure?',
+      text: 'Do you want to create a new Invoice?',
+      icon: 'question',
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#20B2AA',
+      confirmButtonText: 'Yes, create it!',
+    });
 
-
-    if(result.isConfirmed){
-      return;
+    if (!result.isConfirmed) {
+      return; // Stop execution if the user cancels
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         }
-      });
+      );
+
+      console.log(response.data);
       toast.success('Stocks out successfully');
       navigate('/all-invoices-out');
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Error adding user';
+      const errorMessage = error.response?.data?.message || 'Error processing request';
       toast.error(errorMessage);
     }
+
     console.log(formData);
   };
+
 
   const columns = [
     { id: 'product_category', label: 'Product Category' },
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
-    { id: 'product_type', label: 'Type' },
     { id: 'stock_code', label: 'Stock Code' },
-    { id: 'out_width', label: 'Width' },
+    { id: 'width', label: 'Width' },
     { id: 'width_unit', label: 'W Unit' },
-    { id: 'out_length', label: 'Length' },
+    { id: 'length', label: 'Length' },
     { id: 'length_unit', label: 'L Unit' },
-    { id: 'out_quantity', label: 'Quantity' },
-    { id: 'area', label: 'Area' },
+    { id: 'out_pcs', label: 'Pcs' },
+    { id: 'rack', label: 'Rack' },
+
   ];
 
   const handleCheckboxChange = (id) => {
@@ -317,7 +339,7 @@ const Invoice_out = () => {
                       icon={FaUsers}
                       label="Seller"
                       name="receiver_id"
-                      value={formData.receiver_id}
+                      value={formData.company_id}
                       onChange={handleChange}
                       options={receivers}
                       add={'/add-Receiver'}
@@ -556,14 +578,28 @@ const Invoice_out = () => {
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
-                                    <td key="type">{row.product_type}</td>
                                     <td key="stock_code">{row.stock_code}</td>
-                                    <td key="out_width">{row.out_width}</td>
+                                    <td key="width">{row.width}</td>
                                     <td key="width_unit">{row.width_unit}</td>
-                                    <td key="out_length">{row.out_length}</td>
+                                    <td key="length">
+                                      <input
+                                        type="text"
+                                        value={row.length || ''}
+                                        className="py-2"
+                                        onChange={(e) => handleInputChange(row.godown_id, 'length', e.target.value)}
+                                      />
+                                    </td>
                                     <td key="length_unit">{row.length_unit}</td>
-                                    <td key="out_quantity">{row.out_quantity}</td>
-                                    <td key="area">{row.out_length * row.out_width}</td>
+                                    <td key="out_pcs">
+                                      <input
+                                        type="text"
+                                        value={row.out_pcs || 1}
+                                        className="py-2"
+                                        onChange={(e) => handleInputChange(row.godown_id, 'out_pcs', e.target.value)}
+                                      />
+                                    </td>
+                                    <td key="rack">{row.rack}</td>
+
                                     <td key="rate">
                                       <input
                                         type="text"

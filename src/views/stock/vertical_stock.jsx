@@ -21,7 +21,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/verticalstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/getstock/3`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
@@ -62,7 +62,13 @@ const ShowProduct = () => {
     {
       id: 'date',
       name: 'Date',
-      selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
+      selector: (row) => 
+        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
+      sortable: true
+    },
+    {
+      name: 'Stock Code',
+      selector: (row) => row.stock_code,
       sortable: true
     },
     {
@@ -72,7 +78,11 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      id: 'invoice_no',
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
       name: 'Invoice no',
       selector: (row) => row.invoice_no,
       sortable: true

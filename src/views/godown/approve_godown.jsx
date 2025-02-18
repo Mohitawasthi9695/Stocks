@@ -152,9 +152,7 @@ const Index = () => {
               <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
                 <MdCheckCircle />
               </Button>
-              <Button variant="outline-danger" size="sm" onClick={() => handleReject(row.id)}>
-                <MdCancel />
-              </Button>
+              
             </>
           ) : (
             <></>
