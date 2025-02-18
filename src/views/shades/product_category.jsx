@@ -18,8 +18,8 @@ const ProductCategory = () => {
       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products/category`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       });
       setCategories(response.data.data);
     } catch (error) {
@@ -32,6 +32,21 @@ const ProductCategory = () => {
       toast.error('Please enter a category name');
       return;
     }
+
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to create this category?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#20B2AA',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, create it!'
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/products/category`,
@@ -39,16 +54,18 @@ const ProductCategory = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
       const newCat = response.data.data;
       setCategories([...categories, newCat]);
       setNewCategory('');
       toast.success('Category created successfully!');
+      Swal.fire('Created!', 'The category has been added.', 'success');
     } catch (error) {
       toast.error('Error creating category');
+      Swal.fire('Error!', 'Failed to create the category.', 'error');
     }
   };
 
@@ -70,13 +87,13 @@ const ProductCategory = () => {
         await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/products/category/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
 
         // Update state on successful deletion
         setCategories(categories.filter((cat) => cat.id !== id));
-        
+
         // Show success messages
         toast.success('Category deleted successfully');
         Swal.fire('Deleted!', 'The category has been deleted.', 'success');
@@ -101,12 +118,14 @@ const ProductCategory = () => {
     <Container fluid className="p-3">
       <div className="card shadow-sm border-0">
         {/* Header */}
-        <div style={{
-          backgroundColor: "#20B2AA",
-          padding: "12px",
-          borderTopLeftRadius: "4px",
-          borderTopRightRadius: "4px",
-        }}>
+        <div
+          style={{
+            backgroundColor: '#20B2AA',
+            padding: '12px',
+            borderTopLeftRadius: '4px',
+            borderTopRightRadius: '4px'
+          }}
+        >
           <h4 className="text-white text-center m-0">Product Category</h4>
         </div>
 
@@ -122,21 +141,21 @@ const ProductCategory = () => {
                   onChange={(e) => setNewCategory(e.target.value)}
                   className="form-control"
                   style={{
-                    height: "38px",
-                    borderRadius: "4px 0 0 4px",
+                    height: '38px',
+                    borderRadius: '4px 0 0 4px'
                   }}
                 />
-                <Button 
+                <Button
                   onClick={createCategory}
                   variant="success"
                   style={{
-                    borderRadius: "0 4px 4px 0",
-                    backgroundColor: "#20B2AA",
-                    border: "none",
-                    height: "38px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px"
+                    borderRadius: '0 4px 4px 0',
+                    backgroundColor: '#20B2AA',
+                    border: 'none',
+                    height: '38px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px'
                   }}
                 >
                   <FaPlus size={14} /> Add
@@ -151,26 +170,38 @@ const ProductCategory = () => {
           <Table hover bordered className="mb-0">
             <thead>
               <tr>
-                <th className="text-center" 
-                    style={{
-                      backgroundColor: "#20B2AA",
-                      color: "white",
-                      width: "80px",
-                      padding: "10px"
-                    }}>ID</th>
-                <th className="text-center" 
-                    style={{
-                      backgroundColor: "#20B2AA",
-                      color: "white",
-                      padding: "10px"
-                    }}>Category Name</th>
-                {/* <th className="text-center" 
-                    style={{
-                      backgroundColor: "#20B2AA",
-                      color: "white",
-                      width: "120px",
-                      padding: "10px"
-                    }}>Actions</th> */}
+                <th
+                  className="text-center"
+                  style={{
+                    backgroundColor: '#20B2AA',
+                    color: 'white',
+                    width: '80px',
+                    padding: '10px'
+                  }}
+                >
+                  ID
+                </th>
+                <th
+                  className="text-center"
+                  style={{
+                    backgroundColor: '#20B2AA',
+                    color: 'white',
+                    padding: '10px'
+                  }}
+                >
+                  Category Name
+                </th>
+                <th
+                  className="text-center"
+                  style={{
+                    backgroundColor: '#20B2AA',
+                    color: 'white',
+                    width: '120px',
+                    padding: '10px'
+                  }}
+                >
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -184,11 +215,11 @@ const ProductCategory = () => {
                       variant="danger"
                       size="sm"
                       style={{
-                        padding: "4px 8px",
-                        fontSize: "14px",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "5px"
+                        padding: '4px 8px',
+                        fontSize: '14px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px'
                       }}
                     >
                       <FaTrash size={12} /> Delete

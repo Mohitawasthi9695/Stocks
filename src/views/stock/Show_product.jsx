@@ -125,6 +125,34 @@ const Show_product = () => {
       )
     }
   ];
+  const handleEdit = (product) => {
+    setSelectedProduct(product);
+    setShowEditModal(true);
+  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value
+    }));
+  };
+  const handleUpdateProduct = async () => {
+    try {
+      console.log(selectedProduct);
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/${selectedProduct.id}`, selectedProduct, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      console.log(response.data);
+      setProducts((prevProducts) => prevProducts.map((products) => (products.id === selectedProduct.id ? selectedProduct : products)));
+      toast.success('Product updated successfully!');
+      setShowEditModal(false);
+    } catch (error) {
+      toast.error('Error updating Product!');
+    }
+  };
+
   const handleDelete = async (productId) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -157,6 +185,12 @@ const Show_product = () => {
   };
 
   const customStyles = {
+    table: {
+      style: {
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0 // Removes spacing between cells
+      }
+    },
     header: {
       style: {
         backgroundColor: '#2E8B57',
@@ -164,7 +198,7 @@ const Show_product = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 8px 8px'
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
       }
     },
     rows: {
@@ -185,20 +219,21 @@ const Show_product = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '20px'
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
+      },
+      lastCell: {
+        style: {
+          borderRight: 'none' // Removes border for the last cell
+        }
       }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
-        padding: '15px'
-      }
-    },
-    footer: {
-      style: {
-        fontWeight: 'bold',
-        textAlign: 'right'
+        padding: '12px',
+        borderRight: '1px solid grey' // Vertical lines between cells
       }
     },
     pagination: {
@@ -209,9 +244,17 @@ const Show_product = () => {
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: '#fff',
+        color: 'black', // Makes the arrows white
+        border: 'none',
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)'
+        },
+        '& svg': {
+          fill: 'white'
+        },
+        '&:focus': {
+          outline: 'none',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
         }
       }
     }
@@ -265,8 +308,45 @@ const Show_product = () => {
           </div>
         </div>
       </div>
+      {/* Edit Product Modal */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Lot Number</Form.Label>
+              <Form.Control type="text" name="lot_no" value={selectedProduct?.lot_no || ''} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Length</Form.Label>
+              <Form.Control type="number" step="0.01" name="length" value={selectedProduct?.length || ''} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Width</Form.Label>
+              <Form.Control type="number" step="0.01" name="width" value={selectedProduct?.width || ''} onChange={handleChange} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Unit</Form.Label>
+              <Form.Control type="read-only" name="unit" value={selectedProduct?.unit || ''} disabled={true} />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Type</Form.Label>
+              <Form.Control type="text" name="type" value={selectedProduct?.type || ''} onChange={handleChange} />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleUpdateProduct}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
-
   );
 };
 

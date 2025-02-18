@@ -69,6 +69,18 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/calculator_vertical',
+        element: lazy(() => import('./calculator/calculator_vertical')),
+        allowedRoles:  ['superadmin','admin','supervisor', ,'sub_supervisor','operator']
+      },
+      {
+        exact: 'true',
+        path: '/wooden',
+        element: lazy(() => import('./calculator/wooden')),
+        allowedRoles:  ['superadmin','admin','supervisor', ,'sub_supervisor','operator']
+      },
+      {
+        exact: 'true',
         path: '/users',
         element: lazy(() => import('./views/users/Index')),
         allowedRoles:  ['superadmin','admin']
@@ -113,7 +125,7 @@ const routes = [
         exact: 'true',
         path: '/customers',
         element: lazy(() => import('./views/customer/Index')),
-        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
+        allowedRoles:  ['superadmin', 'admin',,'supervisor','operator']
       },
       {
         exact: 'true',
@@ -352,6 +364,12 @@ const routes = [
         exact: 'true',
         path: '/show-gatepass_details/:id',
         element: lazy(() => import('./views/godown/godown_gate_pass_detail')),
+        allowedRoles:  ['superadmin','admin', 'supervisor','sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/contexts',
+        element: lazy(() => import('./menuitems')),
         allowedRoles:  ['superadmin','admin', 'supervisor','sub_supervisor']
       },
       {

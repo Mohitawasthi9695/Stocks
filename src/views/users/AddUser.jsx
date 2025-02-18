@@ -3,6 +3,7 @@ import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import {
   FaUser,
   FaEnvelope,
@@ -34,6 +35,21 @@ const AddUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to create this category?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#20B2AA',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, create it!'
+    })
+
+    if(result.isConfirmed) {
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/admin/users`,

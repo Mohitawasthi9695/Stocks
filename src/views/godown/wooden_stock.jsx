@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
@@ -10,12 +9,14 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import { FiSave } from 'react-icons/fi';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [rackInputs, setRackInputs] = useState({});
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -23,12 +24,17 @@ const ShowProduct = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownwoodenstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log('stocks data:', response.data);
         setProducts(response.data);
         setFilteredProducts(response.data);
+        const initialRackInputs = {};
+        productsWithArea.forEach((product) => {
+          initialRackInputs[product.id] = product.rack || '';
+        });
+        setRackInputs(initialRackInputs);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -42,13 +48,41 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
-        .some((value) => value.includes(lowercasedQuery))
+      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 
+  const handleRackChange = (id, value) => {
+    setRackInputs((prev) => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+  const handleRackUpdate = async (id) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock/${id}`,
+        { rack: rackInputs[id] },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        const updatedProducts = products.map((product) => (product.id === id ? { ...product, rack: rackInputs[id] } : product));
+        setProducts(updatedProducts);
+        setFilteredProducts(updatedProducts);
+        toast.success('Rack updated successfully!');
+      }
+    } catch (error) {
+      console.error('Error updating rack:', error);
+      toast.error('Failed to update rack. Please try again.');
+    }
+  };
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -57,14 +91,13 @@ const ShowProduct = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
-    }
-    ,
+    },
     {
       name: 'Stock Code',
       selector: (row) => row.stock_code,
@@ -90,8 +123,8 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     {
       name: 'Pcs',
       selector: (row) => row.pcs,
@@ -105,8 +138,46 @@ const ShowProduct = () => {
     ,
     {
       name: 'Avaible Pcs',
-      selector: (row) => (row.pcs)-(row.out_pcs),
+      selector: (row) => row.pcs - row.out_pcs,
       sortable: true
+    },
+    {
+      name: 'Rack',
+      cell: (row) => (
+        <div className="d-flex align-items-center gap-2">
+          <input
+            type="text"
+            value={rackInputs[row.id] || ''}
+            onChange={(e) => handleRackChange(row.id, e.target.value)}
+            className="form-control form-control-sm"
+            style={{ width: '100px' }}
+          />
+          <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id)} title="Update Rack">
+            <FiSave size={16} />
+          </button>
+        </div>
+      ),
+      sortable: false,
+      width: '200px'
+    },
+    {
+      name: 'Status',
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      sortable: true,
+      cell: (row) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span
+            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {row.status === 1 ? 'Approved' : 'Pending'}
+          </span>
+        </div>
+      )
     }
   ];
 
@@ -118,12 +189,12 @@ const ShowProduct = () => {
       'Lot No': row.lot_no,
       'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      'Date': row.stock_invoice?.date || 'N/A',
+      Date: row.stock_invoice?.date || 'N/A',
       'Shade No': row.stock_product?.shadeNo || 'N/A',
       'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
-      'Length': row.length,
-      'Width': row.width,
-      'Unit': row.unit,
+      Length: row.length,
+      Width: row.width,
+      Unit: row.unit
     }));
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -147,8 +218,8 @@ const ShowProduct = () => {
           'Length',
           'Width',
           'Unit',
-          'Warehouse',
-        ],
+          'Warehouse'
+        ]
       ],
       body: filteredProducts.map((row, index) => [
         index + 1,
@@ -162,8 +233,8 @@ const ShowProduct = () => {
         row.length,
         row.width,
         row.unit,
-        row.warehouse,
-      ]),
+        row.warehouse
+      ])
     });
     doc.save('stocks_list.pdf');
   };
@@ -172,8 +243,8 @@ const ShowProduct = () => {
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
-      },
+        borderSpacing: 0 // Removes spacing between cells
+      }
     },
     header: {
       style: {
@@ -182,8 +253,8 @@ const ShowProduct = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '10px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -192,9 +263,9 @@ const ShowProduct = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -204,58 +275,52 @@ const ShowProduct = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '10px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
-        },
-      },
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
         '& svg': {
-          fill: 'white',
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
+  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
-          <input
-            type="text"
-            placeholder="Search..."
-            id="search"
-            value={searchQuery}
-            onChange={handleSearch}
-            className="form-control"
-          />
+          <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
         </div>
         <div className="col-md-8">
           <div className="d-flex justify-content-end">
@@ -274,13 +339,14 @@ const ShowProduct = () => {
             {loading ? (
               <Skeleton count={10} />
             ) : (
-              <DataTable
-                columns={columns}
-                data={filteredProducts}
-                pagination
-                highlightOnHover
-                customStyles={customStyles}
-              />
+              <>
+                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+                {searchQuery && (
+                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                    Total Boxes: {totalBoxes}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

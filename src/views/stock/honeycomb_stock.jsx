@@ -43,9 +43,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
-        .some((value) => value.includes(lowercasedQuery))
+      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -296,7 +294,7 @@ const ShowProduct = () => {
       }
     }
   };
-
+  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">

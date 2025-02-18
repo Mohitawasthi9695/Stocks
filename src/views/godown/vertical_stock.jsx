@@ -39,15 +39,13 @@ const ShowProduct = () => {
     fetchStocksData();
   }, []);
 
-  useEffect(() => {
-    const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
-        .some((value) => value.includes(lowercasedQuery))
-    );
-    setFilteredProducts(filtered);
-  }, [searchQuery, products]);
+ useEffect(() => {
+     const lowercasedQuery = searchQuery.toLowerCase();
+     const filtered = products.filter((product) =>
+       Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
+     );
+     setFilteredProducts(filtered);
+   }, [searchQuery, products]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -90,33 +88,42 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: "ToTal Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: "RollLength", selector: (row) => `${row.roll_length?? '_______'}  ${row.length_unit}`, sortable: true },
     {
-      name: 'Pcs',
-      selector: (row) => row.pcs,
-      sortable: true
-    },
-    {
-      name: 'Quantity',
-      selector: (row) => row.quantity,
-      sortable: true,
-    },
-    {
-      name: 'Out Quantity',
-      selector: (row) => row.out_quantity ?? 0,
+      name: 'Issue Length',
+      selector: (row) => row.out_length ?? 0,
       sortable: true,
     },
     {
       name: 'Avaible Quantity',
-      selector: (row) => row.quantity - row.out_quantity,
+      selector: (row) => row.roll_length - row.out_length,
       sortable: true,
     },
     {
-      name: 'Warehouse',
-      selector: (row) => row.warehouse,
+      name: 'Rack',
+      selector: (row) => row.rack?? '__________',
       sortable: true,
     },
+    {
+      name: 'Status',
+      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      sortable: true,
+      cell: (row) => (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span
+                  className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                  style={{
+                      padding: '5px 10px',
+                      borderRadius: '8px',
+                      whiteSpace: 'nowrap'
+                  }}
+              >
+                  {row.status === 1 ? 'Approved' : 'Pending'}
+              </span>
+          </div>
+      )
+  },
   ];
 
   const exportToCSV = () => {
@@ -252,6 +259,7 @@ const ShowProduct = () => {
       },
     },
   };
+  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -283,6 +291,7 @@ const ShowProduct = () => {
             {loading ? (
               <Skeleton count={10} />
             ) : (
+              <>
               <DataTable
                 columns={columns}
                 data={filteredProducts}
@@ -290,6 +299,12 @@ const ShowProduct = () => {
                 highlightOnHover
                 customStyles={customStyles}
               />
+              {searchQuery && (
+                <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                  Total Boxes: {totalBoxes}
+                </div>
+              )}
+              </>
             )}
           </div>
         </div>

@@ -5,7 +5,9 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import FormField from '../../components/FormField';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload, FaUser, FaIdCard } from 'react-icons/fa';
-
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+import Swal from 'sweetalert2';
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +15,7 @@ const AddProduct = () => {
     shadeNo: '',
     product_category_id: '', // Holds the selected category ID
     purchase_shade_no: '',
-    status: 'Active',
+    status: 'Active'
   });
 
   const [categories, setCategories] = useState([]); // Holds the list of categories
@@ -23,15 +25,12 @@ const AddProduct = () => {
   // Fetch product categories from API
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/products/category`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products/category`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
-      );
+      });
 
       if (response.data && response.data.data) {
         setCategories(response.data.data);
@@ -56,33 +55,38 @@ const AddProduct = () => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]: value,
+      [name]: value
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const reslt = await Swal.fire({
+      title : "Are you sure?",
+      text: 'Do you want to add this product?',
+      icon : 'warning',
+      showCancelButton : true, 
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor : '#d33',
+      confirmButtonText : 'Yes, add it!'
+    })
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/products`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/products`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      );
+      });
 
       if (response.status >= 200 && response.status < 300) {
         navigate('/shades');
-        toast.success('Product added successfully');
+        Swal.fire('Success!', 'Product added successfully', 'success');
       } else {
         throw new Error('Unexpected response status');
       }
     } catch (error) {
       console.error('Error adding product:', error);
-      toast.error('Error adding product');
+      Swal.fire('Error', 'Error adding product', 'error');
     }
   };
   const [file, setFile] = useState(null);
@@ -127,6 +131,36 @@ const AddProduct = () => {
       toast.error(errorMessage);
     }
   };
+
+  const handleDownloads = async () => {
+    try {
+      const filePath = `${window.location.origin}/StockIN.csv`; // Ensure file is in 'public' folder
+      const response = await fetch(filePath);
+
+      if (!response.ok) throw new Error('File not found');
+
+      const text = await response.text();
+      const data = text.split('\n').map((row) => row.split(','));
+
+      // Convert CSV to Excel
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'StockIN');
+
+      const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const excelBlob = new Blob([excelBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+
+      // Save Excel file only
+      FileSaver.saveAs(excelBlob, 'StockIN.xlsx');
+
+      console.log('Excel file downloaded successfully!');
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+
   return (
     <Container
       fluid
@@ -134,34 +168,38 @@ const AddProduct = () => {
       style={{
         border: '3px dashed #14ab7f',
         borderRadius: '8px',
-        background: '#ff9d0014',
+        background: '#ff9d0014'
       }}
     >
       <Row className="justify-content-center">
         <div className="col-md-12 position-relative">
           <h2 className="text-center mb-4 fw-bold text-primary">Invoice Items</h2>
 
-          <div
-            className="card shadow-lg border-0 mb-4 mx-auto"
-            style={{ borderRadius: '12px', maxWidth: '700px'}}
-          >
+          <div className="card shadow-lg border-0 mb-4 mx-auto" style={{ borderRadius: '12px', maxWidth: '700px' }}>
             <div className="card-body p-4 mx-auto">
               <div className="d-flex flex-column align-items-center">
                 <form onSubmit={handleFileUpload} encType="multipart/form-data" className="w-100">
                   <div className="mb-3">
                     <div className="d-flex justify-content-between align-items-center">
-                      <label
-                        htmlFor="excel"
-                        className="form-label text-secondary fw-semibold"
-                        style={{ fontSize: '0.95rem' }}
-                      >
+                      <label htmlFor="excel" className="form-label text-secondary fw-semibold" style={{ fontSize: '0.95rem' }}>
                         Choose File
                       </label>
                       <div className="d-flex align-items-center gap-2">
                         <FaFileExcel className="text-success fs-4" />
-                        <a href="/products.csv" download className="text-decoration-none">
+                        {/* <a href="/products.csv" download className="text-decoration-none">
                           <FaDownload className="text-success fs-5" style={{ cursor: 'pointer' }} />
-                        </a>
+                        </a> */}
+                        <Button
+                          onClick={handleDownloads}
+                          style={{
+                            all: 'unset', // Removes all default button styles
+                            cursor: 'pointer', // Ensures the cursor changes on hover
+                            display: 'flex',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <FaDownload className="text-success fs-5" style={{ cursor: 'pointer' }} />
+                        </Button>
                       </div>
                     </div>
 
@@ -194,17 +232,14 @@ const AddProduct = () => {
         </div>
 
         <Col md={12} lg={12}>
-          <Card
-            className="shadow-lg border-0"
-            style={{ borderRadius: '15px', overflow: 'hidden' }}
-          >
+          <Card className="shadow-lg border-0" style={{ borderRadius: '15px', overflow: 'hidden' }}>
             <div
               className="p-4 text-white text-center"
               style={{
                 backgroundColor: '#20B2AA',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                justifyContent: 'center'
               }}
             >
               <FaUserPlus size={40} className="me-3" />
@@ -213,7 +248,7 @@ const AddProduct = () => {
             <Card.Body className="p-5">
               <Form onSubmit={handleSubmit}>
                 <Row>
-                <Col md={6}>
+                  <Col md={6}>
                     {/* Dropdown for Product Category */}
                     <Form.Group controlId="productCategory" style={{ marginBottom: '16px' }}>
                       <Form.Label>
@@ -227,7 +262,7 @@ const AddProduct = () => {
                         onChange={handleChange} // Update formData state
                         style={{
                           border: '1px solid rgb(63, 77, 103)',
-                          zIndex: '10', // Ensure dropdown options are above other elements
+                          zIndex: '10' // Ensure dropdown options are above other elements
                         }}
                       >
                         <option value="">Select Category</option>
@@ -253,22 +288,9 @@ const AddProduct = () => {
                     />
                   </Col>
                   <Col md={6}>
-                    <FormField
-                      icon={FaUser}
-                      label="Product Name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                    />
-                    <FormField
-                      icon={FaIdCard}
-                      label="Shade Number"
-                      name="shadeNo"
-                      value={formData.shadeNo}
-                      onChange={handleChange}
-                    />
+                    <FormField icon={FaUser} label="Product Name" name="name" value={formData.name} onChange={handleChange} />
+                    <FormField icon={FaIdCard} label="Shade Number" name="shadeNo" value={formData.shadeNo} onChange={handleChange} />
                   </Col>
-                  
                 </Row>
 
                 <Button
@@ -278,7 +300,7 @@ const AddProduct = () => {
                   style={{
                     backgroundColor: mainColor,
                     borderColor: mainColor,
-                    width: '10rem',
+                    width: '10rem'
                   }}
                 >
                   <FaUserPlus className="me-2" /> Add Product

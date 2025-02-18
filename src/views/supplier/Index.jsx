@@ -556,7 +556,7 @@ const people_type= "Supplier";
             <Modal.Title className="text-white">Edit Supplier</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
-            ```javascript
+          
             <Form>
               <Form.Group className="mb-3">
                 <Form.Label>Supplier Name</Form.Label>

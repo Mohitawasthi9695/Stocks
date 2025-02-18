@@ -43,9 +43,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
-        .some((value) => value.includes(lowercasedQuery))
+      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -199,8 +197,8 @@ const ShowProduct = () => {
           'Pur. Shade No',
           'Length',
           'Width',
-          'Unit',
-          'Warehouse'
+          'Unit'
+          // 'Warehouse',
         ]
       ],
       body: filteredProducts.map((row, index) => [
@@ -296,7 +294,7 @@ const ShowProduct = () => {
       }
     }
   };
-
+  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -344,3 +342,97 @@ const ShowProduct = () => {
 };
 
 export default ShowProduct;
+
+
+// import React, { useEffect, useState } from 'react';
+// import DataTable from 'react-data-table-component';
+// import Skeleton from 'react-loading-skeleton';
+// import axios from 'axios';
+
+// const ShowProduct = () => {
+//   const [products, setProducts] = useState([]);
+//   const [filteredProducts, setFilteredProducts] = useState([]);
+//   const [searchQuery, setSearchQuery] = useState('');
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchStocksData = async () => {
+//       try {
+//         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/verticalstock`, {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem('token')}`,
+//             'Content-Type': 'application/json',
+//           },
+//         });
+//         setProducts(response.data);
+//         setFilteredProducts(response.data);
+//       } catch (error) {
+//         console.error('Error fetching stocks data:', error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchStocksData();
+//   }, []);
+
+//   useEffect(() => {
+//     const lowercasedQuery = searchQuery.toLowerCase();
+//     const filtered = products.filter((product) =>
+//       Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
+//     );
+//     setFilteredProducts(filtered);
+//   }, [searchQuery, products]);
+
+//   const handleSearch = (e) => {
+//     setSearchQuery(e.target.value);
+//   };
+
+//   // Calculate total quantity (box count) when a search is active
+//   const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
+
+//   const columns = [
+//     { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
+//     { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
+//     { name: 'Invoice no', selector: (row) => row.invoice_no, sortable: true },
+//     { name: 'Product Category', selector: (row) => row.product_category_name, sortable: true },
+//     { name: 'Shade no', selector: (row) => row.shadeNo, sortable: true },
+//     { name: 'Pur. Shade no', selector: (row) => row.purchase_shade_no, sortable: true },
+//     { name: 'Length', selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`, sortable: true },
+//     { name: 'Width', selector: (row) => `${row.width} ${row.width_unit}`, sortable: true },
+//     { name: 'Pcs', selector: (row) => row.pcs, sortable: true },
+//     { name: 'Box', selector: (row) => row.quantity, sortable: true },
+//     { name: 'Out box', selector: (row) => row.out_quantity ?? 0, sortable: true },
+//     { name: 'Balance Boxes', selector: (row) => row.quantity - row.out_quantity, sortable: true },
+//   ];
+
+//   return (
+//     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+//       <div className="row mb-3">
+//         <div className="col-md-4">
+//           <input type="text" placeholder="Search..." value={searchQuery} onChange={handleSearch} className="form-control" />
+//         </div>
+//       </div>
+//       <div className="row">
+//         <div className="col-12">
+//           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
+//             {loading ? (
+//               <Skeleton count={10} />
+//             ) : (
+//               <>
+//                 <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover />
+//                 {searchQuery && (
+//                   <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+//                     Total Boxes: {totalBoxes}
+//                   </div>
+//                 )}
+//               </>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ShowProduct;

@@ -401,9 +401,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
-        .some((value) => value.includes(lowercasedQuery))
+      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -561,8 +559,8 @@ const ShowProduct = () => {
           'Width',
           'Unit',
           'Area (m²)',
-          'Area (sq. ft.)',
-          'Warehouse'
+          'Area (sq. ft.)'
+          // 'Warehouse'
         ]
       ],
       body: filteredProducts.map((row, index) => [
@@ -660,7 +658,7 @@ const ShowProduct = () => {
       }
     }
   };
-
+  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -715,8 +713,9 @@ const ShowProduct = () => {
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="card-body p-0">
+            ) :
+            (
+              <>
                 <DataTable
                   columns={filteredColumns}
                   data={filteredProducts}
@@ -727,8 +726,14 @@ const ShowProduct = () => {
                   customStyles={customStyles}
                   defaultSortFieldId={1}
                 />
-              </div>
-            )}
+                {searchQuery && (
+                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                    Total Boxes: {totalBoxes}
+                  </div>
+                )}
+              </>
+            )
+            }
           </div>
         </div>
       </div>
