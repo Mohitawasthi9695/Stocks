@@ -5,6 +5,7 @@ import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 const AddProduct = () => {
   const { id, no } = useParams();
@@ -18,17 +19,14 @@ const AddProduct = () => {
     {
       invoice_no: no,
       lot_no: '',
-      product_category_id:'',
+      product_category_id: '',
       product_id: '',
       purchase_shadeNo: '',
       width: '',
       length: '',
       date: '',
       rack: '',
-<<<<<<< HEAD
-=======
       warehouse: '',
->>>>>>> 13e947b6d0c72d6bcb6e252d5dae7e9a6bccfcea
       length_unit: '',
       width_unit: '',
       pcs: '',
@@ -53,11 +51,7 @@ const AddProduct = () => {
     fetchCategories();
   }, []);
 
-<<<<<<< HEAD
   const handleCategoryChange = async (event, index) => {
-=======
-  const handleCategoryChange = (event, index) => {
->>>>>>> 13e947b6d0c72d6bcb6e252d5dae7e9a6bccfcea
     const categoryId = event.target.value;
 
     setItems((prevItems) => {
@@ -127,11 +121,7 @@ const AddProduct = () => {
         length: '',
         date: '',
         rack: '',
-<<<<<<< HEAD
         // warehouse: '',
-=======
-        warehouse: '',
->>>>>>> 13e947b6d0c72d6bcb6e252d5dae7e9a6bccfcea
         length_unit: '',
         width_unit: '',
         // type: '',
@@ -206,48 +196,60 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to submit the form?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, submit it!'
+    });
+
     const payload = items.map((item) => ({
       ...item,
       invoice_id: id,
       invoice_no: no
     }));
 
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      toast.success('Stock added successfully');
-      navigate('/stocks');
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Error adding stock';
-      toast.error(errorMessage);
-      console.error(error);
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, payload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        toast.success('Stock added successfully');
+        navigate('/stocks');
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || 'Error adding stock';
+        toast.error(errorMessage);
+        console.error(error);
+      }
     }
-  };
 
-  const handleDownloadExcel = async () => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/download-excel`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        },
-        responseType: 'blob'
-      });
+    const handleDownloadExcel = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/download-excel`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+          responseType: 'blob'
+        });
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'stocks.xlsx');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error('Error downloading the file:', error);
-      toast.error('Error downloading the file');
-    }
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'stocks.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } catch (error) {
+        console.error('Error downloading the file:', error);
+        toast.error('Error downloading the file');
+      }
+    };
   };
 
   // handle date
@@ -337,11 +339,6 @@ const AddProduct = () => {
                         <th style={{ width: '150px' }}>Unit</th>
                         <th style={{ width: '120px' }}>Pcs</th>
                         <th style={{ width: '150px' }}>Quantity</th>
-<<<<<<< HEAD
-=======
-                        <th style={{ width: '120px' }}>Type</th>
-                        <th style={{ width: '190px' }}>Warehouse</th>
->>>>>>> 13e947b6d0c72d6bcb6e252d5dae7e9a6bccfcea
                         <th style={{ width: '120px' }}>Actions</th>
                       </tr>
                     </thead>
@@ -467,34 +464,6 @@ const AddProduct = () => {
                             />
                           </td>
                           <td>
-<<<<<<< HEAD
-=======
-                            <Form.Control
-                              as="select"
-                              value={item.type}
-                              onChange={(e) => handleRowChange(index, 'type', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            >
-                              <option value="">Select Type</option>
-                              <option value="roll">Roll</option>
-                              <option value="box">Box</option>
-                            </Form.Control>
-                          </td>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.warehouse}
-                              onChange={(e) => handleRowChange(index, 'warehouse', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            >
-                              <option value="">Select Warehouse</option>
-                              <option value="Dwarka">Dwarka</option>
-                              <option value="Gujarat">Gujarat</option>
-                            </Form.Control>
-                          </td>
-
-                          <td>
->>>>>>> 13e947b6d0c72d6bcb6e252d5dae7e9a6bccfcea
                             <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
                               <FaTrash />
                             </Button>

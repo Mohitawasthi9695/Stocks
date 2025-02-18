@@ -62,31 +62,33 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const reslt = await Swal.fire({
-      title : "Are you sure?",
+      title: 'Are you sure?',
       text: 'Do you want to add this product?',
-      icon : 'warning',
-      showCancelButton : true, 
+      icon: 'warning',
+      showCancelButton: true,
       confirmButtonColor: '#3085d6',
-      cancelButtonColor : '#d33',
-      confirmButtonText : 'Yes, add it!'
-    })
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, add it!'
+    });
 
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/products`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+    if (reslt.isConfirmed) {
+      try {
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/products`, formData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.status >= 200 && response.status < 300) {
+          navigate('/shades');
+          Swal.fire('Success!', 'Product added successfully', 'success');
+        } else {
+          throw new Error('Unexpected response status');
         }
-      });
-
-      if (response.status >= 200 && response.status < 300) {
-        navigate('/shades');
-        Swal.fire('Success!', 'Product added successfully', 'success');
-      } else {
-        throw new Error('Unexpected response status');
+      } catch (error) {
+        console.error('Error adding product:', error);
+        Swal.fire('Error', 'Error adding product', 'error');
       }
-    } catch (error) {
-      console.error('Error adding product:', error);
-      Swal.fire('Error', 'Error adding product', 'error');
     }
   };
   const [file, setFile] = useState(null);
