@@ -22,8 +22,8 @@ const ShowProduct = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/woodenstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
         console.log('stocks data:', response.data);
         setProducts(response.data);
