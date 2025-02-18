@@ -332,8 +332,17 @@ const ShowProduct = () => {
             {loading ? (
               <Skeleton count={10} />
             ) : (
-              <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
-            )}
+              // <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+              <>
+             <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+              {searchQuery && (
+                <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                  Total Boxes: {totalBoxes}
+                </div>
+              )}
+            </>
+            )
+            }
           </div>
         </div>
       </div>
