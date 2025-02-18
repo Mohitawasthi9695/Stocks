@@ -378,7 +378,7 @@ const ShowProduct = () => {
         });
         console.log('stocks data:', response.data);
         const productsWithArea = response.data.map((product) => {
-          const areaM2 = product.length * product.width * product.quantity;
+          const areaM2 = product.length * product.width;
           const areaSqFt = areaM2 * 10.7639;
           return {
             ...product,
