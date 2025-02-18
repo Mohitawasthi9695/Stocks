@@ -41,6 +41,7 @@ const Index = () => {
         const filteredFields = invoicesDetails.map((gatepass) => ({
           gatepass_no: gatepass.gate_pass_no,
           id: gatepass.id,
+          status:gatepass.status,
           godownSupervisor: gatepass.godown_supervisor.name,
           warehouseSupervisor: gatepass.warehouse_supervisor.name,
           date: gatepass.gate_pass_date,
@@ -117,7 +118,8 @@ const Index = () => {
     },
     {
       name: 'Date',
-      selector: (row) => row.date,
+      selector: (row) => 
+        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
       sortable: true
     },
     {
@@ -183,7 +185,7 @@ const Index = () => {
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/all_stocks/gatepass/${id}`, {
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

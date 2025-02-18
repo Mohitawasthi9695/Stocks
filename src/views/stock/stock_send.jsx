@@ -289,6 +289,7 @@ const Invoice_out = () => {
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
+    { id: 'stock_code', label: 'Stock Code' },
     { id: 'width', label: 'Width' },
     { id: 'width_unit', label: 'W Unit' },
     { id: 'length', label: 'Length' },
@@ -487,6 +488,7 @@ const Invoice_out = () => {
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
+                                    <td key="stock_code">{row.stock_code}</td>
                                     <td key="length">{row.length}</td>
                                     <td key="length_unit">{row.length_unit}</td>
                                     <td key="width">{row.width}</td>

@@ -19,7 +19,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/honeycombstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/getstock/4`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -54,6 +54,12 @@ const ShowProduct = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
+      sortable: true
+    },
+    {
+      name: 'Date',
+      selector: (row) => 
+        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
       sortable: true
     },
     {

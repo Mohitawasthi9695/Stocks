@@ -40,7 +40,7 @@ const Invoice_out = () => {
     invoice_no: '',
     date: '',
     customer_id: '',
-    receiver_id: '',
+    company_id: '',
     place_of_supply: '',
     vehicle_no: '',
     station: '',
@@ -185,7 +185,7 @@ const Invoice_out = () => {
   useEffect(() => {
     const fetchReceiverData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/peoples?people_type=Supplier`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/peoples?people_type=Company`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -206,40 +206,62 @@ const Invoice_out = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
- 
+  const handleInputChange = (godown_id, field, value) => {
+    setSelectedRows((prevSelectedRows) => {
+      const updatedRows = prevSelectedRows.map((row) =>
+        row.godown_id === godown_id ? { ...row, [field]: value } : row
+      );
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        out_products: updatedRows
+      }));
+
+      return updatedRows;
+    });
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const result = await Swal.fire({
-      title : 'Are you sure?',
-      text : 'Do you want to create new Invoice?',
-      icon : 'question',
-      showCancelButton : 'true',
-      cancelButtonColor : '#d33',
-      confirmButtonColor : '#20B2AA',
-      confirmButtonText : 'Yes, create it!'
-    })
+      title: 'Are you sure?',
+      text: 'Do you want to create a new Invoice?',
+      icon: 'question',
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#20B2AA',
+      confirmButtonText: 'Yes, create it!',
+    });
 
-
-    if(result.isConfirmed){
-      return;
+    if (!result.isConfirmed) {
+      return; // Stop execution if the user cancels
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         }
-      });
+      );
+
+      console.log(response.data);
       toast.success('Stocks out successfully');
       navigate('/all-invoices-out');
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Error adding user';
+      const errorMessage = error.response?.data?.message || 'Error processing request';
       toast.error(errorMessage);
     }
+
     console.log(formData);
   };
+
 
   const columns = [
     { id: 'product_category', label: 'Product Category' },
@@ -309,7 +331,7 @@ const Invoice_out = () => {
                       icon={FaUsers}
                       label="Seller"
                       name="receiver_id"
-                      value={formData.receiver_id}
+                      value={formData.company_id}
                       onChange={handleChange}
                       options={receivers}
                       add={'/add-Receiver'}

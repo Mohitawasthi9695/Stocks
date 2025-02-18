@@ -43,12 +43,12 @@ const Show_product = () => {
               gate_pass_date: item.gate_pass_date,
               lot_no: all_stocks.lot_no,
               stock_code: all_stocks.stock_code,
-              width,
-              length,
+              width :width || "N/A",
+              length:length || "N/A",
               pcs:all_stocks.pcs,
               quantity: all_stocks.quantity,
               length_unit: all_stocks.length_unit,
-              width_unit: all_stocks.width_unit,
+              width_unit: all_stocks.width_unit|| "N/A",
               type: all_stocks.type,
               rack: all_stocks.rack || "N/A",
             };
@@ -94,8 +94,7 @@ const Show_product = () => {
     { name: "Lot No", selector: (row) => row.lot_no, sortable: true },
     { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
-    // { name: "Width", selector: (row) => `  ${unitText}`, sortable: true },
-    { name: "Pcs", selector: (row) => row.pcs??1, sortable: true },
+    { name: "Pcs", selector: (row) => row.pcs ?? 1, sortable: true },
     { name: "Quantity", selector: (row) => row.quantity, sortable: true },
   ];
 

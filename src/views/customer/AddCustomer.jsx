@@ -42,13 +42,15 @@ const AddCustomer = () => {
     submitData.append('tel_no', formData.tel_no);
     submitData.append('email', formData.email);
     submitData.append('owner_mobile', formData.owner_mobile);
+    submitData.append('people_type', 'Customer');
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, submitData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/peoples`, submitData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
+      console.log(response.data);
 
       navigate('/customers');
       toast.success('Customer added successfully');
