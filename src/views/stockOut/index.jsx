@@ -106,8 +106,8 @@ const Index = () => {
       sortable: true
     },
     {
-      name: 'Receiver',
-      selector: (row) => row.receiver,
+      name: 'Company',
+      selector: (row) => row.company,
       sortable: true
     },
     {

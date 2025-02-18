@@ -330,7 +330,7 @@ const Invoice_out = () => {
                     <FormField
                       icon={FaUsers}
                       label="Seller"
-                      name="receiver_id"
+                      name="company_id"
                       value={formData.company_id}
                       onChange={handleChange}
                       options={receivers}
@@ -585,7 +585,7 @@ const Invoice_out = () => {
                                     <td key="out_pcs">
                                       <input
                                         type="text"
-                                        value={row.out_pcs || 1}
+                                        value={row.out_pcs || ''}
                                         className="py-2"
                                         onChange={(e) => handleInputChange(row.godown_id, 'out_pcs', e.target.value)}
                                       />

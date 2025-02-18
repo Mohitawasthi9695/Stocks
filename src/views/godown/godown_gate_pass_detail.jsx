@@ -43,6 +43,7 @@ const Show_product = () => {
               gate_pass_date: item.gate_pass_date,
               lot_no: all_stocks.lot_no,
               stock_code: all_stocks.stock_code,
+              stockin_code:all_stocks.stockin_code,
               width :width || "N/A",
               length:length || "N/A",
               pcs:all_stocks.pcs,
@@ -87,9 +88,10 @@ const Show_product = () => {
   const navigate = useNavigate();
   const unitText = '4 feet';
   const columns = [
-    { name: "Sr No", selector: (_, index) => index + 1, sortable: true },
-    { name: "Gate Pass No", selector: (row) => row.gate_pass_no, sortable: true },
-    { name: "Gate Pass Date", selector: (row) => row.gate_pass_date, sortable: true },
+    { name: "Sr No", selector: (_, index) => index + 1, sortable: true},
+    { name: "Gate Pass No", selector: (row) => row.gate_pass_no, sortable: true},
+    { name: "Gate Pass Date", selector: (row) => row.gate_pass_date, sortable: true},
+    { name: "Warehouse Code", selector: (row) => row.stockin_code, sortable: true},
     { name: "Stock Code", selector: (row) => row.stock_code, sortable: true },
     { name: "Lot No", selector: (row) => row.lot_no, sortable: true },
     { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },

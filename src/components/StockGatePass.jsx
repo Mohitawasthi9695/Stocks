@@ -167,8 +167,8 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                 <Text style={styles.sectionTitle}>Stock Godowns Details :</Text>
                                 <View style={styles.table}>
                                     <View style={styles.tableHeader}>
-                                        <Text style={styles.tableCell}>Product Name</Text>
                                         <Text style={styles.tableCell}>Product ShadeNo</Text>
+                                        <Text style={styles.tableCell}>Ware Code</Text>
                                         <Text style={styles.tableCell}>Stock Code</Text>
                                         <Text style={styles.tableCell}>Lot No</Text>
                                         <Text style={styles.tableCell}>Width</Text>
@@ -178,8 +178,8 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                     </View>
                                     {invoice.all_stocks.map((all_stock, index) => (
                                         <View key={index} style={styles.tableRow}>
-                                            <Text style={styles.tableCell}>{all_stock.products.name}</Text>
-                                            <Text style={styles.tableCell}>{all_stock.products.shadeNo}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.products_shadeNo}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.stockin_code}</Text>
                                             <Text style={styles.tableCell}>{all_stock.stock_code}</Text>
                                             <Text style={styles.tableCell}>{all_stock.lot_no}</Text>
                                             <Text style={styles.tableCell}>{all_stock.width} {all_stock.width_unit}</Text>
