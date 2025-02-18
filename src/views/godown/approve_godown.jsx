@@ -121,7 +121,7 @@ const Index = () => {
     },
     {
       name: 'Date',
-      selector: (row) => row.date,
+      selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
       sortable: true
     },
     {

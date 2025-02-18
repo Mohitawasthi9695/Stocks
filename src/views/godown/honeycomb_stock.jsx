@@ -39,12 +39,10 @@ const ShowProduct = () => {
     fetchStocksData();
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
-        .some((value) => value.includes(lowercasedQuery))
+      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -282,13 +280,19 @@ const ShowProduct = () => {
             {loading ? (
               <Skeleton count={10} />
             ) : (
+              <>
               <DataTable
                 columns={columns}
                 data={filteredProducts}
                 pagination
                 highlightOnHover
                 customStyles={customStyles}
-              />
+              /> {searchQuery && (
+                <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                  Total Boxes: {totalBoxes}
+                </div>
+              )}
+              </>
             )}
           </div>
         </div>

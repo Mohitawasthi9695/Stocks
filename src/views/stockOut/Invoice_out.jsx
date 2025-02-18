@@ -53,6 +53,7 @@ const Invoice_out = () => {
     ack_date: '',
     total_amount: '',
     cgst_percentage: '',
+    igst_percentage: '',
     sgst_percentage: '',
     payment_mode: '',
     payment_status: '',
@@ -326,7 +327,14 @@ const Invoice_out = () => {
               <Form onSubmit={handleSubmit}>
                 <Row>
                   <Col md={4}>
-                    <FormField icon={FaFileInvoice} label="Invoice_no" name="invoice_no" value={invoice_no} readOnly />
+                    <FormField 
+                      icon={FaFileInvoice} 
+                      label="Invoice no" 
+                      name="invoice_no" 
+                      value={formData.invoice_no} 
+                      onChange={handleChange}
+                      readOnly 
+                    />
                     <FormField
                       icon={FaUsers}
                       label="Seller"
@@ -642,6 +650,15 @@ const Invoice_out = () => {
                         label="CGST(%)"
                         name="cgst_percentage"
                         value={formData.cgst_percentage}
+                        onChange={handleChange}
+                      />
+                    </Col>
+                    <Col md={3}>
+                      <FormField
+                        icon={FaPercentage}
+                        label="IGST(%)"
+                        name="igst_percentage"
+                        value={formData.igst_percentage}
                         onChange={handleChange}
                       />
                     </Col>

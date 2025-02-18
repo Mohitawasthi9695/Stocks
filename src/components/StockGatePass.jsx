@@ -227,5 +227,4 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
     );
 };
 
-
 export default StockGatePass;

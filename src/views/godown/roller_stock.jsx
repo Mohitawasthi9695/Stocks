@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
@@ -42,7 +41,7 @@ const ShowProduct = () => {
         setProducts(productsWithArea);
         setFilteredProducts(productsWithArea);
         const initialRackInputs = {};
-        productsWithArea.forEach(product => {
+        productsWithArea.forEach((product) => {
           initialRackInputs[product.id] = product.rack || '';
         });
         setRackInputs(initialRackInputs);
@@ -59,9 +58,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
-        .some((value) => value.includes(lowercasedQuery))
+      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -70,7 +67,7 @@ const ShowProduct = () => {
     setSearchQuery(e.target.value);
   };
   const handleRackChange = (id, value) => {
-    setRackInputs(prev => ({
+    setRackInputs((prev) => ({
       ...prev,
       [id]: value
     }));
@@ -89,9 +86,7 @@ const ShowProduct = () => {
       );
 
       if (response.status === 200) {
-        const updatedProducts = products.map(product =>
-          product.id === id ? { ...product, rack: rackInputs[id] } : product
-        );
+        const updatedProducts = products.map((product) => (product.id === id ? { ...product, rack: rackInputs[id] } : product));
         setProducts(updatedProducts);
         toast.success('Rack updated successfully!');
       }
@@ -104,7 +99,7 @@ const ShowProduct = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Stock Code',
@@ -136,9 +131,9 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    { name: "Width", selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
-    { name: "Total Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: "Length", selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
+    { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: 'Total Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Area (m²)',
       selector: (row) => row.area,
@@ -151,7 +146,7 @@ const ShowProduct = () => {
     },
     {
       name: 'Rack',
-      cell: row => (
+      cell: (row) => (
         <div className="d-flex align-items-center gap-2">
           <input
             type="text"
@@ -160,11 +155,7 @@ const ShowProduct = () => {
             className="form-control form-control-sm"
             style={{ width: '100px' }}
           />
-          <button
-            className="btn btn-sm btn-success"
-            onClick={() => handleRackUpdate(row.id)}
-            title="Update Rack"
-          >
+          <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id)} title="Update Rack">
             <FiSave size={16} />
           </button>
         </div>
@@ -190,7 +181,7 @@ const ShowProduct = () => {
           </span>
         </div>
       )
-    },
+    }
   ];
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
@@ -200,12 +191,12 @@ const ShowProduct = () => {
       'Lot No': row.lot_no,
       'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      'Date': row.stock_invoice?.date || 'N/A',
+      Date: row.stock_invoice?.date || 'N/A',
       'Shade No': row.stock_product?.shadeNo || 'N/A',
       'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
-      'Length': row.length,
-      'Width': row.width,
-      'Unit': row.unit,
+      Length: row.length,
+      Width: row.width,
+      Unit: row.unit,
       'Area (m²)': row.area,
       'Area (sq. ft.)': row.area_sq_ft
     }));
@@ -259,8 +250,8 @@ const ShowProduct = () => {
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
-      },
+        borderSpacing: 0 // Removes spacing between cells
+      }
     },
     header: {
       style: {
@@ -269,8 +260,8 @@ const ShowProduct = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -279,9 +270,9 @@ const ShowProduct = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -291,46 +282,47 @@ const ShowProduct = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
-        },
-      },
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
         '& svg': {
-          fill: 'white',
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
 
+  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -362,7 +354,6 @@ const ShowProduct = () => {
       <div className="row">
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
-
             {loading ? (
               <div>
                 {[...Array(8)].map((_, index) => (
@@ -374,18 +365,25 @@ const ShowProduct = () => {
                 ))}
               </div>
             ) : (
-              <div className="card-body p-0">
-                <DataTable
-                  columns={columns}
-                  data={filteredProducts}
-                  pagination
-                  highlightOnHover
-                  striped
-                  responsive
-                  customStyles={customStyles}
-                  defaultSortFieldId={1}
-                />
-              </div>
+              <>
+                <div className="card-body p-0">
+                  <DataTable
+                    columns={columns}
+                    data={filteredProducts}
+                    pagination
+                    highlightOnHover
+                    striped
+                    responsive
+                    customStyles={customStyles}
+                    defaultSortFieldId={1}
+                  />
+                  {searchQuery && (
+                    <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                      Total Boxes: {totalBoxes}
+                    </div>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>

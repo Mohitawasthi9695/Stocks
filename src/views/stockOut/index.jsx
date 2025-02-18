@@ -8,7 +8,7 @@ import { FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import StockOutInvoicePDF from 'components/stockout';
+import StockOutInvoicePDF from 'components/StockOutInvoicePDF';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
@@ -29,7 +29,7 @@ const Index = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockout`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -121,43 +121,8 @@ const Index = () => {
       sortable: true
     },
     {
-      name: 'Station',
-      selector: (row) => row.station,
-      sortable: true
-    },
-    {
-      name: 'E-way Bill',
-      selector: (row) => row.ewaybill,
-      sortable: true
-    },
-    {
-      name: 'Reverse Charge',
-      selector: (row) => row.reverse_charge,
-      sortable: true
-    },
-    {
-      name: 'GR / RR',
-      selector: (row) => row.gr_rr,
-      sortable: true
-    },
-    {
       name: 'Transport',
       selector: (row) => row.transport,
-      sortable: true
-    },
-    {
-      name: 'IRN',
-      selector: (row) => row.irn,
-      sortable: true
-    },
-    {
-      name: 'Ack No',
-      selector: (row) => row.ack_no,
-      sortable: true
-    },
-    {
-      name: 'Ack Date',
-      selector: (row) => row.ack_date,
       sortable: true
     },
     {
@@ -175,11 +140,7 @@ const Index = () => {
       selector: (row) => row.sgst_percentage,
       sortable: true
     },
-    {
-      name: 'Payment Mode',
-      selector: (row) => row.payment_mode,
-      sortable: true
-    },
+    
     {
       name: 'Payment Status',
       selector: (row) => row.payment_status,
@@ -191,28 +152,13 @@ const Index = () => {
       sortable: true
     },
     {
-      name: 'Payment Bank',
-      selector: (row) => row.payment_Bank,
-      sortable: true
-    },
-    {
       name: 'Payment Account No',
       selector: (row) => row.payment_account_no,
       sortable: true
     },
     {
-      name: 'Payment Ref No',
-      selector: (row) => row.payment_ref_no,
-      sortable: true
-    },
-    {
       name: 'Payment Amount',
       selector: (row) => row.payment_amount,
-      sortable: true
-    },
-    {
-      name: 'Payment Remarks',
-      selector: (row) => row.payment_remarks,
       sortable: true
     },
     {
@@ -222,7 +168,7 @@ const Index = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'Inactive' : 'Active'),
+      selector: (row) => (row.status === 1 ? 'Requested' : 'Sold Out'),
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -234,7 +180,7 @@ const Index = () => {
               whiteSpace: 'nowrap'
             }}
           >
-            {row.status === 1 ? 'Inactive' : 'Active'}
+            {row.status === 1 ? 'Requested' : 'Sold Out'}
           </span>
         </div>
       )
@@ -244,7 +190,7 @@ const Index = () => {
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
           <Button variant="outline-success" size="sm" className="me-2">
-            <FaEye onClick={() => navigate(`/show-gatepass_details/${row.id}`)} />
+            <FaEye onClick={() => navigate(`/invoices-out/${row.id}`)} />
           </Button>
 
           <Button
@@ -283,7 +229,7 @@ const Index = () => {
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/all_stocks/gatepass/${id}`, {
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

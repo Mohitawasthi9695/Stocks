@@ -14,8 +14,8 @@ import { text } from 'd3';
 
 const Show_product = () => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -51,11 +51,11 @@ const Show_product = () => {
               length_unit: all_stocks.length_unit,
               width_unit: all_stocks.width_unit|| "N/A",
               type: all_stocks.type,
-              rack: all_stocks.rack || "N/A",
+              rack: all_stocks.rack || 'N/A'
             };
           })
         );
-       
+
         setProducts(godownData);
         setFilteredProducts(godownData);
       } catch (err) {
@@ -169,7 +169,7 @@ const Show_product = () => {
       toast.error('Failed to delete Product');
     }
   };
-  
+
   const customStyles = {
     header: {
       style: {
