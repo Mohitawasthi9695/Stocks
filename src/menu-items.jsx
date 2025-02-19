@@ -11,8 +11,9 @@ const filterMenuItem = (menu) => {
             ['supervisor'].includes(userRole) &&
             [
               'approve_godown',
-              'stockout',
+              'operator-stockout',
               'godownStock',
+              'godown-stockout',
               'users',
               'purchaser',
               'GodownAccessories',
@@ -30,12 +31,13 @@ const filterMenuItem = (menu) => {
             ['sub_supervisor'].includes(userRole) &&
             [
               'usersGroup',
+              'operator-stockout',
               'products',
               'Accessory',
               'stockin',
               'Warehouse_Accessories',
               'WarehouseGatePass',
-             
+
             ].includes(item.id)
           )
       )
@@ -46,15 +48,13 @@ const filterMenuItem = (menu) => {
             [
               'approve_godown',
               'users',
-              'purchaser',
               'GodownAccessories',
               'GoDownGatePass',
               'suppliers',
-              // 'customers',
+              'godown-stockout',
               'stock_to_godown',
               'approve_operator',
               'godown_stock',
-              // 'usersGroup',
               'products',
               'Accessory',
               'stockin',
@@ -114,11 +114,11 @@ const menuItems = {
               url: '/supplier'
             },
             {
-              id: 'purchaser',
-              title: 'Purchaser',
+              id: 'Seller',
+              title: 'Seller',
               icon: 'feather icon-users',
               type: 'item',
-              url: '/receiver'
+              url: '/company'
             },
             {
               id: 'customers',
@@ -270,7 +270,7 @@ const menuItems = {
       ]
     },
     {
-      id: 'stockout',
+      id: 'operator-stockout',
       title: 'Stock Out',
       type: 'group',
       icon: 'icon-ui',
@@ -297,19 +297,36 @@ const menuItems = {
               url: '/all-invoices-out'
             },
             {
-              id: 'invoice_operator_index',
-              title: 'All Operator Invoice',
-              icon: 'feather icon-file-minus',
-              type: 'item',
-              url: '/operator_invoice'
-            },
-            {
               id: 'invoice_out_stock',
               title: 'All Out Stock',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-out-stock'
             }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'godown-stockout',
+      title: 'Stock Out',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'godownstockout',
+          title: 'Stocks Out',
+          type: 'collapse',
+          icon: 'feather icon-box',
+          children: [
+            {
+              id: 'approve_operator',
+              title: 'All Operator Invoice',
+              icon: 'feather icon-file-minus',
+              type: 'item',
+              url: '/operator_invoice'
+            }
+
           ]
         }
       ]
@@ -378,28 +395,21 @@ const menuItems = {
     },
     {
       id: 'GodownAccessories',
-      title: 'Stock',
+      title: 'Accessories Stock',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'godown_stock',
-          title: 'Stocks GatePass',
+          title: 'Accessory Stocks',
           type: 'collapse',
           icon: 'feather icon-box',
 
           children: [
             {
-              id: 'godown_stock',
-              title: 'Product Stocks',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/stocks/godown'
-            },
-            {
               id: 'godown_accessory',
               title: 'Accessory Stocks',
-              icon: 'feather icon-file-plus',
+              icon: 'feather icon-list',
               type: 'item',
               url: '/view_approve_gatepass'
             }

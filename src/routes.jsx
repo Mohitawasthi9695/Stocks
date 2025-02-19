@@ -111,14 +111,14 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/receiver',
-        element: lazy(() => import('./views/receiver/Index')),
+        path: '/company',
+        element: lazy(() => import('./views/company/Index')),
         allowedRoles: ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
-        path: '/add-Receiver',
-        element: lazy(() => import('./views/receiver/AddReceiver')),
+        path: '/add-company',
+        element: lazy(() => import('./views/company/AddCompany')),
         allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
@@ -269,7 +269,7 @@ const routes = [
         exact: 'true',
         path: '/invoice-out',
         element: lazy(() => import('./views/stockOut/Invoice_out')),
-        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
+        allowedRoles:  ['supervisor','operator']
       },
       {
         exact: 'true',

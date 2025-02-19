@@ -22,39 +22,6 @@ const SuppliersPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSupplier, setselectedSupplier] = useState(null);
 
-  const handleToggleStatus = async (supplierId, currentStatus) => {
-    console.log('Toggling status for supplier:', supplierId, 'Current status:', currentStatus);
-
-    const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle the status
-    try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/peoples/${supplierId}`,
-        { status: updatedStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      console.log('Response from API:', response.data);
-
-      // Update the frontend state
-      setSupplier((prevSuppliers) =>
-        prevSuppliers.map((supplier) => (supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier))
-      );
-
-      setFilteredSupplier((prevFilteredSuppliers) =>
-        prevFilteredSuppliers.map((supplier) => (supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier))
-      );
-
-      toast.success('Status updated successfully!');
-    } catch (error) {
-      console.error('Error updating status:', error);
-      toast.error('Failed to update status!');
-    }
-  };
 const people_type= "Supplier";
   useEffect(() => {
     const fetchSupplier = async () => {
@@ -184,60 +151,6 @@ const people_type= "Supplier";
       selector: (row) => row.area,
       sortable: true
     },
-    // {
-    //   name: 'Status',
-    //   cell: (row) => (
-    //     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-    //       {/* Toggle Switch */}
-    //       <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' , marginBottom:'0'}}>
-    //         <input
-    //           type="checkbox"
-    //           checked={row.status === 0} // Active if 0
-    //           onChange={() => handleToggleStatus(row.id, row.status)}
-    //           style={{ opacity: 0, width: 0, height: 0 }}
-    //         />
-    //         <span
-    //           style={{
-    //             position: 'absolute',
-    //             cursor: 'pointer',
-    //             top: 0,
-    //             left: 0,
-    //             right: 0,
-    //             bottom: 0,
-    //             backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
-    //             transition: '0.4s',
-    //             borderRadius: '20px',
-    //           }}
-    //         ></span>
-    //         <span
-    //           style={{
-    //             position: 'absolute',
-    //             content: '',
-    //             height: '14px',
-    //             width: '14px',
-    //             left: row.status === 0 ? '18px' : '3px',
-    //             bottom: '3px',
-    //             backgroundColor: 'white',
-    //             transition: '0.4s',
-    //             borderRadius: '50%',
-    //           }}
-    //         ></span>
-    //       </label>
-      
-    //       {/* Status Badge */}
-    //       <span
-    //         className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
-    //         style={{
-    //           padding: '5px 10px',
-    //           borderRadius: '8px',
-    //           whiteSpace: 'nowrap', // Prevents text wrapping
-    //         }}
-    //       >
-    //         {row.status === 0 ? 'Active' : 'Inactive'}
-    //       </span>
-    //     </div>
-    //   )
-    // }
     {
       name: 'Action',
       cell: (row) => (

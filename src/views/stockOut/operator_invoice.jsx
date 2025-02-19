@@ -50,7 +50,7 @@ const OperatorInvoice = () => {
             receiver_name: invoice.company,
             height: invoice.stock_out_details?.height,
             date: invoice.date,
-            status:invoice.status,
+            status: invoice.status,
             bank: invoice.payment_Bank,
             payment_mode: invoice.payment_mode,
             payment_status: invoice.payment_status,
@@ -143,9 +143,17 @@ const OperatorInvoice = () => {
       width: '200px',
       cell: (row) => (
         <div className="d-flex">
-          <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
-            <MdCheckCircle />
-          </Button>
+
+          {row.status === 0 ? (
+            <>
+              <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
+                <MdCheckCircle />
+              </Button>
+
+            </>
+          ) : (
+            <></>
+          )}
           <Button
             variant="outline-primary"
             size="sm"
@@ -168,19 +176,19 @@ const OperatorInvoice = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 'Approved' ? 'Approved' : 'Pending'),
+      selector: (row) => (row.status === 1 ? 'Approved' : 'Pending'),
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${row.status === 'Approved' ? 'bg-success' : 'bg-danger'}`}
+            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
               whiteSpace: 'nowrap',
             }}
           >
-            {row.status === 'Approved' ? 'Approved' : 'Pending'}
+            {row.status === 1 ? 'Approved' : 'Pending'}
           </span>
         </div>
       ),
@@ -202,8 +210,12 @@ const OperatorInvoice = () => {
         }
       );
       toast.success('StockoutInovice approved successfully!');
-      setInvoices((prev) => prev.filter((invoice) => invoice.id !== id));
-      setFilteredInvoices((prev) => prev.filter((invoice) => invoice.id !== id));
+      setInvoices((prev) =>
+        prev.map((inv) => (inv.id === id ? { ...inv, status: 'Approved' } : inv))
+      );
+      setFilteredInvoices((prev) =>
+        prev.map((inv) => (inv.id === id ? { ...inv, status: 'Approved' } : inv))
+      );
 
     } catch (error) {
       toast.error('Failed to approve gate pass');
