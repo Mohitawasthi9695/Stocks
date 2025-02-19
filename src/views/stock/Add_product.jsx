@@ -25,10 +25,6 @@ const AddProduct = () => {
       length: '',
       date: '',
       rack: '',
-<<<<<<< HEAD
-=======
-      warehouse: '',
->>>>>>> 13e947b6d0c72d6bcb6e252d5dae7e9a6bccfcea
       length_unit: '',
       width_unit: '',
       pcs: 1,
@@ -53,11 +49,7 @@ const AddProduct = () => {
     fetchCategories();
   }, []);
 
-<<<<<<< HEAD
   const handleCategoryChange = async (event, index) => {
-=======
-  const handleCategoryChange = (event, index) => {
->>>>>>> 13e947b6d0c72d6bcb6e252d5dae7e9a6bccfcea
     const categoryId = event.target.value;
 
     setItems((prevItems) => {
@@ -331,11 +323,6 @@ const AddProduct = () => {
                         <th style={{ width: '150px' }}>Unit</th>
                         <th style={{ width: '120px' }}>Pcs</th>
                         <th style={{ width: '150px' }}>Quantity</th>
-<<<<<<< HEAD
-=======
-                        <th style={{ width: '120px' }}>Type</th>
-                        <th style={{ width: '190px' }}>Warehouse</th>
->>>>>>> 13e947b6d0c72d6bcb6e252d5dae7e9a6bccfcea
                         <th style={{ width: '120px' }}>Actions</th>
                       </tr>
                     </thead>
@@ -461,34 +448,6 @@ const AddProduct = () => {
                             />
                           </td>
                           <td>
-<<<<<<< HEAD
-=======
-                            <Form.Control
-                              as="select"
-                              value={item.type}
-                              onChange={(e) => handleRowChange(index, 'type', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            >
-                              <option value="">Select Type</option>
-                              <option value="roll">Roll</option>
-                              <option value="box">Box</option>
-                            </Form.Control>
-                          </td>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.warehouse}
-                              onChange={(e) => handleRowChange(index, 'warehouse', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            >
-                              <option value="">Select Warehouse</option>
-                              <option value="Dwarka">Dwarka</option>
-                              <option value="Gujarat">Gujarat</option>
-                            </Form.Control>
-                          </td>
-
-                          <td>
->>>>>>> 13e947b6d0c72d6bcb6e252d5dae7e9a6bccfcea
                             <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
                               <FaTrash />
                             </Button>

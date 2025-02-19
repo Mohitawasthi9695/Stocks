@@ -30,25 +30,24 @@ const ShowProduct = () => {
 
         console.log('stocks data:', response.data);
 
-        const flattenedData = response.data.data.flatMap((invoice) =>
-          invoice.stock_out_details.map((detail, index) => ({
-            sr_no: index + 1,
-            lot_no: detail.product.shadeNo,
-            invoice_no: invoice.invoice_no,
-            date: invoice.date,
-            shade_no: detail.product?.shadeNo || 'N/A',
-            pur_shade_no: detail.product?.purchase_shade_no || 'N/A',
-            length: detail.unit === 'inches' ? detail.out_length * 39.3700 : detail.out_length,
-            width: detail.unit === 'inches' ? detail.out_width * 39.3700 : detail.out_width,
-            unit: detail.unit,
-            qty: detail.out_quantity,
-            stock_code:detail.stock_code,
-            status: detail.status,
-            waste: (parseFloat(detail.waste_width) * parseFloat(detail.out_length) * detail.out_quantity * 10.7639 || 0).toFixed(3),
-            area: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity || 0).toFixed(3), // Area in m²
-            area_sq_ft: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity * 10.7639 || 0).toFixed(3) // Area in sq. ft.
-          }))
-        );
+        // Ensure that response.data.data is not undefined and contains stock_out_details
+        const flattenedData = response.data.data.stock_out_details.map((detail, index) => ({
+          sr_no: index + 1,
+          lot_no: detail.product.shadeNo,
+          invoice_no: response.data.data.invoice_no, // Access invoice_no from the parent object
+          date: response.data.data.date, // Access date from the parent object
+          shade_no: detail.product?.shadeNo || 'N/A',
+          pur_shade_no: detail.product?.purchase_shade_no || 'N/A',
+          length: detail.length_unit === 'inches' ? detail.out_length * 39.3700 : detail.out_length,
+          width: detail.width_unit === 'inches' ? detail.out_width * 39.3700 : detail.out_width,
+          unit: detail.unit,
+          qty: detail.out_quantity,
+          stock_code: detail.stock_code,
+          status: detail.status,
+          waste: (parseFloat(detail.waste_width) * parseFloat(detail.out_length) * detail.out_quantity * 10.7639 || 0).toFixed(3),
+          area: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity || 0).toFixed(3), // Area in m²
+          area_sq_ft: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity * 10.7639 || 0).toFixed(3) // Area in sq. ft.
+        }));
 
         setProducts(flattenedData);
         setFilteredProducts(flattenedData);
@@ -61,7 +60,6 @@ const ShowProduct = () => {
 
     fetchStocksData();
   }, []);
-
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
@@ -87,8 +85,8 @@ const ShowProduct = () => {
       selector: (row) => `${row.shade_no}-${row.stock_code}` || 'N/A',
       sortable: true
     },
-    { name: 'Shade No', selector: (row) => row.shade_no, sortable: true },
-    { name: 'Pur. Shade No', selector: (row) => row.pur_shade_no, sortable: true },
+    { name: 'Shade No', selector: (row) => row.product_shadeNo, sortable: true },
+    { name: 'Pur. Shade No', selector: (row) => row.product_purchase_shade_no, sortable: true },
     { name: 'Length', selector: (row) => Math.round(row.length), sortable: true },
     { name: 'Width', selector: (row) => Math.round(row.width), sortable: true },
     { name: 'Unit', selector: (row) => row.unit, sortable: true },

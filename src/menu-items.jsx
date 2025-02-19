@@ -34,9 +34,8 @@ const filterMenuItem = (menu) => {
               'Accessory',
               'stockin',
               'Warehouse_Accessories',
-              'stockout',
               'WarehouseGatePass',
-              'stockout'
+             
             ].includes(item.id)
           )
       )
