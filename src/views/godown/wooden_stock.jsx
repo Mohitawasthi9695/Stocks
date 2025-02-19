@@ -142,6 +142,7 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      // modified 
       name: 'Rack',
       cell: (row) => (
         <div className="d-flex align-items-center gap-2">
