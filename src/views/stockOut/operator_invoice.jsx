@@ -45,13 +45,12 @@ const OperatorInvoice = () => {
           return data.map((invoice) => ({
             invoice_no: invoice.invoice_no,
             id: invoice.id,
-            status: localStorage.getItem(`invoice_${invoice.id}_status`) || 'Pending',
             supplier_name: invoice.customer,
-            receiver_name: invoice.company,
+            company_name: invoice.company,
             height: invoice.stock_out_details?.height,
             date: invoice.date,
             status: invoice.status,
-            bank: invoice.payment_Bank,
+            payment_bank: invoice.payment_bank,
             payment_mode: invoice.payment_mode,
             payment_status: invoice.payment_status,
             total_amount: invoice.total_amount,
@@ -120,7 +119,7 @@ const OperatorInvoice = () => {
     },
     {
       name: 'Supplier Name',
-      selector: (row) => row.receiver_name,
+      selector: (row) => row.company_name,
       sortable: true
     },
     {
@@ -130,7 +129,7 @@ const OperatorInvoice = () => {
     },
     {
       name: 'Bank',
-      selector: (row) => row.bank,
+      selector: (row) => row.payment_bank,
       sortable: true
     },
     {
@@ -211,10 +210,10 @@ const OperatorInvoice = () => {
       );
       toast.success('StockoutInovice approved successfully!');
       setInvoices((prev) =>
-        prev.map((inv) => (inv.id === id ? { ...inv, status: 'Approved' } : inv))
+        prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv))
       );
       setFilteredInvoices((prev) =>
-        prev.map((inv) => (inv.id === id ? { ...inv, status: 'Approved' } : inv))
+        prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv))
       );
 
     } catch (error) {

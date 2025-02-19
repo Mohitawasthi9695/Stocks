@@ -592,7 +592,7 @@ const Invoice_out = () => {
                                     <td key="length_unit">{row.length_unit}</td>
                                     <td key="out_pcs">
                                       <input
-                                        type="text"
+                                        type="t                                 ext"
                                         value={row.out_pcs || ''}
                                         className="py-2"
                                         onChange={(e) => handleInputChange(row.godown_id, 'out_pcs', e.target.value)}

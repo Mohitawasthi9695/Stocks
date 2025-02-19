@@ -261,6 +261,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/godown/add_vertical_stock/:id',
+        element: lazy(() => import('./views/godown/add_vertical_stock')),
+        allowedRoles:  ['superadmin','admin', 'supervisor',]
+      },
+      {
+        exact: 'true',
         path: '/godown/honeycomb_stock',
         element: lazy(() => import('./views/godown/honeycomb_stock')),
         allowedRoles:  ['superadmin','admin', 'supervisor','operator']

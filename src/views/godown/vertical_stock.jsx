@@ -101,9 +101,14 @@ const ShowProduct = () => {
       sortable: true,
     },
     {
-      name: 'Rack',
-      selector: (row) => row.rack?? '__________',
-      sortable: true,
+      name: 'Action',
+      cell: (row) => (
+        <div className="d-flex">
+          <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/godown/add_vertical_stock/${row.id}`)}>
+            <MdAdd />
+          </Button>
+        </div>
+      ),
     },
     {
       name: 'Status',

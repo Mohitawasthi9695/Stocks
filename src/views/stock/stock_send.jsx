@@ -268,6 +268,7 @@ const Invoice_out = () => {
       });
 
       toast.success('Stocks out successfully');
+      navigate('/generated_gate_pass');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding stock';
 

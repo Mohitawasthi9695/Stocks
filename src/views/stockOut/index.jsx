@@ -168,19 +168,19 @@ const Index = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'Requested' : 'Sold Out'),
+      selector: (row) => (row.status === 0 ? 'Requested' : 'Sold Out'),
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${row.status === 1 ? 'bg-danger' : 'bg-success'}`}
+            className={`badge ${row.status === 0 ? 'bg-danger' : 'bg-success'}`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
               whiteSpace: 'nowrap'
             }}
           >
-            {row.status === 1 ? 'Requested' : 'Sold Out'}
+            {row.status === 0 ? 'Requested' : 'Sold Out'}
           </span>
         </div>
       )

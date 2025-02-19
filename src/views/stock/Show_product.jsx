@@ -70,6 +70,11 @@ const Show_product = () => {
       sortable: true
     },
     {
+      name: 'Ware Code',
+      selector: (row) => row.stock_code,
+      sortable: true
+    },
+    {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true

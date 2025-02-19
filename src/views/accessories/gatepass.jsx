@@ -41,6 +41,11 @@ const Invoice_out = () => {
   const [formData, setFormData] = useState({
     invoice_no: '',
     date: today,
+    type:'accessory',
+    vehicle_no: '',
+    place_of_supply: '',
+    driver_name: '',
+    driver_phone: '',
     warehouse_supervisor_id: warehouse_supervisor_id,
     godown_supervisor_id: '',
     out_products: []
@@ -233,6 +238,7 @@ const Invoice_out = () => {
       });
 
       toast.success('Stocks out successfully');
+      navigate('/accessory/gatepassview');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
 
@@ -311,11 +317,13 @@ const Invoice_out = () => {
             <Card.Body className="p-5">
               <Form onSubmit={handleSubmit}>
                 <Row>
-                  <Col md={4}>
+                <Col md={4}>
                     <FormField icon={FaFileInvoice} label="GatePass No" name="invoice_no" value={invoice_no} readOnly />
+                    <FormField icon={FaCity} label="place_of_supply" type="text" name="place_of_supply" value={formData.place_of_supply} onChange={handleChange} />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
+                    <FormField icon={FaTruck} label="vehicle_no" type="text" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
                   </Col>
                   <Col md={4}>
                     <FormField
@@ -325,6 +333,13 @@ const Invoice_out = () => {
                       value={formData.sub_supervisor}
                       onChange={handleChange}
                       options={sub_supervisors}
+                    />
+                     <FormField
+                      icon={FaUser}
+                      label="Driver Name"
+                      name="driver_name"
+                      value={formData.driver_name}
+                      onChange={handleChange}
                     />
                   </Col>
                 </Row>

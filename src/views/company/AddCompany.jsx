@@ -94,8 +94,14 @@ const AddReceiver = () => {
             toast.success('Company added successfully');
         } catch (error) {
             console.error('Error adding Company:', error);
-            toast.error('Error adding Company');
+        
+            if (error.response) {
+                toast.error(error.response.data.message || 'Error adding Company');
+            } else {
+                toast.error('Error adding Company');
+            }
         }
+        
     };
 
     const mainColor = '#3f4d67';

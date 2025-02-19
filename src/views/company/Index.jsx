@@ -24,42 +24,11 @@ const ReceiversPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const handleToggleStatus = async (receiverId, currentStatus) => {
-    try {
-      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
-
-      // Make the API call to update status
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`,
-        { status: updatedStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      toast.success('Status updated successfully!');
-
-      // Update state for both Receivers and filteredReceivers
-      setReceiver((prevReceivers) =>
-        prevReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
-      );
-
-      setFilteredReceiver((prevFilteredReceivers) =>
-        prevFilteredReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
-      );
-    } catch (error) {
-      toast.error('Failed to update status!');
-      console.error(error);
-    }
-  };
-
+  const people_type= "Company";
   useEffect(() => {
     const fetchReceiver = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/receiver`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/peoples?people_type=${people_type}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -81,15 +50,15 @@ const ReceiversPage = () => {
   // Update filtered Receivers when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = Receivers.filter((Receiver) => {
-      const statusText = Receiver.status === 1 ? 'active' : 'inactive';
+    const filtered = Receivers.filter((Company) => {
+      const statusText = Company.status === 1 ? 'active' : 'inactive';
       return (
-        Receiver.name.toLowerCase().includes(lowercasedQuery) ||
-        Receiver.code.toLowerCase().includes(lowercasedQuery) ||
-        Receiver.gst_no.toLowerCase().includes(lowercasedQuery) ||
-        Receiver.email.toLowerCase().includes(lowercasedQuery) ||
-        Receiver.tel_no.toLowerCase().includes(lowercasedQuery) ||
-        Receiver.owner_mobile.toLowerCase().includes(lowercasedQuery) ||
+        Company.name.toLowerCase().includes(lowercasedQuery) ||
+        Company.code.toLowerCase().includes(lowercasedQuery) ||
+        Company.gst_no.toLowerCase().includes(lowercasedQuery) ||
+        Company.email.toLowerCase().includes(lowercasedQuery) ||
+        Company.tel_no.toLowerCase().includes(lowercasedQuery) ||
+        Company.owner_mobile.toLowerCase().includes(lowercasedQuery) ||
         statusText.includes(lowercasedQuery)
       );
     });
@@ -109,7 +78,7 @@ const ReceiversPage = () => {
       sortable: true
     },
     {
-      name: 'Receiver Name',
+      name: 'Company Name',
       selector: (row) => row.name,
       sortable: true
     },
@@ -189,63 +158,6 @@ const ReceiversPage = () => {
       selector: (row) => row.area,
       sortable: true
     },
-    
-    {
-      name: 'Status',
-      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
-      sortable: true,
-      cell: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Toggle Switch */}
-          <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' , marginBottom:'0'}}>
-            <input
-              type="checkbox"
-              checked={row.status === 0} // Active if 0
-              onChange={() => handleToggleStatus(row.id, row.status)}
-              style={{ opacity: 0, width: 0, height: 0 }}
-            />
-            <span
-              style={{
-                position: 'absolute',
-                cursor: 'pointer',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
-                transition: '0.4s',
-                borderRadius: '20px',
-              }}
-            ></span>
-            <span
-              style={{
-                position: 'absolute',
-                content: '',
-                height: '14px',
-                width: '14px',
-                left: row.status === 0 ? '18px' : '3px',
-                bottom: '3px',
-                backgroundColor: 'white',
-                transition: '0.4s',
-                borderRadius: '50%',
-              }}
-            ></span>
-          </label>
-      
-          {/* Status Badge */}
-          <span
-            className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
-            style={{
-              padding: '5px 10px',
-              borderRadius: '8px',
-              whiteSpace: 'nowrap', // Prevents text wrapping
-            }}
-          >
-            {row.status === 0 ? 'Active' : 'Inactive'}
-          </span>
-        </div>
-      )
-    },
     {
       name: 'Action',
       cell: (row) => (
@@ -263,7 +175,6 @@ const ReceiversPage = () => {
 
   const handleDelete = async (receiverId) => {
     try {
-      // Display confirmation modal
       const result = await Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -276,7 +187,7 @@ const ReceiversPage = () => {
 
       if (result.isConfirmed) {
         // Attempt to delete supplier
-        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/receiver/${receiverId}`, {
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/peoples/${receiverId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -286,22 +197,22 @@ const ReceiversPage = () => {
         setReceiver((prevReceivers) => prevReceivers.filter((Receivers) => Receivers.id !== receiverId));
         setFilteredReceiver((prevFilteredReceivers) => prevFilteredReceivers.filter((Receivers) => Receivers.id !== receiverId));
 
-        toast.success('Receiver deleted successfully');
-        Swal.fire('Deleted!', 'The Receiver has been deleted.', 'success');
+        toast.success('Company deleted successfully');
+        Swal.fire('Deleted!', 'The Company has been deleted.', 'success');
       }
     } catch (error) {
       // Log error for debugging and notify user
-      console.error('Error deleting Receiver:', error);
+      console.error('Error deleting Company:', error);
 
       // Provide user feedback
       if (error.response && error.response.data && error.response.data.message) {
-        toast.error(`Failed to delete Receiver: ${error.response.data.message}`);
+        toast.error(`Failed to delete Company: ${error.response.data.message}`);
       } else {
-        toast.error('An unexpected error occurred while deleting the Receiver.');
+        toast.error('An unexpected error occurred while deleting the Company.');
       }
 
       // Display error notification in confirmation dialog
-      Swal.fire('Error!', 'There was a problem deleting the Receiver.', 'error');
+      Swal.fire('Error!', 'There was a problem deleting the Company.', 'error');
     }
   };
 
@@ -313,12 +224,12 @@ const ReceiversPage = () => {
     try {
       // Ensure the selectedReceiver is valid
       if (!selectedReceiver || !selectedReceiver.id) {
-        toast.error('Invalid Receiver selected for update!');
+        toast.error('Invalid Company selected for update!');
         return;
       }
 
       // Perform the API call
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/receiver/${selectedReceiver.id}`, selectedReceiver, {
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/peoples/${selectedReceiver.id}`, selectedReceiver, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -327,27 +238,21 @@ const ReceiversPage = () => {
 
       // Check the response status
       if (response.status === 200) {
-        toast.success('Receiver updated successfully!');
-
-        // Update the Receivers list
+        toast.success('Company updated successfully!');
         setReceiver((prev) => prev.map((sup) => (sup.id === selectedReceiver.id ? selectedReceiver : sup)));
-
-        // Update the filtered Receivers list
         setFilteredReceiver((prev) => prev.map((sup) => (sup.id === selectedReceiver.id ? selectedReceiver : sup)));
-
-        // Close the modal
         setShowEditModal(false);
       } else {
         throw new Error('Unexpected response status');
       }
     } catch (error) {
       console.error('Error during update:', error);
-      toast.error('Error updating Receiver!');
+      toast.error('Error updating Company!');
     }
   };
 
   const handleAddUser = () => {
-    navigate('/add-Receiver');
+    navigate('/add-company');
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -446,7 +351,7 @@ const ReceiversPage = () => {
     doc.autoTable({
       head: [
         [
-          'Receiver Name',
+          'Company Name',
           'GST No',
           'Phone',
           'Email',
@@ -483,7 +388,7 @@ const ReceiversPage = () => {
         </div>
         <div className="col-md-8 text-end">
           <Button variant="primary" onClick={handleAddUser}>
-            <MdPersonAdd className="me-2" /> Add Receiver
+            <MdPersonAdd className="me-2" /> Add Company
           </Button>
         </div>
       </div>
@@ -525,12 +430,12 @@ const ReceiversPage = () => {
       {showEditModal && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
           <Modal.Header closeButton style={{ backgroundColor: '#3f4d67' }}>
-            <Modal.Title className="text-white">Edit Receiver</Modal.Title>
+            <Modal.Title className="text-white">Edit Company</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
             <Form>
               <Form.Group className="mb-3">
-                <Form.Label>Receiver Name</Form.Label>
+                <Form.Label>Company Name</Form.Label>
                 <Form.Control
                   type="text"
                   name="name"
@@ -541,7 +446,7 @@ const ReceiversPage = () => {
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Receiver Code</Form.Label>
+                <Form.Label>Company Code</Form.Label>
                 <Form.Control
                   type="text"
                   name="code"

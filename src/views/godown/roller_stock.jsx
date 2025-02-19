@@ -10,7 +10,8 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
-import { FiSave } from 'react-icons/fi';
+import { FiSave ,FiPlus} from 'react-icons/fi';
+import Swal from 'sweetalert2';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
@@ -72,28 +73,49 @@ const ShowProduct = () => {
       [id]: value
     }));
   };
-  const handleRackUpdate = async (id) => {
-    try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock/${id}`,
-        { rack: rackInputs[id] },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
+  const handleRackUpdate = async (id, currentRack) => {
+    Swal.fire({
+      title: "Update Rack",
+      input: "text",
+      inputPlaceholder: "Enter new rack value...",
+      inputValue: currentRack, // Set default value to current rack
+      showCancelButton: true,
+      confirmButtonText: "Save",
+      cancelButtonText: "Cancel",
+      preConfirm: (value) => {
+        if (!value) {
+          Swal.showValidationMessage("Rack value cannot be empty!");
         }
-      );
-
-      if (response.status === 200) {
-        const updatedProducts = products.map((product) => (product.id === id ? { ...product, rack: rackInputs[id] } : product));
-        setProducts(updatedProducts);
-        toast.success('Rack updated successfully!');
+        return value;
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock/${id}`,
+            { rack: result.value },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+  
+          if (response.status === 200) {
+            setProducts((prevProducts) =>
+              prevProducts.map((product) =>
+                product.id === id ? { ...product, rack: result.value } : product
+              )
+            );
+            toast.success("Rack updated successfully!");
+          }
+        } catch (error) {
+          console.error("Error updating rack:", error);
+          toast.error("Failed to update rack. Please try again.");
+        }
       }
-    } catch (error) {
-      console.error('Error updating rack:', error);
-      toast.error('Failed to update rack. Please try again.');
-    }
+    });
   };
   const columns = [
     {
@@ -147,22 +169,20 @@ const ShowProduct = () => {
     {
       name: 'Rack',
       cell: (row) => (
-        <div className="d-flex align-items-center gap-2">
-          <input
-            type="text"
-            value={rackInputs[row.id] || ''}
-            onChange={(e) => handleRackChange(row.id, e.target.value)}
-            className="form-control form-control-sm"
-            style={{ width: '100px' }}
-          />
-          <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id)} title="Update Rack">
-            <FiSave size={16} />
+        <div className="d-flex align-items-center w-100" style={{ justifyContent: row.rack ? 'space-between' : 'center'}}>
+          {row.rack && (
+            <span style={{ paddingLeft: '15px', minWidth: '50px', textAlign: 'left' }}>
+              {row.rack}
+            </span>
+          )}
+          <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id, row.rack)} title="Update Rack">
+            <FiPlus />
           </button>
         </div>
       ),
       sortable: false,
-      width: '200px'
-    },
+      width: '150px'
+    }, 
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
