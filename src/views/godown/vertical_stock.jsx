@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
@@ -10,12 +9,20 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import { FaEye } from 'react-icons/fa6';
+import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
+import { Button, Modal, Form } from 'react-bootstrap';
+import PdfPreview from 'components/PdfPreview';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [showPdfModal, setShowPdfModal] = useState(false);
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -23,8 +30,8 @@ const ShowProduct = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log('stocks data:', response.data);
         setProducts(response.data);
@@ -39,23 +46,24 @@ const ShowProduct = () => {
     fetchStocksData();
   }, []);
 
- useEffect(() => {
-     const lowercasedQuery = searchQuery.toLowerCase();
-     const filtered = products.filter((product) =>
-       Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
-     );
-     setFilteredProducts(filtered);
-   }, [searchQuery, products]);
+  useEffect(() => {
+    const lowercasedQuery = searchQuery.toLowerCase();
+    const filtered = products.filter((product) =>
+      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
+    );
+    setFilteredProducts(filtered);
+  }, [searchQuery, products]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
 
+  const navigate = useNavigate();
   const columns = [
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
+      sortable: true
     },
 
     {
@@ -88,48 +96,94 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    { name: "ToTal Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: "RollLength", selector: (row) => `${row.roll_length?? '_______'}  ${row.length_unit}`, sortable: true },
+    { name: 'ToTal Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: 'RollLength', selector: (row) => `${row.roll_length ?? '_______'}  ${row.length_unit}`, sortable: true },
     {
       name: 'Issue Length',
       selector: (row) => row.out_length ?? 0,
-      sortable: true,
+      sortable: true
     },
     {
       name: 'Avaible Quantity',
       selector: (row) => row.roll_length - row.out_length,
-      sortable: true,
+      sortable: true
     },
     {
-      name: 'Action',
-      cell: (row) => (
-        <div className="d-flex">
-          <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/godown/add_vertical_stock/${row.id}`)}>
-            <MdAdd />
-          </Button>
-        </div>
-      ),
+      name: 'Rack',
+      selector: (row) => row.rack ?? '__________',
+      sortable: true
     },
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
       cell: (row) => (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span
-                  className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
-                  style={{
-                      padding: '5px 10px',
-                      borderRadius: '8px',
-                      whiteSpace: 'nowrap'
-                  }}
-              >
-                  {row.status === 1 ? 'Approved' : 'Pending'}
-              </span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span
+            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {row.status === 1 ? 'Approved' : 'Pending'}
+          </span>
+        </div>
       )
-  },
+    },
+    {
+      name: 'Action',
+      cell: (row) => (
+        <div className="d-flex">
+          <Button
+            variant="outline-warning"
+            size="sm"
+            className="me-2"
+            onClick={() => navigate(`/add_vertical_product/${row.id}/${row.invoice_no}`)}
+          >
+            <MdAdd />
+          </Button>
+          <Button variant="outline-success" size="sm" className="me-2">
+            <FaEye onClick={() => navigate(`/show_vertical_product/${row.id}`)} />
+          </Button>
+
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+            <MdDelete />
+          </Button>
+        </div>
+      ),
+      width: '220px'
+    }
   ];
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+
+      Swal.fire('Deleted!', 'The product has been deleted.', 'success');
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      Swal.fire('Error!', 'Failed to delete the product. Please try again.', 'error');
+    }
+  };
 
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
@@ -139,12 +193,12 @@ const ShowProduct = () => {
       'Lot No': row.lot_no,
       'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      'Date': row.stock_invoice?.date || 'N/A',
+      Date: row.stock_invoice?.date || 'N/A',
       'Shade No': row.stock_product?.shadeNo || 'N/A',
       'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
-      'Length': row.length,
-      'Width': row.width,
-      'Unit': row.unit,
+      Length: row.length,
+      Width: row.width,
+      Unit: row.unit
     }));
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -168,8 +222,8 @@ const ShowProduct = () => {
           'Length',
           'Width',
           'Unit',
-          'Warehouse',
-        ],
+          'Warehouse'
+        ]
       ],
       body: filteredProducts.map((row, index) => [
         index + 1,
@@ -183,8 +237,8 @@ const ShowProduct = () => {
         row.length,
         row.width,
         row.unit,
-        row.warehouse,
-      ]),
+        row.warehouse
+      ])
     });
     doc.save('stocks_list.pdf');
   };
@@ -193,8 +247,8 @@ const ShowProduct = () => {
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
-      },
+        borderSpacing: 0 // Removes spacing between cells
+      }
     },
     header: {
       style: {
@@ -203,8 +257,8 @@ const ShowProduct = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -213,9 +267,9 @@ const ShowProduct = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -225,44 +279,44 @@ const ShowProduct = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
-        },
-      },
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
         '& svg': {
-          fill: 'white',
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
   const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
@@ -270,14 +324,7 @@ const ShowProduct = () => {
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
-          <input
-            type="text"
-            placeholder="Search..."
-            id="search"
-            value={searchQuery}
-            onChange={handleSearch}
-            className="form-control"
-          />
+          <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
         </div>
         <div className="col-md-8">
           <div className="d-flex justify-content-end">
@@ -297,18 +344,12 @@ const ShowProduct = () => {
               <Skeleton count={10} />
             ) : (
               <>
-              <DataTable
-                columns={columns}
-                data={filteredProducts}
-                pagination
-                highlightOnHover
-                customStyles={customStyles}
-              />
-              {searchQuery && (
-                <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
-                  Total Boxes: {totalBoxes}
-                </div>
-              )}
+                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+                {searchQuery && (
+                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                    Total Boxes: {totalBoxes}
+                  </div>
+                )}
               </>
             )}
           </div>
