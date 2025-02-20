@@ -96,8 +96,7 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    { name: 'ToTal Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: 'RollLength', selector: (row) => `${row.roll_length ?? '_______'}  ${row.length_unit}`, sortable: true },
+    { name: 'ToTalLength', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Issue Length',
       selector: (row) => row.out_length ?? 0,
@@ -106,11 +105,6 @@ const ShowProduct = () => {
     {
       name: 'Avaible Quantity',
       selector: (row) => row.roll_length - row.out_length,
-      sortable: true
-    },
-    {
-      name: 'Rack',
-      selector: (row) => row.rack ?? '__________',
       sortable: true
     },
     {
@@ -145,7 +139,7 @@ const ShowProduct = () => {
             <MdAdd />
           </Button>
           <Button variant="outline-success" size="sm" className="me-2">
-            <FaEye onClick={() => navigate(`/show_vertical_product/${row.id}`)} />
+            <FaEye onClick={() => navigate(`/show_vertical_product/${row.stock_in_id}`)} />
           </Button>
 
           <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>

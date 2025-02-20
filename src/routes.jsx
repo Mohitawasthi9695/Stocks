@@ -112,9 +112,6 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/receiver',
-        element: lazy(() => import('./views/receiver/Index')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
         path: '/company',
         element: lazy(() => import('./views/company/Index')),
         allowedRoles: ['superadmin', 'admin','supervisor', 'operator']
@@ -400,6 +397,7 @@ const routes = [
         element: lazy(() => import('./views/godown/show_vertical_product')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
       },
+      
       {
         exact: 'true',
         path: '/contexts',
