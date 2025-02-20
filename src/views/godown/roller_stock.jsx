@@ -185,23 +185,30 @@ const ShowProduct = () => {
     }, 
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      selector: (row) => row.status, // Keep it numeric for sorting
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            className={`badge ${
+              row.status === 1
+                ? 'bg-success'
+                : row.status === 2
+                ? 'bg-warning'
+                : 'bg-danger'
+            }`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
               whiteSpace: 'nowrap'
             }}
           >
-            {row.status === 1 ? 'Approved' : 'Pending'}
+            {row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'}
           </span>
         </div>
       )
     }
+    
   ];
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({

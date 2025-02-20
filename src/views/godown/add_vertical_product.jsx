@@ -67,7 +67,7 @@ const AddProduct = () => {
         }
       });
       toast.success('Godown Vertical Stock Updated');
-      navigate('/vertical_stock');
+      navigate('/godown/vertical_stock');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error updating stock');
       console.error(error);

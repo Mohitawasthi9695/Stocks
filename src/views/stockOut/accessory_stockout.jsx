@@ -22,7 +22,7 @@ const AccessoryOut = () => {
       length_unit: "",
       items: "",
       box_bundle: "",
-      quantity: "0",
+      out_quantity: "0",
     },
   ]);
 
@@ -56,7 +56,7 @@ const AccessoryOut = () => {
         length_unit: "",
         items: "",
         box_bundle: "",
-        quantity: "0",
+        out_quantity: "0",
       },
     ]);
   };
@@ -84,7 +84,7 @@ const AccessoryOut = () => {
       if (field === "items" || field === "box_bundle") {
         const items = Number(updated[index].items) || 0;
         const boxBundle = Number(updated[index].box_bundle) || 0;
-        updated[index].quantity = (items * boxBundle).toString();
+        updated[index].out_quantity = (items * boxBundle).toString();
       }
       return updated;
     });
@@ -118,7 +118,7 @@ const AccessoryOut = () => {
               length_unit: response.data.data.unit || "N/A",
               items: response.data.data.items || "N/A",
               box_bundle: response.data.data.box_bundle || "N/A",
-              quantity: response.data.data.quantity || "0",
+              out_quantity: response.data.data.available_qty || "0",
             };
             return updated;
           });
@@ -158,7 +158,7 @@ const AccessoryOut = () => {
       length_unit: item.length_unit,
       items: item.items,
       box_bundle: item.box_bundle,
-      quantity: item.quantity,
+      out_quantity: item.out_quantity,
     }));
 
     try {
@@ -169,7 +169,7 @@ const AccessoryOut = () => {
         },
       });
       toast.success("Stock added successfully");
-      navigate("/warehouse_accessories");
+      navigate("/operator_invoice");
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || "Error adding stock");
@@ -230,8 +230,8 @@ const AccessoryOut = () => {
                       <td>
                         <Form.Control
                           type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                          value={item.out_quantity}
+                          onChange={(e) => handleRowChange(index, 'out_quantity', e.target.value)}
                         />
                       </td>
                       <td>

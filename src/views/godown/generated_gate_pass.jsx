@@ -41,6 +41,7 @@ const Index = () => {
         const filteredFields = invoicesDetails.map((gatepass) => ({
           gatepass_no: gatepass.gate_pass_no,
           id: gatepass.id,
+          status: gatepass.status,
           godownSupervisor: gatepass.godown_supervisor.name,
           warehouseSupervisor: gatepass.warehouse_supervisor.name,
           date: gatepass.gate_pass_date,
