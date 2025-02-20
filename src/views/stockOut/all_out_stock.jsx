@@ -28,29 +28,8 @@ const ShowProduct = () => {
         });
 
         console.log('stocks data:', response.data);
-
-        const flattenedData = response.data.data.flatMap((invoice) =>
-          invoice.stock_out_details.map((detail, index) => ({
-            sr_no: index + 1,
-            lot_no: detail.product.shadeNo,
-            invoice_no: invoice.invoice_no,
-            date: invoice.date,
-            shade_no: detail.product?.shadeNo || 'N/A',
-            pur_shade_no: detail.product?.purchase_shade_no || 'N/A',
-            length: detail.unit === 'inches' ? detail.out_length * 39.3700 : detail.out_length,
-            width: detail.unit === 'inches' ? detail.out_width * 39.3700 : detail.out_width,
-            unit: detail.unit,
-            qty: detail.out_quantity,
-            stock_code:detail.stock_code,
-            status: detail.status,
-            waste: (parseFloat(detail.waste_width) * parseFloat(detail.out_length) * detail.out_quantity * 10.7639 || 0).toFixed(3),
-            area: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity || 0).toFixed(3), // Area in m²
-            area_sq_ft: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity * 10.7639 || 0).toFixed(3) // Area in sq. ft.
-          }))
-        );
-
-        setProducts(flattenedData);
-        setFilteredProducts(flattenedData);
+        setProducts(response.data.data);
+        setFilteredProducts(response.data.data);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -77,23 +56,38 @@ const ShowProduct = () => {
   };
 
   const columns = [
-    { name: 'Sr No', selector: (row) => row.sr_no, sortable: true },
+    {
+      name: 'Sr No',
+      selector: (_, index) => index + 1,
+      sortable: true
+    },
     { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
     { name: 'Invoice No', selector: (row) => row.invoice_no, sortable: true },
     { name: 'Date', selector: (row) => row.date, sortable: true },
+    { name: 'Category', selector: (row) => row.product_category, sortable: true },
     {
       name: 'Stock Code',
-      selector: (row) => `${row.shade_no}-${row.stock_code}` || 'N/A',
+      selector: (row) => row.stock_code || 'N/A',
       sortable: true
     },
-    { name: 'Shade No', selector: (row) => row.shade_no, sortable: true },
-    { name: 'Pur. Shade No', selector: (row) => row.pur_shade_no, sortable: true },
-    { name: 'Length', selector: (row) => Math.round(row.length), sortable: true },
-    { name: 'Width', selector: (row) => Math.round(row.width), sortable: true },
-    { name: 'Unit', selector: (row) => row.unit, sortable: true },
+    { name: 'Shade No', selector: (row) => row.product_shade_no, sortable: true },
+    { name: 'Pur. Shade No', selector: (row) => row.product_pur_shade_no, sortable: true },
+    {
+      name: 'Length',
+      selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
+      sortable: true
+    },
+    {
+      name: 'Width',
+      selector: (row) =>`${Number(row.width).toFixed(2)} ${row.width_unit}`,
+      sortable: true
+    },
+    { name: 'Pcs', selector: (row) => row.pcs, sortable: true },
+    { name: 'Rate', selector: (row) => row.rate, sortable: true },
+    { name: 'Amount', selector: (row) => row.amount, sortable: true },
+    { name: 'Rack', selector: (row) => row.rack, sortable: true },
     { name: 'Area (m²)', selector: (row) => row.area, sortable: true },
     { name: 'Area (sq. ft.)', selector: (row) => row.area_sq_ft, sortable: true },
-    { name: 'Wastage Area (sq. ft.)', selector: (row) => row.waste, sortable: true },
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),

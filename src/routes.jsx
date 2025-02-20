@@ -303,6 +303,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/accessory-add-out-stock/:id',
+        element: lazy(() => import('./views/stockOut/accessory_stockout')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
+      },
+      {
+        exact: 'true',
         path: '/stocks/add-radius',
         element: lazy(() => import('./views/godown/Add_role')),
         allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']

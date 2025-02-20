@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Button } from 'react-bootstrap';
-import { MdDelete, MdPrint, MdPersonAdd, MdCheckCircle } from 'react-icons/md';
+import { MdDelete, MdPrint, MdPersonAdd, MdCheckCircle,MdAdd } from 'react-icons/md';
 import { FaFileExcel } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
@@ -169,6 +169,9 @@ const OperatorInvoice = () => {
             onClick={() => exportToExcel(row)}
           >
             <FaFileExcel />
+          </Button>
+          <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/accessory-add-out-stock/${row.id}`)}>
+            <MdAdd />
           </Button>
         </div>
       )
