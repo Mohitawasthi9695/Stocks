@@ -167,6 +167,11 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      name: 'Wastage',
+      selector: (row) => row.wastage,
+      sortable: true
+    },
+    {
       name: 'Rack',
       cell: (row) => (
         <div className="d-flex align-items-center w-100" style={{ justifyContent: row.rack ? 'space-between' : 'center'}}>

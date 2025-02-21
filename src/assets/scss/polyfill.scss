@@ -1,0 +1,12 @@
+@function color-channel($color, $channel) {
+    @if $channel == "red" {
+      @return red($color);
+    } @else if $channel == "green" {
+      @return green($color);
+    } @else if $channel == "blue" {
+      @return blue($color);
+    } @else {
+      @error "Invalid channel: #{$channel}. Expected 'red', 'green', or 'blue'.";
+    }
+  }
+  

@@ -179,10 +179,10 @@ const LoginPage = () => {
       cursor: 'pointer',
       transition: '.2s',
     },
-    buttonHover: {
-      borderColor: '#6A679E',
-      outline: 'none',
-    },
+    // buttonHover: {
+    //   borderColor: '#6A679E',
+    //   outline: 'none',
+    // },
     socialLogin: {
       position: 'absolute',
       height: '140px',

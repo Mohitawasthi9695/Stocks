@@ -146,18 +146,17 @@ const Invoice_out = () => {
           console.log('Fetched Product Data:', response.data.data);
           setProducts(response.data.data);
         } else {
-          toast.error("No products found.");
+          toast.error('No products found.');
           setProducts([]); // Reset product list
         }
-
       } catch (error) {
         setLoading(false);
         if (error.response) {
           console.error('Error fetching product data:', error.response.data.message);
-          toast.error(error.response.data.message || "Something went wrong.");
+          toast.error(error.response.data.message || 'Something went wrong.');
         } else {
           console.error('Network error:', error);
-          toast.error("Network error. Please try again.");
+          toast.error('Network error. Please try again.');
         }
         setProducts([]);
       }
@@ -209,9 +208,7 @@ const Invoice_out = () => {
 
   const handleInputChange = (godown_id, field, value) => {
     setSelectedRows((prevSelectedRows) => {
-      const updatedRows = prevSelectedRows.map((row) =>
-        row.godown_id === godown_id ? { ...row, [field]: value } : row
-      );
+      const updatedRows = prevSelectedRows.map((row) => (row.godown_id === godown_id ? { ...row, [field]: value } : row));
 
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -221,7 +218,6 @@ const Invoice_out = () => {
       return updatedRows;
     });
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -233,7 +229,7 @@ const Invoice_out = () => {
       showCancelButton: true,
       cancelButtonColor: '#d33',
       confirmButtonColor: '#20B2AA',
-      confirmButtonText: 'Yes, create it!',
+      confirmButtonText: 'Yes, create it!'
     });
 
     if (!result.isConfirmed) {
@@ -241,16 +237,12 @@ const Invoice_out = () => {
     }
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
-      );
+      });
 
       console.log(response.data);
       toast.success('Stocks out successfully');
@@ -263,6 +255,27 @@ const Invoice_out = () => {
     console.log(formData);
   };
 
+  // length conversion.
+  const convertLengthAndWidth = (length, width, lengthUnit, widthUnit) => {
+    const conversionFactors = {
+      Meter: 1,
+      Inch: 0.0254,
+      Feet: 0.3048
+    };
+
+    let convertedLength = length * conversionFactors[lengthUnit];
+    let convertedWidth = width * conversionFactors[widthUnit];
+
+    // Convert to the base unit (Meter)
+    if (lengthUnit !== 'Meter') {
+      convertedLength = convertedLength / conversionFactors[lengthUnit];
+    }
+    if (widthUnit !== 'Meter') {
+      convertedWidth = convertedWidth / conversionFactors[widthUnit];
+    }
+
+    return { convertedLength, convertedWidth };
+  };
 
   const columns = [
     { id: 'product_category', label: 'Product Category' },
@@ -275,8 +288,7 @@ const Invoice_out = () => {
     { id: 'length', label: 'Length' },
     { id: 'length_unit', label: 'L Unit' },
     { id: 'out_pcs', label: 'Pcs' },
-    { id: 'rack', label: 'Rack' },
-
+    { id: 'rack', label: 'Rack' }
   ];
 
   const handleCheckboxChange = (id) => {
@@ -327,13 +339,13 @@ const Invoice_out = () => {
               <Form onSubmit={handleSubmit}>
                 <Row>
                   <Col md={4}>
-                    <FormField 
-                      icon={FaFileInvoice} 
-                      label="Invoice no" 
-                      name="invoice_no" 
-                      value={formData.invoice_no} 
+                    <FormField
+                      icon={FaFileInvoice}
+                      label="Invoice no"
+                      name="invoice_no"
+                      value={formData.invoice_no}
                       onChange={handleChange}
-                      readOnly 
+                      readOnly
                     />
                     <FormField
                       icon={FaUsers}
@@ -342,7 +354,7 @@ const Invoice_out = () => {
                       value={formData.company_id}
                       onChange={handleChange}
                       options={receivers}
-                      add={'/add-company'}
+                      add={'/add-Receiver'}
                       required
                     />
                     <FormField
@@ -355,7 +367,15 @@ const Invoice_out = () => {
                       add={'/add-Customer'}
                       required
                     />
-                    <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} required />
+                    <FormField
+                      icon={FaCalendarAlt}
+                      label="Date"
+                      type="date"
+                      name="date"
+                      value={formData.date}
+                      onChange={handleChange}
+                      required
+                    />
                     <FormField
                       icon={FaMapMarkerAlt}
                       label="Place of Supply"
@@ -527,8 +547,8 @@ const Invoice_out = () => {
                                       {/* Empty header for checkbox column */}
                                       <input
                                         type="checkbox"
-                                      // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.godown_id) : [])}
-                                      // checked={selectedRows.length === products.length}
+                                        // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.godown_id) : [])}
+                                        // checked={selectedRows.length === products.length}
                                       />
                                     </th>
                                     {columns.map((column) => (
@@ -579,8 +599,27 @@ const Invoice_out = () => {
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
                                     <td key="stock_code">{row.stock_code}</td>
-                                    <td key="width">{row.width}</td>
-                                    <td key="width_unit">{row.width_unit}</td>
+                                    {/* <td key="width">{row.width}</td> */}
+                                    <td key="width">
+                                      <input
+                                        text="text"
+                                        value={row.width || ''}
+                                        className="py-2"
+                                        onChange={(e) => handleInputChange(row.godown_id, 'width', e.target.value)}
+                                      />
+                                    </td>
+                                    <td key="width_unit">
+                                      <select
+                                        value={row.width_unit || ''}
+                                        className="py-2"
+                                        onChange={(e) => handleInputChange(row.godown_id, 'width_unit', e.target.value)}
+                                      >
+                                        <option value="Meter">Meter</option>
+                                        <option value="Inch">Inch</option>
+                                        <option value="Feet">Feet</option>
+                                      </select>
+                                    </td>
+
                                     <td key="length">
                                       <input
                                         type="text"
@@ -589,10 +628,20 @@ const Invoice_out = () => {
                                         onChange={(e) => handleInputChange(row.godown_id, 'length', e.target.value)}
                                       />
                                     </td>
-                                    <td key="length_unit">{row.length_unit}</td>
+                                    <td key="length_unit">
+                                      <select
+                                        value={row.length_unit || ''}
+                                        className="py-2"
+                                        onChange={(e) => handleInputChange(row.godown_id, 'length_unit', e.target.value)}
+                                      >
+                                        <option value="Meter">Meter</option>
+                                        <option value="Inch">Inch</option>
+                                        <option value="Feet">Feet</option>
+                                      </select>
+                                    </td>
                                     <td key="out_pcs">
                                       <input
-                                        type="t                                 ext"
+                                        type="text"
                                         value={row.out_pcs || ''}
                                         className="py-2"
                                         onChange={(e) => handleInputChange(row.godown_id, 'out_pcs', e.target.value)}
