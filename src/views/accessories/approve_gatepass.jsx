@@ -69,6 +69,16 @@ const Index = () => {
 
     const columns = [
         {
+            name: 'S no.',
+            selector: (row, index) => index +1,
+            sortable: true
+        },
+        {
+            name: 'Date',
+            selector: (row) => new Date(row.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+            sortable: true
+        },        
+        {
             name: 'Invoice Number',
             selector: (row) => row.gatepass_no,
             sortable: true
@@ -81,11 +91,6 @@ const Index = () => {
         {
             name: 'WareHouser Supervisor',
             selector: (row) => row.warehouseSupervisor,
-            sortable: true
-        },
-        {
-            name: 'Date',
-            selector: (row) => row.date,
             sortable: true
         },
         {
