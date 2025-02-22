@@ -77,6 +77,7 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      id: 'lot_no',
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true

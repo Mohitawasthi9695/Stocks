@@ -40,7 +40,7 @@ const Invoice_out = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [formData, setFormData] = useState({
     invoice_no: '',
-    type:'stock',
+    type: 'stock',
     date: today,
     vehicle_no: '',
     place_of_supply: '',
@@ -253,7 +253,7 @@ const Invoice_out = () => {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, formData, {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass`, formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -268,6 +268,23 @@ const Invoice_out = () => {
       });
 
       toast.success('Stocks out successfully');
+
+      // Reset the form data
+      setFormData({
+        invoice_no: '',
+        type: 'stock',
+        date: today,
+        vehicle_no: '',
+        place_of_supply: '',
+        driver_name: '',
+        driver_phone: '',
+        warehouse_supervisor_id: warehouse_supervisor_id,
+        godown_supervisor_id: '',
+        out_products: []
+      });
+
+      // Navigate back to the previous page
+      navigate(-1);
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding stock';
 
@@ -280,8 +297,6 @@ const Invoice_out = () => {
 
       toast.error(errorMessage);
     }
-
-    console.log(formData);
   };
 
   const columns = [
@@ -351,11 +366,25 @@ const Invoice_out = () => {
                 <Row>
                   <Col md={4}>
                     <FormField icon={FaFileInvoice} label="GatePass No" name="invoice_no" value={invoice_no} readOnly />
-                    <FormField icon={FaCity} label="place_of_supply" type="text" name="place_of_supply" value={formData.place_of_supply} onChange={handleChange} />
+                    <FormField
+                      icon={FaCity}
+                      label="place_of_supply"
+                      type="text"
+                      name="place_of_supply"
+                      value={formData.place_of_supply}
+                      onChange={handleChange}
+                    />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
-                    <FormField icon={FaTruck} label="vehicle_no" type="text" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
+                    <FormField
+                      icon={FaTruck}
+                      label="vehicle_no"
+                      type="text"
+                      name="vehicle_no"
+                      value={formData.vehicle_no}
+                      onChange={handleChange}
+                    />
                   </Col>
                   <Col md={4}>
                     <FormField
@@ -366,13 +395,7 @@ const Invoice_out = () => {
                       onChange={handleChange}
                       options={sub_supervisors}
                     />
-                     <FormField
-                      icon={FaUser}
-                      label="Driver Name"
-                      name="driver_name"
-                      value={formData.driver_name}
-                      onChange={handleChange}
-                    />
+                    <FormField icon={FaUser} label="Driver Name" name="driver_name" value={formData.driver_name} onChange={handleChange} />
                   </Col>
                 </Row>
                 <hr />

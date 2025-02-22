@@ -56,10 +56,20 @@ const Index = () => {
   }, []);
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = invoices.filter((invoice) => invoice.supplier_name.toLowerCase().includes(lowercasedQuery));
+  
+    const filtered = invoices.filter((invoice) => {
+      return (
+        invoice.invoice_no.toString().toLowerCase().includes(lowercasedQuery) ||
+        invoice.supplier_name.toLowerCase().includes(lowercasedQuery) ||
+        invoice.agent.toLowerCase().includes(lowercasedQuery) ||
+        invoice.total_amount.toString().toLowerCase().includes(lowercasedQuery) ||
+        new Date(invoice.date).toLocaleDateString('en-GB').toLowerCase().includes(lowercasedQuery) // Fix date search
+      );
+    });
+  
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
-
+  
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };

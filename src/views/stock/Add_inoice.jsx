@@ -41,7 +41,7 @@ const Add_inoice = () => {
     gr_rr: '',
     transport: '',
     reverse_charge: '',
-    qr_code: '',
+    qr_code: ''
   });
   const [items, setItems] = useState([]);
   const navigate = useNavigate();
@@ -91,19 +91,19 @@ const Add_inoice = () => {
     e.preventDefault();
 
     const result = await Swal.fire({
-      title : 'Are you sure?',
-      text : 'Do you want to add new field?',
-      icon : 'question',
-      showCancelButton : 'true',
-      cancelButtonColor : '#d33',
-      confirmButtonColor : '#20b2AA',
-      confirmButtonText : 'Yes, create it!'
-    })
+      title: 'Are you sure?',
+      text: 'Do you want to add new field?',
+      icon: 'question',
+      showCancelButton: 'true',
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#20b2AA',
+      confirmButtonText: 'Yes, create it!'
+    });
 
-    if(!result.isConfirmed){
+    if (!result.isConfirmed) {
       return;
     }
-    
+
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice`, formData, {
         headers: {
@@ -116,7 +116,6 @@ const Add_inoice = () => {
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
       toast.error(errorMessage);
-
     }
 
     console.log(formData);
@@ -209,7 +208,6 @@ const Add_inoice = () => {
         background: '#ff9d0014'
       }}
     >
-
       <Row className="justify-content-center">
         <Col md={12} lg={12}>
           <Card className="shadow-lg border-0" style={{ borderRadius: '15px' }}>
@@ -255,13 +253,7 @@ const Add_inoice = () => {
                       onChange={handleChange}
                     />
                     <FormField icon={FaKey} label="Agent" name="agent" value={formData.agent} onChange={handleChange} />
-                    <FormField
-                      icon={FaPercentage}
-                      label="CGST(%)"
-                      name="cgst_percentage"
-                      value={formData.cgst_percentage}
-                      onChange={handleChange}
-                    />
+                    <FormField icon={FaKey} label="Warehouse" name="warehouse" value={formData.warehouse} onChange={handleChange} />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaTruck} label="Vehicle No" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
@@ -295,11 +287,12 @@ const Add_inoice = () => {
                       value={formData.reverse_charge}
                       onChange={handleChange}
                     />
+
                     <FormField
-                      icon={FaKey}
-                      label="Warehouse"
-                      name="warehouse"
-                      value={formData.warehouse}
+                      icon={FaPercentage}
+                      label="CGST(%)"
+                      name="cgst_percentage"
+                      value={formData.cgst_percentage}
                       onChange={handleChange}
                     />
                     <FormField
@@ -309,13 +302,7 @@ const Add_inoice = () => {
                       value={formData.sgst_percentage}
                       onChange={handleChange}
                     />
-                    <FormField
-                      icon={FaPercentage}
-                      label="IGST(%)"
-                      name="igst_percentage"
-                      // value={formData.sgst_percentage}
-                      // onChange={handleChange}
-                    />
+                    <FormField icon={FaPercentage} label="IGST(%)" name="igst_percentage" />
                   </Col>
                 </Row>
 
