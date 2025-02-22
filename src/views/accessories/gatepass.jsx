@@ -117,7 +117,7 @@ const Invoice_out = () => {
           }
         });
         console.log('log', response.data.data);
-        const invoiceData = response.data.data; 
+        const invoiceData = response.data.data;
         SetInvoiceNo(invoiceData);
         setFormData((prevData) => ({
           ...prevData,
@@ -233,6 +233,9 @@ const Invoice_out = () => {
       });
 
       toast.success('Stocks out successfully');
+
+      // Navigate back after successful submission
+      navigate(-1);
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
 
@@ -245,12 +248,9 @@ const Invoice_out = () => {
 
       toast.error(errorMessage);
     }
-
-    console.log(formData);
   };
 
   const columns = [
-
     { id: 'product_category', label: 'Product Category' },
     { id: 'product_accessory_name', label: 'Accessory Name' },
     { id: 'lot_no', label: 'LOT No' },
@@ -439,9 +439,9 @@ const Invoice_out = () => {
                                     <td key="product_category">{row.product_category}</td>
                                     <td key="product_accessory_name">{row.product_accessory_name}</td>
                                     <td key="lot_no">{row.lot_no || '-'}</td>
-                                    <td key="items">{row.items || '-'}</td> 
-                                    <td key="out_length">{row.out_length || '-'}</td> 
-                                    <td key="length_unit">{row.length_unit || '-'}</td> 
+                                    <td key="items">{row.items || '-'}</td>
+                                    <td key="out_length">{row.out_length || '-'}</td>
+                                    <td key="length_unit">{row.length_unit || '-'}</td>
                                     <td key="box_bundle">
                                       <input
                                         type="number"

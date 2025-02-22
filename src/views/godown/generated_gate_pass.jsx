@@ -67,36 +67,35 @@ const Index = () => {
     setSearchQuery(e.target.value);
   };
 
-
   const downloadExcel = (row) => {
-    const fullInvoice = invoiceAllDetails.find(invoice => invoice.id === row.id);
-  
+    const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
+
     if (!fullInvoice || !fullInvoice.all_stocks) {
-      console.error("Godown data not found for this row:", row);
+      console.error('Godown data not found for this row:', row);
       return;
     }
-  
+
     // Extract required data
     const extractedData = fullInvoice.all_stocks.map((godown) => ({
-      GatePassNo: fullInvoice.gate_pass_no,   
-      Date: fullInvoice.gate_pass_date,       
-      ProductType: godown.product_type,       
-      LotNo: godown.lot_no, 
-      ProductName: godown.products.name,                  
-      ShadeNo: godown.products.shadeNo,                  
+      GatePassNo: fullInvoice.gate_pass_no,
+      Date: fullInvoice.gate_pass_date,
+      ProductType: godown.product_type,
+      LotNo: godown.lot_no,
+      ProductName: godown.products.name,
+      ShadeNo: godown.products.shadeNo,
       StockCode: godown.stock_code,
       Width: godown.width,
       Length: godown.length,
-      Pcs:godown.pcs,
+      Pcs: godown.pcs,
       Quantity: godown.quantity,
-      Supervisor: fullInvoice.warehouse_supervisors.name,
+      Supervisor: fullInvoice.warehouse_supervisors.name
     }));
     const ws = XLSX.utils.json_to_sheet(extractedData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "GatePassData");
+    XLSX.utils.book_append_sheet(wb, ws, 'GatePassData');
     XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
   };
-  
+
   const navigate = useNavigate();
 
   const columns = [
@@ -117,8 +116,7 @@ const Index = () => {
     },
     {
       name: 'Date',
-      selector: (row) => 
-        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
+      selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
       sortable: true
     },
     {
@@ -280,7 +278,7 @@ const Index = () => {
     }
   };
 
-return (
+  return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">

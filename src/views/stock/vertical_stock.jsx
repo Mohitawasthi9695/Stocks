@@ -9,23 +9,21 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
-  const [selectedColumns, setSelectedColumns] = useState([]);
 
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/verticalstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/getstock/3`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         });
         console.log('stocks data:', response.data);
         setProducts(response.data);
@@ -52,17 +50,21 @@ const ShowProduct = () => {
     setSearchQuery(e.target.value);
   };
 
-  const allColumns = [
+  const columns = [
     {
-      id: 'sr_no',
       name: 'Sr No',
       selector: (_, index) => index + 1,
       sortable: true
     },
     {
-      id: 'date',
       name: 'Date',
-      selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
+      selector: (row) => 
+        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
+      sortable: true
+    },
+    {
+      name: 'Stock Code',
+      selector: (row) => row.stock_code,
       sortable: true
     },
     {
@@ -72,94 +74,57 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      id: 'invoice_no',
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
       name: 'Invoice no',
       selector: (row) => row.invoice_no,
       sortable: true
     },
     {
-      id: 'product_category_name',
       name: 'Product Category',
       selector: (row) => row.product_category_name,
       sortable: true
     },
     {
-      id: 'shadeNo',
       name: 'Shade no',
       selector: (row) => row.shadeNo,
       sortable: true
     },
     {
-      id: 'purchase_shade_no',
       name: 'Pur. Shade no',
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
     {
-      id: 'length',
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
     },
+    { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     {
-      id: 'width',
-      name: 'Width',
-      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
+      name: 'Pcs',
+      selector: (row) => row.pcs,
       sortable: true
     },
     {
-      id: 'quantity',
-      name: 'Quantity',
+      name: 'Box',
       selector: (row) => row.quantity,
       sortable: true
     },
     {
-      id: 'out_quantity',
-      name: 'Out Quantity',
+      name: 'Out box',
       selector: (row) => row.out_quantity ?? 0,
       sortable: true
     },
     {
-      id: 'available_quantity',
-      name: 'Available Quantity',
+      name: 'balance boxes',
       selector: (row) => row.quantity - row.out_quantity,
-      sortable: true
-    },
-    {
-      id: 'total_length',
-      name: 'Total Length',
-      selector: (row) => Number(row.length * row.quantity).toFixed(2),
-      sortable: true
-    },
-    {
-      id: 'issue_length',
-      name: 'Issue Length',
-      selector: (row) => Number(row.length * row.out_quantity).toFixed(2),
-      sortable: true
-    },
-    {
-      id: 'area',
-      name: 'Area (m²)',
-      selector: (row) => row.area,
-      sortable: true
-    },
-    {
-      id: 'area_sq_ft',
-      name: 'Area (sq. ft.)',
-      selector: (row) => row.area_sq_ft,
       sortable: true
     }
   ];
-
-  useEffect(() => {
-    setSelectedColumns(allColumns.map((col) => col.id));
-  }, []);
-
-  const filteredColumns = allColumns.filter((col) => selectedColumns.includes(col.id));
-
-  const handleColumnToggle = (columnId) => {
-    setSelectedColumns((prev) => (prev.includes(columnId) ? prev.filter((id) => id !== columnId) : [...prev, columnId]));
-  };
 
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
@@ -188,35 +153,33 @@ const ShowProduct = () => {
       head: [
         [
           'Sr No',
-          'User Name',
-          'Lot No',
-          'Stock Code',
-          'Invoice No',
           'Date',
-          'Shade No',
+          'Invoice No',
           'Pur. Shade No',
+          'Shade No',
           'Length',
           'Width',
-          'Unit'
-          // 'Warehouse',
+          '(m²)',
+          '(ft²)',
+          'Out Quantity',
+          'Available Quantity'
         ]
       ],
       body: filteredProducts.map((row, index) => [
         index + 1,
-        JSON.parse(localStorage.getItem('user')).username || 'N/A',
-        row.lot_no,
-        `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-        row.stock_invoice?.invoice_no || 'N/A',
-        row.stock_invoice?.date || 'N/A',
-        row.stock_product?.shadeNo || 'N/A',
-        row.stock_product?.purchase_shade_no || 'N/A',
+        row.date,
+        row.invoice_no,
+        row.purchase_shade_no,
+        row.shadeNo,
         row.length,
         row.width,
-        row.unit,
-        row.warehouse
+        row.pcs,
+        row.quantity,
+        row.out_quantity ?? 0,
+        row.quantity - row.out_quantity
       ])
     });
-    doc.save('stocks_list.pdf');
+    doc.save('vertical_stocks_list.pdf');
   };
 
   const customStyles = {
@@ -298,7 +261,7 @@ const ShowProduct = () => {
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
-        <div className="col-md-4">
+      <div className="col-md-4">
           <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
         </div>
         <div className="col-md-8">
@@ -309,20 +272,6 @@ const ShowProduct = () => {
             <button className="btn btn-info" onClick={exportToPDF}>
               <AiOutlineFilePdf className="w-5 h-5 me-1" /> Export as PDF
             </button>
-          </div >
-          <div className="col-md-0 d-flex justify-content-end" >
-          <DropdownButton title="Display Columns" variant="secondary">
-            <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
-              {allColumns.map((col) => (
-                <Dropdown.Item key={col.id} as="div" onClick={(e) => e.stopPropagation()}>
-                  <label className="d-flex align-items-center" style={{ cursor: 'pointer' }}>
-                    <input type="checkbox" checked={selectedColumns.includes(col.id)} onChange={() => handleColumnToggle(col.id)} />
-                    <span className="ms-2">{col.name}</span>
-                  </label>
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </DropdownButton>
           </div>
         </div>
       </div>
@@ -331,16 +280,16 @@ const ShowProduct = () => {
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {loading ? (
               <Skeleton count={10} />
-            ) : (
-              // <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+            ) :
+            (
               <>
-             <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
-              {searchQuery && (
-                <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
-                  Total Boxes: {totalBoxes}
-                </div>
-              )}
-            </>
+                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles}/>
+                {searchQuery && (
+                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                    Total Boxes: {totalBoxes}
+                  </div>
+                )}
+              </>
             )
             }
           </div>
@@ -351,4 +300,3 @@ const ShowProduct = () => {
 };
 
 export default ShowProduct;
-

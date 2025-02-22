@@ -203,7 +203,7 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                   {invoice.stock_in.map((item, index) => (
                     <View key={index} style={styles.tableRow}>
                       <Text style={styles.tableCell}>{index+1}</Text>
-                      <Text style={styles.tableCell}>{item.products.shadeNo}</Text>
+                      <Text style={styles.tableCell}>{item.products.product_category.product_category}</Text>
                       <Text style={styles.tableCell}>{item.products.shadeNo}</Text>
                       <Text style={styles.tableCell}>{item.lot_no}</Text>
                       <Text style={styles.tableCell}>{`${item.length} ${item.length_unit}`}</Text>

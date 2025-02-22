@@ -26,10 +26,9 @@ const AddProduct = () => {
       length: '',
       date: '',
       rack: '',
-      warehouse: '',
       length_unit: '',
       width_unit: '',
-      pcs: '',
+      pcs: 1,
       quantity: 1
     }
   ]);
@@ -59,13 +58,6 @@ const AddProduct = () => {
       updatedItems[index].product_category_id = categoryId;
       updatedItems[index].product_id = '';
       updatedItems[index].purchase_shadeNo = '';
-      return updatedItems;
-    });
-
-    setItems((prevItems) => {
-      const updatedItems = [...prevItems];
-      updatedItems[index].product_category_id = categoryId;
-      updatedItems[index].product_id = ''; // Reset product selection
       return updatedItems;
     });
 
@@ -121,11 +113,9 @@ const AddProduct = () => {
         length: '',
         date: '',
         rack: '',
-        // warehouse: '',
         length_unit: '',
         width_unit: '',
-        // type: '',
-        pcs: '',
+        pcs: 1,
         quantity: 1
       }
     ]);
