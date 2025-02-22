@@ -46,7 +46,7 @@ const Index = () => {
             bank: invoice.payment_Bank,
             payment_mode: invoice.payment_mode,
             payment_status: invoice.payment_status,
-            total_amount: invoice.total_amount,
+            total_amount: invoice.total_amount
           }));
         };
         setInvoices(filteredFields(invoicesDetails));
@@ -140,7 +140,8 @@ const Index = () => {
           </Button>
         </div>
       )
-    }, {
+    },
+    {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
@@ -151,13 +152,13 @@ const Index = () => {
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
-              whiteSpace: 'nowrap',
+              whiteSpace: 'nowrap'
             }}
           >
             {row.status === 1 ? 'Approved' : 'Pending'}
           </span>
         </div>
-      ),
+      )
     }
   ];
 
@@ -168,8 +169,8 @@ const Index = () => {
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
-      },
+        borderSpacing: 0 // Removes spacing between cells
+      }
     },
     header: {
       style: {
@@ -178,8 +179,8 @@ const Index = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -188,9 +189,9 @@ const Index = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -200,46 +201,45 @@ const Index = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
-        },
-      },
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
         '& svg': {
-          fill: 'white',
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
-
 
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredInvoices);
@@ -250,24 +250,8 @@ const Index = () => {
     const doc = new jsPDF('landscape');
     doc.text('Customers List', 20, 10);
     doc.autoTable({
-      head: [
-        [
-          'Invoice Number',
-          'Customer Name',
-          'Supplier Name',
-          'Date',
-          'Bank',
-          'Total Amount',
-        ]
-      ],
-      body: filteredInvoices.map((row) => [
-        row.invoice_no,
-        row.supplier_name,
-        row.receiver_name,
-        row.date,
-        row.bank,
-        row.total_amount,
-      ])
+      head: [['Invoice Number', 'Customer Name', 'Supplier Name', 'Date', 'Bank', 'Total Amount']],
+      body: filteredInvoices.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
     });
     doc.save('user_list.pdf');
   };
