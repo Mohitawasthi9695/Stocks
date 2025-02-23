@@ -113,7 +113,11 @@ const StockOutInvoicePDF = ({ show, onHide, invoiceData, id }) => {
     if (!invoice) return null;
 
     const calculateTotal = () => {
-        return invoice.stock_out_details.reduce((sum, detail) => sum + parseFloat(detail.amount), 0).toFixed(2);
+        return invoice.stock_out_details.reduce((sum, detail) => sum + parseFloat(detail.amount || 0), 0).toFixed(2);
+    };
+
+    const calculateGST = (percentage) => {
+        return ((calculateTotal() * percentage) / 100).toFixed(2);
     };
 
     return (
@@ -127,8 +131,8 @@ const StockOutInvoicePDF = ({ show, onHide, invoiceData, id }) => {
                         <Page size="A4" style={styles.page}>
                             <Text style={styles.header}>STOCK OUT INVOICE</Text>
 
+                            {/* Invoice & Customer Details */}
                             <View style={styles.flexContainer}>
-                                {/* Invoice Details */}
                                 <View style={[styles.borderBox, styles.column]}>
                                     <Text style={styles.sectionTitle}>Invoice Details</Text>
                                     <View style={styles.row}>
@@ -141,11 +145,10 @@ const StockOutInvoicePDF = ({ show, onHide, invoiceData, id }) => {
                                     </View>
                                     <View style={styles.row}>
                                         <Text style={styles.label}>E-way Bill:</Text>
-                                        <Text style={styles.value}>{invoice.ewaybill}</Text>
+                                        <Text style={styles.value}>{invoice.ewaybill || '-'}</Text>
                                     </View>
                                 </View>
 
-                                {/* Customer Details */}
                                 <View style={[styles.borderBox, styles.column]}>
                                     <Text style={styles.sectionTitle}>Customer Details</Text>
                                     <View style={styles.row}>
@@ -162,7 +165,6 @@ const StockOutInvoicePDF = ({ show, onHide, invoiceData, id }) => {
                                     </View>
                                 </View>
 
-                                {/* Transport Details */}
                                 <View style={[styles.borderBox, styles.column]}>
                                     <Text style={styles.sectionTitle}>Transport Details</Text>
                                     <View style={styles.row}>
@@ -171,7 +173,7 @@ const StockOutInvoicePDF = ({ show, onHide, invoiceData, id }) => {
                                     </View>
                                     <View style={styles.row}>
                                         <Text style={styles.label}>Transport:</Text>
-                                        <Text style={styles.value}>{invoice.transport}</Text>
+                                        <Text style={styles.value}>{invoice.transport || '-'}</Text>
                                     </View>
                                     <View style={styles.row}>
                                         <Text style={styles.label}>Station:</Text>
@@ -198,7 +200,7 @@ const StockOutInvoicePDF = ({ show, onHide, invoiceData, id }) => {
                                     {invoice.stock_out_details.map((detail, index) => (
                                         <View key={index} style={styles.tableRow}>
                                             <Text style={styles.tableCell}>{detail.product_name}</Text>
-                                            <Text style={styles.tableCell}>{detail.product_shadeNo}</Text>
+                                            <Text style={styles.tableCell}>{detail.product_shadeNo || 'N/A'}</Text>
                                             <Text style={styles.tableCell}>{detail.stock_code || '-'}</Text>
                                             <Text style={styles.tableCell}>{detail.product_category}</Text>
                                             <Text style={styles.tableCell}>{`${detail.out_width} ${detail.width_unit}`}</Text>
@@ -219,11 +221,11 @@ const StockOutInvoicePDF = ({ show, onHide, invoiceData, id }) => {
                                 </View>
                                 <View style={styles.row}>
                                     <Text style={styles.label}>CGST ({invoice.cgst_percentage}%):</Text>
-                                    <Text style={styles.value}>₹ {(calculateTotal() * invoice.cgst_percentage / 100).toFixed(2)}</Text>
+                                    <Text style={styles.value}>₹ {calculateGST(invoice.cgst_percentage)}</Text>
                                 </View>
                                 <View style={styles.row}>
                                     <Text style={styles.label}>SGST ({invoice.sgst_percentage}%):</Text>
-                                    <Text style={styles.value}>₹ {(calculateTotal() * invoice.sgst_percentage / 100).toFixed(2)}</Text>
+                                    <Text style={styles.value}>₹ {calculateGST(invoice.sgst_percentage)}</Text>
                                 </View>
                             </View>
 
@@ -253,5 +255,6 @@ const StockOutInvoicePDF = ({ show, onHide, invoiceData, id }) => {
         </Modal>
     );
 };
+
 
 export default StockOutInvoicePDF;

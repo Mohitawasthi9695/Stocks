@@ -112,15 +112,15 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/receiver',
-        element: lazy(() => import('./views/receiver/Index')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
+        path: '/company',
+        element: lazy(() => import('./views/company/Index')),
+        allowedRoles: ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
-        path: '/add-Receiver',
-        element: lazy(() => import('./views/receiver/AddReceiver')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
+        path: '/add-company',
+        element: lazy(() => import('./views/company/AddCompany')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
@@ -258,7 +258,13 @@ const routes = [
         exact: 'true',
         path: '/godown/vertical_stock',
         element: lazy(() => import('./views/godown/vertical_stock')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
+        allowedRoles:  ['superadmin','admin', 'supervisor','operator']
+      },
+      {
+        exact: 'true',
+        path: '/godown/add_vertical_stock/:id',
+        element: lazy(() => import('./views/godown/add_vertical_stock')),
+        allowedRoles:  ['superadmin','admin', 'supervisor',]
       },
       {
         exact: 'true',
@@ -270,13 +276,13 @@ const routes = [
         exact: 'true',
         path: '/invoice-out',
         element: lazy(() => import('./views/stockOut/Invoice_out')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
+        allowedRoles:  ['supervisor','operator']
       },
       {
         exact: 'true',
         path: '/all-invoices-out',
         element: lazy(() => import('./views/stockOut/index')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
+        allowedRoles:  ['superadmin', 'admin','supervisor', 'operator']
       },
       {
         exact: 'true',
@@ -288,13 +294,19 @@ const routes = [
         exact: 'true',
         path: '/operator_invoice',
         element: lazy(() => import('./views/stockOut/operator_invoice')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
+        allowedRoles:  ['superadmin', 'admin','sub_supervisor', 'operator']
       },
       {
         exact: 'true',
         path: '/all-out-stock',
         element: lazy(() => import('./views/stockOut/all_out_stock')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
+      },
+      {
+        exact: 'true',
+        path: '/accessory-add-out-stock/:id',
+        element: lazy(() => import('./views/stockOut/accessory_stockout')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
@@ -385,6 +397,7 @@ const routes = [
         element: lazy(() => import('./views/godown/show_vertical_product')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
       },
+      
       {
         exact: 'true',
         path: '/contexts',

@@ -40,9 +40,13 @@ const ShowProduct = () => {
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = products.filter((product) =>
-      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
-    );
+    const filtered = products.filter((product) => {
+      const formattedDate = product.date ? new Date(product.date).toLocaleDateString('en-GB') : 'N/A';
+      return Object.values(product).some((value) => {
+        if (value === product.date) return formattedDate.includes(lowercasedQuery);
+        return value?.toString()?.toLowerCase().includes(lowercasedQuery);
+      });
+    });
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 
@@ -130,23 +134,24 @@ const ShowProduct = () => {
       'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
       'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
       'Lot No': row.lot_no,
-      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      Date: row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Stock Code': row.stock_code || 'N/A',
+      'Invoice No': row.invoice_no || 'N/A',
+      Date: row.date || 'N/A',
+      'Shade No': row.shadeNo || 'N/A',
+      'Pur. Shade No': row.purchase_shade_no || 'N/A',
       Length: row.length,
       Width: row.width,
-      Unit: row.unit
+      Unit: row.unit,
+      'Area (m²)': row.area,
+      'Area (sq. ft.)': row.area_sq_ft
     }));
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
-
   const exportToPDF = () => {
     const doc = new jsPDF();
-    doc.text('Stocks List', 20, 10);
+    doc.text('stocks List', 20, 10);
     doc.autoTable({
       head: [
         [
@@ -171,13 +176,13 @@ const ShowProduct = () => {
         row.shadeNo,
         row.length,
         row.width,
-        row.pcs,
-        row.quantity,
+        row.area,
+        row.area_sq_ft,
         row.out_quantity ?? 0,
         row.quantity - row.out_quantity
       ])
     });
-    doc.save('Honeycomb.pdf');
+    doc.save('rooler_stocks_list.pdf');
   };
 
   const customStyles = {

@@ -30,7 +30,6 @@ const AddReceiver = () => {
         email: '',
         owner_mobile: '',
         logo: null,
-        status: 'Active',
     });
     const [previewImage, setPreviewImage] = useState(null);
     const navigate = useNavigate();
@@ -73,8 +72,7 @@ const AddReceiver = () => {
         submitData.append('tel_no', formData.tel_no);
         submitData.append('email', formData.email);
         submitData.append('owner_mobile', formData.owner_mobile);
-        submitData.append('status', formData.status === 'Active✅' ? 1 : 0);
-
+        submitData.append('people_type', 'Company');
         // Append logo if it exists
         if (formData.logo) {
             submitData.append('logo', formData.logo);
@@ -82,7 +80,7 @@ const AddReceiver = () => {
 
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/receiver`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/peoples`,
                 submitData,
                 {
                     headers: {
@@ -92,12 +90,18 @@ const AddReceiver = () => {
                 }
             );
 
-            navigate('/Receiver');
-            toast.success('Receiver added successfully');
+            navigate('/Company');
+            toast.success('Company added successfully');
         } catch (error) {
-            console.error('Error adding Receiver:', error);
-            toast.error('Error adding Receiver');
+            console.error('Error adding Company:', error);
+        
+            if (error.response) {
+                toast.error(error.response.data.message || 'Error adding Company');
+            } else {
+                toast.error('Error adding Company');
+            }
         }
+        
     };
 
     const mainColor = '#3f4d67';
@@ -122,7 +126,7 @@ const AddReceiver = () => {
                             }}
                         >
                             <FaUserPlus size={40} className="me-3" />
-                            <h2 className="m-0 text-white">Add New Receiver</h2>
+                            <h2 className="m-0 text-white">Add Company Details</h2>
                         </div>
                         <Card.Body className="p-5">
                             <Form onSubmit={handleSubmit}>
@@ -131,7 +135,7 @@ const AddReceiver = () => {
                                     <Col md={6}>
                                         <FormField
                                             icon={FaUser}
-                                            label="Receiver Name"
+                                            label="Company Name"
                                             name="name"
                                             value={formData.name}
                                             onChange={handleChange}
@@ -139,7 +143,7 @@ const AddReceiver = () => {
 
                                         <FormField
                                             icon={FaIdCard}
-                                            label="Receiver Code"
+                                            label="Company Code"
                                             name="code"
                                             value={formData.code}
                                             onChange={handleChange}
@@ -175,44 +179,7 @@ const AddReceiver = () => {
                                             value={formData.tel_no}
                                             onChange={handleChange}
                                         />
-                                        <Form.Group className="mb-3 position-relative">
-                                            <Form.Label className="d-flex align-items-center">
-                                                <FaImage className="me-2" style={{ color: mainColor }} />
-                                                Receiver Logo
-                                            </Form.Label>
-                                            <Form.Control
-                                                type="file"
-                                                name="logo"
-                                                onChange={handleFileChange}
-                                                accept="image/*"
-                                                style={{
-                                                    paddingLeft: '40px',
-                                                    borderColor: mainColor
-                                                }}
-                                            />
-                                            <FaImage
-                                                className="position-absolute"
-                                                style={{
-                                                    left: '10px',
-                                                    top: '38px',
-                                                    color: mainColor,
-                                                    opacity: 0.5
-                                                }}
-                                            />
-                                            {previewImage && (
-                                                <div className="mt-2 text-center">
-                                                    <img
-                                                        src={previewImage}
-                                                        alt="Logo Preview"
-                                                        style={{
-                                                            maxWidth: '200px',
-                                                            maxHeight: '200px',
-                                                            borderRadius: '8px'
-                                                        }}
-                                                    />
-                                                </div>
-                                            )}
-                                        </Form.Group>
+                                       
 
                                     </Col>
 
@@ -268,18 +235,7 @@ const AddReceiver = () => {
                                             value={formData.owner_mobile}
                                             onChange={handleChange}
                                         />
-
-                                        {/* Status and Logo */}
-                                        <FormField
-                                            icon={FaCheckCircle}
-                                            label="Status"
-                                            name="status"
-                                            value={formData.status}
-                                            onChange={handleChange}
-                                            options={statuses}
-                                        />
-
-                                        {/* Image Upload Field */}
+                                       
                                     </Col>
                                 </Row>
 
@@ -294,7 +250,7 @@ const AddReceiver = () => {
                                         width: '10rem',
                                     }}
                                 >
-                                    <FaUserPlus className="me-2" /> Add Receiver
+                                    <FaUserPlus className="me-2" /> Add Company
                                 </Button>
                             </Form>
                         </Card.Body>

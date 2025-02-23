@@ -71,6 +71,11 @@ const WarehouseAccessoriesPage = () => {
       selector: (row) => row.product_accessory_name,
       sortable: true
     },
+    {
+      name: 'Accessory Code',
+      selector: (row) => row.stock_code,
+      sortable: true
+    },
     { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Items',

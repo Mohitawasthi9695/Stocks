@@ -103,68 +103,14 @@ const SuppliersPage = () => {
     },
     {
       name: 'Product Category',
-      selector: (row) => row.product_category,
+      selector: (row) => row.product_category.toUpperCase(),
       sortable: true
     },
     {
       name: 'Accessory Name',
-      selector: (row) => row.accessory_name,
+      selector: (row) => row.accessory_name.toUpperCase(),
       sortable: true
     },
-    // {
-    //   name: 'Status',
-    //   cell: (row) => (
-    //     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-    //       {/* Toggle Switch */}
-    //       <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px', marginBottom: '0' }}>
-    //         <input
-    //           type="checkbox"
-    //           checked={row.status === 0} // Active if 0
-    //           onChange={() => handleToggleStatus(row.id, row.status)}
-    //           style={{ opacity: 0, width: 0, height: 0 }}
-    //         />
-    //         <span
-    //           style={{
-    //             position: 'absolute',
-    //             cursor: 'pointer',
-    //             top: 0,
-    //             left: 0,
-    //             right: 0,
-    //             bottom: 0,
-    //             backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
-    //             transition: '0.4s',
-    //             borderRadius: '20px'
-    //           }}
-    //         ></span>
-    //         <span
-    //           style={{
-    //             position: 'absolute',
-    //             content: '',
-    //             height: '14px',
-    //             width: '14px',
-    //             left: row.status === 0 ? '18px' : '3px',
-    //             bottom: '3px',
-    //             backgroundColor: 'white',
-    //             transition: '0.4s',
-    //             borderRadius: '50%'
-    //           }}
-    //         ></span>
-    //       </label>
-
-    //       {/* Status Badge */}
-    //       <span
-    //         className={`badge ${row.status === 0 ? 'bg-success' : 'bg-danger'}`}
-    //         style={{
-    //           padding: '5px 10px',
-    //           borderRadius: '8px',
-    //           whiteSpace: 'nowrap' // Prevents text wrapping
-    //         }}
-    //       >
-    //         {row.status === 0 ? 'Active' : 'Inactive'}
-    //       </span>
-    //     </div>
-    //   )
-    // },
     {
       name: 'Action',
       cell: (row) => (
@@ -357,32 +303,28 @@ const SuppliersPage = () => {
     saveAs(blob, 'accessory_list.csv');
   };
   const exportToPDF = () => {
-    const doc = new jsPDF('landscape'); // Landscape orientation provides more horizontal space.
-
+    const doc = new jsPDF('portrait'); // Landscape orientation provides more horizontal space.
+  
     doc.text('Accessory List', 14, 10);
-
+  
     doc.autoTable({
-      head: [['Product Category', 'Accessory', 'Status']],
-      body: filteredSuppliers.map((row) => [row.product_categoryt, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
+      head: [['S No.', 'Product Category', 'Accessory', 'Status']],
+      body: filteredSuppliers.map((row, index) => [
+        index + 1,
+        row.product_category.toUpperCase()  || '',
+        row.accessory_name.toUpperCase() ||'',
+        row.status === 1 ? 'Active' : 'Inactive'
+      ]),
       styles: {
-        fontSize: 6, // Smaller font size to fit more data
+        fontSize: 10, // Smaller font size to fit more data
         overflow: 'linebreak', // Wrap text within cells
         cellPadding: 1 // Reduce padding for tighter fit
       },
       columnStyles: {
-        0: { cellWidth: 'auto' }, // Auto-adjust column widths
-        1: { cellWidth: 15 },
-        2: { cellWidth: 20 },
-        3: { cellWidth: 20 },
-        4: { cellWidth: 20 },
-        5: { cellWidth: 20 },
-        6: { cellWidth: 15 },
-        7: { cellWidth: 25 },
-        8: { cellWidth: 20 },
-        9: { cellWidth: 30 },
-        10: { cellWidth: 30 },
-        11: { cellWidth: 15 },
-        12: { cellWidth: 15 }
+        0: { cellWidth: 10}, // Auto-adjust column widths
+        1: { cellWidth: 40 },
+        2: { cellWidth: 90 },
+        3: { cellWidth: 30 },
       },
       tableWidth: 'wrap', // Ensure table fits within the page width
       margin: { top: 20 }, // Top margin for the table
@@ -391,7 +333,7 @@ const SuppliersPage = () => {
       },
       pageBreak: 'auto' // Automatically breaks into new pages if needed
     });
-
+  
     doc.save('accessory_list.pdf');
   };
 

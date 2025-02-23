@@ -17,11 +17,11 @@ const CustomersPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCustomer, setselectedCustomer] = useState(null);
   const [filteredSuppliers, setFilteredSuppliers] = useState([]);
-
+  const people_type= "Customer";
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/peoples?people_type=${people_type}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -131,54 +131,6 @@ const CustomersPage = () => {
       sortable: true
     },
     {
-      name: 'Status',
-      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
-      sortable: true,
-
-      cell: (row) => (
-        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
-          <div style={{ marginLeft: '10px', marginTop: '4px' }}>
-            <span className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`} style={{ padding: '5px 10px', borderRadius: '8px' }}>
-              {row.status === 0 ? 'Active' : 'Inactive'}
-            </span>
-          </div>
-
-          <input
-            type="checkbox"
-            checked={row.status === 1}
-            onChange={() => handleToggleStatus(row.id, row.status)}
-            style={{ opacity: 0, width: 0, height: 0 }}
-          />
-          <span
-            style={{
-              position: 'absolute',
-              cursor: 'pointer',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
-              transition: '0.4s',
-              borderRadius: '20px'
-            }}
-          ></span>
-          <span
-            style={{
-              position: 'absolute',
-              content: '',
-              height: '14px',
-              width: '14px',
-              left: row.status === 0 ? '18px' : '3px',
-              bottom: '3px',
-              backgroundColor: 'white',
-              transition: '0.4s',
-              borderRadius: '50%'
-            }}
-          ></span>
-        </label>
-      )
-    },
-    {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
@@ -193,49 +145,6 @@ const CustomersPage = () => {
     }
   ];
 
-  const handleToggleStatus = async (userId, currentStatus) => {
-    try {
-      const updatedStatus = currentStatus === 1 ? 0 : 1;
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`,
-        { status: updatedStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      toast.success('Status updated successfully!');
-      setCustomer((prevCustomers) =>
-        prevCustomers.map((customer) => (customer.id === userId ? { ...customer, status: updatedStatus } : customer))
-      );
-    } catch (error) {
-      toast.error('Failed to update status!');
-    }
-  };
-  // const handleDelete = async (userId) => {
-  //   try {
-  //     const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //         'Content-Type': 'application/json'
-  //       }
-  //     });
-
-  //     // Check if the response indicates success
-  //     if (response.status === 200) {
-  //       toast.success('User deleted successfully');
-  //       setCustomer(Customers.filter((user) => user.id !== userId));
-  //       setFilteredCustomer(filteredCustomers.filter((user) => user.id !== userId));
-  //     } else {
-  //       throw new Error('Unexpected response status');
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error('Failed to delete user');
-  //   }
-  // };
 
   const handleDelete = async (userId) => {
     try {
@@ -289,7 +198,7 @@ const CustomersPage = () => {
       }
 
       // Perform the API call
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${selectedCustomer.id}`, selectedCustomer, {
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/peoples/${selectedCustomer.id}`, selectedCustomer, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'

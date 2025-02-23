@@ -2,9 +2,9 @@
 
 
 @function color-yiq($color) {
-  $r: color.channel($color, "red");
-  $g: color.channel($color, "green");
-  $b: color.channel($color, "blue");
+  $r: color-channel($color,"red");
+  $g: color-channel($color, "green");
+  $b: color-channel($color, "blue");
   $yiq: (($r * 299) + ($g * 587) + ($b * 114)) * 0.001;
   @if ($yiq >= $yiq-contrasted-threshold) {
     @return $yiq-dark-color;

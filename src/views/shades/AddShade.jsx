@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 const AddProduct = () => {
   const [formData, setFormData] = useState({
     name: '',
+    date: '',
     shadeNo: '',
     product_category_id: '', // Holds the selected category ID
     purchase_shade_no: '',
@@ -175,7 +176,7 @@ const AddProduct = () => {
     >
       <Row className="justify-content-center">
         <div className="col-md-12 position-relative">
-          <h2 className="text-center mb-4 fw-bold text-primary">Invoice Items</h2>
+          <h2 className="text-center mb-3 fw-bold y">Product Shades</h2>
 
           <div className="card shadow-lg border-0 mb-4 mx-auto" style={{ borderRadius: '12px', maxWidth: '700px' }}>
             <div className="card-body p-4 mx-auto">
@@ -252,6 +253,7 @@ const AddProduct = () => {
                 <Row>
                   <Col md={6}>
                     {/* Dropdown for Product Category */}
+                    <FormField icon={FaUser} type= 'date' label="Date" name="date" value={formData.date} onChange={handleChange} />
                     <Form.Group controlId="productCategory" style={{ marginBottom: '16px' }}>
                       <Form.Label>
                         <FaIdCard className="me-2" />

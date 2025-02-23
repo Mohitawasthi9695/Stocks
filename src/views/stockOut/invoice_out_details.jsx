@@ -30,25 +30,29 @@ const ShowProduct = () => {
 
         console.log('stocks data:', response.data);
 
-        const flattenedData = response.data.data.flatMap((invoice) =>
-          invoice.stock_out_details.map((detail, index) => ({
-            sr_no: index + 1,
-            lot_no: detail.product.shadeNo,
-            invoice_no: invoice.invoice_no,
-            date: invoice.date,
-            shade_no: detail.product?.shadeNo || 'N/A',
-            pur_shade_no: detail.product?.purchase_shade_no || 'N/A',
-            length: detail.unit === 'inches' ? detail.out_length * 39.3700 : detail.out_length,
-            width: detail.unit === 'inches' ? detail.out_width * 39.3700 : detail.out_width,
-            unit: detail.unit,
-            qty: detail.out_quantity,
-            stock_code:detail.stock_code,
-            status: detail.status,
-            waste: (parseFloat(detail.waste_width) * parseFloat(detail.out_length) * detail.out_quantity * 10.7639 || 0).toFixed(3),
-            area: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity || 0).toFixed(3), // Area in m²
-            area_sq_ft: (parseFloat(detail.out_length) * parseFloat(detail.out_width) * detail.out_quantity * 10.7639 || 0).toFixed(3) // Area in sq. ft.
-          }))
-        );
+        // Ensure response.data.data exists
+        if (!response.data.data || !response.data.data.stock_out_details) {
+          console.error('Invalid response structure');
+          return;
+        }
+
+        const flattenedData = response.data.data.stock_out_details.map((detail, index) => ({
+          sr_no: index + 1,
+          lot_no: detail.product_shadeNo || 'N/A',
+          invoice_no: response.data.data.invoice_no,
+          date: response.data.data.date,
+          shadeNo: detail.product_shadeNo || 'N/A',
+          pur_shade_no: detail.product_purchase_shade_no || 'N/A',
+          length: detail.length_unit === 'inches' ? parseFloat(detail.length) * 39.3700 : parseFloat(detail.length),
+          width: detail.width_unit === 'inches' ? parseFloat(detail.width) * 39.3700 : parseFloat(detail.width),
+          unit: detail.length_unit || 'meter',  // Assuming unit from length_unit
+          qty: detail.out_pcs || 'N/A',
+          stock_code: detail.stock_code,
+          status: detail.status,
+          waste: detail.waste_width ? (parseFloat(detail.waste_width) * parseFloat(detail.length) * parseFloat(detail.out_pcs) * 10.7639 || 0).toFixed(3) : '0.000',
+          area: (parseFloat(detail.length) * parseFloat(detail.width) * parseFloat(detail.out_pcs) || 0).toFixed(3), // Area in m²
+          area_sq_ft: (parseFloat(detail.length) * parseFloat(detail.width) * parseFloat(detail.out_pcs) * 10.7639 || 0).toFixed(3) // Area in sq. ft.
+        }));
 
         setProducts(flattenedData);
         setFilteredProducts(flattenedData);
@@ -84,10 +88,10 @@ const ShowProduct = () => {
     { name: 'Date', selector: (row) => row.date, sortable: true },
     {
       name: 'Stock Code',
-      selector: (row) => `${row.shade_no}-${row.stock_code}` || 'N/A',
+      selector: (row) => row.stock_code || 'N/A',
       sortable: true
     },
-    { name: 'Shade No', selector: (row) => row.shade_no, sortable: true },
+    { name: 'Shade No', selector: (row) => row.shadeNo, sortable: true },
     { name: 'Pur. Shade No', selector: (row) => row.pur_shade_no, sortable: true },
     { name: 'Length', selector: (row) => Math.round(row.length), sortable: true },
     { name: 'Width', selector: (row) => Math.round(row.width), sortable: true },

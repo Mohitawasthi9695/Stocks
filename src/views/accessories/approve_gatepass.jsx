@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
+import { MdEdit, MdDelete,MdCheckCircle, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
 import { FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
@@ -42,7 +42,7 @@ const Index = () => {
                     warehouseSupervisor: gatepass.warehouse_supervisors.name,
                     date: gatepass.gate_pass_date,
                     total_amount: gatepass.total_amount,
-                    status,
+                    status:gatepass.status,
                 }));
                 setInvoices(filteredFields);
                 setFilteredInvoices(filteredFields);
@@ -54,7 +54,24 @@ const Index = () => {
         };
         fetchInvoices();
     }, []);
-
+    const handleApprove = async (id) => {
+        try {
+          await axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/api/godowns/accessory/gatepass/${id}/approve`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+              }
+            }
+          );
+          toast.success('Gate pass approved successfully!');
+          setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
+          setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
+        } catch (error) {
+          toast.error('Failed to approve gate pass');
+        }
+      };
     useEffect(() => {
         const lowercasedQuery = searchQuery.toLowerCase();
         const filtered = invoices.filter((invoice) => invoice.godownSupervisor.toLowerCase().includes(lowercasedQuery));
@@ -121,14 +138,11 @@ const Index = () => {
                             <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
                                 <MdCheckCircle />
                             </Button>
-                            <Button variant="outline-danger" size="sm" onClick={() => handleReject(row.id)}>
-                                <MdCancel />
-                            </Button>
+
                         </>
                     ) : (
                         <></>
                     )}
-
                     <Button
                         variant="outline-primary"
                         size="sm"

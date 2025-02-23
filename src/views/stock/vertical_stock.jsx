@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
@@ -132,11 +133,11 @@ const ShowProduct = () => {
       'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
       'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
       'Lot No': row.lot_no,
-      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      Date: row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Stock Code': row.stock_code || 'N/A',
+      'Invoice No': row.invoice_no || 'N/A',
+      Date: row.date || 'N/A',
+      'Shade No': row.shadeNo || 'N/A',
+      'Pur. Shade No': row.purchase_shade_no || 'N/A',
       Length: row.length,
       Width: row.width,
       Unit: row.unit
@@ -300,3 +301,13 @@ const ShowProduct = () => {
 };
 
 export default ShowProduct;
+
+
+
+
+
+
+
+
+
+

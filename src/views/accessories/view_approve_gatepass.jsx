@@ -69,8 +69,6 @@ const Show_product = () => {
     { name: "Sr No", selector: (_, index) => index + 1, sortable: true },
     { name: "Gate Pass No", selector: (row) => row.gate_pass_no, sortable: true },
     { name: "Date", selector: (row) => row.date, sortable: true },
-    // { name: "Warehouse Supervisor", selector: (row) => row.warehouse_supervisor, sortable: true },
-    // { name: "Godown Supervisor", selector: (row) => row.godown_supervisor, sortable: true },
     { name: "Stock Code", selector: (row) => row.stock_code, sortable: true },
     { name: "Lot No", selector: (row) => row.lot_no, sortable: true },
     { name: "Length", selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
@@ -78,6 +76,32 @@ const Show_product = () => {
     { name: "Box/Bundle", selector: (row) => row.box_bundle, sortable: true },
     { name: "Quantity", selector: (row) => row.quantity, sortable: true },
     { name: "Out Quantity", selector: (row) => row.out_quantity, sortable: true },
+    {
+      name: 'Status',
+      selector: (row) => row.status, // Keep it numeric for sorting
+      sortable: true,
+      cell: (row) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span
+            className={`badge ${
+              row.status === 1
+                ? 'bg-success'
+                : row.status === 2
+                ? 'bg-warning'
+                : 'bg-danger'
+            }`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'}
+          </span>
+        </div>
+      )
+    }
+    
   ];
 
 

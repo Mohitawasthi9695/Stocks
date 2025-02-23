@@ -268,23 +268,7 @@ const Invoice_out = () => {
       });
 
       toast.success('Stocks out successfully');
-
-      // Reset the form data
-      setFormData({
-        invoice_no: '',
-        type: 'stock',
-        date: today,
-        vehicle_no: '',
-        place_of_supply: '',
-        driver_name: '',
-        driver_phone: '',
-        warehouse_supervisor_id: warehouse_supervisor_id,
-        godown_supervisor_id: '',
-        out_products: []
-      });
-
-      // Navigate back to the previous page
-      navigate(-1);
+      navigate('/generated_gate_pass');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding stock';
 
@@ -510,10 +494,10 @@ const Invoice_out = () => {
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
-                                    <td key="length">{row.length}</td>
-                                    <td key="length_unit">{row.length_unit}</td>
                                     <td key="width">{row.width}</td>
                                     <td key="width_unit">{row.width_unit}</td>
+                                    <td key="length">{row.length}</td>
+                                    <td key="length_unit">{row.length_unit}</td>
                                     <td key="pcs">{row.pcs}</td>
                                     <td key="out_quantity">
                                       <input
