@@ -11,6 +11,14 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import Swal from 'sweetalert2';
 import { BiBorderLeft } from 'react-icons/bi';
 import { text } from 'd3';
+import * as XLSX from 'xlsx';
+import { MdFileDownload } from 'react-icons/md';
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Show_product = () => {
   const [products, setProducts] = useState([]);
@@ -49,7 +57,7 @@ const Show_product = () => {
               pcs:all_stocks.pcs,
               quantity: all_stocks.quantity,
               length_unit: all_stocks.length_unit,
-              width_unit: all_stocks.width_unit|| "N/A",
+              width_unit: all_stocks.width_unit || 'N/A',
               type: all_stocks.type,
               rack: all_stocks.rack || 'N/A'
             };
@@ -68,6 +76,14 @@ const Show_product = () => {
 
     fetchProductData();
   }, [id]); // Ensure this effect re-runs when `id` changes
+
+  const downloadRowAsExcel = (row) => {
+    const ws = XLSX.utils.json_to_sheet([row]); // Convert single row to sheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Product_Data');
+
+    XLSX.writeFile(wb, `Product_${row.id}.xlsx`); // Download the file
+  };
 
   // Update filtered Products when the search query changes
   useEffect(() => {

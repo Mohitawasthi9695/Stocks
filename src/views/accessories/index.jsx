@@ -103,12 +103,12 @@ const SuppliersPage = () => {
     },
     {
       name: 'Product Category',
-      selector: (row) => row.product_category,
+      selector: (row) => row.product_category.toUpperCase(),
       sortable: true
     },
     {
       name: 'Accessory Name',
-      selector: (row) => row.accessory_name,
+      selector: (row) => row.accessory_name.toUpperCase(),
       sortable: true
     },
     {
@@ -303,32 +303,28 @@ const SuppliersPage = () => {
     saveAs(blob, 'accessory_list.csv');
   };
   const exportToPDF = () => {
-    const doc = new jsPDF('landscape'); // Landscape orientation provides more horizontal space.
-
+    const doc = new jsPDF('portrait'); // Landscape orientation provides more horizontal space.
+  
     doc.text('Accessory List', 14, 10);
-
+  
     doc.autoTable({
-      head: [['Product Category', 'Accessory', 'Status']],
-      body: filteredSuppliers.map((row) => [row.product_categoryt, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
+      head: [['S No.', 'Product Category', 'Accessory', 'Status']],
+      body: filteredSuppliers.map((row, index) => [
+        index + 1,
+        row.product_category.toUpperCase()  || '',
+        row.accessory_name.toUpperCase() ||'',
+        row.status === 1 ? 'Active' : 'Inactive'
+      ]),
       styles: {
-        fontSize: 6, // Smaller font size to fit more data
+        fontSize: 10, // Smaller font size to fit more data
         overflow: 'linebreak', // Wrap text within cells
         cellPadding: 1 // Reduce padding for tighter fit
       },
       columnStyles: {
-        0: { cellWidth: 'auto' }, // Auto-adjust column widths
-        1: { cellWidth: 15 },
-        2: { cellWidth: 20 },
-        3: { cellWidth: 20 },
-        4: { cellWidth: 20 },
-        5: { cellWidth: 20 },
-        6: { cellWidth: 15 },
-        7: { cellWidth: 25 },
-        8: { cellWidth: 20 },
-        9: { cellWidth: 30 },
-        10: { cellWidth: 30 },
-        11: { cellWidth: 15 },
-        12: { cellWidth: 15 }
+        0: { cellWidth: 10}, // Auto-adjust column widths
+        1: { cellWidth: 40 },
+        2: { cellWidth: 90 },
+        3: { cellWidth: 30 },
       },
       tableWidth: 'wrap', // Ensure table fits within the page width
       margin: { top: 20 }, // Top margin for the table
@@ -337,7 +333,7 @@ const SuppliersPage = () => {
       },
       pageBreak: 'auto' // Automatically breaks into new pages if needed
     });
-
+  
     doc.save('accessory_list.pdf');
   };
 

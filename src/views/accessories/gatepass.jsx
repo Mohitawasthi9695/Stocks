@@ -256,12 +256,9 @@ const Invoice_out = () => {
 
       toast.error(errorMessage);
     }
-
-    console.log(formData);
   };
 
   const columns = [
-
     { id: 'product_category', label: 'Product Category' },
     { id: 'product_accessory_name', label: 'Accessory Name' },
     { id: 'stock_code', label: 'Warehouse Code' },

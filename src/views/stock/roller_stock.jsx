@@ -29,10 +29,12 @@ const ShowProduct = () => {
         const productsWithArea = response.data.map((product) => {
           const areaM2 = product.length * product.width * product.quantity;
           const areaSqFt = areaM2 * 10.7639;
+          const dateLocal = new Date(product.date).toLocaleDateString('en-GB'); // Convert date to local date format
           return {
             ...product,
             area: areaM2.toFixed(3),
-            area_sq_ft: areaSqFt.toFixed(3)
+            area_sq_ft: areaSqFt.toFixed(3),
+            dateLocal, // Add new property to product object
           };
         });
         setProducts(productsWithArea);
@@ -58,6 +60,21 @@ const ShowProduct = () => {
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
+
+  const searchFields = [
+    'dateLocal',
+    'invoice_no',
+    'purchase_shade_no',
+    'shadeNo',
+    'lot_no',
+    'length',
+    'width',
+    'invoice_no',
+    'lot_no',
+    'product_category_name',
+    'shadeNo',
+    'purchase_shade_no',
+  ];
 
   const columns = [
     {
@@ -85,11 +102,6 @@ const ShowProduct = () => {
     {
       name: 'Invoice no',
       selector: (row) => row.invoice_no,
-      sortable: true
-    },
-    {
-      name: 'Date',
-      selector: (row) => row.date,
       sortable: true
     },
     {
@@ -143,12 +155,12 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'SQ Meter',
+      name: 'm²',
       selector: (row) => row.area,
       sortable: true
     },
     {
-      name: 'sq.ft',
+      name: 'ft²',
       selector: (row) => row.area_sq_ft,
       sortable: true
     }
@@ -159,11 +171,11 @@ const ShowProduct = () => {
       'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
       'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
       'Lot No': row.lot_no,
-      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      Date: row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Stock Code': row.stock_code || 'N/A',
+      'Invoice No': row.invoice_no || 'N/A',
+      Date: row.date || 'N/A',
+      'Shade No': row.shadeNo || 'N/A',
+      'Pur. Shade No': row.purchase_shade_no || 'N/A',
       Length: row.length,
       Width: row.width,
       Unit: row.unit,
@@ -181,39 +193,33 @@ const ShowProduct = () => {
       head: [
         [
           'Sr No',
-          'User Name',
-          'Lot No',
-          'Stock Code',
-          'Invoice No',
           'Date',
-          'Shade No',
+          'Invoice No',
           'Pur. Shade No',
+          'Shade No',
           'Length',
           'Width',
-          'Unit',
-          'Area (m²)',
-          'Area (sq. ft.)'
-          // 'Warehouse'
+          '(m²)',
+          '(ft²)',
+          'Out Quantity',
+          'Available Quantity'
         ]
       ],
       body: filteredProducts.map((row, index) => [
         index + 1,
-        JSON.parse(localStorage.getItem('user')).username || 'N/A',
-        row.lot_no,
-        `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-        row.stock_invoice?.invoice_no || 'N/A',
-        row.stock_invoice?.date || 'N/A',
-        row.stock_product?.shadeNo || 'N/A',
-        row.stock_product?.purchase_shade_no || 'N/A',
+        row.date,
+        row.invoice_no,
+        row.purchase_shade_no,
+        row.shadeNo,
         row.length,
         row.width,
-        row.unit,
         row.area,
         row.area_sq_ft,
-        row.Warehouse
+        row.out_quantity ?? 0,
+        row.quantity - row.out_quantity
       ])
     });
-    doc.save('stocks_list.pdf');
+    doc.save('rooler_stocks_list.pdf');
   };
 
   const customStyles = {

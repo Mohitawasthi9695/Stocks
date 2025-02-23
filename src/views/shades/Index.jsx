@@ -72,16 +72,26 @@ const ProductsPage = () => {
   }, []);
 
   useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredProducts(products); // Reset when query is empty
+      return;
+    }
+  
     const lowercasedQuery = searchQuery.toLowerCase();
+  
     const filtered = products.filter((product) => {
       return (
-        product.shadeNo.toLowerCase().includes(lowercasedQuery) ||
-        product.code.toLowerCase().includes(lowercasedQuery) ||
-        product.purchase_shade_no.toLowerCase().includes(lowercasedQuery)
+        (product.shadeNo && product.shadeNo.toLowerCase().includes(lowercasedQuery)) ||
+        (product.code && product.code.toLowerCase().includes(lowercasedQuery)) ||
+        (product.purchase_shade_no && product.purchase_shade_no.toLowerCase().includes(lowercasedQuery)) ||
+        (product.product_category?.product_category &&
+          product.product_category.product_category.toLowerCase().includes(lowercasedQuery))
       );
     });
-    setFilteredProducts(filtered);
+  
+    setFilteredProducts(filtered.length > 0 ? filtered : []);
   }, [searchQuery, products]);
+  
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -93,6 +103,11 @@ const ProductsPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
+      sortable: true
+    },
+    {
+      name: 'Date',
+      selector: (row) => row.date,
       sortable: true
     },
     {
@@ -328,16 +343,48 @@ const ProductsPage = () => {
     }
   };
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredProducts);
+    const csvData = filteredProducts.map((row) => [
+      row.id,
+      row.date,
+      row.product_category ? row.product_category.product_category : '',
+      row.name,
+      row.shadeNo,
+      row.purchase_shade_no,
+      row.status === 1 ? 'Active' : 'Inactive'
+    ]);
+  
+    const csv = Papa.unparse({
+      fields: ['S No.', 'Date', 'Product Category', 'Product Name', 'Shade No', 'Purchase Shade No', 'Status'],
+      data: csvData
+    });
+  
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'Products_list.csv');
   };
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Banks List', 20, 10);
+    const doc = new jsPDF('p', 'mm', 'a4');
+    doc.setFontSize(12);
+    doc.text('Products List', 10, 10);
     doc.autoTable({
-      head: [['Shade No', 'Code', 'Purchase Shade No', 'Status']],
-      body: filteredProducts.map((row) => [row.shadeNo, row.code, row.purchase_shade_no, row.status === 1 ? 'Active' : 'Inactive'])
+      head: [['S No.', 'Date', 'Product Category', 'Product Name', 'Shade No', 'Purchase Shade No', 'Status']],
+      body: filteredProducts.map((row, index) => [
+        index + 1,
+        row.date,
+        row.product_category ? row.product_category.product_category : '',
+        row.name,
+        row.shadeNo,
+        row.purchase_shade_no,
+        row.status === 1 ? 'Active' : 'Inactive'
+      ]),
+      columns: [
+        { header: 'S No.', dataKey: 'sno' },
+        { header: 'date', dataKey: 'date' },
+        { header: 'Product Category', dataKey: 'product_category' },
+        { header: 'Product Name', dataKey: 'name' },
+        { header: 'Shade No', dataKey: 'shadeNo' },
+        { header: 'Purchase Shade No', dataKey: 'purchase_shade_no' },
+        { header: 'Status', dataKey: 'status' }
+      ]
     });
     doc.save('Products_list.pdf');
   };
@@ -399,7 +446,7 @@ const ProductsPage = () => {
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
             <Form>
-              {/* <Form.Group className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>Product Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -408,7 +455,7 @@ const ProductsPage = () => {
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
-              </Form.Group> */}
+              </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Shade No</Form.Label>
@@ -421,16 +468,6 @@ const ProductsPage = () => {
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Code</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="code"
-                  value={selectedProduct.code || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Purchase Shade No</Form.Label>

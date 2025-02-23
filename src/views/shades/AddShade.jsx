@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 const AddProduct = () => {
   const [formData, setFormData] = useState({
     name: '',
+    date: '',
     shadeNo: '',
     product_category_id: '', // Holds the selected category ID
     purchase_shade_no: '',
@@ -252,6 +253,7 @@ const AddProduct = () => {
                 <Row>
                   <Col md={6}>
                     {/* Dropdown for Product Category */}
+                    <FormField icon={FaUser} type= 'date' label="Date" name="date" value={formData.date} onChange={handleChange} />
                     <Form.Group controlId="productCategory" style={{ marginBottom: '16px' }}>
                       <Form.Label>
                         <FaIdCard className="me-2" />

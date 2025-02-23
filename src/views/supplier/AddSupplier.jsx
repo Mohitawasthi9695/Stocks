@@ -37,10 +37,11 @@ const AddSupplier = () => {
       showCancelButton: 'true',
       confirmButtonColor: '#20B2AA',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, create it!'
+      confirmButtonText: 'Yes, create it!',
+      background: 'white'
     });
 
-    if (result.isConfirmed) {
+    if (!result.isConfirmed) {
       return;
     }
 
