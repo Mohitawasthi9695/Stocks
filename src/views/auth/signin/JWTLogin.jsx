@@ -18,7 +18,7 @@ const JWTLogin = () => {
 
   const generateCaptchaText = () => {
     let captcha = '';
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 4; i++) {
       const randomType = Math.floor(Math.random() * 3);
       if (randomType === 0)
         captcha += generateRandomChar(65, 90); // Uppercase
@@ -207,7 +207,7 @@ const JWTLogin = () => {
                 style={{
                   border: '2px solid #ccc',
                   borderRadius: '5px',
-                  width: '130px'
+                  width: '100px'
                 }}
               />
               <button
@@ -227,7 +227,7 @@ const JWTLogin = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '5px'
+                  // padding: '5px'
                 }}
               >
                 {isLoading ? (

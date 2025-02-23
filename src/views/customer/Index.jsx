@@ -8,6 +8,10 @@ import { toast } from 'react-toastify';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Swal from 'sweetalert2';
+import { saveAs } from 'file-saver';
+import Papa from 'papaparse';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const CustomersPage = () => {
   const [Customers, setCustomer] = useState([]);
@@ -316,49 +320,56 @@ const CustomersPage = () => {
   };
 
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredSuppliers);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'supplier_list.csv');
+    if (filteredCustomers.length === 0) {
+      toast.error("No data available to export.");
+      return;
+    }
+  
+    const csv = Papa.unparse(filteredCustomers);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "customer_list.csv");
   };
+  
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
-    doc.text('Suppliers List', 20, 10);
+    
+    // Title
+    doc.text('Customers List', 14, 10);
+  
+    // Define table headers
+    const headers = [
+      ['Customer Name', 'Code', 'GST No', 'CIN No', 'PAN No', 'MSME No', 'Phone', 'Owner Mobile', 'Registered Address',]
+    ];
+  
+    // Map data for table body
+    const body = filteredCustomers.map((row) => [
+      row.name,
+      row.code,
+      row.gst_no,
+      row.cin_no,
+      row.pan_no,
+      row.msme_no,
+      row.tel_no,
+      row.owner_mobile,
+      row.reg_address,
+    ]);
+  
+    // Add table to PDF
     doc.autoTable({
-      head: [
-        [
-          'Customer Name',
-          'Code',
-          'GST No',
-          'CIN No',
-          'PAN No',
-          'MSME No',
-          'Phone',
-          'Email',
-          'Owner Mobile',
-          'Registered Address',
-          'Work Address',
-          'Area',
-          'Status'
-        ]
-      ],
-      body: filteredSuppliers.map((row) => [
-        row.name,
-        row.code,
-        row.gst_no,
-        row.cin_no,
-        row.pan_no,
-        row.msme_no,
-        row.tel_no,
-        row.email,
-        row.owner_mobile,
-        row.reg_address,
-        row.work_address,
-        row.area,
-        row.status === 1 ? 'Active' : 'Inactive'
-      ])
+      head: headers,
+      body: body,
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [238, 238, 238] },
     });
-    doc.save('user_list.pdf');
+  
+    // Save PDF
+    doc.save('customers_list.pdf');
   };
+  
+  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -387,12 +398,6 @@ const CustomersPage = () => {
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             <div className="card  border-0 shadow-none" style={{ background: '#f5f0e6' }}>
-              {/* <div
-              className="card-header d-flex justify-content-between align-items-center"
-              style={{ backgroundColor: '#3f4d67', color: 'white' }}
-            >
-              <h2 className="m-0 text-white">Customers Management</h2>
-            </div> */}
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
                 <div className="d-flex justify-content-end">
                   <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>

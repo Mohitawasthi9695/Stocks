@@ -12,6 +12,7 @@ import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import { FiSave ,FiPlus} from 'react-icons/fi';
 import Swal from 'sweetalert2';
+import { FiEdit } from 'react-icons/fi';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
@@ -174,20 +175,32 @@ const ShowProduct = () => {
     {
       name: 'Rack',
       cell: (row) => (
-        <div className="d-flex align-items-center w-100" style={{ justifyContent: row.rack ? 'space-between' : 'center'}}>
-          {row.rack && (
-            <span style={{ paddingLeft: '15px', minWidth: '50px', textAlign: 'left' }}>
-              {row.rack}
-            </span>
+        <div className="d-flex align-items-center w-100" style={{ justifyContent: row.rack ? 'space-between' : 'center' }}>
+          {row.rack ? (
+            <>
+              <span style={{ paddingLeft: '15px', minWidth: '50px', textAlign: 'left' }}>{row.rack}</span>
+              <button
+                className="btn btn-sm btn-warning"
+                onClick={() => handleRackUpdate(row.id, row.rack)}
+                title="Edit Rack"
+              >
+                <FiEdit /> {/* Pencil Icon */}
+              </button>
+            </>
+          ) : (
+            <button
+              className="btn btn-sm btn-success"
+              onClick={() => handleRackUpdate(row.id, row.rack)}
+              title="Add Rack"
+            >
+              <FiPlus /> {/* Add Icon */}
+            </button>
           )}
-          <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id, row.rack)} title="Update Rack">
-            <FiPlus />
-          </button>
         </div>
       ),
       sortable: false,
       width: '150px'
-    }, 
+    },
     {
       name: 'Status',
       selector: (row) => row.status, // Keep it numeric for sorting
@@ -218,65 +231,64 @@ const ShowProduct = () => {
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
       'Sr No': index + 1,
-      'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
-      'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
-      'Lot No': row.lot_no,
-      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      'User Name': JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
+      'User Email': JSON.parse(localStorage.getItem('user'))?.email || 'N/A',
+      'Lot No': row.lot_no || 'N/A',
+      'Stock Code': row.stock_code || 'N/A',
       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      Date: row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
-      Length: row.length,
-      Width: row.width,
-      Unit: row.unit,
-      'Area (m²)': row.area,
-      'Area (sq. ft.)': row.area_sq_ft
+      'Date': row.stock_invoice?.date || 'N/A',
+      'Shade No': row.shadeNo || 'N/A',
+      'Pur. Shade No': row.purchase_shade_no || 'N/A',
+      'Width': row.width || 'N/A',
+      'Length': row.length || 'N/A',
+      'Unit': row.unit || 'N/A',
+      'Area (m²)': row.area || 'N/A',
+      'Area (sq. ft.)': row.area_sq_ft || 'N/A',
+      'Wastage': row.wastage || 'N/A',
+      'Rack': row.rack || 'N/A',
+      'Status': row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
     }));
+  
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
+  
   const exportToPDF = () => {
     const doc = new jsPDF();
-    doc.text('stocks List', 20, 10);
+    doc.text('Stock List', 20, 10);
+    
     doc.autoTable({
       head: [
         [
-          'Sr No',
-          'User Name',
-          'Lot No',
-          'Stock Code',
-          'Invoice No',
-          'Date',
-          'Shade No',
-          'Pur. Shade No',
-          'Length',
-          'Width',
-          'Unit',
-          'Area (m²)',
-          'Area (sq. ft.)',
-          'Warehouse'
+          'Sr No', 'User Name', 'Lot No', 'Stock Code', 'Invoice No', 'Date',
+          'Shade No', 'Pur. Shade No', 'Width', 'Length', 'Unit',
+          'Area (m²)', 'Area (sq. ft.)', 'Wastage', 'Rack', 'Status'
         ]
       ],
       body: filteredProducts.map((row, index) => [
         index + 1,
-        JSON.parse(localStorage.getItem('user')).username || 'N/A',
-        row.lot_no,
-        `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+        JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
+        row.lot_no || 'N/A',
+        row.stock_code || 'N/A',
         row.stock_invoice?.invoice_no || 'N/A',
         row.stock_invoice?.date || 'N/A',
-        row.stock_product?.shadeNo || 'N/A',
-        row.stock_product?.purchase_shade_no || 'N/A',
-        row.length,
-        row.width,
-        row.unit,
-        row.area,
-        row.area_sq_ft,
-        row.Warehouse
+        row.shadeNo || 'N/A',
+        row.purchase_shade_no || 'N/A',
+        row.width || 'N/A',
+        row.length || 'N/A',
+        row.unit || 'N/A',
+        row.area || 'N/A',
+        row.area_sq_ft || 'N/A',
+        row.wastage || 'N/A',
+        row.rack || 'N/A',
+        row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
       ])
     });
+  
     doc.save('stocks_list.pdf');
   };
+  
 
   const customStyles = {
     table: {

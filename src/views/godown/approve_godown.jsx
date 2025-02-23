@@ -14,6 +14,10 @@ import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { FaFileExcel } from 'react-icons/fa';
+import { FaFileCsv } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import Papa from 'papaparse';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -152,7 +156,6 @@ const Index = () => {
               <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
                 <MdCheckCircle />
               </Button>
-              
             </>
           ) : (
             <></>
@@ -286,7 +289,53 @@ const Index = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'GatePassData');
     XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
   };
+  // Export CSV
+  const exportToCSV = () => {
+    if (!filteredInvoices || filteredInvoices.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
 
+    const csvData = filteredInvoices.map((row, index) => ({
+      'Sr No': index + 1,
+      'Gate Pass No': row.gatepass_no,
+      'Godown Supervisor': row.godownSupervisor,
+      'Warehouse Supervisor': row.warehouseSupervisor,
+      Date: row.date || 'N/A',
+      Status: row.status === 1 ? 'Approved' : 'Pending'
+    }));
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'gate_pass_list.csv');
+    toast.success('CSV exported successfully!');
+  };
+
+  // Export PDF
+  const exportToPDF = () => {
+    if (!filteredInvoices || filteredInvoices.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
+
+    const doc = new jsPDF();
+    doc.text('Gate Pass List', 20, 10);
+
+    doc.autoTable({
+      head: [['Sr No', 'Gate Pass No', 'Godown Supervisor', 'Warehouse Supervisor', 'Date', 'Status']],
+      body: filteredInvoices.map((row, index) => [
+        index + 1,
+        row.gatepass_no,
+        row.godownSupervisor,
+        row.warehouseSupervisor,
+        row.date || 'N/A',
+        row.status === 1 ? 'Approved' : 'Pending'
+      ])
+    });
+
+    doc.save('gate_pass_list.pdf');
+    toast.success('PDF exported successfully!');
+  };
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -300,6 +349,18 @@ const Index = () => {
             className="pe-5 ps-2 py-2"
             style={{ borderRadius: '5px' }}
           />
+        </div>
+        <div className="col-md-8">
+          <div className="d-flex justify-content-end">
+            <button type="button" className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" />
+              Export as CSV
+            </button>
+            <button type="button" className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              Export as PDF
+            </button>
+          </div>
         </div>
       </div>
       <div className="row">
