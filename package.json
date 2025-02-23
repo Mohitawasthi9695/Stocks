@@ -41,6 +41,7 @@
     "react-captcha-generator": "^1.6.3",
     "react-chartjs-2": "^5.2.0",
     "react-copy-to-clipboard": "^5.1.0",
+    "react-csv": "^2.2.2",
     "react-data-table-component": "^7.6.2",
     "react-data-table-component-extensions": "^1.6.0",
     "react-dom": "^18.3.1",
@@ -98,7 +99,7 @@
     "json-server": "^1.0.0-beta.3",
     "prettier": "3.2.5",
     "react-error-overlay": "6.0.11",
-    "sass": "^1.75.0",
+    "sass": "^1.62.1",
     "sass-migrator": "^2.3.1",
     "shadcn-ui": "^0.9.4"
   },

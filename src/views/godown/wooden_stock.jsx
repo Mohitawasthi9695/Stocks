@@ -10,6 +10,11 @@ import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import { FiSave } from 'react-icons/fi';
+import { FiPlus } from 'react-icons/fi';
+import { FiEdit } from 'react-icons/fi';
+import 'jspdf-autotable';
+import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
@@ -30,8 +35,10 @@ const ShowProduct = () => {
         console.log('stocks data:', response.data);
         setProducts(response.data);
         setFilteredProducts(response.data);
+
+        // Correct rack initialization
         const initialRackInputs = {};
-        productsWithArea.forEach((product) => {
+        response.data.forEach((product) => {
           initialRackInputs[product.id] = product.rack || '';
         });
         setRackInputs(initialRackInputs);
@@ -53,40 +60,63 @@ const ShowProduct = () => {
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 
+  const handleRackUpdate = async (id, currentRack) => {
+    Swal.fire({
+      title: 'Update Rack',
+      input: 'text',
+      inputPlaceholder: 'Enter new rack value...',
+      inputValue: currentRack || '', // Ensure empty string if undefined
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+      preConfirm: (value) => {
+        if (!value) {
+          Swal.showValidationMessage('Rack value cannot be empty!');
+        }
+        return value;
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/api/godownwoodenstock/${id}`,
+            { rack: result.value },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+
+          if (response.status === 200) {
+            setProducts((prevProducts) =>
+              prevProducts.map((product) => (product.id === id ? { ...product, rack: result.value } : product))
+            );
+            setRackInputs((prev) => ({
+              ...prev,
+              [id]: result.value
+            }));
+            toast.success('Rack updated successfully!');
+          }
+        } catch (error) {
+          console.error('Error updating rack:', error);
+          toast.error('Failed to update rack. Please try again.');
+        }
+      }
+    });
+  };
+
   const handleRackChange = (id, value) => {
     setRackInputs((prev) => ({
       ...prev,
       [id]: value
     }));
   };
-  const handleRackUpdate = async (id) => {
-    try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock/${id}`,
-        { rack: rackInputs[id] },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
 
-      if (response.status === 200) {
-        const updatedProducts = products.map((product) => (product.id === id ? { ...product, rack: rackInputs[id] } : product));
-        setProducts(updatedProducts);
-        setFilteredProducts(updatedProducts);
-        toast.success('Rack updated successfully!');
-      }
-    } catch (error) {
-      console.error('Error updating rack:', error);
-      toast.error('Failed to update rack. Please try again.');
-    }
-  };
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
-
   const columns = [
     {
       name: 'Sr No',
@@ -144,37 +174,39 @@ const ShowProduct = () => {
     {
       name: 'Rack',
       cell: (row) => (
-        <div className="d-flex align-items-center gap-2">
-          <input
-            type="text"
-            value={rackInputs[row.id] || ''}
-            onChange={(e) => handleRackChange(row.id, e.target.value)}
-            className="form-control form-control-sm"
-            style={{ width: '100px' }}
-          />
-          <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id)} title="Update Rack">
-            <FiSave size={16} />
-          </button>
+        <div className="d-flex align-items-center w-100" style={{ justifyContent: row.rack ? 'space-between' : 'center' }}>
+          {row.rack ? (
+            <>
+              <span style={{ paddingLeft: '15px', minWidth: '50px', textAlign: 'left' }}>{row.rack}</span>
+              <button className="btn btn-sm btn-warning" onClick={() => handleRackUpdate(row.id, row.rack)} title="Edit Rack">
+                <FiEdit /> {/* Pencil Icon */}
+              </button>
+            </>
+          ) : (
+            <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id, '')} title="Add Rack">
+              <FiPlus /> {/* Add Icon */}
+            </button>
+          )}
         </div>
       ),
       sortable: false,
-      width: '200px'
+      width: '150px'
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      selector: (row) => row.status, // Keep it numeric for sorting
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            className={`badge ${row.status === 1 ? 'bg-success' : row.status === 2 ? 'bg-warning' : 'bg-danger'}`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
               whiteSpace: 'nowrap'
             }}
           >
-            {row.status === 1 ? 'Approved' : 'Pending'}
+            {row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'}
           </span>
         </div>
       )

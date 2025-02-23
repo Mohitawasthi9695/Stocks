@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { Card, Button, Alert } from 'react-bootstrap';
 import { NavLink, Link } from 'react-router-dom';
 import Breadcrumb from '../../../layouts/AdminLayout/Breadcrumb';
@@ -8,6 +9,9 @@ import AuthLogin from './JWTLogin';  // Import JWTLogin as AuthLogin
 import './login.scss';
 
 const Signin1 = () => {
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
   return (
     <React.Fragment>
       <Breadcrumb />

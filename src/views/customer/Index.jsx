@@ -8,6 +8,10 @@ import { toast } from 'react-toastify';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Swal from 'sweetalert2';
+import { saveAs } from 'file-saver';
+import Papa from 'papaparse';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const CustomersPage = () => {
   const [Customers, setCustomer] = useState([]);
@@ -17,11 +21,11 @@ const CustomersPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCustomer, setselectedCustomer] = useState(null);
   const [filteredSuppliers, setFilteredSuppliers] = useState([]);
-
+  const people_type= "Customer";
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/peoples?people_type=${people_type}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -131,54 +135,6 @@ const CustomersPage = () => {
       sortable: true
     },
     {
-      name: 'Status',
-      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
-      sortable: true,
-
-      cell: (row) => (
-        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
-          <div style={{ marginLeft: '10px', marginTop: '4px' }}>
-            <span className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`} style={{ padding: '5px 10px', borderRadius: '8px' }}>
-              {row.status === 0 ? 'Active' : 'Inactive'}
-            </span>
-          </div>
-
-          <input
-            type="checkbox"
-            checked={row.status === 1}
-            onChange={() => handleToggleStatus(row.id, row.status)}
-            style={{ opacity: 0, width: 0, height: 0 }}
-          />
-          <span
-            style={{
-              position: 'absolute',
-              cursor: 'pointer',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: row.status === 0 ? '#4caf50' : '#ccc',
-              transition: '0.4s',
-              borderRadius: '20px'
-            }}
-          ></span>
-          <span
-            style={{
-              position: 'absolute',
-              content: '',
-              height: '14px',
-              width: '14px',
-              left: row.status === 0 ? '18px' : '3px',
-              bottom: '3px',
-              backgroundColor: 'white',
-              transition: '0.4s',
-              borderRadius: '50%'
-            }}
-          ></span>
-        </label>
-      )
-    },
-    {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
@@ -193,49 +149,6 @@ const CustomersPage = () => {
     }
   ];
 
-  const handleToggleStatus = async (userId, currentStatus) => {
-    try {
-      const updatedStatus = currentStatus === 1 ? 0 : 1;
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`,
-        { status: updatedStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      toast.success('Status updated successfully!');
-      setCustomer((prevCustomers) =>
-        prevCustomers.map((customer) => (customer.id === userId ? { ...customer, status: updatedStatus } : customer))
-      );
-    } catch (error) {
-      toast.error('Failed to update status!');
-    }
-  };
-  // const handleDelete = async (userId) => {
-  //   try {
-  //     const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${userId}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //         'Content-Type': 'application/json'
-  //       }
-  //     });
-
-  //     // Check if the response indicates success
-  //     if (response.status === 200) {
-  //       toast.success('User deleted successfully');
-  //       setCustomer(Customers.filter((user) => user.id !== userId));
-  //       setFilteredCustomer(filteredCustomers.filter((user) => user.id !== userId));
-  //     } else {
-  //       throw new Error('Unexpected response status');
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error('Failed to delete user');
-  //   }
-  // };
 
   const handleDelete = async (userId) => {
     try {
@@ -289,7 +202,7 @@ const CustomersPage = () => {
       }
 
       // Perform the API call
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/customers/${selectedCustomer.id}`, selectedCustomer, {
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/peoples/${selectedCustomer.id}`, selectedCustomer, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -407,49 +320,56 @@ const CustomersPage = () => {
   };
 
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredSuppliers);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'supplier_list.csv');
+    if (filteredCustomers.length === 0) {
+      toast.error("No data available to export.");
+      return;
+    }
+  
+    const csv = Papa.unparse(filteredCustomers);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "customer_list.csv");
   };
+  
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
-    doc.text('Suppliers List', 20, 10);
+    
+    // Title
+    doc.text('Customers List', 14, 10);
+  
+    // Define table headers
+    const headers = [
+      ['Customer Name', 'Code', 'GST No', 'CIN No', 'PAN No', 'MSME No', 'Phone', 'Owner Mobile', 'Registered Address',]
+    ];
+  
+    // Map data for table body
+    const body = filteredCustomers.map((row) => [
+      row.name,
+      row.code,
+      row.gst_no,
+      row.cin_no,
+      row.pan_no,
+      row.msme_no,
+      row.tel_no,
+      row.owner_mobile,
+      row.reg_address,
+    ]);
+  
+    // Add table to PDF
     doc.autoTable({
-      head: [
-        [
-          'Customer Name',
-          'Code',
-          'GST No',
-          'CIN No',
-          'PAN No',
-          'MSME No',
-          'Phone',
-          'Email',
-          'Owner Mobile',
-          'Registered Address',
-          'Work Address',
-          'Area',
-          'Status'
-        ]
-      ],
-      body: filteredSuppliers.map((row) => [
-        row.name,
-        row.code,
-        row.gst_no,
-        row.cin_no,
-        row.pan_no,
-        row.msme_no,
-        row.tel_no,
-        row.email,
-        row.owner_mobile,
-        row.reg_address,
-        row.work_address,
-        row.area,
-        row.status === 1 ? 'Active' : 'Inactive'
-      ])
+      head: headers,
+      body: body,
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [238, 238, 238] },
     });
-    doc.save('user_list.pdf');
+  
+    // Save PDF
+    doc.save('customers_list.pdf');
   };
+  
+  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -478,12 +398,6 @@ const CustomersPage = () => {
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             <div className="card  border-0 shadow-none" style={{ background: '#f5f0e6' }}>
-              {/* <div
-              className="card-header d-flex justify-content-between align-items-center"
-              style={{ backgroundColor: '#3f4d67', color: 'white' }}
-            >
-              <h2 className="m-0 text-white">Customers Management</h2>
-            </div> */}
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
                 <div className="d-flex justify-content-end">
                   <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>

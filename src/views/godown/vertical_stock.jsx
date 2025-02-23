@@ -114,7 +114,13 @@ const ShowProduct = () => {
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${row.status === 1 ? 'bg-success' : row.status === 2 ? 'bg-warning' : 'bg-danger'}`}
+            className={`badge ${
+              row.status === 1
+                ? 'bg-success'
+                : row.status === 2
+                ? 'bg-warning'
+                : 'bg-danger'
+            }`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
@@ -125,7 +131,7 @@ const ShowProduct = () => {
           </span>
         </div>
       )
-    },
+    },    
     {
       name: 'Action',
       cell: (row) => (

@@ -20,6 +20,7 @@ import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
+
 const Show_product = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -113,17 +114,7 @@ const Show_product = () => {
     { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     { name: 'Pcs', selector: (row) => row.pcs ?? 1, sortable: true },
-    { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
-    {
-      name: 'Action',
-      cell: (row) => (
-        <div className="d-flex">
-          <Button variant="success" size="sm" onClick={() => downloadRowAsExcel(row)}>
-            <MdFileDownload />
-          </Button>
-        </div>
-      )
-    }
+    { name: 'Quantity', selector: (row) => row.quantity, sortable: true }
   ];
 
   const handleEdit = (product) => {
@@ -253,6 +244,70 @@ const Show_product = () => {
       }
     }
   };
+  const exportToCSV = () => {
+    if (!filteredProducts || filteredProducts.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
+
+    const csvData = filteredProducts.map((row, index) => ({
+      'Sr No': index + 1,
+      'Gate Pass No': row.gate_pass_no,
+      'Gate Pass Date': row.gate_pass_date,
+      'Warehouse Code': row.stockin_code,
+      'Stock Code': row.stock_code,
+      'Lot No': row.lot_no,
+      Length: `${row.length} ${row.length_unit}`,
+      Width: `${row.width} ${row.width_unit}`,
+      Pcs: row.pcs ?? 1,
+      Quantity: row.quantity
+    }));
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'stock_list.csv');
+    toast.success('CSV exported successfully!');
+  };
+
+  const exportToPDF = () => {
+    if (!filteredProducts || filteredProducts.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
+  
+    const doc = new jsPDF();
+    doc.setFontSize(14); // Heading size adjusted
+    doc.text('Stock List', 80, 10);
+  
+    doc.autoTable({
+      head: [['Sr No', 'Gate Pass No', 'Gate Pass Date', 'Warehouse Code', 'Stock Code',
+         'Lot No', 'Length', 'Width', 'Pcs', 'Quantity',]],
+      body: filteredProducts.map((row, index) => [
+        index + 1,
+        row.gate_pass_no || 'N/A',
+        row.gate_pass_date || 'N/A',
+        row.stockin_code || 'N/A',
+        row.stock_code || 'N/A',
+        row.lot_no || 'N/A',
+        `${row.length} ${row.length_unit}` || 'N/A',
+        `${row.width} ${row.width_unit}` || 'N/A',
+        row.pcs ?? 1,
+        row.quantity || 'N/A',
+    
+      ]),
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 3 }, // Body text size
+      headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 8 }, // **Smaller column heading font size**
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      margin: { top: 20 },
+    });
+  
+    doc.save('stock_list.pdf');
+    toast.success('PDF exported successfully!');
+  };
+  
+  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -267,6 +322,18 @@ const Show_product = () => {
             className="pe-5 ps-2 py-2"
             style={{ borderRadius: '5px' }}
           />
+        </div>
+        <div className="col-md-8">
+          <div className="d-flex justify-content-end">
+            <button type="button" className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" />
+              Export as CSV
+            </button>
+            <button type="button" className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              Export as PDF
+            </button>
+          </div>
         </div>
       </div>
       <div className="row">

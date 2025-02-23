@@ -251,6 +251,12 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import Swal from 'sweetalert2';
 import { BiBorderLeft } from 'react-icons/bi';
 import { text } from 'd3';
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Show_product = () => {
   const [products, setProducts] = useState([]);
@@ -304,15 +310,32 @@ const Show_product = () => {
     { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
     { name: 'Gate Pass No', selector: (row) => row.gate_pass_no, sortable: true },
     { name: 'Date', selector: (row) => row.date, sortable: true },
-    // { name: "Warehouse Supervisor", selector: (row) => row.warehouse_supervisor, sortable: true },
-    // { name: "Godown Supervisor", selector: (row) => row.godown_supervisor, sortable: true },
     { name: 'Stock Code', selector: (row) => row.stock_code, sortable: true },
     { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
     { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: 'Pcs', selector: (row) => row.items, sortable: true },
     { name: 'Box/Bundle', selector: (row) => row.box_bundle, sortable: true },
     { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
-    { name: 'Out Quantity', selector: (row) => row.out_quantity, sortable: true }
+    { name: 'Out Quantity', selector: (row) => row.out_quantity, sortable: true },
+    {
+      name: 'Status',
+      selector: (row) => row.status, // Keep it numeric for sorting
+      sortable: true,
+      cell: (row) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span
+            className={`badge ${row.status === 1 ? 'bg-success' : row.status === 2 ? 'bg-warning' : 'bg-danger'}`}
+            style={{
+              padding: '5px 10px',
+              borderRadius: '8px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {row.status === 1 ? 'Approved' : row.status === 2 ? 'Stock Out' : 'Pending'}
+          </span>
+        </div>
+      )
+    }
   ];
 
   const handleEdit = (product) => {
@@ -416,6 +439,80 @@ const Show_product = () => {
       }
     }
   };
+  const exportToCSV = () => {
+    if (!filteredProducts || filteredProducts.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
+
+    // Extract column headers dynamically from `columns` array
+    const headers = columns.map((col) => col.name);
+
+    // Prepare CSV data dynamically
+    const csvData = filteredProducts.map((row, index) => {
+      let rowData = { 'Sr No': index + 1 }; // Add Serial Number manually
+
+      columns.forEach((col) => {
+        if (typeof col.selector === 'function') {
+          rowData[col.name] = col.selector(row);
+        }
+      });
+
+      return rowData;
+    });
+
+    // Convert to CSV and save
+    const csv = Papa.unparse({ fields: headers, data: csvData });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'stock_list.csv');
+    toast.success('CSV exported successfully!');
+  };
+
+  const exportToPDF = () => {
+    if (!filteredProducts || filteredProducts.length === 0) {
+      toast.error("No data available for export.");
+      return;
+    }
+  
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text("Stock List", 80, 10);
+  
+    // Extract headers from `columns` array
+    const headers = columns.map((col) => col.name);
+  
+    // Prepare data dynamically
+    const body = filteredProducts.map((row, index) => {
+      return [
+        index + 1, // Sr No
+        row.gate_pass_no || "N/A", // Explicitly include Gate Pass No
+        row.date || "N/A",
+        row.stock_code || "N/A",
+        row.lot_no || "N/A",
+        `${row.length} ${row.length_unit}` || "N/A",
+        row.items || "N/A",
+        row.box_bundle || "N/A",
+        row.quantity || "N/A",
+        row.out_quantity || "N/A",
+        row.status === 1 ? "Approved" : row.status === 2 ? "Sold Out" : "Pending",
+      ];
+    });
+  
+    doc.autoTable({
+      head: [headers],
+      body: body,
+      startY: 20,
+      theme: "grid",
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 8 },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      margin: { top: 20 },
+    });
+  
+    doc.save("stock_list.pdf");
+    toast.success("PDF exported successfully!");
+  };
+  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -430,6 +527,18 @@ const Show_product = () => {
             className="pe-5 ps-2 py-2"
             style={{ borderRadius: '5px' }}
           />
+        </div>
+        <div className="col-md-8">
+          <div className="d-flex justify-content-end">
+            <button type="button" className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" />
+              Export as CSV
+            </button>
+            <button type="button" className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              Export as PDF
+            </button>
+          </div>
         </div>
       </div>
       <div className="row">

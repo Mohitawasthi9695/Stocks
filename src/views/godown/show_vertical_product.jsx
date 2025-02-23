@@ -6,8 +6,10 @@ import { MdDelete } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import Swal from 'sweetalert2';
+import { useParams } from 'react-router-dom';
 
 const ShowGodownStock = () => {
+    const { id } = useParams();
   const [stocks, setStocks] = useState([]);
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,7 +18,7 @@ const ShowGodownStock = () => {
   useEffect(() => {
     const fetchGodownStockData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock/godownStock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock/stock/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -106,8 +108,8 @@ const ShowGodownStock = () => {
       sortable: true
     },
     {
-      name: 'Type',
-      selector: (row) => row.type,
+      name: 'Out Length',
+      selector: (row) => `${Number(row.out_length).toFixed(2)} ${row.length_unit}`,
       sortable: true
     },
     {

@@ -11,10 +11,10 @@ const filterMenuItem = (menu) => {
             ['supervisor'].includes(userRole) &&
             [
               'approve_godown',
-              'stockout',
+              'operator-stockout',
               'godownStock',
+              'godown-stockout',
               'users',
-              'purchaser',
               'GodownAccessories',
               'GoDownGatePass',
               'customers',
@@ -30,13 +30,13 @@ const filterMenuItem = (menu) => {
             ['sub_supervisor'].includes(userRole) &&
             [
               'usersGroup',
+              'operator-stockout',
               'products',
               'Accessory',
               'stockin',
               'Warehouse_Accessories',
-              'stockout',
-              'WarehouseGatePass',
-              'stockout'
+              'WarehouseGatePass'
+              // 'godown-stockout'
             ].includes(item.id)
           )
       )
@@ -47,20 +47,19 @@ const filterMenuItem = (menu) => {
             [
               'approve_godown',
               'users',
-              'purchaser',
               'GodownAccessories',
               'GoDownGatePass',
               'suppliers',
-              // 'customers',
+              'godown-stockout',
               'stock_to_godown',
               'approve_operator',
               'godown_stock',
-              // 'usersGroup',
               'products',
               'Accessory',
               'stockin',
               'Warehouse_Accessories',
-              'WarehouseGatePass'
+              'WarehouseGatePass',
+              'godownStock'
             ].includes(item.id)
           )
       )
@@ -115,11 +114,11 @@ const menuItems = {
               url: '/supplier'
             },
             {
-              id: 'purchaser',
-              title: 'Purchaser',
+              id: 'Seller',
+              title: 'Seller',
               icon: 'feather icon-users',
               type: 'item',
-              url: '/receiver'
+              url: '/company'
             },
             {
               id: 'customers',
@@ -271,14 +270,14 @@ const menuItems = {
       ]
     },
     {
-      id: 'stockout',
-      title: 'Stock Out',
+      id: 'operator-stockout',
+      title: 'Blinds Stock Out',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'stocksout',
-          title: 'Stocks Out',
+          title: 'Blinds Out',
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
@@ -292,21 +291,14 @@ const menuItems = {
 
             {
               id: 'invoice_out_index',
-              title: 'All Out Invoice',
+              title: 'View Out Invoice',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-invoices-out'
             },
             {
-              id: 'invoice_operator_index',
-              title: 'All Operator Invoice',
-              icon: 'feather icon-file-minus',
-              type: 'item',
-              url: '/operator_invoice'
-            },
-            {
               id: 'invoice_out_stock',
-              title: 'All Out Stock',
+              title: 'Total Out Stock',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-out-stock'
@@ -348,30 +340,59 @@ const menuItems = {
     },
     {
       id: 'GoDownGatePass',
-      title: 'Stock GatePass',
+      title: 'Blinds Stock GatePass',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'godown_gatepass',
-          title: 'GatePass',
+          title: 'Blinds GatePass',
           type: 'collapse',
           icon: 'feather icon-box',
 
           children: [
             {
               id: 'approve_stock',
-              title: 'Stock GatePass',
+              title: 'Blinds Stock GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/approve/godown'
             },
             {
-              id: 'approve_accessory',
-              title: 'Accessory GatePass',
-              icon: 'feather icon-file-plus',
-              type: 'item',
-              url: '/approve/accessory'
+              id: 'all_stocks',
+              title: 'Blinds Stocks',
+              icon: 'feather icon-clipboard',
+              type: 'collapse',
+              children: [
+                {
+                  id: 'roller_stock',
+                  title: 'Roller Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/godown/roller_stock'
+                },
+                {
+                  id: 'wooden_stock',
+                  title: 'Wooden Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/godown/wooden_stock'
+                },
+                {
+                  id: 'vertical_stock',
+                  title: 'Vertical Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/godown/vertical_stock'
+                },
+                {
+                  id: 'honeycomb_stock',
+                  title: 'HoneyComb Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/godown/honeycomb_stock'
+                }
+              ]
             }
           ]
         }
@@ -379,28 +400,28 @@ const menuItems = {
     },
     {
       id: 'GodownAccessories',
-      title: 'Stock',
+      title: 'Accessories Stock',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'godown_stock',
-          title: 'Stocks GatePass',
+          title: 'Accessory Stocks',
           type: 'collapse',
           icon: 'feather icon-box',
 
           children: [
             {
-              id: 'godown_stock',
-              title: 'Product Stocks',
+              id: 'approve_accessory',
+              title: 'Accessory GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
-              url: '/stocks/godown'
+              url: '/approve/accessory'
             },
             {
               id: 'godown_accessory',
               title: 'Accessory Stocks',
-              icon: 'feather icon-file-plus',
+              icon: 'feather icon-list',
               type: 'item',
               url: '/view_approve_gatepass'
             }
@@ -409,44 +430,23 @@ const menuItems = {
       ]
     },
     {
-      id: 'godownStock',
-      title: 'Godown Stocks',
+      id: 'godown-stockout',
+      title: 'Accessories Stocks Out',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
-          id: 'all_stocks',
-          title: 'Stocks',
-          icon: 'feather icon-clipboard',
+          id: 'godownstockout',
+          title: 'Accessories Out',
           type: 'collapse',
+          icon: 'feather icon-box',
           children: [
             {
-              id: 'roller_stock',
-              title: 'Roller Stocks',
-              icon: 'feather icon-list',
+              id: 'approve_operator',
+              title: 'Accessories Out Invoice',
+              icon: 'feather icon-file-minus',
               type: 'item',
-              url: '/godown/roller_stock'
-            },
-            {
-              id: 'wooden_stock',
-              title: 'Wooden Stocks',
-              icon: 'feather icon-list',
-              type: 'item',
-              url: '/godown/wooden_stock'
-            },
-            {
-              id: 'vertical_stock',
-              title: 'Vertical Stocks',
-              icon: 'feather icon-list',
-              type: 'item',
-              url: '/godown/vertical_stock'
-            },
-            {
-              id: 'honeycomb_stock',
-              title: 'HoneyComb Stocks',
-              icon: 'feather icon-list',
-              type: 'item',
-              url: '/godown/honeycomb_stock'
+              url: '/operator_invoice'
             }
           ]
         }

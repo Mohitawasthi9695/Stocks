@@ -228,7 +228,7 @@ const ShowProduct = () => {
   };
 
   return (
-    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input
@@ -241,20 +241,22 @@ const ShowProduct = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
+        <div className="col-md-8">
+          <div className="d-flex justify-content-end">
+            <button type="button" className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" />
+              Export as CSV
+            </button>
+            <button type="button" className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              Export as PDF
+            </button>
+          </div>
+        </div>
       </div>
       <div className="row">
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
-            <div className="d-flex justify-content-end">
-              <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                <FaFileCsv className="w-5 h-5 me-1" />
-                Export as CSV
-              </button>
-              <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                Export as PDF
-              </button>
-            </div>
             {loading ? (
               <div>
                 {[...Array(8)].map((_, index) => (

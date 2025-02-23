@@ -17,6 +17,9 @@ import { FaFileExcel } from 'react-icons/fa';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import PdfPreview from 'components/PdfPreview';
+import Papa from 'papaparse';
+import 'jspdf-autotable';
+import { FaFileCsv } from 'react-icons/fa';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -57,12 +60,11 @@ const Index = () => {
     setSearchQuery(e.target.value);
   };
 
-
   const downloadExcel = (row) => {
-    const fullInvoice = invoiceAllDetails.find(invoice => invoice.id === row.id);
+    const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
 
     if (!fullInvoice || !fullInvoice.all_stocks) {
-      console.error("Godown data not found for this row:", row);
+      console.error('Godown data not found for this row:', row);
       return;
     }
 
@@ -79,11 +81,11 @@ const Index = () => {
       Length: godown.length,
       Pcs: godown.pcs,
       Quantity: godown.quantity,
-      Supervisor: fullInvoice.warehouse_supervisors.name,
+      Supervisor: fullInvoice.warehouse_supervisors.name
     }));
     const ws = XLSX.utils.json_to_sheet(extractedData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "GatePassData");
+    XLSX.utils.book_append_sheet(wb, ws, 'GatePassData');
     XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
   };
 
@@ -140,7 +142,7 @@ const Index = () => {
       selector: (row) => row.sgst_percentage,
       sortable: true
     },
-    
+
     {
       name: 'Payment Status',
       selector: (row) => row.payment_status,
@@ -168,19 +170,19 @@ const Index = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'Requested' : 'Sold Out'),
+      selector: (row) => (row.status === 0 ? 'Requested' : 'Sold Out'),
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${row.status === 1 ? 'bg-danger' : 'bg-success'}`}
+            className={`badge ${row.status === 0 ? 'bg-danger' : 'bg-success'}`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
               whiteSpace: 'nowrap'
             }}
           >
-            {row.status === 1 ? 'Requested' : 'Sold Out'}
+            {row.status === 0 ? 'Requested' : 'Sold Out'}
           </span>
         </div>
       )
@@ -215,6 +217,88 @@ const Index = () => {
       width: '250px'
     }
   ];
+  const exportToCSV = () => {
+    const csvData = filteredInvoices.map((row) => ({
+      'Invoice No': row.invoice_no || '',
+      Date: row.date || '',
+      Customer: row.customer || '',
+      Company: row.company || '',
+      'Place of Supply': row.place_of_supply || '',
+      'Vehicle No': row.vehicle_no || '',
+      Transport: row.transport || '',
+      'Total Amount': row.total_amount || '',
+      'CGST %': row.cgst_percentage || '',
+      'SGST %': row.sgst_percentage || '',
+      'Payment Status': row.payment_status || '',
+      'Payment Date': row.payment_date || '',
+      'Payment Account No': row.payment_account_no || '',
+      'Payment Amount': row.payment_amount || '',
+      'QR Code': row.qr_code || '',
+      Status: row.status === 0 ? 'Requested' : 'Sold Out'
+    }));
+
+    // Convert to CSV
+    const csv = Papa.unparse(csvData, {
+      quotes: true, // Ensures proper formatting
+      escapeChar: '"', // Prevents data from being misinterpreted
+      delimiter: ',' // Standard CSV format
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'invoice_list.csv');
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF('landscape');
+    doc.text('Invoice List', 14, 10);
+
+    // Define headers dynamically based on invoice fields
+    const headers = [
+      [
+        'Invoice No',
+        'Date',
+        'Customer',
+        'Company',
+        'Place of Supply',
+        'Vehicle No',
+        'Total Amount',
+        'CGST %',
+        'SGST %',
+        'Payment Status',
+        'Payment Date',
+        'Payment Account No',
+        'Payment Amount',
+      ]
+    ];
+
+    const body = filteredInvoices.map((row, index) => [
+      row.invoice_no || 'N/A',
+      row.date || 'N/A',
+      row.customer || 'N/A',
+      row.company || 'N/A',
+      row.place_of_supply || 'N/A',
+      row.vehicle_no || 'N/A',
+      row.total_amount || 'N/A',
+      row.cgst_percentage || 'N/A',
+      row.sgst_percentage || 'N/A',
+      row.payment_status || 'N/A',
+      row.payment_date || 'N/A',
+      row.payment_account_no || 'N/A',
+      row.payment_amount || 'N/A',
+    ]);
+
+    doc.autoTable({
+      head: headers,
+      body: body,
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [238, 238, 238] }
+    });
+
+    doc.save('invoice_list.pdf');
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -246,7 +330,7 @@ const Index = () => {
   };
 
   const handleAddInvoice = () => {
-    navigate('/add-invoice');
+    navigate('/invoice-out');
   };
 
   const customStyles = {
@@ -345,6 +429,16 @@ const Index = () => {
           </Button>
         </div>
       </div>
+      <div className="d-flex justify-content-end">
+        <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+          <FaFileCsv className="w-5 h-5 me-1" />
+          Export as CSV
+        </button>
+        <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+          <AiOutlineFilePdf className="w-5 h-5 me-1" />
+          Export as PDF
+        </button>
+      </div>
       <div className="row">
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
@@ -378,7 +472,12 @@ const Index = () => {
         </div>
       </div>
       {invoiceAllDetails && selectedInvoice && (
-        <StockOutInvoicePDF show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
+        <StockOutInvoicePDF
+          show={showPdfModal}
+          onHide={() => setShowPdfModal(false)}
+          invoiceData={invoiceAllDetails}
+          id={selectedInvoice}
+        />
       )}
     </div>
   );

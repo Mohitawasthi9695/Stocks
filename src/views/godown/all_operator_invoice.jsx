@@ -11,6 +11,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import PdfPreview from 'components/PdfOutPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 
+
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]); // For search

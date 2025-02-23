@@ -62,31 +62,33 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const reslt = await Swal.fire({
-      title : "Are you sure?",
+      title: 'Are you sure?',
       text: 'Do you want to add this product?',
-      icon : 'warning',
-      showCancelButton : true, 
+      icon: 'warning',
+      showCancelButton: true,
       confirmButtonColor: '#3085d6',
-      cancelButtonColor : '#d33',
-      confirmButtonText : 'Yes, add it!'
-    })
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, add it!'
+    });
 
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/products`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+    if (reslt.isConfirmed) {
+      try {
+        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/products`, formData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.status >= 200 && response.status < 300) {
+          navigate('/shades');
+          Swal.fire('Success!', 'Product added successfully', 'success');
+        } else {
+          throw new Error('Unexpected response status');
         }
-      });
-
-      if (response.status >= 200 && response.status < 300) {
-        navigate('/shades');
-        Swal.fire('Success!', 'Product added successfully', 'success');
-      } else {
-        throw new Error('Unexpected response status');
+      } catch (error) {
+        console.error('Error adding product:', error);
+        Swal.fire('Error', 'Error adding product', 'error');
       }
-    } catch (error) {
-      console.error('Error adding product:', error);
-      Swal.fire('Error', 'Error adding product', 'error');
     }
   };
   const [file, setFile] = useState(null);
@@ -173,7 +175,7 @@ const AddProduct = () => {
     >
       <Row className="justify-content-center">
         <div className="col-md-12 position-relative">
-          <h2 className="text-center mb-4 fw-bold text-primary">Invoice Items</h2>
+          <h2 className="text-center mb-3 fw-bold y">Product Shades</h2>
 
           <div className="card shadow-lg border-0 mb-4 mx-auto" style={{ borderRadius: '12px', maxWidth: '700px' }}>
             <div className="card-body p-4 mx-auto">

@@ -82,7 +82,7 @@ const NavRight = () => {
   return (
     <React.Fragment>
       <ListGroup as="ul" bsPrefix=" " className="navbar-nav ml-auto" id="navbar-right">
-        <ListGroup.Item as="li" bsPrefix=" ">
+        {/* <ListGroup.Item as="li" bsPrefix=" ">
           <Dropdown align="end">
             <Dropdown.Toggle as={Link} variant="link" to="#" id="dropdown-basic">
               <i className="feather icon-bell icon" />
@@ -153,13 +153,15 @@ const NavRight = () => {
             </Dropdown.Menu>
           </Dropdown>
         </ListGroup.Item>
+
         <ListGroup.Item as="li" bsPrefix=" ">
           <Dropdown>
             <Dropdown.Toggle as={Link} variant="link" to="#" className="displayChatbox" onClick={() => setListOpen(true)}>
               <i className="icon feather icon-mail" />
             </Dropdown.Toggle>
           </Dropdown>
-        </ListGroup.Item>
+        </ListGroup.Item> */}
+
         <ListGroup.Item as="li" bsPrefix=" ">
           <Dropdown align={'end'} className="drp-user">
             <Dropdown.Toggle as={Link} variant="link" to="#" id="dropdown-basic">
@@ -184,11 +186,6 @@ const NavRight = () => {
                     <i className="feather icon-user" /> Profile
                   </Link>
                 </ListGroup.Item>
-                {/* <ListGroup.Item as="li" bsPrefix=" ">
-                  <Link to="#" className="dropdown-item">
-                    <i className="feather icon-mail" /> My Messages
-                  </Link>
-                </ListGroup.Item> */}
                 <ListGroup.Item as="li" bsPrefix=" ">
                   <Link onClick={handleLogout} className="dropdown-item">
                     <i className="feather icon-lock" /> Logout

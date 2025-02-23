@@ -41,6 +41,11 @@ const Invoice_out = () => {
   const [formData, setFormData] = useState({
     invoice_no: '',
     date: today,
+    type: 'accessory',
+    vehicle_no: '',
+    place_of_supply: '',
+    driver_name: '',
+    driver_phone: '',
     warehouse_supervisor_id: warehouse_supervisor_id,
     godown_supervisor_id: '',
     out_products: []
@@ -143,8 +148,13 @@ const Invoice_out = () => {
           }
         });
         setLoading(false);
-        console.log('Fetched Product Data:', response.data.data);
-        setProducts(response.data.data);
+        if (response.data && response.data.data) {
+          console.log('Fetched Product Data:', response.data.data);
+          setProducts(response.data.data);
+        } else {
+          toast.error('No products found.');
+          setProducts([]); // Reset product list
+        }
       } catch (error) {
         setLoading(false);
         console.error('Error fetching product data:', error);
@@ -233,9 +243,7 @@ const Invoice_out = () => {
       });
 
       toast.success('Stocks out successfully');
-
-      // Navigate back after successful submission
-      navigate(-1);
+      navigate('/accessory/gatepassview');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding user';
 
@@ -253,6 +261,7 @@ const Invoice_out = () => {
   const columns = [
     { id: 'product_category', label: 'Product Category' },
     { id: 'product_accessory_name', label: 'Accessory Name' },
+    { id: 'stock_code', label: 'Warehouse Code' },
     { id: 'lot_no', label: 'LOT No' },
     { id: 'items', label: 'Items' },
     { id: 'out_length', label: 'Length' },
@@ -313,9 +322,11 @@ const Invoice_out = () => {
                 <Row>
                   <Col md={4}>
                     <FormField icon={FaFileInvoice} label="GatePass No" name="invoice_no" value={invoice_no} readOnly />
+                    <FormField icon={FaCity} label="place_of_supply" type="text" name="place_of_supply" value={formData.place_of_supply} onChange={handleChange} />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
+                    <FormField icon={FaTruck} label="vehicle_no" type="text" name="vehicle_no" value={formData.vehicle_no} onChange={handleChange} />
                   </Col>
                   <Col md={4}>
                     <FormField
@@ -325,6 +336,13 @@ const Invoice_out = () => {
                       value={formData.sub_supervisor}
                       onChange={handleChange}
                       options={sub_supervisors}
+                    />
+                    <FormField
+                      icon={FaUser}
+                      label="Driver Name"
+                      name="driver_name"
+                      value={formData.driver_name}
+                      onChange={handleChange}
                     />
                   </Col>
                 </Row>
@@ -438,6 +456,7 @@ const Invoice_out = () => {
                                   <tr key={row.warehouse_accessory_id}>
                                     <td key="product_category">{row.product_category}</td>
                                     <td key="product_accessory_name">{row.product_accessory_name}</td>
+                                    <td key="stock_code">{row.stock_code || '-'}</td>
                                     <td key="lot_no">{row.lot_no || '-'}</td>
                                     <td key="items">{row.items || '-'}</td>
                                     <td key="out_length">{row.out_length || '-'}</td>

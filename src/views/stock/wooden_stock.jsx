@@ -68,6 +68,21 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      name: 'Vendor name',
+      selector: (row) => row.supplier,
+      sortable: true
+    },
+    {
+      name: 'Invoice no',
+      selector: (row) => row.invoice_no,
+      sortable: true
+    },
+    {
+      name: 'Product Category',
+      selector: (row) => row.product_category_name,
+      sortable: true
+    },
+    {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true

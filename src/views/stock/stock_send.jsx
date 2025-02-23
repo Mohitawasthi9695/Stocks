@@ -268,23 +268,7 @@ const Invoice_out = () => {
       });
 
       toast.success('Stocks out successfully');
-
-      // Reset the form data
-      setFormData({
-        invoice_no: '',
-        type: 'stock',
-        date: today,
-        vehicle_no: '',
-        place_of_supply: '',
-        driver_name: '',
-        driver_phone: '',
-        warehouse_supervisor_id: warehouse_supervisor_id,
-        godown_supervisor_id: '',
-        out_products: []
-      });
-
-      // Navigate back to the previous page
-      navigate(-1);
+      navigate('/generated_gate_pass');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding stock';
 

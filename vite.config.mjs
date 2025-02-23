@@ -19,7 +19,9 @@ export default defineConfig(({ mode }) => {
     },
     css: {
       preprocessorOptions: {
-        scss: { charset: false },
+        scss: {
+          additionalData: `@use "sass:color";`
+        },
         less: { charset: false },
       },
       charset: false,
