@@ -112,6 +112,11 @@ const SuppliersPage = () => {
       sortable: true
     },
     {
+      name: 'Date',
+      selector: (row) => row.date.toUpperCase(),
+      sortable: true
+    },
+    {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">

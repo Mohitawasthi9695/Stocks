@@ -13,7 +13,8 @@ import * as FileSaver from 'file-saver';
 const AddAccessory = () => {
   const [formData, setFormData] = useState({
     product_category_id: '',
-    accessory_name: ''
+    accessory_name: '',
+    date:''
   });
 
   const [categories, setCategories] = useState([]);
@@ -149,7 +150,7 @@ const AddAccessory = () => {
           confirmButtonText: 'OK'
         }).then(() => {
           setFile(null);
-          navigate('/shades');
+          navigate('/accessories_record');
         });
       }
     } catch (error) {
@@ -281,6 +282,14 @@ const AddAccessory = () => {
                       label="Accessory Name"
                       name="accessory_name"
                       value={formData.accessory_name}
+                      onChange={handleChange}
+                    />
+                    <FormField
+                      icon={FaUser}
+                      label="Date"
+                      type="date"
+                      name="date"
+                      value={formData.date}
                       onChange={handleChange}
                     />
                   </Col>
