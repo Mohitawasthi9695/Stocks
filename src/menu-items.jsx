@@ -10,11 +10,11 @@ const filterMenuItem = (menu) => {
           !(
             ['supervisor'].includes(userRole) &&
             [
+              'users',
               'approve_godown',
               'operator-stockout',
               'godownStock',
               'godown-stockout',
-              'users',
               'GodownAccessories',
               'GoDownGatePass',
               'customers',
