@@ -5,6 +5,8 @@ import { FaUserPlus } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { FaPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
+
 const AddProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -46,8 +48,16 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const payload = godownStocks.map((item) => ({
-        gate_pass_id: item.gate_pass_id,
+      // Find only newly added rows (rows without a gate_pass_id)
+      const newRows = godownStocks.filter((item) => !item.gate_pass_id);
+
+      if (newRows.length === 0) {
+        toast.warn('No new rows to submit!');
+        return;
+      }
+
+      const payload = newRows.map((item) => ({
+        gate_pass_id: item.gate_pass_id || '', // Ensure it's empty for new items
         stock_in_id: item.stock_in_id || '',
         gate_pass_no: item.gate_pass_no,
         gate_pass_date: item.gate_pass_date,
@@ -56,41 +66,33 @@ const AddProduct = () => {
         lot_no: item.lot_no,
         length: parseFloat(item.length) || 0,
         length_unit: item.length_unit,
-        type:'stock',
+        type: 'stock',
         rack: item.rack
       }));
 
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock`, [payload[0]], {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock`, payload, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-      toast.success('Godown Vertical Stock Updated');
+
+      toast.success('New stock items added successfully');
       navigate('/godown/vertical_stock');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Error updating stock');
+      toast.error(error.response?.data?.message || 'Error adding stock');
       console.error(error);
     }
   };
+
   const handleAddRow = () => {
-    setGodownStocks((prevStocks) => [
-      ...prevStocks,
-      {
-        gate_pass_id: '',
-        stock_in_id: '',
-        gate_pass_no: '',
-        gate_pass_date: '',
-        date: new Date().toISOString().split('T')[0],
-        product_id: '',
-        lot_no: '',
-        length: '',
-        length_unit: '',
-        type: 'stock',
-        rack: ''
-      }
-    ]);
+    if (godownStocks.length === 0) return; // Prevent adding if no fetched data
+
+    const lastRow = godownStocks[godownStocks.length - 1]; // Get the latest row
+
+    setGodownStocks((prevStocks) => [...prevStocks, { ...lastRow }]); // Duplicate the last row
   };
+
   const handleRowChange = (index, field, value) => {
     console.log(`Changing ${field} at index ${index} to ${value}`);
     setGodownStocks((prevStocks) => {
@@ -99,8 +101,10 @@ const AddProduct = () => {
       return updatedStocks;
     });
   };
-  
-  
+  const handleDeleteRow = (index) => {
+    setGodownStocks((prevStocks) => prevStocks.filter((_, i) => i !== index));
+  };
+
   return (
     <Container fluid className="pt-4 px-2" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center">
@@ -108,9 +112,9 @@ const AddProduct = () => {
           <div className="card shadow-lg border-0 rounded-lg">
             <div className="card-body p-5">
               <h3 className="text-center mb-4">Show Vertical Stock</h3>
-                            <Button variant="success" onClick={handleAddRow} className="px-1 py-1 ms-auto d-block">
-                              <FaPlus /> Add Item
-                            </Button>
+              <Button variant="success" onClick={handleAddRow} className="px-1 py-1 ms-auto d-block">
+                <FaPlus /> Add Item
+              </Button>
               <form onSubmit={handleSubmit}>
                 <div style={{ overflowX: 'auto' }}>
                   <Table bordered hover responsive style={{ minWidth: '1500px' }}>
@@ -125,6 +129,7 @@ const AddProduct = () => {
                         <th>Length</th>
                         <th>Length Unit</th>
                         <th>Rack</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -164,6 +169,11 @@ const AddProduct = () => {
                               value={item.rack || ''}
                               onChange={(e) => handleRowChange(index, 'rack', e.target.value)}
                             />
+                          </td>
+                          <td>
+                            <Button variant="danger" size="sm" onClick={() => handleDeleteRow(index)}>
+                              <FaTrash /> Delete
+                            </Button>
                           </td>
                         </tr>
                       ))}

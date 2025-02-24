@@ -366,25 +366,8 @@ const ProductsPage = () => {
     doc.setFontSize(12);
     doc.text('Products List', 10, 10);
     doc.autoTable({
-      head: [['S No.', 'Date', 'Product Category', 'Product Name', 'Shade No', 'Purchase Shade No', 'Status']],
-      body: filteredProducts.map((row, index) => [
-        index + 1,
-        row.date,
-        row.product_category ? row.product_category.product_category : '',
-        row.name,
-        row.shadeNo,
-        row.purchase_shade_no,
-        row.status === 1 ? 'Active' : 'Inactive'
-      ]),
-      columns: [
-        { header: 'S No.', dataKey: 'sno' },
-        { header: 'date', dataKey: 'date' },
-        { header: 'Product Category', dataKey: 'product_category' },
-        { header: 'Product Name', dataKey: 'name' },
-        { header: 'Shade No', dataKey: 'shadeNo' },
-        { header: 'Purchase Shade No', dataKey: 'purchase_shade_no' },
-        { header: 'Status', dataKey: 'status' }
-      ]
+      head: [['Shade No', 'Code', 'Purchase Shade No', 'Status']],
+      body: filteredProducts.map((row) => [row.shadeNo, row.date,row.code,row.name,row.product_category.product_category, row.purchase_shade_no, row.status === 1 ? 'Active' : 'Inactive'])
     });
     doc.save('Products_list.pdf');
   };
