@@ -30,6 +30,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [invoiceAllDetails, setInvoiceAllDetails] = useState([]);
   const [loading, setLoading] = useState(true);
+  const today = new Date().toISOString().split('T')[0];
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
   useEffect(() => {
@@ -47,6 +48,10 @@ const Index = () => {
         const filteredFields = invoicesDetails.map((gatepass) => ({
           gatepass_no: gatepass.gate_pass_no,
           id: gatepass.id,
+          vehicle_no:gatepass.vehicle_no,
+          place_of_supply:gatepass.place_of_supply,
+          driver_name:gatepass.driver_name,
+          driver_phone:gatepass.driver_phone,
           godownSupervisor: gatepass.godown_supervisors.name,
           warehouseSupervisor: gatepass.warehouse_supervisors.name,
           date: gatepass.gate_pass_date,
