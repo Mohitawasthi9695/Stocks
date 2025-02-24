@@ -11,6 +11,17 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import Swal from 'sweetalert2';
 import { BiBorderLeft } from 'react-icons/bi';
 import { text } from 'd3';
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
+import { FaFileExcel } from 'react'
+import autoTable from 'jspdf-autotable';
+import PdfPreview from 'components/PdfPreview';
+import 'jspdf-autotable';
+
 
 const Show_product = () => {
   const [products, setProducts] = useState([]);
@@ -201,7 +212,95 @@ const Show_product = () => {
     },
   };
   
+  const exportToCSV = () => {
+    const csvData = filteredProducts.map((row, index) => ({
+      "Sr No": index + 1,
+      "Gate Pass No": row.gate_pass_no,
+      "Gate Pass Date": row.gate_pass_date,
+      "Warehouse Supervisor": row.warehouse_supervisor,
+      "Godown Supervisor": row.godown_supervisor,
+      "Stock Code": row.stock_code,
+      "Lot No": row.lot_no,
+      "Material": row.material,
+      "Grade": row.grade,
+      "Make": row.make,
+      "Surface Condition": row.surface_condition,
+      "Length": `${row.length} ${row.length_unit}`,
+      "Pcs": row.items,
+      "Box/Bundle": row.box_bundle,
+      "Quantity": row.quantity,
+      "Location": row.location,
+      "Remarks": row.remarks,
+    }));
+  
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'accessory_list.csv');
+  };
+  
+  
+  
+  const exportToPDF = () => {
+    const doc = new jsPDF({ orientation: 'landscape' });
+    doc.text('Accessory List', 14, 10);
 
+    const tableColumn = [
+      "Sr No", "Gate Pass No", "Gate Pass Date", "Warehouse Supervisor",
+      "Godown Supervisor", "Stock Code", "Lot No", "Length", "Pcs",
+      "Box/Bundle", "Quantity"
+    ];
+
+    const tableRows = filteredProducts.map((row, index) => [
+      index + 1,
+      row.gate_pass_no || "N/A",
+      row.gate_pass_date || "N/A",
+      row.warehouse_supervisor || "N/A",
+      row.godown_supervisor || "N/A",
+      row.stock_code || "N/A",
+      row.lot_no || "N/A",
+      `${row.length} ${row.length_unit}` || "N/A",
+      row.items || "N/A",
+      row.box_bundle || "N/A",
+      row.quantity || "N/A",
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: {
+        fontSize: 8,
+        cellPadding: 3,
+        overflow: 'linebreak',
+        lineColor: [44, 62, 80],
+        lineWidth: 0.2,
+      },
+      columnStyles: {
+        0: { cellWidth: 10 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 25 },
+        3: { cellWidth: 40 },
+        4: { cellWidth: 40 },
+        5: { cellWidth: 25 },
+        6: { cellWidth: 20 },
+        7: { cellWidth: 25 },
+        8: { cellWidth: 15 },
+        9: { cellWidth: 15 },
+        10: { cellWidth: 20 },
+      },
+      margin: { top: 20 },
+      didDrawPage: (data) => {
+        doc.text('Accessory List (continued)', 14, 10);
+      },
+      pageBreak: 'auto',
+    });
+
+    doc.save('accessory_list.pdf');
+  };
+
+  
+  
+  
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -216,7 +315,17 @@ const Show_product = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-      </div>
+                    <div className="d-flex justify-content-end">
+                      <button type="button" className="btn btn-info" onClick={exportToCSV}>
+                        <FaFileCsv className="w-5 h-5 me-1" />
+                        Export as CSV
+                      </button>
+                      <button type="button" className="btn btn-info" onClick={exportToPDF}>
+                        <AiOutlineFilePdf className="w-5 h-5 me-1" />
+                        Export as PDF
+                      </button>
+                    </div>
+                  </div>
       <div className="row">
         <div className="col-12">
           <div className="card shadow-lg border-0 rounded-lg">

@@ -40,7 +40,6 @@ const ShowProduct = () => {
     fetchStocksData();
   }, []);
 
-
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
@@ -79,7 +78,7 @@ const ShowProduct = () => {
     },
     {
       name: 'Width',
-      selector: (row) =>`${Number(row.width).toFixed(2)} ${row.width_unit}`,
+      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
       sortable: true
     },
     { name: 'Pcs', selector: (row) => row.pcs, sortable: true },
@@ -99,13 +98,13 @@ const ShowProduct = () => {
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
-              whiteSpace: 'nowrap',
+              whiteSpace: 'nowrap'
             }}
           >
             {row.status === 1 ? 'Approved' : 'Pending'}
           </span>
         </div>
-      ),
+      )
     }
   ];
 
@@ -156,8 +155,8 @@ const ShowProduct = () => {
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
-      },
+        borderSpacing: 0 // Removes spacing between cells
+      }
     },
     header: {
       style: {
@@ -166,8 +165,8 @@ const ShowProduct = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -176,9 +175,9 @@ const ShowProduct = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -188,49 +187,48 @@ const ShowProduct = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
-        },
-      },
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
         '& svg': {
-          fill: 'white',
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
 
-
   return (
-    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input
@@ -243,20 +241,22 @@ const ShowProduct = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
+        <div className="col-md-8">
+          <div className="d-flex justify-content-end">
+            <button type="button" className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" />
+              Export as CSV
+            </button>
+            <button type="button" className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              Export as PDF
+            </button>
+          </div>
+        </div>
       </div>
       <div className="row">
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
-            <div className="d-flex justify-content-end">
-              <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                <FaFileCsv className="w-5 h-5 me-1" />
-                Export as CSV
-              </button>
-              <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                Export as PDF
-              </button>
-            </div>
             {loading ? (
               <div>
                 {[...Array(8)].map((_, index) => (

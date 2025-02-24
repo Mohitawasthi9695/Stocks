@@ -112,20 +112,24 @@ const Invoice_out = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockout/invoiceno`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
+  
+        console.log("Fetched Invoice No:", response.data.data);
         SetInvoiceNo(response.data.data);
         setFormData((prevData) => ({
           ...prevData,
-          invoice_no: response.data.data
+          invoice_no: response.data.data || "",  // Ensure it's set
         }));
       } catch (error) {
-        console.error('Error fetching Invoice No data:', error);
+        console.error("Error fetching Invoice No:", error);
       }
     };
+  
     fetchInvoiceNo();
   }, []);
+  
 
   const handleShadeNoChange = async (event) => {
     setLoading(true);
@@ -201,61 +205,68 @@ const Invoice_out = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
-
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handleInputChange = (godown_id, field, value) => {
-    setSelectedRows((prevSelectedRows) => {
-      const updatedRows = prevSelectedRows.map((row) => (row.godown_id === godown_id ? { ...row, [field]: value } : row));
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        out_products: updatedRows
-      }));
-
-      return updatedRows;
+    setFormData((prev) => {
+      const updatedForm = { ...prev, [name]: value };
+      updateTotalAmount(selectedRows, updatedForm);
+      return updatedForm;
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to create a new Invoice?',
-      icon: 'question',
-      showCancelButton: true,
-      cancelButtonColor: '#d33',
-      confirmButtonColor: '#20B2AA',
-      confirmButtonText: 'Yes, create it!'
-    });
-
-    if (!result.isConfirmed) {
-      return; // Stop execution if the user cancels
+    
+    console.log("Submitting Invoice with Data:", formData);
+  
+    if (formData.out_products.length === 0) {
+      toast.error("Please select at least one product.");
+      return;
     }
-
+  
+    for (let product of formData.out_products) {
+      if (!product.rate || isNaN(product.rate)) {
+        toast.error("Each product must have a valid rate.");
+        return;
+      }
+      if (!product.amount || isNaN(product.amount)) {
+        toast.error("Each product must have a valid amount.");
+        return;
+      }
+    }
+  
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to create a new Invoice?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#20B2AA",
+      confirmButtonText: "Yes, create it!",
+    });
+  
+    if (!result.isConfirmed) return;
+  
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+      console.log("Sending API Request...");
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
-      });
-
-      console.log(response.data);
-      toast.success('Stocks out successfully');
-      navigate('/all-invoices-out');
+      );
+  
+      console.log("Response:", response.data);
+      toast.success("Invoice created successfully!");
+      navigate("/all-invoices-out");
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Error processing request';
-      toast.error(errorMessage);
+      console.error("API Error:", error.response?.data?.message || error);
+      toast.error(error.response?.data?.message || "Error processing request");
     }
 
     console.log(formData);
   };
 
-  // length conversion.
   const convertLengthAndWidth = (length, width, lengthUnit, widthUnit) => {
     const conversionFactors = {
       Meter: 1,
@@ -294,22 +305,91 @@ const Invoice_out = () => {
   const handleCheckboxChange = (id) => {
     setSelectedRows((prevSelected) => {
       const isAlreadySelected = prevSelected.some((row) => row.godown_id === id);
-
+  
       const updatedSelectedRows = isAlreadySelected
         ? prevSelected.filter((row) => row.godown_id !== id)
         : [...prevSelected, products.find((p) => p.godown_id === id)];
-
-      console.log(updatedSelectedRows);
+  
+      // ✅ Update formData.out_products immediately
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedSelectedRows
+        out_products: updatedSelectedRows,
       }));
-
+  
       return updatedSelectedRows;
     });
   };
+  
+
   console.log('data', formData.invoice_no);
   const mainColor = '#3f4d67';
+  const handleInputChange = (id, field, value) => {
+    setSelectedRows((prevSelectedRows) => {
+      const updatedRows = prevSelectedRows.map((row) => {
+        if (row.godown_id === id) {
+          let updatedRow = { ...row, [field]: value };
+  
+          // ✅ Ensure `amount` updates when `rate` or dimensions change
+          if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
+            updatedRow.amount = calculateAmount(updatedRow);
+          }
+  
+          return updatedRow;
+        }
+        return row;
+      });
+  
+      // ✅ Update `out_products` in formData
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        out_products: updatedRows,
+      }));
+  
+      return updatedRows;
+    });
+  };
+  
+
+  const updateTotalAmount = (rows, updatedForm = formData) => {
+    let totalAmount = 0;
+
+    rows.forEach((row) => {
+      const amount = parseFloat(row.amount) || 0;
+      const cgst = (parseFloat(updatedForm.cgst_percentage) / 100) * amount || 0;
+      const sgst = (parseFloat(updatedForm.sgst_percentage) / 100) * amount || 0;
+      const igst = (parseFloat(updatedForm.igst_percentage) / 100) * amount || 0;
+
+      totalAmount += amount + cgst + sgst + igst;
+    });
+
+    setFormData((prev) => ({ ...prev, total_amount: totalAmount.toFixed(2) }));
+  };
+  const calculateAmount = (row) => {
+    const rate = parseFloat(row.rate) || 0;
+    let width = parseFloat(row.width) || 0;
+    let length = parseFloat(row.length) || 0;
+    const out_pcs = parseFloat(row.out_pcs) || 1;
+
+    if (row.width_unit === 'centimeter') {
+      width = width / 100;
+    } else if (row.width_unit === 'Inch') {
+      width = width * 0.0254;
+    }
+
+    if (row.length_unit === 'centimeter') {
+      length = length / 100;
+    } else if (row.length_unit === 'Inch') {
+      length = length * 0.0254;
+    }
+
+    let areaSqM = width * length;
+    let areaSqFt = areaSqM * 10.7639;
+
+    let amount = rate * areaSqFt * out_pcs;
+
+    return isNaN(amount) ? '0.00' : amount.toFixed(2);
+  };
+
   return (
     <Container
       fluid
@@ -600,11 +680,11 @@ const Invoice_out = () => {
                                     <td key="lot_no">{row.lot_no}</td>
                                     <td key="stock_code">{row.stock_code}</td>
                                     {/* <td key="width">{row.width}</td> */}
-                                    <td key="width">
+                                    <td key={`width-${row.godown_id}`}>
                                       <input
-                                        text="text"
+                                        type="text"
                                         value={row.width || ''}
-                                        className="py-2"
+                                        className="py-2 border border-gray-300 px-2 w-full"
                                         onChange={(e) => handleInputChange(row.godown_id, 'width', e.target.value)}
                                       />
                                     </td>
@@ -616,11 +696,11 @@ const Invoice_out = () => {
                                       >
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
-                                        <option value="Feet">Feet</option>
+                                        <option value="centimeter">cm</option>
                                       </select>
                                     </td>
 
-                                    <td key="length">
+                                    <td key={`length-${row.godown_id}`}>
                                       <input
                                         type="text"
                                         value={row.length || ''}
@@ -636,7 +716,7 @@ const Invoice_out = () => {
                                       >
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
-                                        <option value="Feet">Feet</option>
+                                        <option value="centimeter">cm</option>
                                       </select>
                                     </td>
                                     <td key="out_pcs">

@@ -14,6 +14,15 @@ import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { FaFileExcel } from 'react-icons/fa';
+import Papa from 'papaparse';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { FaFileCsv } from 'react-icons/fa';
+import autoTable from 'jspdf-autotable';
+import PdfPreview from 'components/PdfPreview';
+import 'jspdf-autotable';
+
+
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -277,7 +286,67 @@ const Index = () => {
     // Write the Excel file
     XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
   };
-
+  const exportToCSV = () => {
+    const csvData = filteredInvoices.map((row, index) => ({
+      "Sr No": index + 1,
+      "Gate Pass No": row.gatepass_no,
+      "Gate Pass Date": row.date,
+      "Warehouse Supervisor": row.warehouseSupervisor,
+      "Godown Supervisor": row.godownSupervisor,
+      "Status": row.status === 1 ? "Approved" : "Pending"
+    }));
+  
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'accessory_list.csv');
+  };
+  
+  
+  const exportToPDF = () => {
+    const doc = new jsPDF({
+      orientation: 'landscape',
+      format: 'a4'
+    });
+  
+    doc.text('Accessory List', 14, 10);
+  
+    const tableColumn = [
+      "Sr No", "Gate Pass No", "Gate Pass Date", "Warehouse Supervisor",
+      "Godown Supervisor", "Status"
+    ];
+  
+    const tableRows = filteredInvoices.map((row, index) => [
+      index + 1,
+      row.gatepass_no || "N/A",
+      row.date || "N/A",
+      row.warehouseSupervisor || "N/A",
+      row.godownSupervisor || "N/A",
+      row.status === 1 ? "Approved" : "Pending"
+    ]);
+  
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 10, cellPadding: 5, overflow: 'linebreak' },
+      theme: 'grid', // Adds borders around all columns
+      tableWidth: 'auto', // Adjust table to fit the full page width
+      columnStyles: {
+        0: { cellWidth: 'auto' },
+        1: { cellWidth: 'auto' },
+        2: { cellWidth: 'auto' },
+        3: { cellWidth: 'auto' },
+        4: { cellWidth: 'auto' },
+        5: { cellWidth: 'auto' }
+      },
+      margin: { top: 20, left: 10, right: 10 }
+    });
+  
+    doc.save('accessory_list.pdf');
+  };
+  
+  
+   
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -292,11 +361,24 @@ const Index = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
+        
         <div className="col-md-8 text-end">
           <Button variant="primary" onClick={handleAddInvoice}>
             <MdPersonAdd className="me-2" /> Add Gate Pass
           </Button>
         </div>
+          {/* <div className="col-md-8"> */}
+                  <div className="d-flex justify-content-end">
+                    <button type="button" className="btn btn-info" onClick={exportToCSV}>
+                      <FaFileCsv className="w-5 h-5 me-1" />
+                      Export as CSV
+                    </button>
+                    <button type="button" className="btn btn-info" onClick={exportToPDF}>
+                      <AiOutlineFilePdf className="w-5 h-5 me-1" />
+                      Export as PDF
+                    </button>
+                  </div>
+                {/* </div> */}
       </div>
       <div className="row">
         <div className="col-12">

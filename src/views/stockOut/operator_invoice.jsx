@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Button } from 'react-bootstrap';
-import { MdDelete, MdPrint, MdPersonAdd, MdCheckCircle,MdAdd } from 'react-icons/md';
+import { MdDelete, MdPrint, MdPersonAdd, MdCheckCircle, MdAdd } from 'react-icons/md';
 import { FaFileExcel } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
@@ -53,7 +53,7 @@ const OperatorInvoice = () => {
             payment_bank: invoice.payment_bank,
             payment_mode: invoice.payment_mode,
             payment_status: invoice.payment_status,
-            total_amount: invoice.total_amount,
+            total_amount: invoice.total_amount
           }));
         };
 
@@ -62,7 +62,7 @@ const OperatorInvoice = () => {
         setFilteredInvoices(filteredFields(invoicesDetails));
       } catch (error) {
         console.error(error);
-        toast.error("Failed to fetch invoices");
+        toast.error('Failed to fetch invoices');
       } finally {
         setLoading(false);
       }
@@ -74,8 +74,7 @@ const OperatorInvoice = () => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = invoices.filter(
       (invoice) =>
-        invoice.supplier_name.toLowerCase().includes(lowercasedQuery) ||
-        invoice.receiver_name.toLowerCase().includes(lowercasedQuery)
+        invoice.supplier_name.toLowerCase().includes(lowercasedQuery) || invoice.receiver_name.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
@@ -139,16 +138,14 @@ const OperatorInvoice = () => {
     },
     {
       name: 'Action',
-      width: '200px',
+      width: '230px',
       cell: (row) => (
         <div className="d-flex">
-
           {row.status === 0 ? (
             <>
               <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
                 <MdCheckCircle />
               </Button>
-
             </>
           ) : (
             <></>
@@ -163,11 +160,7 @@ const OperatorInvoice = () => {
           >
             <MdPrint />
           </Button>
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={() => exportToExcel(row)}
-          >
+          <Button variant="outline-primary" size="sm" onClick={() => exportToExcel(row)}>
             <FaFileExcel />
           </Button>
           <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/accessory-add-out-stock/${row.id}`)}>
@@ -187,13 +180,13 @@ const OperatorInvoice = () => {
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
-              whiteSpace: 'nowrap',
+              whiteSpace: 'nowrap'
             }}
           >
             {row.status === 1 ? 'Approved' : 'Pending'}
           </span>
         </div>
-      ),
+      )
     }
   ];
 
@@ -212,13 +205,8 @@ const OperatorInvoice = () => {
         }
       );
       toast.success('StockoutInovice approved successfully!');
-      setInvoices((prev) =>
-        prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv))
-      );
-      setFilteredInvoices((prev) =>
-        prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv))
-      );
-
+      setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
+      setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
     } catch (error) {
       toast.error('Failed to approve gate pass');
     }
@@ -227,8 +215,8 @@ const OperatorInvoice = () => {
     table: {
       style: {
         borderCollapse: 'separate',
-        borderSpacing: 0,
-      },
+        borderSpacing: 0
+      }
     },
     header: {
       style: {
@@ -237,20 +225,19 @@ const OperatorInvoice = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0',
-      },
+        borderRadius: '8px 8px 0 0'
+      }
     },
-    rows:
-    {
+    rows: {
       style: {
         backgroundColor: '#f0fff4',
         borderBottom: '1px solid #e0e0e0',
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -260,44 +247,44 @@ const OperatorInvoice = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0',
+        borderRight: '1px solid #e0e0e0'
       },
       lastCell: {
         style: {
-          borderRight: 'none',
-        },
-      },
+          borderRight: 'none'
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '10px',
-        borderRight: '1px solid grey',
-      },
+        borderRight: '1px solid grey'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black',
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
         '& svg': {
-          fill: 'white',
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
 
   const exportToCSV = () => {
@@ -306,8 +293,8 @@ const OperatorInvoice = () => {
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       saveAs(blob, 'supplier_list.csv');
     } catch (error) {
-      console.error("Error generating CSV:", error);
-      toast.error("Failed to export CSV");
+      console.error('Error generating CSV:', error);
+      toast.error('Failed to export CSV');
     }
   };
 
@@ -317,29 +304,13 @@ const OperatorInvoice = () => {
       doc.setFontSize(14);
       doc.text('Supplier List', 14, 10);
       doc.autoTable({
-        head: [
-          [
-            'Invoice Number',
-            'Customer Name',
-            'Supplier Name',
-            'Date',
-            'Bank',
-            'Total Amount',
-          ]
-        ],
-        body: filteredInvoices.map((row) => [
-          row.invoice_no,
-          row.supplier_name,
-          row.receiver_name,
-          row.date,
-          row.bank,
-          row.total_amount,
-        ])
+        head: [['Invoice Number', 'Customer Name', 'Supplier Name', 'Date', 'Bank', 'Total Amount']],
+        body: filteredInvoices.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
       });
       doc.save('supplier_list.pdf');
     } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to export PDF");
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to export PDF');
     }
   };
 
@@ -356,6 +327,18 @@ const OperatorInvoice = () => {
             className="pe-5 ps-2 py-2"
             style={{ borderRadius: '5px' }}
           />
+        </div>
+        <div className="col-md-8">
+          <div className="d-flex justify-content-end">
+            <button type="button" className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" />
+              Export as CSV
+            </button>
+            <button type="button" className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              Export as PDF
+            </button>
+          </div>
         </div>
       </div>
       <div className="row">
@@ -376,16 +359,6 @@ const OperatorInvoice = () => {
               </div>
             ) : (
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
-                <div className="d-flex justify-content-end">
-                  <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                    <FaFileCsv className="w-5 h-5 me-1" />
-                    Export as CSV
-                  </button>
-                  <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                    <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                    Export as PDF
-                  </button>
-                </div>
                 <div style={{ direction }}>
                   <DataTable
                     columns={columns}
@@ -404,7 +377,12 @@ const OperatorInvoice = () => {
         </div>
       </div>
       {invoiceAllDetails && selectedInvoice && (
-        <StockOutInvoicePDF show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
+        <StockOutInvoicePDF
+          show={showPdfModal}
+          onHide={() => setShowPdfModal(false)}
+          invoiceData={invoiceAllDetails}
+          id={selectedInvoice}
+        />
       )}
     </div>
   );

@@ -4,7 +4,7 @@ import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaUserPlus } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import { FaPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 const AddProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -35,13 +35,13 @@ const AddProduct = () => {
     fetchGodownStocks();
   }, [id]);
 
-  const handleRowChange = (index, field, value) => {
-    setGodownStocks((prevStocks) => {
-      const updatedStocks = [...prevStocks];
-      updatedStocks[index] = { ...updatedStocks[index], [field]: value };
-      return updatedStocks;
-    });
-  };
+  // const handleRowChange = (index, field, value) => {
+  //   setGodownStocks((prevStocks) => {
+  //     const updatedStocks = [...prevStocks];
+  //     updatedStocks[index] = { ...updatedStocks[index], [field]: value };
+  //     return updatedStocks;
+  //   });
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,7 +74,34 @@ const AddProduct = () => {
       console.error(error);
     }
   };
-
+  const handleAddRow = () => {
+    setGodownStocks((prevStocks) => [
+      ...prevStocks,
+      {
+        gate_pass_id: '',
+        stock_in_id: '',
+        gate_pass_no: '',
+        gate_pass_date: '',
+        date: new Date().toISOString().split('T')[0],
+        product_id: '',
+        lot_no: '',
+        length: '',
+        length_unit: '',
+        type: 'stock',
+        rack: ''
+      }
+    ]);
+  };
+  const handleRowChange = (index, field, value) => {
+    console.log(`Changing ${field} at index ${index} to ${value}`);
+    setGodownStocks((prevStocks) => {
+      const updatedStocks = [...prevStocks];
+      updatedStocks[index] = { ...updatedStocks[index], [field]: value };
+      return updatedStocks;
+    });
+  };
+  
+  
   return (
     <Container fluid className="pt-4 px-2" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center">
@@ -82,6 +109,9 @@ const AddProduct = () => {
           <div className="card shadow-lg border-0 rounded-lg">
             <div className="card-body p-5">
               <h3 className="text-center mb-4">Show Vertical Stock</h3>
+                            <Button variant="success" onClick={handleAddRow} className="px-1 py-1 ms-auto d-block">
+                              <FaPlus /> Add Item
+                            </Button>
               <form onSubmit={handleSubmit}>
                 <div style={{ overflowX: 'auto' }}>
                   <Table bordered hover responsive style={{ minWidth: '1500px' }}>

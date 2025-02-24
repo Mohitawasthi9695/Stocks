@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import FormField from '../../components/FormField';
-import { FaUser, FaFileExcel, FaDownload, FaUpload, FaIdCard } from 'react-icons/fa';
+import { FaUser, FaFileExcel, FaDownload, FaUpload, FaIdCard,FaCalendarAlt} from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 
@@ -13,7 +13,8 @@ import * as FileSaver from 'file-saver';
 const AddAccessory = () => {
   const [formData, setFormData] = useState({
     product_category_id: '',
-    accessory_name: ''
+    accessory_name: '',
+    date: '',
   });
 
   const [categories, setCategories] = useState([]);
@@ -285,6 +286,22 @@ const AddAccessory = () => {
                     />
                   </Col>
                 </Row>
+<Row className="mt-3">
+                  <Col md={6}>
+                    <Form.Group controlId="date">
+                      <Form.Label>
+                        <FaCalendarAlt className="me-2" /> Date
+                      </Form.Label>
+                      <Form.Control
+                        type="date"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
 
                 {/* Submit Button */}
                 <Button variant="primary" type="submit" className="mt-4 d-block m-auto" style={{ width: '10rem' }}>
@@ -300,3 +317,5 @@ const AddAccessory = () => {
 };
 
 export default AddAccessory;
+
+

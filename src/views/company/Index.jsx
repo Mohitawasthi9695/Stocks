@@ -24,7 +24,7 @@ const ReceiversPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const people_type= "Company";
+  const people_type = 'Company';
   useEffect(() => {
     const fetchReceiver = async () => {
       try {
@@ -128,9 +128,11 @@ const ReceiversPage = () => {
       sortable: true,
       cell: (row) => (
         <details>
-          <summary style={{ 
-            cursor: 'pointer', 
-          }}>
+          <summary
+            style={{
+              cursor: 'pointer'
+            }}
+          >
             {row.reg_address.replace('\n', ', ').slice(0, 20)} {/* Show first 50 characters truncated */}
           </summary>
           <span>{row.reg_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
@@ -143,16 +145,18 @@ const ReceiversPage = () => {
       sortable: true,
       cell: (row) => (
         <details>
-          <summary style={{ 
-            cursor: 'pointer', 
-          }}>
+          <summary
+            style={{
+              cursor: 'pointer'
+            }}
+          >
             {row.work_address.replace('\n', ', ').slice(0, 20)} {/* Show first 50 characters truncated */}
           </summary>
           <span>{row.work_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
         </details>
       )
     },
-    
+
     {
       name: 'Area',
       selector: (row) => row.area,
@@ -266,8 +270,8 @@ const ReceiversPage = () => {
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
-      },
+        borderSpacing: 0 // Removes spacing between cells
+      }
     },
     header: {
       style: {
@@ -276,8 +280,8 @@ const ReceiversPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -286,9 +290,9 @@ const ReceiversPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -299,13 +303,13 @@ const ReceiversPage = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
-        },
-      },
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
@@ -313,33 +317,33 @@ const ReceiversPage = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
-        '& svg':{
-          fill: 'white',
+        '& svg': {
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
-  
+
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredReceivers);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -347,35 +351,42 @@ const ReceiversPage = () => {
   };
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
-    doc.text('Receivers List', 20, 5);
+    doc.text('Seller List', 14, 10);
+
+    const headers = [['Sr No', 'Company Name', 'Code', 'GST No', 'CIN No', 'PAN No', 'MSME No', 'Owner Mobile', 'Registered Address']];
+
+    const body = filteredReceivers.map((row, index) => [
+      index + 1, // Corrected index usage
+      row.name,
+      row.code,
+      row.gst_no || 'N/A',
+      row.cin_no || 'N/A',
+      row.pan_no || 'N/A',
+      row.msme_no || 'N/A',
+      row.owner_mobile || 'N/A',
+      row.reg_address || 'N/A'
+    ]);
+
     doc.autoTable({
-      head: [
-        [
-          'Company Name',
-          'GST No',
-          'Phone',
-          'Email',
-          'Registered Address',
-          'Area'
-        ]
-      ],
-      body: filteredReceivers.map((row) => [
-        row.name,
-        row.gst_no,
-        row.tel_no,
-        row.email,
-        row.reg_address,
-        row.area
-      ])
+      head: headers,
+      body: body,
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [238, 238, 238] }
     });
-    doc.save('Receivers_list.pdf');
+
+    doc.save('receivers_list.pdf');
   };
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
-      <div className="col-md-4">
-          <label htmlFor="search" className='me-2'>Search: </label>
+        <div className="col-md-4">
+          <label htmlFor="search" className="me-2">
+            Search:{' '}
+          </label>
           <input
             type="text"
             placeholder="Type here..."
@@ -395,12 +406,6 @@ const ReceiversPage = () => {
       <div className="row">
         <div className="col-12">
           <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
-            {/* <div
-              className="card-header d-flex justify-content-between align-items-center"
-              style={{ backgroundColor: '#3f4d67', color: 'white' }}
-            >
-              <h2 className="m-0 text-white">Receivers Management</h2>
-            </div> */}
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <div className="d-flex justify-content-end">
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
