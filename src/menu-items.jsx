@@ -133,13 +133,13 @@ const menuItems = {
     },
     {
       id: 'products',
-      title: 'Product',
+      title: 'Blinds',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'products-id',
-          title: 'Products',
+          title: 'Blinds',
           icon: 'feather icon-package',
           type: 'collapse',
           style: {
@@ -151,14 +151,14 @@ const menuItems = {
           children: [
             {
               id: 'category2',
-              title: ' Products Category',
+              title: ' Blinds Category',
               type: 'item',
               url: '/product_category',
               icon: 'feather icon-package'
             },
             {
               id: 'category1',
-              title: ' Product',
+              title: ' Blinds',
               type: 'item',
               url: '/shades',
               icon: 'feather icon-package'
@@ -169,7 +169,7 @@ const menuItems = {
     },
     {
       id: 'Accessory',
-      title: 'Accessories',
+      title: 'Accessories IN',
       type: 'group',
       icon: 'icon-ui',
       children: [
@@ -205,13 +205,13 @@ const menuItems = {
     },
     {
       id: 'stockin',
-      title: 'Stock In',
+      title: 'Blinds In',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'stocks',
-          title: 'Stocks In',
+          title: 'Blinds In',
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
@@ -224,14 +224,14 @@ const menuItems = {
             },
             {
               id: 'list_stock',
-              title: 'List',
+              title: 'View Blinds Invoice',
               icon: 'feather icon-list',
               type: 'item',
               url: '/invoices'
             },
             {
               id: 'all_stocks',
-              title: 'Stocks',
+              title: 'Blinds Stocks',
               icon: 'feather icon-clipboard',
               type: 'collapse',
               children: [
@@ -309,13 +309,13 @@ const menuItems = {
     },
     {
       id: 'WarehouseGatePass',
-      title: 'Godown GatePass',
+      title: 'Blinds Godown GatePass',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'send_to_godown',
-          title: 'GatePass',
+          title: 'Blinds GatePass',
           type: 'collapse',
           icon: 'feather icon-box',
 
@@ -329,7 +329,7 @@ const menuItems = {
             },
             {
               id: 'generated_gate_pass',
-              title: 'View Gate Pass',
+              title: 'View Blinds Gate Pass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/generated_gate_pass'
@@ -473,7 +473,7 @@ const menuItems = {
             },
             {
               id: 'accessory_out_index',
-              title: 'View GatePass',
+              title: 'View Accessory GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/accessory/gatepassview'
