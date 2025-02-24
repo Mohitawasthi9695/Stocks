@@ -5,16 +5,16 @@ import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import FormField from '../../components/FormField';
-import { FaUser, FaFileExcel, FaDownload, FaUpload, FaIdCard,FaCalendarAlt} from 'react-icons/fa';
+import { FaUser, FaFileExcel, FaDownload, FaUpload, FaIdCard, FaCalendarAlt } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
-
+import { date } from 'yup';
 
 const AddAccessory = () => {
   const [formData, setFormData] = useState({
     product_category_id: '',
     accessory_name: '',
-    date: '',
+    date: ''
   });
 
   const [categories, setCategories] = useState([]);
@@ -57,21 +57,20 @@ const AddAccessory = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
 
-        const result = await Swal.fire({
-          title: 'Are you sure?',
-          text: 'Do you want to create this category?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#20B2AA',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, create it!'
-        });
-    
-        if (!result.isConfirmed) {
-          return;
-        }
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to create this category?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#20B2AA',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, create it!'
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
 
     try {
       console.log('Submitting data:', formData); // Debugging log
@@ -286,19 +285,13 @@ const AddAccessory = () => {
                     />
                   </Col>
                 </Row>
-<Row className="mt-3">
+                <Row className="mt-3">
                   <Col md={6}>
                     <Form.Group controlId="date">
                       <Form.Label>
                         <FaCalendarAlt className="me-2" /> Date
                       </Form.Label>
-                      <Form.Control
-                        type="date"
-                        name="date"
-                        value={formData.date}
-                        onChange={handleChange}
-                        required
-                      />
+                      <Form.Control type="date" name="date" value={formData.date} onChange={handleChange} required />
                     </Form.Group>
                   </Col>
                 </Row>
@@ -317,5 +310,3 @@ const AddAccessory = () => {
 };
 
 export default AddAccessory;
-
-
