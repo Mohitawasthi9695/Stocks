@@ -431,19 +431,19 @@ const menuItems = {
     },
     {
       id: 'godown-stockout',
-      title: 'Accessories Stocks Out',
+      title: 'Stocks Out',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'godownstockout',
-          title: 'Accessories Out',
+          title: 'Stocks Out',
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
             {
               id: 'approve_operator',
-              title: 'Accessories Out Invoice',
+              title: 'Invoice Out ',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/operator_invoice'
