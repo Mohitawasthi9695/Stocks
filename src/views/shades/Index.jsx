@@ -96,6 +96,11 @@ const ProductsPage = () => {
       sortable: true
     },
     {
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
       name: 'Product Category',
       selector: (row) => row.product_category.product_category,
       sortable: true
@@ -337,7 +342,7 @@ const ProductsPage = () => {
     doc.text('Banks List', 20, 10);
     doc.autoTable({
       head: [['Shade No', 'Code', 'Purchase Shade No', 'Status']],
-      body: filteredProducts.map((row) => [row.shadeNo, row.code, row.purchase_shade_no, row.status === 1 ? 'Active' : 'Inactive'])
+      body: filteredProducts.map((row) => [row.shadeNo, row.date,row.code,row.name,row.product_category.product_category, row.purchase_shade_no, row.status === 1 ? 'Active' : 'Inactive'])
     });
     doc.save('Products_list.pdf');
   };

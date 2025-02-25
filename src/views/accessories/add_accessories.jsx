@@ -9,6 +9,8 @@ import { FaUser, FaFileExcel, FaDownload, FaUpload, FaIdCard, FaCalendarAlt } fr
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { date } from 'yup';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const AddAccessory = () => {
   const [formData, setFormData] = useState({
@@ -57,7 +59,7 @@ const AddAccessory = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to create this category?',
@@ -67,21 +69,32 @@ const AddAccessory = () => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, create it!'
     });
-
+  
     if (!result.isConfirmed) {
       return;
     }
-
+  
     try {
-      console.log('Submitting data:', formData); // Debugging log
-
+      console.log('Submitting data:', formData);
+  
       await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/accessory`, formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-
+  
+      // Show Toast Notification
+      toast.success('Accessory added successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined
+      });
+  
       Swal.fire({
         icon: 'success',
         title: 'Success!',
@@ -93,6 +106,17 @@ const AddAccessory = () => {
       });
     } catch (error) {
       console.error('Error adding accessory:', error);
+      
+      toast.error(error.response?.data?.message || 'Error adding accessory', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined
+      });
+  
       Swal.fire({
         icon: 'error',
         title: 'Error!',
@@ -102,6 +126,7 @@ const AddAccessory = () => {
       });
     }
   };
+  
 
   const [file, setFile] = useState(null);
   const handleFileChange = (e) => {
