@@ -362,7 +362,7 @@ const ShowProduct = () => {
           outline: 'none',
           boxShadow: '0 0 5px rgba(255,255,255,0.5)'
         }
-      }
+      },
     }
   };
 
