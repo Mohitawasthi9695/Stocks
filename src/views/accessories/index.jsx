@@ -313,8 +313,8 @@ const SuppliersPage = () => {
     doc.text('Accessory List', 14, 10);
   
     doc.autoTable({
-      head: [['Product Category', 'Accessory', 'Status']],
-      body: filteredSuppliers.map((row) => [row.product_categoryt, row.date, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
+      head: [[ 'S No','date','Product Category', 'Accessory']],
+      body: filteredSuppliers.map((row, index) => [index + 1 , row.date,row.product_category.toUpperCase(), row.accessory_name.toUpperCase()]),
       styles: {
         fontSize: 10, // Smaller font size to fit more data
         overflow: 'linebreak', // Wrap text within cells
@@ -323,8 +323,9 @@ const SuppliersPage = () => {
       columnStyles: {
         0: { cellWidth: 10}, // Auto-adjust column widths
         1: { cellWidth: 40 },
-        2: { cellWidth: 90 },
-        3: { cellWidth: 30 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 80 },
+        
       },
       tableWidth: 'wrap', // Ensure table fits within the page width
       margin: { top: 20 }, // Top margin for the table

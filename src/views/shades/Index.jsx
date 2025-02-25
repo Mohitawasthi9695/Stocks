@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
@@ -76,22 +75,20 @@ const ProductsPage = () => {
       setFilteredProducts(products); // Reset when query is empty
       return;
     }
-  
+
     const lowercasedQuery = searchQuery.toLowerCase();
-  
+
     const filtered = products.filter((product) => {
       return (
         (product.shadeNo && product.shadeNo.toLowerCase().includes(lowercasedQuery)) ||
         (product.code && product.code.toLowerCase().includes(lowercasedQuery)) ||
         (product.purchase_shade_no && product.purchase_shade_no.toLowerCase().includes(lowercasedQuery)) ||
-        (product.product_category?.product_category &&
-          product.product_category.product_category.toLowerCase().includes(lowercasedQuery))
+        (product.product_category?.product_category && product.product_category.product_category.toLowerCase().includes(lowercasedQuery))
       );
     });
-  
+
     setFilteredProducts(filtered.length > 0 ? filtered : []);
   }, [searchQuery, products]);
-  
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -239,8 +236,8 @@ const ProductsPage = () => {
     table: {
       style: {
         borderCollapse: 'separate',
-        borderSpacing: 0,
-      },
+        borderSpacing: 0
+      }
     },
     header: {
       style: {
@@ -249,8 +246,8 @@ const ProductsPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0',
-      },
+        borderRadius: '8px 8px 0 0'
+      }
     },
     rows: {
       style: {
@@ -259,9 +256,9 @@ const ProductsPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -271,47 +268,45 @@ const ProductsPage = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0',
+        borderRight: '1px solid #e0e0e0'
       },
       lastCell: {
         style: {
-          borderRight: 'none',
-        },
-      },
+          borderRight: 'none'
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey',
-      },
+        borderRight: '1px solid grey'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black',
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
         '& svg': {
-          fill: 'white',
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
-
-
 
   const handleFileUpload = async (e) => {
     e.preventDefault();
@@ -352,12 +347,12 @@ const ProductsPage = () => {
       row.purchase_shade_no,
       row.status === 1 ? 'Active' : 'Inactive'
     ]);
-  
+
     const csv = Papa.unparse({
       fields: ['S No.', 'Date', 'Product Category', 'Product Name', 'Shade No', 'Purchase Shade No', 'Status'],
       data: csvData
     });
-  
+
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'Products_list.csv');
   };
@@ -366,32 +361,21 @@ const ProductsPage = () => {
     doc.setFontSize(12);
     doc.text('Products List', 10, 10);
     doc.autoTable({
-      head: [['S No.', 'Date', 'Product Category', 'Product Name', 'Shade No', 'Purchase Shade No', 'Status']],
+      head: [['S No.', 'Date', 'Product Category', 'Product Name', 'Shade No', 'Purchase Shade No']],
       body: filteredProducts.map((row, index) => [
         index + 1,
         row.date,
-        row.product_category ? row.product_category.product_category : '',
+        row.product_category.product_category,
         row.name,
         row.shadeNo,
-        row.purchase_shade_no,
-        row.status === 1 ? 'Active' : 'Inactive'
-      ]),
-      columns: [
-        { header: 'S No.', dataKey: 'sno' },
-        { header: 'date', dataKey: 'date' },
-        { header: 'Product Category', dataKey: 'product_category' },
-        { header: 'Product Name', dataKey: 'name' },
-        { header: 'Shade No', dataKey: 'shadeNo' },
-        { header: 'Purchase Shade No', dataKey: 'purchase_shade_no' },
-        { header: 'Status', dataKey: 'status' }
-      ]
+        row.purchase_shade_no
+      ])
     });
     doc.save('Products_list.pdf');
   };
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
-        
         <div className="col-md-4">
           <input
             type="text"
@@ -468,7 +452,6 @@ const ProductsPage = () => {
                 />
               </Form.Group>
 
-
               <Form.Group className="mb-3">
                 <Form.Label>Purchase Shade No</Form.Label>
                 <Form.Control
@@ -503,4 +486,3 @@ const ProductsPage = () => {
 };
 
 export default ProductsPage;
-

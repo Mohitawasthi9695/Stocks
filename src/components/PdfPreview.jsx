@@ -5,10 +5,31 @@ import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/re
 const PdfPreview = ({ show, onHide, invoiceData, id }) => {
   const invoice = invoiceData.find((invoice) => invoice.id === id);
 
+  // Unique shade numbers
+  const uniqueShadeNumbers = [...new Set(invoice.stock_in.map(item => item.products.shadeNo))];
+
+  // Total quantity by each shade, ensuring the array length matches uniqueShadeNumbers
+  const totalQuantityByShadeArray = uniqueShadeNumbers.map(shadeNo => {
+    return invoice.stock_in.reduce((sum, item) => {
+      return item.products.shadeNo === shadeNo ? sum + item.quantity : sum;
+    }, 0);
+  });
+
   const styles = {
     page: {
       padding: 30,
       fontSize: 12,
+    },
+    watermark: {
+      position: 'absolute',
+      left: '3%',
+      top: '20%',
+      fontSize: 100,
+      color: 'gray',
+      opacity: 0.1,
+      transform: 'rotate(-35deg)',
+      textAlign: 'center',
+      width: '100%',
     },
     header: {
       fontSize: 18,
@@ -107,8 +128,8 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
         <PDFViewer width="100%" height="100%">
           <Document>
             <Page size="A4" style={styles.page}>
+            <Text style={styles.watermark}>VISHAL HiTech</Text>
               <Text style={styles.header}>STOCK IN INVOICE</Text>
-
               <View style={styles.flexContainer}>
                 <View style={[styles.borderBox, styles.column]}>
                   <Text style={styles.sectionTitle}>Supplier Details:</Text>
@@ -186,7 +207,7 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                 </View>
               </View>
 
-              <View style={styles.borderBox}>
+              <View style={[styles.borderBox, { marginTop: 10 }]}>
                 <Text style={styles.sectionTitle}>Products:</Text>
                 <View style={styles.table}>
                   <View style={styles.tableHeader}>
@@ -198,7 +219,8 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                     <Text style={styles.tableCell}>Width</Text>
                     <Text style={styles.tableCell}>Quantity</Text>
                     <Text style={styles.tableCell}>PCS</Text>
-                    <Text style={styles.tableCell}>Rack</Text>
+                    <Text style={styles.tableCell}>Unique <br/> Shade No.</Text>
+                    <Text style={styles.tableCell}>Total <br/> Qty</Text>
                   </View>
                   {invoice.stock_in.map((item, index) => (
                     <View key={index} style={styles.tableRow}>
@@ -206,11 +228,12 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                       <Text style={styles.tableCell}>{item.products.product_category.product_category}</Text>
                       <Text style={styles.tableCell}>{item.products.shadeNo}</Text>
                       <Text style={styles.tableCell}>{item.lot_no}</Text>
-                      <Text style={styles.tableCell}>{`${item.length} ${item.length_unit}`}</Text>
-                      <Text style={styles.tableCell}>{`${item.width} ${item.width_unit}`}</Text>
+                      <Text style={styles.tableCell}>{`${item.length}\n${item.length_unit}`}</Text>
+                      <Text style={styles.tableCell}>{`${item.width}\n${item.width_unit}`}</Text>
                       <Text style={styles.tableCell}>{item.quantity}</Text>
                       <Text style={styles.tableCell}>{item.pcs}</Text>
-                      <Text style={styles.tableCell}>{item.rack}</Text>
+                      <Text style={styles.tableCell}>{uniqueShadeNumbers[index] || ''}</Text>
+                      <Text style={styles.tableCell}>{totalQuantityByShadeArray[index] !== undefined ? totalQuantityByShadeArray[index] : ''}</Text>
                     </View>
                   ))}
                 </View>

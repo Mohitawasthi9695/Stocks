@@ -7,13 +7,12 @@ import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
-
+import { FaFileCsv } from 'react-icons/fa';
+import { AiOutlineFilePdf } from 'react-icons/ai';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { FaFileCsv } from 'react-icons/fa';
-import { AiOutlineFilePdf } from 'react-icons/ai';
 
 const WarehouseAccessoriesPage = () => {
   const [accessories, setAccessories] = useState([]);
@@ -262,6 +261,82 @@ const WarehouseAccessoriesPage = () => {
     }
   };
 
+  const exportToCSV = () => {
+    if (!filteredAccessories || filteredAccessories.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
+  
+    // Extract headers dynamically from columns array
+    const headers = columns.map(col => col.name);
+  
+    // Prepare CSV data dynamically
+    const csvData = filteredAccessories.map((row, index) => {
+      let rowData = { 'Sr No': index + 1 }; // Add Serial Number manually
+  
+      columns.forEach(col => {
+        if (typeof col.selector === 'function') {
+          rowData[col.name] = col.selector(row);
+        }
+      });
+  
+      return rowData;
+    });
+  
+    // Convert to CSV and save
+    const csv = Papa.unparse({ fields: headers, data: csvData });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'warehouse_accessories.csv');
+    toast.success('CSV exported successfully!');
+  };
+  
+  const exportToPDF = () => {
+    if (!filteredAccessories || filteredAccessories.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
+  
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text('Stock List', 80, 10);
+  
+    // Extract headers from `columns` array, excluding "Action"
+    const headers = columns
+      .filter((col) => col.name !== 'Action') // Exclude Action column
+      .map((col) => col.name);
+  
+    // Prepare data dynamically
+    const body = filteredAccessories.map((row, index) => {
+      return [
+        index + 1, // Sr No
+        row.product_category || 'N/A',
+        row.product_accessory_name || 'N/A',
+        row.stock_code || 'N/A',
+        `${row.out_length} ${row.length_unit}` || 'N/A',
+        row.items || 'N/A',
+        row.box_bundle || 'N/A',
+        row.quantity || 'N/A',
+        row.out_quantity || 'N/A',
+        'Edit/Delete' // Placeholder for the Action column
+      ];
+    });
+  
+    doc.autoTable({
+      head: [headers],
+      body: body,
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 8 },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      margin: { top: 20 }
+    });
+  
+    doc.save('stock_list.pdf');
+    toast.success('PDF exported successfully!');
+  };
+  
+  
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -279,10 +354,22 @@ const WarehouseAccessoriesPage = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
+
         <div className="col-md-8 text-end">
           <Button variant="primary" onClick={() => navigate('/add_warehouse_accessories')}>
             <MdPersonAdd className="me-2" /> Add Warehouse Accessory
           </Button>
+        </div>
+
+        <div className="d-flex justify-content-end">
+          <button type="button" className="btn btn-info" onClick={exportToCSV}>
+            <FaFileCsv className="w-5 h-5 me-1" />
+            Export as CSV
+          </button>
+          <button type="button" className="btn btn-info" onClick={exportToPDF}>
+            <AiOutlineFilePdf className="w-5 h-5 me-1" />
+            Export as PDF
+          </button>
         </div>
       </div>
 

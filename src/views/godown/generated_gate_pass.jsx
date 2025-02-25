@@ -17,6 +17,9 @@ import { FaFileExcel } from 'react-icons/fa';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import PdfPreview from 'components/PdfPreview';
+import { FaFileCsv } from 'react-icons/fa';
+import Papa from 'papaparse';
+import 'jspdf-autotable';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -35,9 +38,10 @@ const Index = () => {
             'Content-Type': 'application/json'
           }
         });
+
         const invoicesDetails = response.data.data;
-        console.log(invoicesDetails);
         setInvoiceAllDetails(invoicesDetails);
+
         const filteredFields = invoicesDetails.map((gatepass) => ({
           gatepass_no: gatepass.gate_pass_no,
           id: gatepass.id,
@@ -47,6 +51,7 @@ const Index = () => {
           date: gatepass.gate_pass_date,
           total_amount: gatepass.total_amount
         }));
+
         setInvoices(filteredFields);
         setFilteredInvoices(filteredFields);
       } catch (error) {
@@ -278,6 +283,67 @@ const Index = () => {
       }
     }
   };
+  const exportToCSV = () => {
+    if (!filteredInvoices || filteredInvoices.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
+
+    // Extract column headers dynamically from `columns` array
+    const headers = columns.map((col) => col.name);
+
+    // Prepare CSV data dynamically
+    const csvData = filteredInvoices.map((row, index) => {
+      let rowData = { 'Sr No': index + 1 }; // Add Serial Number manually
+
+      columns.forEach((col) => {
+        if (typeof col.selector === 'function') {
+          rowData[col.name] = col.selector(row);
+        }
+      });
+
+      return rowData;
+    });
+
+    // Convert to CSV and save
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'gatepass_data.csv');
+    toast.success('CSV exported successfully!');
+  };
+
+  const exportToPDF = () => {
+    if (!filteredInvoices || filteredInvoices.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
+
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text('Gate Pass Data', 80, 10);
+
+    // Extract headers from `columns` array
+    const headers = columns.map((col) => col.name);
+
+    // Prepare data dynamically
+    const body = filteredInvoices.map((row, index) => {
+      return columns.map((col) => (typeof col.selector === 'function' ? col.selector(row) : 'N/A'));
+    });
+
+    doc.autoTable({
+      head: [headers],
+      body: body,
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 8 },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      margin: { top: 20 }
+    });
+
+    doc.save('gatepass_data.pdf');
+    toast.success('PDF exported successfully!');
+  };
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -297,6 +363,16 @@ const Index = () => {
           <Button variant="primary" onClick={handleAddInvoice}>
             <MdPersonAdd className="me-2" /> Add Gate pass
           </Button>
+        </div>
+        <div className="d-flex justify-content-end">
+          <button type="button" className="btn btn-info" onClick={exportToCSV}>
+            <FaFileCsv className="w-5 h-5 me-1" />
+            Export as CSV
+          </button>
+          <button type="button" className="btn btn-info" onClick={exportToPDF}>
+            <AiOutlineFilePdf className="w-5 h-5 me-1" />
+            Export as PDF
+          </button>
         </div>
       </div>
       <div className="row">
