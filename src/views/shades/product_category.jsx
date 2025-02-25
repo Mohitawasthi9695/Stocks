@@ -116,55 +116,19 @@ const ProductCategory = () => {
 
   return (
     <Container fluid className="p-3">
-      <div className="card shadow-sm border-0">
+      <div className="card shadow-sm border-0 m-1 p-3">
         {/* Header */}
         <div
           style={{
             backgroundColor: '#20B2AA',
             padding: '12px',
+            marginBottom: '20px',
             borderTopLeftRadius: '4px',
             borderTopRightRadius: '4px'
           }}
         >
-          <h4 className="text-white text-center m-0">Product Category</h4>
+          <h2 className="text-white text-center m-0">Product Category</h2>
         </div>
-
-        {/* Input Section */}
-        <div className="px-3 py-3">
-          <Row className="justify-content-center g-0">
-            <Col xs={12} md={8} lg={6}>
-              {/* <div className="d-flex">
-                <input
-                  type="text"
-                  placeholder="Enter product category"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="form-control"
-                  style={{
-                    height: '38px',
-                    borderRadius: '4px 0 0 4px'
-                  }}
-                />
-                <Button
-                  onClick={createCategory}
-                  variant="success"
-                  style={{
-                    borderRadius: '0 4px 4px 0',
-                    backgroundColor: '#20B2AA',
-                    border: 'none',
-                    height: '38px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px'
-                  }}
-                >
-                  <FaPlus size={14} /> Add
-                </Button>
-              </div> */}
-            </Col>
-          </Row>
-        </div>
-
         {/* Table Section */}
         <div className="px-3 pb-3">
           <Table hover bordered className="mb-0">
@@ -173,7 +137,7 @@ const ProductCategory = () => {
                 <th
                   className="text-center"
                   style={{
-                    backgroundColor: '#20B2AA',
+                    backgroundColor: '#888',
                     color: 'white',
                     width: '80px',
                     padding: '10px'
@@ -184,24 +148,14 @@ const ProductCategory = () => {
                 <th
                   className="text-center"
                   style={{
-                    backgroundColor: '#20B2AA',
+                    backgroundColor: '#888',
                     color: 'white',
                     padding: '10px'
                   }}
                 >
                   Category Name
                 </th>
-                <th
-                  className="text-center"
-                  style={{
-                    backgroundColor: '#20B2AA',
-                    color: 'white',
-                    width: '120px',
-                    padding: '10px'
-                  }}
-                >
-                  Actions
-                </th>
+                
               </tr>
             </thead>
             <tbody>
@@ -209,22 +163,6 @@ const ProductCategory = () => {
                 <tr key={category.id}>
                   <td className="text-center align-middle">{category.id}</td>
                   <td className="text-center align-middle">{category.product_category}</td>
-                  {/* <td className="text-center" style={{ padding: "6px" }}>
-                    <Button
-                      onClick={() => deleteCategory(category.id)}
-                      variant="danger"
-                      size="sm"
-                      style={{
-                        padding: '4px 8px',
-                        fontSize: '14px',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px'
-                      }}
-                    >
-                      <FaTrash size={12} /> Delete
-                    </Button>
-                  </td> */}
                 </tr>
               ))}
             </tbody>

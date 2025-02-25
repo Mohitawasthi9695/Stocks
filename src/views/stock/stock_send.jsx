@@ -204,24 +204,6 @@ const Invoice_out = () => {
       const updatedRows = prevSelectedRows.map((row) => {
         if (row.stock_available_id === id) {
           const updatedRow = { ...row, [field]: value };
-
-          if (field === 'length' || field === 'width' || field === 'unit') {
-            const lengthInFeet =
-              updatedRow.unit === 'meter'
-                ? Number(updatedRow.out_length) * 3.28084
-                : updatedRow.unit === 'inches'
-                  ? Number(updatedRow.out_length) / 12
-                  : Number(updatedRow.out_length);
-
-            const widthInFeet =
-              updatedRow.unit === 'meter'
-                ? Number(updatedRow.out_width) * 3.28084
-                : updatedRow.unit === 'inches'
-                  ? Number(updatedRow.out_width) / 12
-                  : Number(updatedRow.out_width);
-            updatedRow.area = Number(lengthInFeet * widthInFeet).toFixed(2);
-            console.log(updatedRow.area);
-          }
           return updatedRow;
         }
         return row;
@@ -288,10 +270,8 @@ const Invoice_out = () => {
     { id: 'product_shadeNo', label: 'Shade No' },
     { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
     { id: 'lot_no', label: 'LOT No' },
-    { id: 'width', label: 'Width' },
-    { id: 'width_unit', label: 'W Unit' },
-    { id: 'length', label: 'Length' },
-    { id: 'length_unit', label: 'L Unit' },
+    { id: 'width_combined', label: 'Width (Unit)' },
+    { id: 'length_combined', label: 'Length (Unit)' },
     { id: 'pcs', label: 'Pcs' },
     { id: 'out_quantity', label: 'Quantity' }
   ];
@@ -358,6 +338,14 @@ const Invoice_out = () => {
                       value={formData.place_of_supply}
                       onChange={handleChange}
                     />
+                    <FormField
+                      icon={FaCity}
+                      label="driver_phone"
+                      type="number"
+                      name="driver_phone"
+                      value={formData.driver_phone}
+                      onChange={handleChange}
+                    />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
@@ -405,7 +393,7 @@ const Invoice_out = () => {
                     </Form.Group>
 
                     <Form.Group style={{ marginLeft: '20px' }}>
-                      <Form.Label>Select Shade Number:</Form.Label>
+                      <Form.Label>Select Shade/Purchase Number:</Form.Label>
                       <Form.Control
                         as="select"
                         id="shadeNo"
@@ -417,7 +405,7 @@ const Invoice_out = () => {
                         <option value="">Select</option>
                         {shadeNo.map((shade) => (
                           <option key={shade.id} value={shade.id}>
-                            {shade.shadeNo}
+                            {shade.shadeNo} / {shade.purchase_shade_no}
                           </option>
                         ))}
                       </Form.Control>
@@ -460,10 +448,19 @@ const Invoice_out = () => {
                                   {products.map((row) => (
                                     <tr key={row.stock_available_id}>
                                       <td>
-                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.stock_available_id)} />
+                                        <input
+                                          type="checkbox"
+                                          onChange={() => handleCheckboxChange(row.stock_available_id)}
+                                        />
                                       </td>
                                       {columns.map((column) => (
-                                        <td key={column.id}>{row[column.id]}</td>
+                                        <td key={column.id}>
+                                          {column.id === 'width_combined'
+                                            ? `${row.width ?? ''} ${row.width_unit ?? ''}`.trim() 
+                                            : column.id === 'length_combined'
+                                              ? `${row.length ?? ''} ${row.length_unit ?? ''}`.trim()
+                                              : row[column.id] ?? ''}
+                                        </td>
                                       ))}
                                     </tr>
                                   ))}
@@ -494,10 +491,8 @@ const Invoice_out = () => {
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
-                                    <td key="width">{row.width}</td>
-                                    <td key="width_unit">{row.width_unit}</td>
-                                    <td key="length">{row.length}</td>
-                                    <td key="length_unit">{row.length_unit}</td>
+                                    <td key="width">{row.width} {row.width_unit}</td>
+                                    <td key="length">{row.length} {row.length_unit}</td>
                                     <td key="pcs">{row.pcs}</td>
                                     <td key="out_quantity">
                                       <input

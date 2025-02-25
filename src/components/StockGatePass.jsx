@@ -141,22 +141,35 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                         <Text style={styles.label}>Status:</Text>
                                         <Text style={styles.value}>{invoice.status === 0 ? 'Pending' : 'Completed'}</Text>
                                     </View>
+                                   
                                 </View>
 
                                 {/* Warehouse Supervisor */}
                                 <View style={[styles.borderBox, styles.column]}>
-                                    <Text style={styles.sectionTitle}>Warehouse Supervisor:</Text>
+                                    <Text style={styles.sectionTitle}>Transport:</Text>
                                     <View style={styles.row}>
-                                        <Text style={styles.label}>Name:</Text>
-                                        <Text style={styles.value}>{invoice.warehouse_supervisor.name}</Text>
+                                        <Text style={styles.label}>Driver Name:</Text>
+                                        <Text style={styles.value}>{invoice.driver_name}</Text>
+                                    </View>
+                                    <View style={styles.row}>
+                                        <Text style={styles.label}>Driver Phone:</Text>
+                                        <Text style={styles.value}>{invoice.driver_phone}</Text>
+                                    </View>
+                                    <View style={styles.row}>
+                                        <Text style={styles.label}>Vechical No:</Text>
+                                        <Text style={styles.value}>{invoice.vehicle_no}</Text>
                                     </View>
                                 </View>
 
                                 {/* Godown Supervisor */}
                                 <View style={[styles.borderBox, styles.column]}>
-                                    <Text style={styles.sectionTitle}>Godown Supervisor:</Text>
+                                <Text style={styles.sectionTitle}>Authority:</Text>
+                                <View style={styles.row}>
+                                        <Text style={styles.label}>Warehouse Supervisor:</Text>
+                                        <Text style={styles.value}>{invoice.warehouse_supervisor.name}</Text>
+                                    </View>
                                     <View style={styles.row}>
-                                        <Text style={styles.label}>Name:</Text>
+                                        <Text style={styles.label}>Godown Supervisor:</Text>
                                         <Text style={styles.value}>{invoice.godown_supervisor.name}</Text>
                                     </View>
                                 </View>
@@ -167,7 +180,8 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                 <Text style={styles.sectionTitle}>Stock Godowns Details :</Text>
                                 <View style={styles.table}>
                                     <View style={styles.tableHeader}>
-                                        <Text style={styles.tableCell}>Product ShadeNo</Text>
+                                        <Text style={styles.tableCell}> ShadeNo</Text>
+                                        <Text style={styles.tableCell}>PurShadeNo</Text>
                                         <Text style={styles.tableCell}>Ware Code</Text>
                                         <Text style={styles.tableCell}>Stock Code</Text>
                                         <Text style={styles.tableCell}>Lot No</Text>
@@ -179,6 +193,7 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                     {invoice.all_stocks.map((all_stock, index) => (
                                         <View key={index} style={styles.tableRow}>
                                             <Text style={styles.tableCell}>{all_stock.products_shadeNo}</Text>
+                                            <Text style={styles.tableCell}>{all_stock.products_purchase_shade_no}</Text>
                                             <Text style={styles.tableCell}>{all_stock.stockin_code}</Text>
                                             <Text style={styles.tableCell}>{all_stock.stock_code}</Text>
                                             <Text style={styles.tableCell}>{all_stock.lot_no}</Text>

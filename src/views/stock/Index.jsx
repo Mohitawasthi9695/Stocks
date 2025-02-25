@@ -108,7 +108,7 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
-          <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/add-product/${row.id}/${row.invoice_no}`)}>
+          <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/add-product/${row.id}`)}>
             <MdAdd />
           </Button>
           <Button variant="outline-success" size="sm" className="me-2">

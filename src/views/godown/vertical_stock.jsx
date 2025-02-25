@@ -98,18 +98,13 @@ const ShowProduct = () => {
     },
     { name: 'ToTalLength', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     {
-      name: 'Issue Length',
-      selector: (row) => row.out_length ?? 0,
-      sortable: true
-    },
-    {
-      name: 'Avaible Quantity',
-      selector: (row) => row.roll_length - row.out_length,
+      name: 'Pcs',
+      selector: (row) => row.pcs ?? 0,
       sortable: true
     },
     {
       name: 'Status',
-      selector: (row) => row.status, // Keep it numeric for sorting
+      selector: (row) => row.status, 
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -140,7 +135,7 @@ const ShowProduct = () => {
             variant="outline-warning"
             size="sm"
             className="me-2"
-            onClick={() => navigate(`/add_vertical_product/${row.id}/${row.invoice_no}`)}
+            onClick={() => navigate(`/add_vertical_product/${row.id}`)}
           >
             <MdAdd />
           </Button>

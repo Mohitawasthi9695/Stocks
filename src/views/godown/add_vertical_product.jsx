@@ -23,10 +23,22 @@ const AddProduct = () => {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
+
         if (!response.data || !response.data.data) {
           throw new Error('Invalid API response format');
         }
-        setGodownStocks([response.data.data]); // Store as an array
+
+        const stockData = response.data.data;
+        const pcsCount = stockData.pcs || 1; // Default to 1 if pcs is missing
+
+        // Generate `pcsCount` rows by duplicating stockData
+        const initialStocks = Array.from({ length: pcsCount }, () => ({
+          ...stockData,
+          length: '',
+          rack: ''
+        }));
+
+        setGodownStocks(initialStocks);
       } catch (error) {
         toast.error(error.response?.data?.message || 'Error fetching godown stocks');
         console.error('Fetch Error:', error);
@@ -40,8 +52,6 @@ const AddProduct = () => {
 
     const newRow = {
       ...godownStocks[0], // Duplicate existing row
-      gate_pass_id: godownStocks[0].gate_pass_id,
-      stock_in_id: godownStocks[0].stock_in_id,
       length: '',
       rack: ''
     };
@@ -104,8 +114,9 @@ const AddProduct = () => {
         <Col md={12} lg={12}>
           <div className="card shadow-lg border-0 rounded-lg">
             <div className="card-body p-5">
-              <h3 className="text-center mb-4">Show Vertical Stock</h3>
+              <h2 className="text-center mb-4">Add Vertical Stock</h2>
 
+              {/* Add Row Button */}
               <Button variant="success" onClick={handleAddRow} className="mb-3 d-block ms-auto">
                 <FaPlus /> Add Row
               </Button>
@@ -143,7 +154,19 @@ const AddProduct = () => {
                               onChange={(e) => handleRowChange(index, 'length', e.target.value)}
                             />
                           </td>
-                          <td><Form.Control type="text" value={item.length_unit || ''} disabled /></td>
+                          <td>
+                            <Form.Control
+                              as="select"
+                              value={item.length_unit}
+                              onChange={(e) => handleRowChange(index, 'length_unit', e.target.value)}
+                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                            >
+                              <option value="">Select Unit</option>
+                              <option value="m">Meter</option>
+                              <option value="cm">Centimeter</option>
+                              <option value="ft">Feet</option>
+                            </Form.Control>
+                            </td>
                           <td>
                             <Form.Control
                               type="text"
@@ -168,7 +191,7 @@ const AddProduct = () => {
                   className="mt-5 d-block m-auto"
                   style={{ backgroundColor: '#3f4d67', borderColor: '#3f4d67', width: '10rem' }}
                 >
-                  <FaUserPlus className="me-2" /> Update Stock
+                  <FaUserPlus className="me-2" /> Submit
                 </Button>
               </form>
             </div>
