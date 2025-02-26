@@ -22,7 +22,7 @@ const SuppliersPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSupplier, setselectedSupplier] = useState(null);
 
-const people_type= "Supplier";
+  const people_type = 'Supplier';
   useEffect(() => {
     const fetchSupplier = async () => {
       try {
@@ -74,6 +74,7 @@ const people_type= "Supplier";
     },
     {
       name: 'Supplier Name',
+      width: '150px',
       selector: (row) => row.name,
       sortable: true
     },
@@ -114,11 +115,13 @@ const people_type= "Supplier";
     },
     {
       name: 'Owner Mobile',
+      width: '200px',
       selector: (row) => row.owner_mobile,
       sortable: true
     },
     {
       name: 'Registered Address',
+      width: '300px',
       selector: (row) => row.reg_address,
       sortable: true,
       cell: (row) => (
@@ -128,8 +131,7 @@ const people_type= "Supplier";
           </summary>
           <span>{row.reg_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
         </details>
-      ),
-      width: '150px'
+      )
     },
     {
       name: 'Work Address',
@@ -137,14 +139,11 @@ const people_type= "Supplier";
       sortable: true,
       cell: (row) => (
         <details>
-          <summary style={{ cursor: 'pointer'}}>
-            {row.work_address.split('\n')[0]} {/* Show only the first line in truncated view */}
-          </summary>
-          <span>{row.work_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
+          <summary style={{ cursor: 'pointer' }}>{row.work_address.split('\n')[0]}</summary>
+          <span>{row.work_address.replace('\n', ', ')}</span>
         </details>
       ),
       width: '150px'
-
     },
     {
       name: 'Area',
@@ -153,8 +152,12 @@ const people_type= "Supplier";
     },
     {
       name: 'Action',
+      width: '200px',
       cell: (row) => (
         <div className="d-flex">
+          <Button variant="outline-info" size="sm" onClick={() => exportRowToPDF(row)}>
+            <AiOutlineFilePdf />
+          </Button>
           <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
             <MdEdit />
           </Button>
@@ -165,7 +168,45 @@ const people_type= "Supplier";
       )
     }
   ];
-
+  const exportRowToPDF = (row) => {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' }); // Use portrait mode
+    doc.text(`Supplier Details - ${row.name}`, 14, 10);
+  
+    doc.autoTable({
+      head: [['Field', 'Value']],
+      body: [
+        ['Supplier Name', row.name],
+        ['Code', row.code],
+        ['GST No', row.gst_no],
+        ['CIN No', row.cin_no],
+        ['PAN No', row.pan_no],
+        ['MSME No', row.msme_no],
+        ['Phone', row.tel_no],
+        ['Email', row.email],
+        ['Owner Mobile', row.owner_mobile],
+        ['Registered Address', row.reg_address],
+        ['Work Address', row.work_address],
+        ['Area', row.area],
+        ['Status', row.status === 1 ? 'Active' : 'Inactive']
+      ],
+      styles: {
+        fontSize: 9, // Reduce font size
+        cellPadding: 2, // Reduce padding to fit more text
+        overflow: 'linebreak', // Ensures text wraps properly
+        lineWidth: 0.3 // Border thickness
+      },
+      columnStyles: {
+        0: { cellWidth: 50 }, // Adjust column width for fields
+        1: { cellWidth: 120 } // Adjust width for values
+      },
+      theme: 'grid', // Adds vertical and horizontal lines
+      tableWidth: 'auto', // Ensures table fits the page
+      margin: { top: 15, left: 10, right: 10, bottom: 10 } // Optimize margins
+    });
+  
+    doc.save(`Supplier_${row.name}.pdf`);
+  };
+  
   const handleDelete = async (supplierId) => {
     try {
       // Display confirmation modal
@@ -262,8 +303,8 @@ const people_type= "Supplier";
     table: {
       style: {
         borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0, // Removes spacing between cells
-      },
+        borderSpacing: 0 // Removes spacing between cells
+      }
     },
     header: {
       style: {
@@ -272,8 +313,8 @@ const people_type= "Supplier";
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0', // Adjusted to only affect top corners
-      },
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+      }
     },
     rows: {
       style: {
@@ -282,9 +323,9 @@ const people_type= "Supplier";
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -295,13 +336,13 @@ const people_type= "Supplier";
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0', // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none', // Removes border for the last cell
-        },
-      },
+          borderRight: 'none' // Removes border for the last cell
+        }
+      }
     },
     cells: {
       style: {
@@ -309,43 +350,42 @@ const people_type= "Supplier";
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey', // Vertical lines between cells
-      },
+        borderRight: '1px solid grey' // Vertical lines between cells
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black', // Makes the arrows white
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
-        '& svg':{
-          fill: 'white',
+        '& svg': {
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
-  
+
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredSuppliers);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'supplier_list.csv');
   };
   const exportToPDF = () => {
-    const doc = new jsPDF('landscape'); // Landscape orientation provides more horizontal space.
-  
+    const doc = new jsPDF('landscape'); // Landscape for more width
     doc.text('Suppliers List', 14, 10);
-  
+
     doc.autoTable({
       head: [
         [
@@ -361,8 +401,8 @@ const people_type= "Supplier";
           'Registered Address',
           'Work Address',
           'Area',
-          'Status',
-        ],
+          'Status'
+        ]
       ],
       body: filteredSuppliers.map((row) => [
         row.name,
@@ -377,48 +417,44 @@ const people_type= "Supplier";
         row.reg_address,
         row.work_address,
         row.area,
-        row.status === 1 ? 'Active' : 'Inactive',
+        row.status === 1 ? 'Active' : 'Inactive'
       ]),
       styles: {
-        fontSize: 6, // Smaller font size to fit more data
-        overflow: 'linebreak', // Wrap text within cells
-        cellPadding: 1, // Reduce padding for tighter fit
+        fontSize: 7, // Adjusted to fit more text
+        cellPadding: 0.5, // Reduce padding to utilize space
+        overflow: 'linebreak', // Prevent text from overflowing outside cells
+        lineWidth: 0.3 // Border thickness
       },
       columnStyles: {
-        0: { cellWidth: 'auto' }, // Auto-adjust column widths
-        1: { cellWidth: 15 },
-        2: { cellWidth: 20 },
-        3: { cellWidth: 20 },
-        4: { cellWidth: 20 },
-        5: { cellWidth: 20 },
-        6: { cellWidth: 15 },
-        7: { cellWidth: 25 },
-        8: { cellWidth: 20 },
-        9: { cellWidth: 30 },
-        10: { cellWidth: 30 },
-        11: { cellWidth: 15 },
-        12: { cellWidth: 15 },
+        0: { cellWidth: 'auto' },
+        1: { cellWidth: 'auto' },
+        2: { cellWidth: 'auto' },
+        3: { cellWidth: 'auto' },
+        4: { cellWidth: 'auto' },
+        5: { cellWidth: 'auto' },
+        6: { cellWidth: 'auto' },
+        7: { cellWidth: 'auto' },
+        8: { cellWidth: 'auto' },
+        9: { cellWidth: 'auto' },
+        10: { cellWidth: 'auto' },
+        11: { cellWidth: 'auto' },
+        12: { cellWidth: 'auto' }
       },
-      tableWidth: 'wrap', // Ensure table fits within the page width
-      margin: { top: 20 }, // Top margin for the table
-      didDrawPage: (data) => {
-        doc.text('Suppliers List (continued)', 14, 10);
-      },
-      pageBreak: 'auto', // Automatically breaks into new pages if needed
+      theme: 'grid', // Ensures vertical and horizontal table lines
+      tableWidth: 'wrap', // Ensures no extra gaps on the page
+      margin: { top: 10, left: 5, right: 5, bottom: 5 } // Utilize full page
     });
-  
+
     doc.save('supplier_list.pdf');
   };
-  
-  
-  
-  
-  
+
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
-      <div className="col-md-4">
-          <label htmlFor="search" className='me-2'>Search: </label>
+        <div className="col-md-4">
+          <label htmlFor="search" className="me-2">
+            Search:{' '}
+          </label>
           <input
             type="text"
             placeholder="Type here..."
@@ -469,7 +505,6 @@ const people_type= "Supplier";
             <Modal.Title className="text-white">Edit Supplier</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
-          
             <Form>
               <Form.Group className="mb-3">
                 <Form.Label>Supplier Name</Form.Label>

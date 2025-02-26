@@ -118,54 +118,146 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'balance boxes',
+      name: 'Balance boxes',
       selector: (row) => row.quantity - row.out_quantity,
       sortable: true
     }
   ];
 
   const exportToCSV = () => {
-    const csvData = filteredProducts.map((row, index) => ({
-      'Sr No': index + 1,
-      'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
-      'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
-      'Lot No': row.lot_no,
-      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      Date: row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
-      Length: row.length,
-      Width: row.width,
-      Unit: row.unit
-    }));
-    const csv = Papa.unparse(csvData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'stocks_list.csv');
-  };
+      if (filteredProducts.length === 0) {
+        alert('No data available for export.');
+        return;
+      }
+  
+      // ✅ Define CSV Headers (Same as PDF for consistency)
+      const csvHeaders = [
+        'Sr No',
+        'Invoice No',
+        'Date',
+        'Lot No',
+        'Stock Code',
+        'Shade No',
+        'Pur. Shade No',
+        'Length',
+        'Width',
+        // 'Unit',
+        'Quantity',
+        'Out Quantity',
+        'Balance boxes',
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Stocks List', 20, 10);
-    doc.autoTable({
-      head: [['Sr No', 'User Name', 'Lot No', 'Stock Code', 'Invoice No', 'Date', 'Shade No', 'Pur. Shade No', 'Length', 'Width', 'Unit']],
-      body: filteredProducts.map((row, index) => [
+      ];
+  
+      // ✅ Convert Data to CSV Format
+      const csvData = filteredProducts.map((row, index) => ({
+        'Sr No': index + 1,
+        'Invoice No': row.invoice_no ?? 'N/A',
+        Date: row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+        'Lot No': row.lot_no ?? 'N/A',
+        'Stock Code': `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
+        'Shade No': row.shadeNo ?? 'N/A',
+        'Pur. Shade No': row.purchase_shade_no ?? 'N/A',
+        Length: row.length ?? 'N/A',
+        Width: row.width ?? 'N/A',
+        Unit: row.unit ?? 'N/A',
+        Quantity: row.quantity ?? 'N/A',
+        'Out Quantity': row.out_quantity ?? 0,
+        'Balance boxes': row.quantity - row.out_quantity ?? 0,
+
+      }));
+  
+      // ✅ Convert to CSV String and Trigger Download
+      const csvString = Papa.unparse({
+        fields: csvHeaders,
+        data: csvData
+      });
+  
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', 'stocks_list.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+    const exportToPDF = () => {
+      if (filteredProducts.length === 0) {
+        alert('No data available for export.');
+        return;
+      }
+    
+      const doc = new jsPDF({
+        orientation: 'landscape', // Landscape for better table fitting
+        unit: 'mm',
+        format: 'a4'
+      });
+    
+      doc.text('Stocks List', 14, 10);
+    
+      const tableColumn = [
+        'Sr No', 'Invoice No', 'Date', 'Lot No', 'Stock Code', 'Shade No', 
+        'Pur. Shade No', 'Length', 'Width', 'Quantity', 'Out Qty', 'Avail Qty'
+      ];
+    
+      const tableRows = filteredProducts.map((row, index) => [
         index + 1,
-        JSON.parse(localStorage.getItem('user')).username || 'N/A',
-        row.lot_no,
-        `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-        row.stock_invoice?.invoice_no || 'N/A',
-        row.stock_invoice?.date || 'N/A',
-        row.stock_product?.shadeNo || 'N/A',
-        row.stock_product?.purchase_shade_no || 'N/A',
-        row.length,
-        row.width,
-        row.unit
-        // row.warehouse,
-      ])
-    });
-    doc.save('stocks_list.pdf');
-  };
+        row.invoice_no ?? 'N/A',
+        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+        row.lot_no ?? 'N/A',
+        `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
+        row.shadeNo ?? 'N/A',
+        row.purchase_shade_no ?? 'N/A',
+        row.length ?? 'N/A',
+        row.width ?? 'N/A',
+        row.quantity ?? 'N/A',
+        row.out_quantity ?? 0,
+        row.quantity - row.out_quantity ?? 0,
+      ]);
+    
+      doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 20,
+        styles: {
+          fontSize: 8,
+          cellPadding: 1.5,
+          valign: 'middle',
+          halign: 'center',
+          overflow: 'linebreak',
+          lineWidth: 0.2, // ✅ Ensures vertical and horizontal lines
+          lineColor: [0, 0, 0] // ✅ Black border color
+        },
+        headStyles: {
+          fillColor: [22, 160, 133],
+          textColor: [255, 255, 255],
+          fontSize: 9,
+          halign: 'center',
+          lineWidth: 0.4
+        },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        tableLineColor: [0, 0, 0], // ✅ Black grid lines
+        tableLineWidth: 0.2, // ✅ Thin grid lines
+        columnStyles: {
+          0: { cellWidth: 'auto' },
+          1: { cellWidth: 'auto' },
+          2: { cellWidth: 'auto' },
+          3: { cellWidth: 'auto' },
+          4: { cellWidth: 'auto' },
+          5: { cellWidth: 'auto' },
+          6: { cellWidth: 'auto' },
+          7: { cellWidth: 'auto' },
+          8: { cellWidth: 'auto' },
+          9: { cellWidth: 'auto' },
+          10: { cellWidth: 'auto' },
+          11: { cellWidth: 'auto' }
+        },
+        margin: { top: 20, left: 10, right: 10 }
+      });
+    
+      doc.save('stocks_list.pdf');
+    };
+    
+    
 
   const customStyles = {
     table: {

@@ -58,8 +58,7 @@ const ShowProduct = () => {
     },
     {
       name: 'Date',
-      selector: (row) => 
-        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
+      selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
       sortable: true
     },
     {
@@ -129,60 +128,91 @@ const ShowProduct = () => {
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
       'Sr No': index + 1,
-      'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
-      'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
-      'Lot No': row.lot_no,
-      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      Date: row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
-      Length: row.length,
-      Width: row.width,
-      Unit: row.unit
+      'User Name': JSON.parse(localStorage.getItem('user'))?.username ?? 'N/A',
+      'User Email': JSON.parse(localStorage.getItem('user'))?.email ?? 'N/A',
+      'Lot No': row.lot_no ?? 'N/A',
+      'Stock Code': `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
+      'Invoice No': row.invoice_no ?? 'N/A',
+      Date: row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      'Shade No': row.shadeNo ?? 'N/A',
+      'Pur. Shade No': row.purchase_shade_no ?? 'N/A',
+      Length: row.length ?? 'N/A',
+      Width: row.width ?? 'N/A',
+      Quantity: row.quantity ?? 'N/A',
+      'Out Quantity': row.out_quantity ?? 0,
+      'Available Quantity': row.quantity - row.out_quantity,
+      'Total Length': Number(row.length * row.quantity).toFixed(2),
+      'Issue Length': Number(row.length * row.out_quantity).toFixed(2),
+      'Area (m²)': row.area ?? 'N/A',
+      'Area (sq. ft.)': row.area_sq_ft ?? 'N/A'
     }));
+
+    if (csvData.length === 0) {
+      alert('No data available for export.');
+      return;
+    }
+
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Stocks List', 20, 10);
-    doc.autoTable({
-      head: [
-        [
-          'Sr No',
-          'User Name',
-          'Lot No',
-          'Stock Code',
-          'Invoice No',
-          'Date',
-          'Shade No',
-          'Pur. Shade No',
-          'Length',
-          'Width',
-          'Unit'
-          // 'Warehouse',
-        ]
-      ],
-      body: filteredProducts.map((row, index) => [
-        index + 1,
-        JSON.parse(localStorage.getItem('user')).username || 'N/A',
-        row.lot_no,
-        `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-        row.stock_invoice?.invoice_no || 'N/A',
-        row.stock_invoice?.date || 'N/A',
-        row.stock_product?.shadeNo || 'N/A',
-        row.stock_product?.purchase_shade_no || 'N/A',
-        row.length,
-        row.width,
-        row.unit,
-        row.warehouse
-      ])
+    if (filteredProducts.length === 0) {
+      alert('No data available for export.');
+      return;
+    }
+  
+    const doc = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
     });
+  
+    doc.text('Stocks List', 14, 10);
+  
+    const tableColumn = [
+      'Sr No', 'User Name', 'Lot No', 'Stock Code', 'Invoice No', 'Date',
+      'Shade No', 'Pur. Shade No', 'Length', 'Width', 'Unit', 'Quantity',
+      'Out Quantity', 'Available Quantity', 'Total Length', 'Issue Length',
+    ];
+  
+    const tableRows = filteredProducts.map((row, index) => [
+      index + 1,
+      JSON.parse(localStorage.getItem('user'))?.username ?? 'N/A',
+      row.lot_no ?? 'N/A',
+      `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
+      row.invoice_no ?? 'N/A',
+      row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      row.shadeNo ?? 'N/A',
+      row.purchase_shade_no ?? 'N/A',
+      row.length ?? 'N/A',
+      row.width ?? 'N/A',
+      row.unit || 'N/A',  // ✅ Fixed: Unit now included
+      row.quantity ?? 'N/A',
+      row.out_quantity ?? 0,
+      row.quantity - row.out_quantity,
+      Number(row.length * row.quantity).toFixed(2),
+      Number(row.length * row.out_quantity).toFixed(2),
+  
+    ]);
+  
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 6 },
+      headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255] },
+      columnStyles: { 16: { cellWidth: 15 }, 17: { cellWidth: 15 } }, // Force columns to fit
+      theme: 'grid',
+    });
+  
     doc.save('stocks_list.pdf');
   };
+  
+  
+  
+  
 
   const customStyles = {
     table: {
@@ -263,7 +293,7 @@ const ShowProduct = () => {
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
-      <div className="col-md-4">
+        <div className="col-md-4">
           <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
         </div>
         <div className="col-md-8">
@@ -282,18 +312,16 @@ const ShowProduct = () => {
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {loading ? (
               <Skeleton count={10} />
-            ) :
-            (
+            ) : (
               <>
-                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles}/>
+                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
                 {searchQuery && (
                   <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
                     Total Boxes: {totalBoxes}
                   </div>
                 )}
               </>
-            )
-            }
+            )}
           </div>
         </div>
       </div>
