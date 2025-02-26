@@ -8,13 +8,16 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Swal from 'sweetalert2';
+import 'react-loading-skeleton/dist/skeleton.css';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
-import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import 'jspdf-autotable';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 
 const ProductsPage = () => {
@@ -338,41 +341,49 @@ const ProductsPage = () => {
     }
   };
   const exportToCSV = () => {
-    const csvData = filteredProducts.map((row) => [
-      row.id,
+    const csv = Papa.unparse(
+      filteredProducts.map((row, index) => ({
+        "Sr No": index + 1,
+        "Date": row.date,
+        "Product Category": row.product_category.product_category,
+        "Name": row.name,
+        "Shade No": row.shadeNo,
+        "Purchase Shade No": row.purchase_shade_no,
+      }))
+    );
+  
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'products_list.csv');
+  };
+  
+  const exportToPDF = () => {
+    const doc = new jsPDF('landscape');
+    doc.text('Product List', 14, 10);
+  
+    const headers = [['Sr No', 'Date', 'Product Category', 'Name', 'Shade No', 'Purchase Shade No']];
+  
+    const body = filteredProducts.map((row, index) => [
+      index + 1,
       row.date,
-      row.product_category ? row.product_category.product_category : '',
+      row.product_category.product_category,
       row.name,
       row.shadeNo,
       row.purchase_shade_no,
-      row.status === 1 ? 'Active' : 'Inactive'
     ]);
-
-    const csv = Papa.unparse({
-      fields: ['S No.', 'Date', 'Product Category', 'Product Name', 'Shade No', 'Purchase Shade No', 'Status'],
-      data: csvData
-    });
-
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'Products_list.csv');
-  };
-  const exportToPDF = () => {
-    const doc = new jsPDF('p', 'mm', 'a4');
-    doc.setFontSize(12);
-    doc.text('Products List', 10, 10);
+  
     doc.autoTable({
-      head: [['S No.', 'Date', 'Product Category', 'Product Name', 'Shade No', 'Purchase Shade No']],
-      body: filteredProducts.map((row, index) => [
-        index + 1,
-        row.date,
-        row.product_category.product_category,
-        row.name,
-        row.shadeNo,
-        row.purchase_shade_no
-      ])
+      head: headers,
+      body: body,
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [238, 238, 238] }
     });
-    doc.save('Products_list.pdf');
+  
+    doc.save('products_list.pdf');
   };
+  
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">

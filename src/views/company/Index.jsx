@@ -7,10 +7,11 @@ import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
-import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
@@ -164,8 +165,16 @@ const ReceiversPage = () => {
     },
     {
       name: 'Action',
-      cell: (row) => (
+      width: '250px',
+      cell: (row, index) => (
         <div className="d-flex">
+          <Button
+            variant="outline-info"
+            size="sm"
+            onClick={() => exportRowToPDF(row, index + 1)} // Corrected passing of `index`
+          >
+            <AiOutlineFilePdf />
+          </Button>
           <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
             <MdEdit />
           </Button>
@@ -174,8 +183,49 @@ const ReceiversPage = () => {
           </Button>
         </div>
       )
+      
     }
   ];
+  const exportRowToPDF = (row, srNo) => {
+    console.log('Exporting Row:', row);
+    console.log('Sr No:', srNo);
+  
+    const doc = new jsPDF();
+  
+    doc.setFontSize(16);
+    doc.text('Supplier Details', 14, 10);
+  
+    const tableColumn = ['Field', 'Value'];
+    const tableRows = [
+      ['Sr No', srNo || 'N/A'],
+      ['Supplier Name', row.name || 'N/A'],
+      ['Code', row.code || 'N/A'],
+      ['GST No', row.gst_no || 'N/A'],
+      ['CIN No', row.cin_no || 'N/A'],
+      ['PAN No', row.pan_no || 'N/A'],
+      ['MSME No', row.msme_no || 'N/A'],
+      ['Phone', row.tel_no || 'N/A'],
+      ['Email', row.email || 'N/A'],
+      ['Owner Mobile', row.owner_mobile || 'N/A'],
+      ['Registered Address', row.reg_address || 'N/A'],
+      ['Work Address', row.work_address || 'N/A'],
+      ['Area', row.area || 'N/A'],
+      ['Status', row.status === 1 ? 'Active' : 'Inactive']
+    ];
+  
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 9, cellPadding: 2, overflow: 'linebreak', lineWidth: 0.3 },
+      columnStyles: { 0: { cellWidth: 50 }, 1: { cellWidth: 120 } },
+      theme: 'grid'
+    });
+  
+    console.log('Downloading PDF...');
+    doc.save(`Supplier_${row.name || 'Unknown'}.pdf`);
+  };
+  
 
   const handleDelete = async (receiverId) => {
     try {
