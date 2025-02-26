@@ -11,7 +11,11 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import PdfPreview from 'components/PdfPreview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Swal from 'sweetalert2';
-
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import 'jspdf-autotable';
+import 'react-loading-skeleton/dist/skeleton.css';
+import jsPDF from 'jspdf';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -56,7 +60,7 @@ const Index = () => {
   }, []);
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-  
+
     const filtered = invoices.filter((invoice) => {
       return (
         invoice.invoice_no.toString().toLowerCase().includes(lowercasedQuery) ||
@@ -66,10 +70,10 @@ const Index = () => {
         new Date(invoice.date).toLocaleDateString('en-GB').toLowerCase().includes(lowercasedQuery) // Fix date search
       );
     });
-  
+
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
-  
+
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -256,19 +260,52 @@ const Index = () => {
   };
 
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredInvoices);
+    const csvData = filteredInvoices.map((row, index) => ({
+      'Sr No': index + 1,
+      Date: new Date(row.date).toLocaleDateString('en-GB'),
+      'Invoice Number': row.invoice_no || 'N/A',
+      'Supplier Name': row.supplier_name || 'N/A',
+      'Receiver Name': row.agent || 'N/A',
+      'Total Amount': row.total_amount || 'N/A',
+      
+    }));
+  
+    const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'supplier_list.csv');
+    saveAs(blob, 'invoice_list.csv');
   };
+  
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
-    doc.text('Invoices List', 20, 10);
+    doc.text('Invoice List', 14, 10);
+  
+    const headers = [['Sr No', 'Date', 'Invoice Number', 'Supplier Name', 'Receiver Name', 'Total Amount']];
+  
+    const body = filteredInvoices.map((row, index) => [
+      index + 1,
+      new Date(row.date).toLocaleDateString('en-GB'),
+      row.invoice_no || 'N/A',
+      row.supplier_name || 'N/A',
+      row.agent || 'N/A',
+      row.total_amount || 'N/A',
+     
+    ]);
+  
     doc.autoTable({
-      head: [['Invoice Number', 'Supplier Name', 'Receiver Name', 'Date', 'Bank', 'Total Amount']],
-      body: filteredInvoices.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.total_amount])
+      head: headers,
+      body: body,
+      startY: 20,
+      theme: 'grid', // Ensures grid lines for vertical & horizontal separation
+      styles: { fontSize: 10, cellPadding: 3, valign: 'middle' },
+      headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [238, 238, 238] },
+      tableLineColor: [0, 0, 0], // Black border lines
+      tableLineWidth: 0.2, // Thin border lines
     });
-    doc.save('user_list.pdf');
+  
+    doc.save('invoice_list.pdf');
   };
+  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -288,6 +325,17 @@ const Index = () => {
           <Button variant="primary" onClick={handleAddInvoice}>
             <MdPersonAdd className="me-2" /> Add Invoice
           </Button>
+        </div>
+       
+        <div className="d-flex justify-content-end">
+          <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+            <FaFileCsv className="w-5 h-5 me-1" />
+            Export as CSV
+          </button>
+          <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
+            <AiOutlineFilePdf className="w-5 h-5 me-1" />
+            Export as PDF
+          </button>
         </div>
       </div>
       <div className="row">
