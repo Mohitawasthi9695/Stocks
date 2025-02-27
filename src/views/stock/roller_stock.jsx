@@ -163,6 +163,11 @@ const ShowProduct = () => {
       name: 'ft²',
       selector: (row) => row.area_sq_ft,
       sortable: true
+    },
+    {
+      name: 'Remark',
+      selector: (row) => row.remark,
+      sortable: true
     }
   ];
 
