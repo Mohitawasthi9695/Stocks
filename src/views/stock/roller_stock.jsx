@@ -261,7 +261,7 @@ const ShowProduct = () => {
       row.invoice_no ?? 'N/A',
       row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
       row.lot_no ?? 'N/A',
-      `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
+      `${row.stock_code ?? 'N/A'}`,
       row.shadeNo ?? 'N/A',
       row.purchase_shade_no ?? 'N/A',
       row.length ?? 'N/A',
@@ -269,7 +269,7 @@ const ShowProduct = () => {
       row.unit ?? 'N/A',
       row.quantity ?? 'N/A',
       row.out_quantity ?? 0,
-      row.quantity - row.out_quantity ?? 0,
+      (row.quantity - row.out_quantity) ?? 0,
       row.area ?? 'N/A',
       row.area_sq_ft ?? 'N/A'
     ]);

@@ -435,7 +435,7 @@ const Invoice_out = () => {
                       value={formData.company_id}
                       onChange={handleChange}
                       options={receivers}
-                      add={'/add-Receiver'}
+                      add={'/add-company'}
                       required
                     />
                     <FormField
@@ -595,7 +595,7 @@ const Invoice_out = () => {
                         <option value="">Select</option>
                         {shadeNo.map((shade) => (
                           <option key={shade.id} value={shade.id}>
-                            {shade.shadeNo}
+                            {shade.shadeNo}/ {shade.purchase_shade_no}
                           </option>
                         ))}
                       </Form.Control>
@@ -695,9 +695,9 @@ const Invoice_out = () => {
                                         className="py-2"
                                         onChange={(e) => handleInputChange(row.godown_id, 'width_unit', e.target.value)}
                                       >
-                                        <option value="Meter">Meter</option>
-                                        <option value="Inch">Inch</option>
-                                        <option value="centimeter">cm</option>
+                                        <option value="m">Meter</option>
+                                        <option value="in">Inch</option>
+                                        <option value="cm">centimeter</option>
                                       </select>
                                     </td>
 
@@ -715,9 +715,9 @@ const Invoice_out = () => {
                                         className="py-2"
                                         onChange={(e) => handleInputChange(row.godown_id, 'length_unit', e.target.value)}
                                       >
-                                        <option value="Meter">Meter</option>
-                                        <option value="Inch">Inch</option>
-                                        <option value="centimeter">cm</option>
+                                        <option value="m">Meter</option>
+                                        <option value="in">Inch</option>
+                                        <option value="cm">centimeter</option>
                                       </select>
                                     </td>
                                     <td key="out_pcs">

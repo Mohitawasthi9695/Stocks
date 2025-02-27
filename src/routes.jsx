@@ -260,12 +260,7 @@ const routes = [
         element: lazy(() => import('./views/godown/vertical_stock')),
         allowedRoles:  ['superadmin','admin', 'supervisor','operator']
       },
-      {
-        exact: 'true',
-        path: '/godown/add_vertical_stock/:id',
-        element: lazy(() => import('./views/godown/add_vertical_stock')),
-        allowedRoles:  ['superadmin','admin', 'supervisor',]
-      },
+      
       {
         exact: 'true',
         path: '/godown/honeycomb_stock',
