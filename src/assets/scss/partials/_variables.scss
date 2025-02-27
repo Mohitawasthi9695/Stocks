@@ -29,18 +29,19 @@ $theme-border: #eaeaea;
 
 // header
 $brand-background: #3f4d67;
-$header-dark-background: #3f4d67;
+$header-dark-background: rgb(1, 46, 29);
 $header-dark-text-color: #fff;
 $header-light-background: #fff;
 $header-light-text-color: #3f4d67;
 
 // Menu
 $menu-caption-color: #14171d;
-$menu-dark-background: #3f4d67;
-$menu-dark-text-color: #a9b7d0;
-$menu-light-background: #fff;
-$menu-light-text-color: #3f4d67;
-$menu-active-color: #04a9f5;
+// $menu-dark-background: #013924;
+$menu-dark-background: #271204;
+$menu-dark-text-color: white;
+$menu-light-background: #ffffff;
+$menu-light-text-color: #013924;
+$menu-active-color: #021c55;
 
 // dark layout colors
 $dark-layout: #212224;
@@ -62,12 +63,12 @@ $color-title-name: blue, red, purple, lightblue, dark;
 $color-title-color: $primary-color, #ff5252, #9575cd, #23b7e5, color.scale($dark-layout, $lightness: 8.1%);
 
 // layout-6 background color
-$layout-6-bg-color: #23b7e5;
+$layout-6-bg-color: #83d3eb;
 
 $theme-font-family: 'Open Sans', sans-serif;
 $theme-font-size: 14px;
-$theme-background: #f4f7fa;
-$theme-font-color: #888;
+$theme-background: #92bebc;
+$theme-font-color: #0e0101;
 $theme-heading-color: #111;
 
 $color-name: c-blue, c-red, c-green, c-yellow, c-purple;
