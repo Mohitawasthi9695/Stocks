@@ -136,7 +136,7 @@ const DashDefault = () => {
             <Col key={index} xl={6} xxl={3}>
               <Card style={{
                 borderRadius: '15px',
-                background: '#8875e1'
+                // background: '#8875e1'
               }}>
                 <Card.Body>
                   <h6 className="mb-4" style={{ fontSize: '18px', fontWeight: 'bold', color: '#333', background: '#a' }}>{data.title}</h6>

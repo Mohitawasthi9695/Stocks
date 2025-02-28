@@ -88,80 +88,86 @@ const Index = () => {
 
   const navigate = useNavigate();
 
-  const columns = [
-    {
-      name: 'Invoice Number',
-      selector: (row) => row.gatepass_no,
-      sortable: true
-    },
-    {
-      name: 'Godown Supervisor Name',
-      selector: (row) => row.godownSupervisor,
-      sortable: true
-    },
-    {
-      name: 'WareHouser Supervisor',
-      selector: (row) => row.warehouseSupervisor,
-      sortable: true
-    },
-    {
-      name: 'Date',
-      selector: (row) => row.date,
-      sortable: true
-    },
-    {
-      name: 'Status',
-      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
-      sortable: true,
-      cell: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span
-            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
-            style={{
-              padding: '5px 10px',
-              borderRadius: '8px',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            {row.status === 1 ? 'Approved' : 'Pending'}
-          </span>
-        </div>
-      )
-    },
-    {
-      name: 'Action',
-      cell: (row) => (
-        <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
-          {row.status === 0 ? (
-            <>
-              <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
-                <MdCheckCircle />
-              </Button>
-            </>
-          ) : (
-            <></>
-          )}
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={() => {
-              setSelectedInvoice(row.id);
-              setShowPdfModal(true);
-            }}
-          >
-            <MdPrint />
-          </Button>
-          <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
-            <FaFileExcel />
-          </Button>
-          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
-            <MdDelete />
-          </Button>
-        </div>
-      ),
-      width: '250px'
-    }
-  ];
+    const columns = [
+        {
+            name: 'S no.',
+            selector: (row, index) => index +1,
+            sortable: true
+        },
+        {
+            name: 'Date',
+            selector: (row) => new Date(row.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+            sortable: true
+        },        
+        {
+            name: 'Invoice Number',
+            selector: (row) => row.gatepass_no,
+            sortable: true
+        },
+        {
+            name: 'Godown Supervisor Name',
+            selector: (row) => row.godownSupervisor,
+            sortable: true
+        },
+        {
+            name: 'WareHouser Supervisor',
+            selector: (row) => row.warehouseSupervisor,
+            sortable: true
+        },
+        {
+            name: 'Status',
+            selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+            sortable: true,
+            cell: (row) => (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span
+                        className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                        style={{
+                            padding: '5px 10px',
+                            borderRadius: '8px',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {row.status === 1 ? 'Approved' : 'Pending'}
+                    </span>
+                </div>
+            )
+        },
+        {
+            name: 'Action',
+            cell: (row) => (
+                <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
+                    {row.status === 0 ? (
+                        <>
+                            <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
+                                <MdCheckCircle />
+                            </Button>
+
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                    <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => {
+                            setSelectedInvoice(row.id);
+                            setShowPdfModal(true);
+                        }}
+                    >
+                        <MdPrint />
+                    </Button>
+                    <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
+                        <FaFileExcel />
+                    </Button>
+                    <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+                        <MdDelete />
+                    </Button>
+                </div>
+            ),
+            width: '250px'
+        }
+    ];
 
   const handleDelete = async (id) => {
     try {

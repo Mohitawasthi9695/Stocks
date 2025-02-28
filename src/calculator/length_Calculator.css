@@ -1,0 +1,90 @@
+/* Global Styles */
+.length-body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    
+  }
+  
+  .length-App {
+    background: #ffffff;
+    padding: 2rem;
+    
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  .length-form-container label {
+    display: block;
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .length-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  input[type="number"], select {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  button {
+    width: 30%;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  button:hover {
+    background: #0056b3;
+  }
+  
+  .length-result {
+    background: #e6f0ff;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+  
+  .length-result h2 {
+    margin: 0 0 0.5rem 0;
+    color: #007bff;
+  }
+  
+  .length-result p {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .length-result select {
+    margin-top: 0.5rem;
+  }
+  
+  .length-result{
+    height: 150px;
+    border: 1px solid #ccc;
+    
+  }

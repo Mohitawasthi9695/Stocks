@@ -102,11 +102,6 @@ const SuppliersPage = () => {
       sortable: true
     },
     {
-      name: 'Date',
-      selector: (row) => row.date,
-      sortable: true
-    },
-    {
       name: 'Product Category',
       selector: (row) => row.product_category.toUpperCase(),
       sortable: true
@@ -114,6 +109,11 @@ const SuppliersPage = () => {
     {
       name: 'Accessory Name',
       selector: (row) => row.accessory_name.toUpperCase(),
+      sortable: true
+    },
+    {
+      name: 'Date',
+      selector: (row) => row.date.toUpperCase(),
       sortable: true
     },
     {
@@ -313,8 +313,8 @@ const SuppliersPage = () => {
     doc.text('Accessory List', 14, 10);
   
     doc.autoTable({
-      head: [[ 'S No','date','Product Category', 'Accessory']],
-      body: filteredSuppliers.map((row, index) => [index + 1 , row.date,row.product_category.toUpperCase(), row.accessory_name.toUpperCase()]),
+      head: [['Product Category', 'Accessory', 'Status']],
+      body: filteredSuppliers.map((row) => [row.product_categoryt, row.date, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
       styles: {
         fontSize: 10, // Smaller font size to fit more data
         overflow: 'linebreak', // Wrap text within cells

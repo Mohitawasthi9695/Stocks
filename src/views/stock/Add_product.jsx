@@ -17,7 +17,6 @@ const AddProduct = () => {
   const mainColor = '#3f4d67';
   const [items, setItems] = useState([
     {
-      invoice_no: no,
       lot_no: '',
       product_category_id: '',
       product_id: '',
@@ -26,6 +25,7 @@ const AddProduct = () => {
       length: '',
       date: '',
       rack: '',
+      remark: '',
       length_unit: '',
       width_unit: '',
       pcs: 1,
@@ -69,31 +69,25 @@ const AddProduct = () => {
           }
         });
 
-        // Update only the products list for the specific row
         setItems((prevItems) => {
           const updatedItems = [...prevItems];
-          updatedItems[index].products = response.data.data;
+          updatedItems[index] = {
+            ...updatedItems[index],
+            product_category_id: categoryId,
+            product_id: '',
+            purchase_shadeNo: '',
+            products: [...response.data.data], 
+          };
+        
+          console.log("Updated Products in State:", updatedItems[index].products);
           return updatedItems;
         });
+        
       } catch (error) {
         console.error('Error fetching products:', error);
       }
     }
   };
-
-  const fetchAllProducts = async (categoryId) => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${categoryId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      setAllProducts(response.data.data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-  };
-
   useEffect(() => {
     if (selectedCategoryId) {
       fetchAllProducts(selectedCategoryId);
@@ -104,7 +98,6 @@ const AddProduct = () => {
     setItems((prevItems) => [
       ...prevItems,
       {
-        invoice_no: no,
         lot_no: '',
         product_category_id: '',
         product_id: '',
@@ -113,6 +106,7 @@ const AddProduct = () => {
         length: '',
         date: '',
         rack: '',
+        remark: '',
         length_unit: '',
         width_unit: '',
         pcs: 1,
@@ -125,12 +119,14 @@ const AddProduct = () => {
     setItems((prevItems) => prevItems.filter((_, i) => i !== index));
   };
 
-  // Handle changes to row fields
   const handleRowChange = (index, field, value) => {
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
+  
       if (field === 'product_id') {
-        const selectedProduct = updatedItems[index].products.find((product) => product.id === parseInt(value));
+        const selectedProduct = updatedItems[index].products.find(
+          (product) => product.id === parseInt(value) 
+        );
         updatedItems[index].product_id = value;
         updatedItems[index].purchase_shadeNo = selectedProduct ? selectedProduct.purchase_shade_no : '';
       } else {
@@ -139,6 +135,7 @@ const AddProduct = () => {
       return updatedItems;
     });
   };
+  
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -317,27 +314,24 @@ const AddProduct = () => {
                   <Table bordered hover responsive style={{ minWidth: '1500px' }}>
                     <thead>
                       <tr className="text-white text-center">
-                        <th style={{ width: '150px' }}>Invoice No</th>
-                        <th style={{ width: '150px' }}>ProductName</th>
-                        <th style={{ width: '200px' }}>Shade No</th>
+                        <th style={{ width: '0px' }}>ProductName</th>
+                        <th style={{ width: '300px' }}>Shade No</th>
                         <th style={{ width: '120px' }}>Pur. Shade No</th>
                         <th style={{ width: '150px' }}>Date</th>
                         <th style={{ width: '150px' }}>LOT No</th>
                         <th style={{ width: '150px' }}>Width</th>
-                        <th style={{ width: '150px' }}>Unit</th>
+                        <th style={{ width: '100px' }}>Unit</th>
                         <th style={{ width: '150px' }}>Length</th>
-                        <th style={{ width: '150px' }}>Unit</th>
+                        <th style={{ width: '100px' }}>Unit</th>
                         <th style={{ width: '120px' }}>Pcs</th>
                         <th style={{ width: '150px' }}>Quantity</th>
+                        <th style={{ width: '120px' }}>Remark</th>
                         <th style={{ width: '120px' }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {items.map((item, index) => (
                         <tr key={index} className="text-center">
-                          <td>
-                            <Form.Control type="text" value={no} disabled style={{ fontSize: '0.9rem', height: '3rem' }} />
-                          </td>
                           <td>
                             <Form.Control
                               as="select"
@@ -364,9 +358,10 @@ const AddProduct = () => {
                               <option value="">Select Shade No.</option>
                               {item.products?.map((product) => (
                                 <option key={product.id} value={product.id}>
-                                  {product.shadeNo}
+                                  {product.shadeNo} / {product.purchase_shade_no}
                                 </option>
                               ))}
+
                             </Form.Control>
                           </td>
                           <td>
@@ -410,9 +405,9 @@ const AddProduct = () => {
                               style={{ fontSize: '0.9rem', height: '3rem' }}
                             >
                               <option value="">Select Unit</option>
-                              <option value="meter">Meter</option>
-                              <option value="inches">Inch</option>
-                              <option value="feet">Feet</option>
+                              <option value="m">Meter</option>
+                              <option value="in">Inch</option>
+                              <option value="ft">Feet</option>
                               <option value="mm">MM</option>
                             </Form.Control>
                           </td>
@@ -432,9 +427,9 @@ const AddProduct = () => {
                               style={{ fontSize: '0.9rem', height: '3rem' }}
                             >
                               <option value="">Select Unit</option>
-                              <option value="meter">Meter</option>
-                              <option value="inches">Inch</option>
-                              <option value="feet">Feet</option>
+                              <option value="m">Meter</option>
+                              <option value="in">Inch</option>
+                              <option value="ft">Feet</option>
                             </Form.Control>
                           </td>
                           <td>
@@ -445,11 +440,20 @@ const AddProduct = () => {
                               style={{ fontSize: '0.9rem', height: '3rem' }}
                             />
                           </td>
+
                           <td>
                             <Form.Control
                               type="number"
                               value={item.quantity}
                               onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                            />
+                          </td>
+                          <td>
+                            <Form.Control
+                              type="text"
+                              value={item.remark}
+                              onChange={(e) => handleRowChange(index, 'remark', e.target.value)}
                               style={{ fontSize: '0.9rem', height: '3rem' }}
                             />
                           </td>

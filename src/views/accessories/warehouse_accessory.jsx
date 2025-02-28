@@ -61,6 +61,11 @@ const WarehouseAccessoriesPage = () => {
       sortable: true
     },
     {
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
       name: 'Product Category',
       selector: (row) => row.product_category,
       sortable: true
