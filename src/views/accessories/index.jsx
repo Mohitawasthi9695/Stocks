@@ -14,6 +14,10 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+// import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import 'jspdf-autotable';
+import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 
 const SuppliersPage = () => {
   const [suppliers, setSupplier] = useState([]);
@@ -21,6 +25,9 @@ const SuppliersPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSupplier, setselectedSupplier] = useState(null);
+  const [editedUser, setEditedUser] = useState(null);
+
+
 
   const handleToggleStatus = async (supplierId, currentStatus) => {
     console.log('Toggling status for supplier:', supplierId, 'Current status:', currentStatus);
@@ -181,37 +188,70 @@ const SuppliersPage = () => {
     setShowEditModal(true);
   };
 
-  const handleUpdateUser = async () => {
-    try {
-      if (!selectedSupplier || !selectedSupplier.id) {
-        toast.error('Invalid supplier selected for update!');
-        return;
-      }
+  // const handleUpdateUser = async () => {
+  //   try {
+  //     if (!selectedSupplier || !selectedSupplier.id) {
+  //       toast.error('Invalid supplier selected for update!');
+  //       return;
+  //     }
 
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
+  //     const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
 
-      if (response.status === 200) {
-        toast.success('Supplier updated successfully!');
+  //     if (response.status === 200) {
+  //       toast.success('Supplier updated successfully!');
 
-        setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
+  //       setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
 
-        setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
+  //       setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
 
-        setShowEditModal(false);
-      } else {
-        throw new Error('Unexpected response status');
-      }
-    } catch (error) {
-      console.error('Error during update:', error);
-      toast.error('Error updating supplier!');
+  //       setShowEditModal(false);
+  //     } else {
+  //       throw new Error('Unexpected response status');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error during update:', error);
+  //     toast.error('Error updating supplier!');
+  //   }
+  // };
+
+const handleUpdateUser  = async () => {
+  try {
+    if (!selectedSupplier || !selectedSupplier.id) {
+      toast.error('Invalid supplier selected for update!');
+      return;
     }
-  };
 
+    // Log the selected supplier to check its state
+    console.log('Updating supplier:', selectedSupplier);
+
+    const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 200) {
+      toast.success('Supplier updated successfully!');
+
+      // Update the suppliers state
+      setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
+      setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
+
+      setShowEditModal(false);
+    } else {
+      throw new Error('Unexpected response status');
+    }
+  } catch (error) {
+    console.error('Error during update:', error);
+    toast.error('Error updating supplier!');
+  }
+};
   const handleAddUser = () => {
     navigate('/add_accessories');
   };
@@ -223,6 +263,7 @@ const SuppliersPage = () => {
       [name]: value
     }));
   };
+ 
 
   const customStyles = {
     table: {
@@ -303,47 +344,38 @@ const SuppliersPage = () => {
   };
 
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredSuppliers);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'accessory_list.csv');
-  };
-  const exportToPDF = () => {
-    const doc = new jsPDF('landscape'); // Landscape orientation provides more horizontal space.
+    const csv = Papa.unparse(
+      filteredSuppliers.map((row, index) => ({
+        'Sr No': index + 1,
+        Date: row.date,
+        'Product Category': row.product_category,
+        'Accessory Name': row.accessory_name
+      }))
+    );
 
-    doc.text('Accessory List', 14, 10);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'suppliers_list.csv');
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF('landscape');
+    doc.text('Suppliers List', 14, 10);
+
+    const headers = [['Sr No', 'Date', 'Product Category', 'Accessory Name']];
+
+    const body = filteredSuppliers.map((row, index) => [index + 1, row.date, row.product_category, row.accessory_name]);
 
     doc.autoTable({
-      head: [['Product Category', 'Accessory', 'Status']],
-      body: filteredSuppliers.map((row) => [row.product_categoryt, row.date, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
-      styles: {
-        fontSize: 6, // Smaller font size to fit more data
-        overflow: 'linebreak', // Wrap text within cells
-        cellPadding: 1 // Reduce padding for tighter fit
-      },
-      columnStyles: {
-        0: { cellWidth: 'auto' }, // Auto-adjust column widths
-        1: { cellWidth: 15 },
-        2: { cellWidth: 20 },
-        3: { cellWidth: 20 },
-        4: { cellWidth: 20 },
-        5: { cellWidth: 20 },
-        6: { cellWidth: 15 },
-        7: { cellWidth: 25 },
-        8: { cellWidth: 20 },
-        9: { cellWidth: 30 },
-        10: { cellWidth: 30 },
-        11: { cellWidth: 15 },
-        12: { cellWidth: 15 }
-      },
-      tableWidth: 'wrap', // Ensure table fits within the page width
-      margin: { top: 20 }, // Top margin for the table
-      didDrawPage: (data) => {
-        doc.text('Accessory List (continued)', 14, 10);
-      },
-      pageBreak: 'auto' // Automatically breaks into new pages if needed
+      head: headers,
+      body: body,
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [238, 238, 238] }
     });
 
-    doc.save('accessory_list.pdf');
+    doc.save('suppliers_list.pdf');
   };
 
   return (
@@ -411,9 +443,13 @@ const SuppliersPage = () => {
               </Form.Group>
 
               {/* Accessory Name Field */}
-              <Form.Group className="mb-3">
+              {/* <Form.Group className="mb-3">
                 <Form.Label>Accessory Name</Form.Label>
                 <Form.Control type="text" name="accessory_name" value={selectedSupplier.accessory_name || ''} onChange={handleChange} />
+              </Form.Group> */}
+              <Form.Group className="mb-3">
+                <Form.Label>Accessory Name</Form.Label>
+                <Form.Control type="text" name="accessory_name" value={selectedSupplier?.accessory_name || ''} onChange={handleChange} />
               </Form.Group>
 
               {/* Status Dropdown */}
