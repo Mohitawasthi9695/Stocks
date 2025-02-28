@@ -217,7 +217,8 @@ const SuppliersPage = () => {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Yes, delete it!',
+        background: 'white'
       });
 
       if (result.isConfirmed) {
@@ -233,7 +234,12 @@ const SuppliersPage = () => {
         setFilteredSupplier((prevFilteredSuppliers) => prevFilteredSuppliers.filter((supplier) => supplier.id !== supplierId));
 
         toast.success('Supplier deleted successfully');
-        Swal.fire('Deleted!', 'The supplier has been deleted.', 'success');
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'The supplier has been deleted.',
+          icon: 'success',
+          background: '#FFFFFF' // or simply 'white'
+        });
       }
     } catch (error) {
       // Log error for debugging and notify user

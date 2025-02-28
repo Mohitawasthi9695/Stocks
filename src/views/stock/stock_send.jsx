@@ -494,10 +494,10 @@ const Invoice_out = () => {
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
-                                    <td key="length">{row.length}</td>
-                                    <td key="length_unit">{row.length_unit}</td>
                                     <td key="width">{row.width}</td>
                                     <td key="width_unit">{row.width_unit}</td>
+                                    <td key="length">{row.length}</td>
+                                    <td key="length_unit">{row.length_unit}</td>
                                     <td key="pcs">{row.pcs}</td>
                                     <td key="out_quantity">
                                       <input

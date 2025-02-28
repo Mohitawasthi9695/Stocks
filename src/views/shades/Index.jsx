@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
@@ -75,15 +74,23 @@ const ProductsPage = () => {
   }, []);
 
   useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredProducts(products); // Reset when query is empty
+      return;
+    }
+
     const lowercasedQuery = searchQuery.toLowerCase();
+
     const filtered = products.filter((product) => {
       return (
-        product.shadeNo.toLowerCase().includes(lowercasedQuery) ||
-        product.code.toLowerCase().includes(lowercasedQuery) ||
-        product.purchase_shade_no.toLowerCase().includes(lowercasedQuery)
+        (product.shadeNo && product.shadeNo.toLowerCase().includes(lowercasedQuery)) ||
+        (product.code && product.code.toLowerCase().includes(lowercasedQuery)) ||
+        (product.purchase_shade_no && product.purchase_shade_no.toLowerCase().includes(lowercasedQuery)) ||
+        (product.product_category?.product_category && product.product_category.product_category.toLowerCase().includes(lowercasedQuery))
       );
     });
-    setFilteredProducts(filtered);
+
+    setFilteredProducts(filtered.length > 0 ? filtered : []);
   }, [searchQuery, products]);
 
   const handleSearch = (e) => {
@@ -232,8 +239,8 @@ const ProductsPage = () => {
     table: {
       style: {
         borderCollapse: 'separate',
-        borderSpacing: 0,
-      },
+        borderSpacing: 0
+      }
     },
     header: {
       style: {
@@ -242,8 +249,8 @@ const ProductsPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0',
-      },
+        borderRadius: '8px 8px 0 0'
+      }
     },
     rows: {
       style: {
@@ -252,9 +259,9 @@ const ProductsPage = () => {
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        },
-      },
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }
+      }
     },
     headCells: {
       style: {
@@ -264,47 +271,45 @@ const ProductsPage = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0',
+        borderRight: '1px solid #e0e0e0'
       },
       lastCell: {
         style: {
-          borderRight: 'none',
-        },
-      },
+          borderRight: 'none'
+        }
+      }
     },
     cells: {
       style: {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey',
-      },
+        borderRight: '1px solid grey'
+      }
     },
     pagination: {
       style: {
         backgroundColor: '#3f4d67',
         color: '#fff',
-        borderRadius: '0 0 8px 8px',
+        borderRadius: '0 0 8px 8px'
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
         color: 'black',
         border: 'none',
         '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)',
+          backgroundColor: 'rgba(255,255,255,0.2)'
         },
         '& svg': {
-          fill: 'white',
+          fill: 'white'
         },
         '&:focus': {
           outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
-        },
-      },
-    },
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+        }
+      }
+    }
   };
-
-
 
   const handleFileUpload = async (e) => {
     e.preventDefault();
@@ -382,7 +387,6 @@ const ProductsPage = () => {
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
-        
         <div className="col-md-4">
           <input
             type="text"
@@ -437,7 +441,7 @@ const ProductsPage = () => {
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
             <Form>
-              {/* <Form.Group className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>Product Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -446,7 +450,7 @@ const ProductsPage = () => {
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
-              </Form.Group> */}
+              </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label>Shade No</Form.Label>
@@ -454,17 +458,6 @@ const ProductsPage = () => {
                   type="text"
                   name="shadeNo"
                   value={selectedProduct.shadeNo || ''}
-                  onChange={handleChange}
-                  className="bg-white shadow-sm"
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Code</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="code"
-                  value={selectedProduct.code || ''}
                   onChange={handleChange}
                   className="bg-white shadow-sm"
                 />
@@ -504,4 +497,3 @@ const ProductsPage = () => {
 };
 
 export default ProductsPage;
-

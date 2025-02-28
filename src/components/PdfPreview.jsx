@@ -5,97 +5,121 @@ import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/re
 const PdfPreview = ({ show, onHide, invoiceData, id }) => {
   const invoice = invoiceData.find((invoice) => invoice.id === id);
 
+  // Unique shade numbers
+  const uniqueShadeNumbers = [...new Set(invoice.stock_in.map((item) => item.products.shadeNo))];
+
+  const totalQuantity = invoice.stock_in.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Total quantity by each shade, ensuring the array length matches uniqueShadeNumbers
+  const totalQuantityByShadeArray = uniqueShadeNumbers.map((shadeNo) => {
+    return invoice.stock_in.reduce((sum, item) => {
+      return item.products.shadeNo === shadeNo ? sum + item.quantity : sum;
+    }, 0);
+  });
+
   const styles = {
     page: {
       padding: 30,
-      fontSize: 12,
+      fontSize: 12
+    },
+    watermark: {
+      position: 'absolute',
+      left: '3%',
+      top: '20%',
+      fontSize: 100,
+      color: 'gray',
+      opacity: 0.1,
+      transform: 'rotate(-35deg)',
+      textAlign: 'center',
+      width: '100%'
     },
     header: {
       fontSize: 18,
       marginBottom: 20,
       textAlign: 'center',
-      fontWeight: 'bold',
+      fontWeight: 'bold'
     },
     flexContainer: {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 10,
+      marginBottom: 10
     },
     borderBox: {
       border: '1pt solid black',
       padding: 10,
-      marginBottom: 10,
+      marginBottom: 10
     },
     column: {
       flex: 1,
-      marginRight: 10,
+      marginRight: 10
     },
     row: {
       flexDirection: 'row',
-      marginBottom: 5,
+      marginBottom: 5
     },
     label: {
       fontWeight: 'bold',
       marginRight: 5,
-      width: '40%',
+      width: '40%'
     },
     value: {
-      width: '60%',
+      width: '60%'
     },
     sectionTitle: {
       fontSize: 14,
       fontWeight: 'bold',
-      marginBottom: 5,
+      marginBottom: 5
     },
     table: {
       display: 'table',
       width: '100%',
-      marginTop: 10,
+      marginTop: 10
     },
     tableHeader: {
       flexDirection: 'row',
       backgroundColor: '#f0f0f0',
       padding: 5,
-      fontWeight: 'bold',
+      fontWeight: 'bold'
     },
     tableRow: {
       flexDirection: 'row',
       padding: 5,
-      borderBottom: '1pt solid #ddd',
+      borderBottom: '1pt solid #ddd'
     },
     tableCell: {
       flex: 1,
       textAlign: 'center',
-      fontSize: 10,
+      fontSize: 10
     },
     totalSection: {
-      marginTop: 10,
+      marginTop: 20,
       alignSelf: 'flex-end',
       width: '50%',
+      paddingLeft: '30px'
     },
     footerColumns: {
       flexDirection: 'row',
       marginTop: 20,
-      justifyContent: 'space-between',
+      justifyContent: 'space-between'
     },
     footerColumn: {
       flex: 1,
-      marginRight: 10,
+      marginRight: 10
     },
     signatureBox: {
       height: 50,
       border: '1pt solid black',
-      marginBottom: 5,
+      marginBottom: 5
     },
     signatureText: {
       textAlign: 'center',
-      fontSize: 10,
+      fontSize: 10
     },
     termsText: {
       fontSize: 10,
-      marginBottom: 3,
-    },
+      marginBottom: 3
+    }
   };
 
   return (
@@ -107,8 +131,8 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
         <PDFViewer width="100%" height="100%">
           <Document>
             <Page size="A4" style={styles.page}>
+              <Text style={styles.watermark}>VISHAL HiTech</Text>
               <Text style={styles.header}>STOCK IN INVOICE</Text>
-
               <View style={styles.flexContainer}>
                 <View style={[styles.borderBox, styles.column]}>
                   <Text style={styles.sectionTitle}>Supplier Details:</Text>
@@ -186,7 +210,7 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                 </View>
               </View>
 
-              <View style={styles.borderBox}>
+              <View style={[styles.borderBox, { marginTop: 10 }]}>
                 <Text style={styles.sectionTitle}>Products:</Text>
                 <View style={styles.table}>
                   <View style={styles.tableHeader}>
@@ -198,22 +222,47 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                     <Text style={styles.tableCell}>Width</Text>
                     <Text style={styles.tableCell}>Quantity</Text>
                     <Text style={styles.tableCell}>PCS</Text>
-                    <Text style={styles.tableCell}>Rack</Text>
+                    <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px' }]}>
+                      Unique <br /> Shade No.
+                    </Text>
+                    <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px'}]}>
+                      Total <br /> Qty
+                    </Text>
                   </View>
                   {invoice.stock_in.map((item, index) => (
                     <View key={index} style={styles.tableRow}>
-                      <Text style={styles.tableCell}>{index+1}</Text>
+                      <Text style={styles.tableCell}>{index + 1}</Text>
                       <Text style={styles.tableCell}>{item.products.product_category.product_category}</Text>
                       <Text style={styles.tableCell}>{item.products.shadeNo}</Text>
                       <Text style={styles.tableCell}>{item.lot_no}</Text>
-                      <Text style={styles.tableCell}>{`${item.length} ${item.length_unit}`}</Text>
-                      <Text style={styles.tableCell}>{`${item.width} ${item.width_unit}`}</Text>
+                      <Text style={styles.tableCell}>{`${item.length}\n${item.length_unit}`}</Text>
+                      <Text style={styles.tableCell}>{`${item.width}\n${item.width_unit}`}</Text>
                       <Text style={styles.tableCell}>{item.quantity}</Text>
                       <Text style={styles.tableCell}>{item.pcs}</Text>
-                      <Text style={styles.tableCell}>{item.rack}</Text>
+                      <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px'}]}>{uniqueShadeNumbers[index] || ''}</Text>
+                      <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px'}]}>
+                        {totalQuantityByShadeArray[index] !== undefined ? totalQuantityByShadeArray[index] : ''}
+                      </Text>
                     </View>
                   ))}
                 </View>
+
+                <view
+                  style={{
+                    paddingTop: '10px'
+                  }}
+                >
+                  <View style={styles.row}>
+                    <Text
+                      style={{
+                        paddingRight: '20px'
+                      }}
+                    >
+                      Total Quantity:
+                    </Text>
+                    <Text>{totalQuantity}</Text>
+                  </View>
+                </view>
 
                 <View style={styles.totalSection}>
                   <View style={styles.row}>
@@ -235,7 +284,11 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                   <View style={[styles.row, { borderTop: '1pt solid black', marginTop: 5, paddingTop: 5 }]}>
                     <Text style={styles.label}>Grand Total:</Text>
                     <Text style={styles.value}>
-                      ₹{(parseFloat(invoice.total_amount) * (1 + (parseFloat(invoice.cgst_percentage) + parseFloat(invoice.sgst_percentage)) / 100)).toFixed(2)}
+                      ₹
+                      {(
+                        parseFloat(invoice.total_amount) *
+                        (1 + (parseFloat(invoice.cgst_percentage) + parseFloat(invoice.sgst_percentage)) / 100)
+                      ).toFixed(2)}
                     </Text>
                   </View>
                 </View>

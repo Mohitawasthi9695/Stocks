@@ -98,6 +98,11 @@ const ShowGodownStock = () => {
       sortable: true
     },
     {
+      name: 'Stock Code',
+      selector: (row) => row.stock_code,
+      sortable: true
+    },
+    {
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true

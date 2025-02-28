@@ -36,7 +36,6 @@ const Invoice_out = () => {
   const [shadeNo, setShadeNo] = useState([]);
   const [invoice_no, SetInvoiceNo] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
-
   const [formData, setFormData] = useState({
     invoice_no: '',
     date: '',
@@ -264,8 +263,9 @@ const Invoice_out = () => {
       console.error("API Error:", error.response?.data?.message || error);
       toast.error(error.response?.data?.message || "Error processing request");
     }
+
+    console.log(formData);
   };
-  
 
   const convertLengthAndWidth = (length, width, lengthUnit, widthUnit) => {
     const conversionFactors = {
@@ -704,7 +704,7 @@ const Invoice_out = () => {
                                       <input
                                         type="text"
                                         value={row.length || ''}
-                                        className="py-2 border border-gray-300 px-2 w-full"
+                                        className="py-2"
                                         onChange={(e) => handleInputChange(row.godown_id, 'length', e.target.value)}
                                       />
                                     </td>
@@ -729,20 +729,20 @@ const Invoice_out = () => {
                                     </td>
                                     <td key="rack">{row.rack}</td>
 
-                                    <td key={`rate-${row.godown_id}`}>
+                                    <td key="rate">
                                       <input
                                         type="text"
                                         value={row.rate || ''}
-                                        className="py-2 border border-gray-300 px-2 w-full"
+                                        className="py-2"
                                         onChange={(e) => handleInputChange(row.godown_id, 'rate', e.target.value)}
                                       />
                                     </td>
-                                    <td key={`amount-${row.godown_id}`}>
+                                    <td key="amount">
                                       <input
                                         type="text"
                                         value={row.amount || ''}
-                                        className="py-2 border border-gray-300 px-2 w-full bg-gray-100"
-                                        readOnly
+                                        className="py-2"
+                                        onChange={(e) => handleInputChange(row.godown_id, 'amount', e.target.value)}
                                       />
                                     </td>
                                   </tr>
@@ -760,9 +760,8 @@ const Invoice_out = () => {
                         icon={FaMoneyBillWave}
                         label="Total Amount"
                         name="total_amount"
-                        value={formData.total_amount} // Automatically updates
-                        readOnly // Prevent manual edits
-                        disabled
+                        value={formData.total_amount}
+                        onChange={handleChange}
                       />
                     </Col>
                     <Col md={3}>
@@ -789,6 +788,17 @@ const Invoice_out = () => {
                         label="IGST(%)"
                         name="igst_percentage"
                         value={formData.igst_percentage}
+                        onChange={handleChange}
+                      />
+                    </Col>
+
+                    <Col md={3}>
+                      <FormField
+                        icon={FaCalendarAlt}
+                        label="Ack Date"
+                        type="date"
+                        name="ack_date"
+                        value={formData.ack_date}
                         onChange={handleChange}
                       />
                     </Col>

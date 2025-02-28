@@ -319,6 +319,7 @@ const AddProduct = () => {
                         <th>Gate Pass No</th>
                         <th>Gate Pass Date</th>
                         <th>Stock Code</th>
+                        <th>Roller Code</th>
                         <th>Product Category Name</th>
                         <th>Product Name</th>
                         <th>Lot No</th>

@@ -115,12 +115,12 @@ const SuppliersPage = () => {
     },
     {
       name: 'Product Category',
-      selector: (row) => row.product_category,
+      selector: (row) => row.product_category.toUpperCase(),
       sortable: true
     },
     {
       name: 'Accessory Name',
-      selector: (row) => row.accessory_name,
+      selector: (row) => row.accessory_name.toUpperCase(),
       sortable: true
     },
     {
