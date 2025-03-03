@@ -76,6 +76,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/length_calculator',
+        element: lazy(() => import('./calculator/length_Calculator')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', , 'sub_supervisor', 'operator']
+      },
+      {
+        exact: 'true',
         path: '/wooden',
         element: lazy(() => import('./calculator/wooden')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', , 'sub_supervisor', 'operator']

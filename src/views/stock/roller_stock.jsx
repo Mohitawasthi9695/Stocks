@@ -10,12 +10,14 @@ import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import 'jspdf-autotable';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedColumns, setSelectedColumns] = useState([]);
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -77,18 +79,114 @@ const ShowProduct = () => {
     'purchase_shade_no',
   ];
 
+  // const columns = [
+  //   {
+  //     name: 'Sr No',
+  //     selector: (_, index) => index + 1,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Date',
+  //     selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Stock Code',
+  //     selector: (row) => row.stock_code,
+  //     sortable: true
+  //   },
+  //   {
+  //     id: 'lot_no',
+  //     name: 'Lot No',
+  //     selector: (row) => row.lot_no,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Invoice no',
+  //     selector: (row) => row.invoice_no,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Product Category',
+  //     selector: (row) => row.product_category_name,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Shade no',
+  //     selector: (row) => row.shadeNo,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Pur. Shade no',
+  //     selector: (row) => row.purchase_shade_no,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Length',
+  //     selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Width',
+  //     selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Quantity',
+  //     selector: (row) => row.quantity,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Out Quantity',
+  //     selector: (row) => row.out_quantity ?? 0,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Avaible Quantity',
+  //     selector: (row) => row.quantity - row.out_quantity,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Total Length',
+  //     selector: (row) => Number(row.length * row.quantity).toFixed(2),
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Issue Length',
+  //     selector: (row) => Number(row.length * row.out_quantity).toFixed(2),
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'm²',
+  //     selector: (row) => row.area,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'ft²',
+  //     selector: (row) => row.area_sq_ft,
+  //     sortable: true
+  //   },
+  //   {
+  //     name: 'Remark',
+  //     selector: (row) => row.remark,
+  //     sortable: true
+  //   }
+  // ];
   const columns = [
     {
+      id: 'sr_no',
       name: 'Sr No',
       selector: (_, index) => index + 1,
       sortable: true
     },
     {
+      id: 'date',
       name: 'Date',
       selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
       sortable: true
     },
     {
+      id: 'stock_code',
       name: 'Stock Code',
       selector: (row) => row.stock_code,
       sortable: true
@@ -100,76 +198,91 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      id: 'invoice_no',
       name: 'Invoice no',
       selector: (row) => row.invoice_no,
       sortable: true
     },
     {
+      id: 'product_category',
       name: 'Product Category',
       selector: (row) => row.product_category_name,
       sortable: true
     },
     {
+      id: 'shade_no',
       name: 'Shade no',
       selector: (row) => row.shadeNo,
       sortable: true
     },
     {
+      id: 'purchase_shade_no',
       name: 'Pur. Shade no',
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
     {
+      id: 'length',
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
     },
     {
+      id: 'width',
       name: 'Width',
       selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
       sortable: true
     },
     {
+      id: 'quantity',
       name: 'Quantity',
       selector: (row) => row.quantity,
       sortable: true
     },
     {
+      id: 'out_quantity',
       name: 'Out Quantity',
       selector: (row) => row.out_quantity ?? 0,
       sortable: true
     },
     {
+      id: 'available_quantity',
       name: 'Avaible Quantity',
       selector: (row) => row.quantity - row.out_quantity,
       sortable: true
     },
     {
+      id: 'total_length',
       name: 'Total Length',
       selector: (row) => Number(row.length * row.quantity).toFixed(2),
       sortable: true
     },
     {
+      id: 'issue_length',
       name: 'Issue Length',
       selector: (row) => Number(row.length * row.out_quantity).toFixed(2),
       sortable: true
     },
     {
+      id: 'area_m2',
       name: 'm²',
       selector: (row) => row.area,
       sortable: true
     },
     {
+      id: 'area_ft2',
       name: 'ft²',
       selector: (row) => row.area_sq_ft,
       sortable: true
     },
     {
+      id: 'remark',
       name: 'Remark',
       selector: (row) => row.remark,
       sortable: true
     }
   ];
+
 
   const exportToCSV = () => {
     if (filteredProducts.length === 0) {
@@ -401,6 +514,17 @@ const ShowProduct = () => {
     }
   };
   const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
+
+
+  useEffect(() => {
+    setSelectedColumns(columns.map((col) => col.id));
+  }, []);
+
+  const filteredColumns = columns.filter((col) => selectedColumns.includes(col.id));
+  const handleColumnToggle = (columnId) => {
+    setSelectedColumns((prev) => (prev.includes(columnId) ? prev.filter((id) => id !== columnId) : [...prev, columnId]));
+  };
+
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -426,6 +550,20 @@ const ShowProduct = () => {
               Export as PDF
             </button>
           </div>
+          <div className="col-md-0 d-flex justify-content-end">
+            <DropdownButton title="Display Columns" variant="secondary">
+              <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {columns.map((col) => (
+                  <Dropdown.Item key={col.id} as="div" onClick={(e) => e.stopPropagation()}>
+                    <label className="d-flex align-items-center" style={{ cursor: 'pointer' }}>
+                      <input type="checkbox" checked={selectedColumns.includes(col.id)} onChange={() => handleColumnToggle(col.id)} />
+                      <span className="ms-2">{col.name}</span>
+                    </label>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </DropdownButton>
+          </div>
         </div>
       </div>
       <div className="row">
@@ -444,7 +582,7 @@ const ShowProduct = () => {
             ) : (
               <>
                 <DataTable
-                  columns={columns}
+                  columns={filteredColumns}
                   data={filteredProducts}
                   pagination
                   highlightOnHover
