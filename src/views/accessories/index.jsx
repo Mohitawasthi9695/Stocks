@@ -14,6 +14,10 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+// import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import 'jspdf-autotable';
+import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 
 const SuppliersPage = () => {
   const [suppliers, setSupplier] = useState([]);
@@ -21,6 +25,9 @@ const SuppliersPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSupplier, setselectedSupplier] = useState(null);
+  const [editedUser, setEditedUser] = useState(null);
+
+
 
   const handleToggleStatus = async (supplierId, currentStatus) => {
     console.log('Toggling status for supplier:', supplierId, 'Current status:', currentStatus);
@@ -181,37 +188,70 @@ const SuppliersPage = () => {
     setShowEditModal(true);
   };
 
-  const handleUpdateUser = async () => {
-    try {
-      if (!selectedSupplier || !selectedSupplier.id) {
-        toast.error('Invalid supplier selected for update!');
-        return;
-      }
+  // const handleUpdateUser = async () => {
+  //   try {
+  //     if (!selectedSupplier || !selectedSupplier.id) {
+  //       toast.error('Invalid supplier selected for update!');
+  //       return;
+  //     }
 
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
+  //     const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
 
-      if (response.status === 200) {
-        toast.success('Supplier updated successfully!');
+  //     if (response.status === 200) {
+  //       toast.success('Supplier updated successfully!');
 
-        setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
+  //       setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
 
-        setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
+  //       setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
 
-        setShowEditModal(false);
-      } else {
-        throw new Error('Unexpected response status');
-      }
-    } catch (error) {
-      console.error('Error during update:', error);
-      toast.error('Error updating supplier!');
+  //       setShowEditModal(false);
+  //     } else {
+  //       throw new Error('Unexpected response status');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error during update:', error);
+  //     toast.error('Error updating supplier!');
+  //   }
+  // };
+
+const handleUpdateUser  = async () => {
+  try {
+    if (!selectedSupplier || !selectedSupplier.id) {
+      toast.error('Invalid supplier selected for update!');
+      return;
     }
-  };
 
+    // Log the selected supplier to check its state
+    console.log('Updating supplier:', selectedSupplier);
+
+    const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 200) {
+      toast.success('Supplier updated successfully!');
+
+      // Update the suppliers state
+      setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
+      setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
+
+      setShowEditModal(false);
+    } else {
+      throw new Error('Unexpected response status');
+    }
+  } catch (error) {
+    console.error('Error during update:', error);
+    toast.error('Error updating supplier!');
+  }
+};
   const handleAddUser = () => {
     navigate('/add_accessories');
   };
@@ -223,6 +263,7 @@ const SuppliersPage = () => {
       [name]: value
     }));
   };
+ 
 
   const customStyles = {
     table: {
@@ -303,15 +344,27 @@ const SuppliersPage = () => {
   };
 
   const exportToCSV = () => {
-    const csv = Papa.unparse(filteredSuppliers);
+    const csv = Papa.unparse(
+      filteredSuppliers.map((row, index) => ({
+        'Sr No': index + 1,
+        Date: row.date,
+        'Product Category': row.product_category,
+        'Accessory Name': row.accessory_name
+      }))
+    );
+
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'accessory_list.csv');
+    saveAs(blob, 'suppliers_list.csv');
   };
+
   const exportToPDF = () => {
-    const doc = new jsPDF('portrait'); // Landscape orientation provides more horizontal space.
-  
-    doc.text('Accessory List', 14, 10);
-  
+    const doc = new jsPDF('landscape');
+    doc.text('Suppliers List', 14, 10);
+
+    const headers = [['Sr No', 'Date', 'Product Category', 'Accessory Name']];
+
+    const body = filteredSuppliers.map((row, index) => [index + 1, row.date, row.product_category, row.accessory_name]);
+
     doc.autoTable({
       head: [['Product Category', 'Accessory', 'Status']],
       body: filteredSuppliers.map((row) => [row.product_categoryt, row.date, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
@@ -402,9 +455,13 @@ const SuppliersPage = () => {
               </Form.Group>
 
               {/* Accessory Name Field */}
-              <Form.Group className="mb-3">
+              {/* <Form.Group className="mb-3">
                 <Form.Label>Accessory Name</Form.Label>
                 <Form.Control type="text" name="accessory_name" value={selectedSupplier.accessory_name || ''} onChange={handleChange} />
+              </Form.Group> */}
+              <Form.Group className="mb-3">
+                <Form.Label>Accessory Name</Form.Label>
+                <Form.Control type="text" name="accessory_name" value={selectedSupplier?.accessory_name || ''} onChange={handleChange} />
               </Form.Group>
 
               {/* Status Dropdown */}

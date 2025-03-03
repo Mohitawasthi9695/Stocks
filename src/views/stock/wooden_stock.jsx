@@ -40,13 +40,9 @@ const ShowProduct = () => {
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = products.filter((product) => {
-      const formattedDate = product.date ? new Date(product.date).toLocaleDateString('en-GB') : 'N/A';
-      return Object.values(product).some((value) => {
-        if (value === product.date) return formattedDate.includes(lowercasedQuery);
-        return value?.toString()?.toLowerCase().includes(lowercasedQuery);
-      });
-    });
+    const filtered = products.filter((product) =>
+      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
+    );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 

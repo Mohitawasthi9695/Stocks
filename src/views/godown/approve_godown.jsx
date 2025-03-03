@@ -312,29 +312,64 @@ const Index = () => {
   };
 
   // Export PDF
+  // const exportToPDF = () => {
+  //   if (!filteredInvoices || filteredInvoices.length === 0) {
+  //     toast.error('No data available for export.');
+  //     return;
+  //   }
+
+  //   const doc = new jsPDF();
+  //   doc.text('Gate Pass List', 20, 10);
+
+  //   doc.autoTable({
+  //     head: [['Sr No', 'Gate Pass No', 'Godown Supervisor', 'Warehouse Supervisor', 'Date', 'Status']],
+  //     body: filteredInvoices.map((row, index) => [
+  //       index + 1,
+  //       row.gatepass_no,
+  //       row.godownSupervisor,
+  //       row.warehouseSupervisor,
+  //       row.date || 'N/A',
+  //       row.status === 1 ? 'Approved' : 'Pending'
+  //     ])
+  //   });
+
+  //   doc.save('gate_pass_list.pdf');
+  //   toast.success('PDF exported successfully!');
+  // };
+
   const exportToPDF = () => {
-    if (!filteredInvoices || filteredInvoices.length === 0) {
+    if (filteredInvoices.length === 0) {
       toast.error('No data available for export.');
       return;
     }
-
-    const doc = new jsPDF();
-    doc.text('Gate Pass List', 20, 10);
-
-    doc.autoTable({
-      head: [['Sr No', 'Gate Pass No', 'Godown Supervisor', 'Warehouse Supervisor', 'Date', 'Status']],
-      body: filteredInvoices.map((row, index) => [
-        index + 1,
-        row.gatepass_no,
-        row.godownSupervisor,
-        row.warehouseSupervisor,
-        row.date || 'N/A',
-        row.status === 1 ? 'Approved' : 'Pending'
-      ])
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
     });
 
+    doc.text('Gate Pass List', 20, 10);
+    const tableColumn = ['Sr No', 'Gate Pass No', 'Godown Supervisor', 'Warehouse Supervisor', 'Date', 'Status'];
+
+    const tableRows = filteredInvoices.map((row, index) => [
+      index + 1,
+      row.gatepass_no,
+      row.godownSupervisor,
+      row.warehouseSupervisor,
+      row.date || 'N/A',
+      row.status === 1 ? 'Approved' : 'Pending'
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255] },
+      columnStyles: { 16: { cellWidth: 12 }, 17: { cellWidth: 12 } }, // Force columns to fit
+      theme: 'grid',
+    });
     doc.save('gate_pass_list.pdf');
-    toast.success('PDF exported successfully!');
   };
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>

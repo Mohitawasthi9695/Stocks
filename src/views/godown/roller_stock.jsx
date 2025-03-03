@@ -10,7 +10,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
-import { FiSave ,FiPlus} from 'react-icons/fi';
+import { FiSave, FiPlus } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import { FiEdit } from 'react-icons/fi';
 
@@ -76,19 +76,19 @@ const ShowProduct = () => {
   };
   const handleRackUpdate = async (id, currentRack) => {
     Swal.fire({
-      title: "Update Rack",
-      input: "text",
-      inputPlaceholder: "Enter new rack value...",
+      title: 'Update Rack',
+      input: 'text',
+      inputPlaceholder: 'Enter new rack value...',
       inputValue: currentRack, // Set default value to current rack
       showCancelButton: true,
-      confirmButtonText: "Save",
-      cancelButtonText: "Cancel",
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
       preConfirm: (value) => {
         if (!value) {
-          Swal.showValidationMessage("Rack value cannot be empty!");
+          Swal.showValidationMessage('Rack value cannot be empty!');
         }
         return value;
-      },
+      }
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -97,23 +97,21 @@ const ShowProduct = () => {
             { rack: result.value },
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-                "Content-Type": "application/json",
-              },
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              }
             }
           );
-  
+
           if (response.status === 200) {
             setProducts((prevProducts) =>
-              prevProducts.map((product) =>
-                product.id === id ? { ...product, rack: result.value } : product
-              )
+              prevProducts.map((product) => (product.id === id ? { ...product, rack: result.value } : product))
             );
-            toast.success("Rack updated successfully!");
+            toast.success('Rack updated successfully!');
           }
         } catch (error) {
-          console.error("Error updating rack:", error);
-          toast.error("Failed to update rack. Please try again.");
+          console.error('Error updating rack:', error);
+          toast.error('Failed to update rack. Please try again.');
         }
       }
     });
@@ -179,20 +177,12 @@ const ShowProduct = () => {
           {row.rack ? (
             <>
               <span style={{ paddingLeft: '15px', minWidth: '50px', textAlign: 'left' }}>{row.rack}</span>
-              <button
-                className="btn btn-sm btn-warning"
-                onClick={() => handleRackUpdate(row.id, row.rack)}
-                title="Edit Rack"
-              >
+              <button className="btn btn-sm btn-warning" onClick={() => handleRackUpdate(row.id, row.rack)} title="Edit Rack">
                 <FiEdit /> {/* Pencil Icon */}
               </button>
             </>
           ) : (
-            <button
-              className="btn btn-sm btn-success"
-              onClick={() => handleRackUpdate(row.id, row.rack)}
-              title="Add Rack"
-            >
+            <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id, row.rack)} title="Add Rack">
               <FiPlus /> {/* Add Icon */}
             </button>
           )}
@@ -208,13 +198,7 @@ const ShowProduct = () => {
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${
-              row.status === 1
-                ? 'bg-success'
-                : row.status === 2
-                ? 'bg-warning'
-                : 'bg-danger'
-            }`}
+            className={`badge ${row.status === 1 ? 'bg-success' : row.status === 2 ? 'bg-warning' : 'bg-danger'}`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
@@ -226,7 +210,6 @@ const ShowProduct = () => {
         </div>
       )
     }
-    
   ];
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
@@ -236,59 +219,121 @@ const ShowProduct = () => {
       'Lot No': row.lot_no || 'N/A',
       'Stock Code': row.stock_code || 'N/A',
       'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      'Date': row.stock_invoice?.date || 'N/A',
+      Date: row.stock_invoice?.date || 'N/A',
       'Shade No': row.shadeNo || 'N/A',
       'Pur. Shade No': row.purchase_shade_no || 'N/A',
-      'Width': row.width || 'N/A',
-      'Length': row.length || 'N/A',
-      'Unit': row.unit || 'N/A',
+      Width: row.width || 'N/A',
+      Length: row.length || 'N/A',
+      Unit: row.unit || 'N/A',
       'Area (m²)': row.area || 'N/A',
       'Area (sq. ft.)': row.area_sq_ft || 'N/A',
-      'Wastage': row.wastage || 'N/A',
-      'Rack': row.rack || 'N/A',
-      'Status': row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
+      Wastage: row.wastage || 'N/A',
+      Rack: row.rack || 'N/A',
+      Status: row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
     }));
-  
+
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
-  
+
+  // const exportToPDF = () => {
+  //   const doc = new jsPDF();
+  //   doc.text('Stock List', 20, 10);
+
+  //   doc.autoTable({
+  //     head: [
+  //       [
+  //         'Sr No', 'User Name', 'Lot No', 'Stock Code', 'Invoice No', 'Date',
+  //         'Shade No', 'Pur. Shade No', 'Width', 'Length', 'Unit',
+  //         'Area (m²)', 'Area (sq. ft.)', 'Wastage', 'Rack', 'Status'
+  //       ]
+  //     ],
+  //     body: filteredProducts.map((row, index) => [
+  //       index + 1,
+  //       JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
+  //       row.lot_no || 'N/A',
+  //       row.stock_code || 'N/A',
+  //       row.stock_invoice?.invoice_no || 'N/A',
+  //       row.stock_invoice?.date || 'N/A',
+  //       row.shadeNo || 'N/A',
+  //       row.purchase_shade_no || 'N/A',
+  //       row.width || 'N/A',
+  //       row.length || 'N/A',
+  //       row.unit || 'N/A',
+  //       row.area || 'N/A',
+  //       row.area_sq_ft || 'N/A',
+  //       row.wastage || 'N/A',
+  //       row.rack || 'N/A',
+  //       row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
+  //     ])
+  //   });
+
+  //   doc.save('stocks_list.pdf');
+  // };
+
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Stock List', 20, 10);
-    
-    doc.autoTable({
-      head: [
-        [
-          'Sr No', 'User Name', 'Lot No', 'Stock Code', 'Invoice No', 'Date',
-          'Shade No', 'Pur. Shade No', 'Width', 'Length', 'Unit',
-          'Area (m²)', 'Area (sq. ft.)', 'Wastage', 'Rack', 'Status'
-        ]
-      ],
-      body: filteredProducts.map((row, index) => [
-        index + 1,
-        JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
-        row.lot_no || 'N/A',
-        row.stock_code || 'N/A',
-        row.stock_invoice?.invoice_no || 'N/A',
-        row.stock_invoice?.date || 'N/A',
-        row.shadeNo || 'N/A',
-        row.purchase_shade_no || 'N/A',
-        row.width || 'N/A',
-        row.length || 'N/A',
-        row.unit || 'N/A',
-        row.area || 'N/A',
-        row.area_sq_ft || 'N/A',
-        row.wastage || 'N/A',
-        row.rack || 'N/A',
-        row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
-      ])
+    if (filteredProducts.length === 0) {
+      // toast
+      alert('No data available for export.');
+      return;
+    }
+
+    const doc = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
     });
-  
-    doc.save('stocks_list.pdf');
+
+    const tableColumn = [
+      'Sr No',
+      'User Name',
+      'Lot No',
+      'Stock Code',
+      'Invoice No',
+      'Date',
+      'Shade No',
+      'Pur. Shade No',
+      'Width',
+      'Length',
+      'Unit',
+      'Area (m²)',
+      'Area (sq. ft.)',
+      'Wastage',
+      'Rack',
+      'Status'
+    ];
+
+    const tableRows = filteredProducts.map((row, index) => [
+      index + 1,
+      JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
+      row.lot_no || 'N/A',
+      row.stock_code || 'N/A',
+      row.invoice_no || 'N/A',
+      row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      row.shadeNo || 'N/A',
+      row.purchase_shade_no || 'N/A',
+      row.width || 'N/A',
+      row.length || 'N/A',
+      row.unit || 'N/A',
+      row.area || 'N/A',
+      row.area_sq_ft || 'N/A',
+      row.wastage || 'N/A',
+      row.rack || 'N/A',
+      row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255] },
+      columnStyles: { 16: { cellWidth: 15 }, 17: { cellWidth: 15 } }, // Force columns to fit
+      theme: 'grid',
+    });
+    doc.save('stocks_list.pdf')
   };
-  
 
   const customStyles = {
     table: {
@@ -362,7 +407,7 @@ const ShowProduct = () => {
           outline: 'none',
           boxShadow: '0 0 5px rgba(255,255,255,0.5)'
         }
-      },
+      }
     }
   };
 
