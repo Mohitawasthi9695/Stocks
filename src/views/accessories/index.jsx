@@ -109,11 +109,6 @@ const SuppliersPage = () => {
       sortable: true
     },
     {
-      name: 'Date',
-      selector: (row) => row.date,
-      sortable: true
-    },
-    {
       name: 'Product Category',
       selector: (row) => row.product_category.toUpperCase(),
       sortable: true
@@ -121,6 +116,11 @@ const SuppliersPage = () => {
     {
       name: 'Accessory Name',
       selector: (row) => row.accessory_name.toUpperCase(),
+      sortable: true
+    },
+    {
+      name: 'Date',
+      selector: (row) => row.date.toUpperCase(),
       sortable: true
     },
     {
@@ -366,16 +366,28 @@ const handleUpdateUser  = async () => {
     const body = filteredSuppliers.map((row, index) => [index + 1, row.date, row.product_category, row.accessory_name]);
 
     doc.autoTable({
-      head: headers,
-      body: body,
-      startY: 20,
-      theme: 'grid',
-      styles: { fontSize: 10, cellPadding: 3 },
-      headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
-      alternateRowStyles: { fillColor: [238, 238, 238] }
+      head: [['Product Category', 'Accessory', 'Status']],
+      body: filteredSuppliers.map((row) => [row.product_categoryt, row.date, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
+      styles: {
+        fontSize: 10, // Smaller font size to fit more data
+        overflow: 'linebreak', // Wrap text within cells
+        cellPadding: 1 // Reduce padding for tighter fit
+      },
+      columnStyles: {
+        0: { cellWidth: 10}, // Auto-adjust column widths
+        1: { cellWidth: 40 },
+        2: { cellWidth: 90 },
+        3: { cellWidth: 30 },
+      },
+      tableWidth: 'wrap', // Ensure table fits within the page width
+      margin: { top: 20 }, // Top margin for the table
+      didDrawPage: (data) => {
+        doc.text('Accessory List (continued)', 14, 10);
+      },
+      pageBreak: 'auto' // Automatically breaks into new pages if needed
     });
-
-    doc.save('suppliers_list.pdf');
+  
+    doc.save('accessory_list.pdf');
   };
 
   return (

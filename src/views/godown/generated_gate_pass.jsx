@@ -40,6 +40,7 @@ const Index = () => {
         });
 
         const invoicesDetails = response.data.data;
+        console.log(response.data.data);
         setInvoiceAllDetails(invoicesDetails);
 
         const filteredFields = invoicesDetails.map((gatepass) => ({
@@ -51,7 +52,6 @@ const Index = () => {
           date: gatepass.gate_pass_date,
           total_amount: gatepass.total_amount
         }));
-
         setInvoices(filteredFields);
         setFilteredInvoices(filteredFields);
       } catch (error) {
@@ -188,7 +188,7 @@ const Index = () => {
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/all_stocks/gatepass/${id}`, {
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

@@ -123,6 +123,11 @@ const ShowProduct = () => {
       name: 'balance boxes',
       selector: (row) => row.quantity - row.out_quantity,
       sortable: true
+    },
+    {
+      name: 'Remark',
+      selector: (row) => row.remark,
+      sortable: true
     }
   ];
 

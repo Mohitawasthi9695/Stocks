@@ -171,7 +171,7 @@ const SuppliersPage = () => {
   const exportRowToPDF = (row) => {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' }); // Use portrait mode
     doc.text(`Supplier Details - ${row.name}`, 14, 10);
-  
+
     doc.autoTable({
       head: [['Field', 'Value']],
       body: [
@@ -203,10 +203,10 @@ const SuppliersPage = () => {
       tableWidth: 'auto', // Ensures table fits the page
       margin: { top: 15, left: 10, right: 10, bottom: 10 } // Optimize margins
     });
-  
+
     doc.save(`Supplier_${row.name}.pdf`);
   };
-  
+
   const handleDelete = async (supplierId) => {
     try {
       // Display confirmation modal
@@ -258,18 +258,48 @@ const SuppliersPage = () => {
   };
 
   const handleEdit = (supplier) => {
-    setselectedSupplier(supplier);
+    setselectedSupplier({ ...supplier }); // Copy supplier data to state
     setShowEditModal(true);
   };
 
-  const handleUpdateUser = async () => {
-    try {
-      if (!selectedSupplier || !selectedSupplier.id) {
-        toast.error('Invalid supplier selected for update!');
-        return;
-      }
+  // const handleUpdateUser = async () => {
+  //   try {
+  //     if (!selectedSupplier || !selectedSupplier.id) {
+  //       toast.error('Invalid supplier selected for update!');
+  //       return;
+  //     }
 
-      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/${selectedSupplier.id}`, selectedSupplier, {
+  //     const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/supplier/${selectedSupplier.id}`, selectedSupplier, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
+
+  //     if (response.status === 200) {
+  //       toast.success('Supplier updated successfully!');
+
+  //       setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
+
+  //       setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
+
+  //       setShowEditModal(false);
+  //     } else {
+  //       throw new Error('Unexpected response status');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error during update:', error);
+  //     toast.error('Error updating supplier!');
+  //   }
+  // };
+  const handleUpdateUser = async () => {
+    if (!selectedSupplier || !selectedSupplier.id) {
+      toast.error('Invalid supplier selected!');
+      return;
+    }
+
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/peoples/${selectedSupplier.id}`, selectedSupplier, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
@@ -277,18 +307,13 @@ const SuppliersPage = () => {
       });
 
       if (response.status === 200) {
-        toast.success('Supplier updated successfully!');
-
         setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
-
         setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
-
+        toast.success('Supplier updated successfully!');
         setShowEditModal(false);
-      } else {
-        throw new Error('Unexpected response status');
       }
     } catch (error) {
-      console.error('Error during update:', error);
+      console.error('Error updating supplier:', error);
       toast.error('Error updating supplier!');
     }
   };
@@ -296,12 +321,11 @@ const SuppliersPage = () => {
   const handleAddUser = () => {
     navigate('/add-supplier');
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setselectedSupplier((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value // Dynamically update input fields
     }));
   };
 

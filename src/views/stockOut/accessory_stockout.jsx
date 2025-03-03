@@ -223,7 +223,8 @@ const AccessoryOut = () => {
                         </Form.Select>
                       </td>
                       <td><Form.Control type="text" value={item.lot_no} readOnly /></td>
-                      <td><Form.Control type="number" value={item.length} readOnly /></td>
+                      <td><Form.Control type="number" value={item.length}
+                      onChange={(e) => handleRowChange(index, 'length', e.target.value)} /></td>
                       <td><Form.Control type="text" value={item.length_unit} readOnly /></td>
                       <td><Form.Control type="number" value={item.items} readOnly /></td>
                       <td><Form.Control type="number" value={item.box_bundle} readOnly /></td>

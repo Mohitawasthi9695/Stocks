@@ -56,7 +56,6 @@ const Show_product = () => {
               width: width || 'N/A',
               length: length || 'N/A',
               pcs: all_stocks.pcs,
-              quantity: all_stocks.quantity,
               length_unit: all_stocks.length_unit,
               width_unit: all_stocks.width_unit || 'N/A',
               type: all_stocks.type,
@@ -114,7 +113,6 @@ const Show_product = () => {
     { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     { name: 'Pcs', selector: (row) => row.pcs ?? 1, sortable: true },
-    { name: 'Quantity', selector: (row) => row.quantity, sortable: true }
   ];
 
   const handleEdit = (product) => {

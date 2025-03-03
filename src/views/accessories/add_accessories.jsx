@@ -16,7 +16,7 @@ const AddAccessory = () => {
   const [formData, setFormData] = useState({
     product_category_id: '',
     accessory_name: '',
-    date: ''
+    date:''
   });
 
   const [categories, setCategories] = useState([]);
@@ -174,7 +174,7 @@ const AddAccessory = () => {
           confirmButtonText: 'OK'
         }).then(() => {
           setFile(null);
-          navigate('/shades');
+          navigate('/accessories_record');
         });
       }
     } catch (error) {
@@ -308,19 +308,16 @@ const AddAccessory = () => {
                       value={formData.accessory_name}
                       onChange={handleChange}
                     />
+                    <FormField
+                      icon={FaUser}
+                      label="Date"
+                      type="date"
+                      name="date"
+                      value={formData.date}
+                      onChange={handleChange}
+                    />
                   </Col>
                 </Row>
-                <Row className="mt-3">
-                  <Col md={6}>
-                    <Form.Group controlId="date">
-                      <Form.Label>
-                        <FaCalendarAlt className="me-2" /> Date
-                      </Form.Label>
-                      <Form.Control type="date" name="date" value={formData.date} onChange={handleChange} required />
-                    </Form.Group>
-                  </Col>
-                </Row>
-
                 {/* Submit Button */}
                 <Button variant="primary" type="submit" className="mt-4 d-block m-auto" style={{ width: '10rem' }}>
                   Add Accessory

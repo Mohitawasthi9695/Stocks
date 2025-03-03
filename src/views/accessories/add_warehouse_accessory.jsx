@@ -155,7 +155,7 @@ const AddProduct = () => {
           text: 'Stock added successfully!'
         }).then(() => {
           setFile(null);
-          navigate('/shades');
+          navigate('/warehouse_accessories');
         });
       }
     } catch (error) {

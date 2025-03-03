@@ -126,6 +126,11 @@ const ShowProduct = () => {
       name: 'Avaible Quantity',
       selector: (row) => row.quantity - row.out_quantity,
       sortable: true
+    },
+    {
+      name: 'Remark',
+      selector: (row) => row.remark,
+      sortable: true
     }
   ];
 
@@ -216,12 +221,12 @@ const ShowProduct = () => {
       'Lot No': row.lot_no ?? 'N/A',
       'Stock Code': `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
       'Invoice No': row.invoice_no ?? 'N/A',
-      Date: row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      'date': row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
       'Shade No': row.shadeNo ?? 'N/A',
       'Pur. Shade No': row.purchase_shade_no ?? 'N/A',
-      Length: row.length ?? 'N/A',
-      Width: row.width ?? 'N/A',
-      Quantity: row.quantity ?? 'N/A',
+      'Length': row.length ?? 'N/A',
+      'Width': row.width ?? 'N/A',
+      'Quantity': row.quantity ?? 'N/A',
       'Out Quantity': row.out_quantity ?? 0,
       'Available Quantity': row.quantity - row.out_quantity,
       'Total Length': Number(row.length * row.quantity).toFixed(2),
