@@ -16,6 +16,7 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { FaFileCsv } from 'react-icons/fa';
+import { MdCancel } from 'react-icons/md'; // Import Reject Icon
 
 const OperatorInvoice = () => {
   const [invoices, setInvoices] = useState([]);
@@ -136,15 +137,70 @@ const OperatorInvoice = () => {
       selector: (row) => row.total_amount,
       sortable: true
     },
+    // {
+    //   name: 'Action',
+    //   width: '230px',
+    //   cell: (row) => (
+    //     <div className="d-flex">
+    //       {row.status === 0 ? (
+    //         <>
+    //           <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
+    //             <MdCheckCircle />
+    //           </Button>
+    //         </>
+    //       ) : (
+    //         <></>
+    //       )}
+    //       <Button
+    //         variant="outline-primary"
+    //         size="sm"
+    //         onClick={() => {
+    //           setSelectedInvoice(row.id);
+    //           setShowPdfModal(true);
+    //         }}
+    //       >
+    //         <MdPrint />
+    //       </Button>
+    //       <Button variant="outline-primary" size="sm" onClick={() => exportToExcel(row)}>
+    //         <FaFileExcel />
+    //       </Button>
+    //       <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/accessory-add-out-stock/${row.id}`)}>
+    //         <MdAdd />
+    //       </Button>
+    //     </div>
+    //   )
+    // },
+    // {
+    //   name: 'Status',
+    //   selector: (row) => (row.status === 1 ? 'Approved' : 'Pending'),
+    //   sortable: true,
+    //   cell: (row) => (
+    //     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+    //       <span
+    //         className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+    //         style={{
+    //           padding: '5px 10px',
+    //           borderRadius: '8px',
+    //           whiteSpace: 'nowrap'
+    //         }}
+    //       >
+    //         {row.status === 1 ? 'Approved' : 'Pending'}
+    //       </span>
+    //     </div>
+    //   )
+    // }
     {
       name: 'Action',
-      width: '230px',
+      width: '280px',
       cell: (row) => (
         <div className="d-flex">
           {row.status === 0 ? (
             <>
               <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
                 <MdCheckCircle />
+              </Button>
+              <Button variant="outline-danger" size="sm" onClick={() => handleReject(row.id)} className="ms-2">
+                <MdCancel />
               </Button>
             </>
           ) : (
@@ -171,24 +227,42 @@ const OperatorInvoice = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'Approved' : 'Pending'),
+      selector: (row) => (row.status === 1 ? 'Approved' : row.status === -1 ? 'Rejected' : 'Pending'),
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+            className={`badge ${row.status === 1 ? 'bg-success' : row.status === -1 ? 'bg-danger' : 'bg-warning'}`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
               whiteSpace: 'nowrap'
             }}
           >
-            {row.status === 1 ? 'Approved' : 'Pending'}
+            {row.status === 1 ? 'Approved' : row.status === -1 ? 'Rejected' : 'Pending'}
           </span>
         </div>
       )
     }
   ];
+  const handleReject = async (id) => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout/reject/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      toast.error('Stockout Invoice rejected!');
+      setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: -1 } : inv)));
+      setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: -1 } : inv)));
+    } catch (error) {
+      toast.error('Failed to reject stockout invoice');
+    }
+  };
 
   const handleAddInvoice = () => {
     navigate('/invoice-out');

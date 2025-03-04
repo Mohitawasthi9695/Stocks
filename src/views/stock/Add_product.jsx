@@ -5,6 +5,7 @@ import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
 
 const AddProduct = () => {

@@ -232,6 +232,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/zebra_stock',
+        element: lazy(() => import('./views/stock/zebra_stock')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor']
+      },
+      {
+        exact: 'true',
         path: '/wooden_stock',
         element: lazy(() => import('./views/stock/wooden_stock')),
         allowedRoles: ['superadmin', 'admin', 'supervisor']

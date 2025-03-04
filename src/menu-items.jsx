@@ -262,6 +262,13 @@ const menuItems = {
                   icon: 'feather icon-list',
                   type: 'item',
                   url: '/honeycomb_stock'
+                },
+                {
+                  id: 'zebra_stock',
+                  title: 'Zebra Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/zebra_stock'
                 }
               ]
             }
