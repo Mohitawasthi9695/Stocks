@@ -76,6 +76,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/length_calculator',
+        element: lazy(() => import('./calculator/length_Calculator')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', , 'sub_supervisor', 'operator']
+      },
+      {
+        exact: 'true',
         path: '/wooden',
         element: lazy(() => import('./calculator/wooden')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', , 'sub_supervisor', 'operator']
@@ -226,6 +232,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/zebra_stock',
+        element: lazy(() => import('./views/stock/zebra_stock')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor']
+      },
+      {
+        exact: 'true',
         path: '/wooden_stock',
         element: lazy(() => import('./views/stock/wooden_stock')),
         allowedRoles: ['superadmin', 'admin', 'supervisor']
@@ -258,6 +270,12 @@ const routes = [
         exact: 'true',
         path: '/godown/vertical_stock',
         element: lazy(() => import('./views/godown/vertical_stock')),
+        allowedRoles:  ['superadmin','admin', 'supervisor','operator']
+      },
+      {
+        exact: 'true',
+        path: '/zebra_stock_godown',
+        element: lazy(() => import('./views/godown/zebra_stock')),
         allowedRoles:  ['superadmin','admin', 'supervisor','operator']
       },
       

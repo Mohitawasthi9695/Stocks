@@ -134,7 +134,10 @@ const DashDefault = () => {
         {dashSalesData.map((data, index) => {
           return (
             <Col key={index} xl={6} xxl={3}>
-              <Card>
+              <Card style={{
+                borderRadius: '15px',
+                // background: '#8875e1'
+              }}>
                 <Card.Body>
                   <h6 className="mb-4">{data.title}</h6>
                   <div className="row d-flex align-items-center">

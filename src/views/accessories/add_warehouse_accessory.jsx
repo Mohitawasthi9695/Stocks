@@ -16,6 +16,7 @@ const AddProduct = () => {
     {
       product_accessory_id: '',
       lot_no: '',
+      date:'',
       length: '',
       length_unit: '',
       items: '',
@@ -45,6 +46,7 @@ const AddProduct = () => {
       {
         product_accessory_id: '',
         lot_no: '',
+        date:'',
         length: '',
         length_unit: '',
         items: '',
@@ -92,6 +94,7 @@ const AddProduct = () => {
     const payload = items.map((item) => ({
       product_accessory_id: item.product_accessory_id,
       lot_no: item.lot_no,
+      date: item.date,
       length: item.length,
       length_unit: item.length_unit,
       items: item.items,
@@ -275,11 +278,12 @@ const AddProduct = () => {
                   <tr>
                     <th>Product</th>
                     <th>Lot No</th>
+                    <th>date</th>
                     <th>Length</th>
                     <th>Length Unit</th>
-                    <th>Items</th>
+                    <th>Items/pcs</th>
                     <th>Box/Bundle</th>
-                    <th>Quantity</th>
+                    <th>Total Quantity</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -302,6 +306,13 @@ const AddProduct = () => {
                       </td>
                       <td>
                         <Form.Control type="text" value={item.lot_no} onChange={(e) => handleRowChange(index, 'lot_no', e.target.value)} />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="date"
+                          value={item.date}
+                          onChange={(e) => handleRowChange(index, 'date', e.target.value)}
+                        />
                       </td>
                       <td>
                         <Form.Control

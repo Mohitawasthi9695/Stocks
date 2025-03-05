@@ -9,12 +9,15 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
+
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedColumns, setSelectedColumns] = useState([]);
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -52,87 +55,113 @@ const ShowProduct = () => {
 
   const columns = [
     {
+      id: 'sr_no',
       name: 'Sr No',
       selector: (_, index) => index + 1,
       sortable: true
     },
     {
+      id: 'date',
       name: 'Date',
       selector: (row) => 
         row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
       sortable: true
     },
     {
+      id: 'stock_code',
       name: 'Stock Code',
       selector: (row) => row.stock_code,
       sortable: true
     },
     {
+      id: 'vendor_name',
       name: 'Vendor name',
       selector: (row) => row.supplier,
       sortable: true
     },
     {
+      id: 'invoice_no',
       name: 'Invoice no',
       selector: (row) => row.invoice_no,
       sortable: true
     },
     {
+      id: 'product_category_name',
       name: 'Product Category',
       selector: (row) => row.product_category_name,
       sortable: true
     },
     {
+      id: 'lot_no',
       name: 'Lot No',
       selector: (row) => row.lot_no,
       sortable: true
     },
     {
+      id: 'shadeNo',
       name: 'Shade no',
       selector: (row) => row.shadeNo,
       sortable: true
     },
     {
+      id: 'purchase_shade_no',
       name: 'Pur. Shade no',
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
     {
+      id: 'length',
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
       sortable: true
     },
     {
+      id :'width',
       name: 'Width',
       selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
       sortable: true
     },
     {
+      id: 'pcs',
       name: 'Pcs',
       selector: (row) => row.pcs,
       sortable: true
     },
     {
+      id: 'quantity',
       name: 'Quantity',
       selector: (row) => row.quantity,
       sortable: true
     },
     {
+      id: 'out_quantity',
       name: 'Out Quantity',
       selector: (row) => row.out_quantity ?? 0,
       sortable: true
     },
     {
+      id: 'avaible_quantity',
       name: 'Avaible Quantity',
       selector: (row) => row.quantity - row.out_quantity,
       sortable: true
     },
     {
+      id: 'remark',
       name: 'Remark',
       selector: (row) => row.remark,
       sortable: true
     }
   ];
+
+  useEffect(() => {
+    setSelectedColumns(columns.map((col) => col.id));
+  }, []);
+
+  const filteredColumns = columns.filter((col) => selectedColumns.includes(col.id));
+
+  const handleColumnToggle = (columnId) => {
+    setSelectedColumns((prev) => (prev.includes(columnId) ? prev.filter((id) => id !== columnId) : [...prev, columnId]));
+  };
 
 
   const customStyles = {
@@ -315,6 +344,20 @@ const ShowProduct = () => {
               <AiOutlineFilePdf className="w-5 h-5 me-1" /> Export as PDF
             </button>
           </div>
+          <div className="col-md-0 d-flex justify-content-end">
+            <DropdownButton title="Display Item" variant="secondary">
+              <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {columns.map((col) => (
+                  <Dropdown.Item key={col.id} as="div" onClick={(e) => e.stopPropagation()}>
+                    <label className="d-flex align-items-center" style={{ cursor: 'pointer' }}>
+                      <input type="checkbox" checked={selectedColumns.includes(col.id)} onChange={() => handleColumnToggle(col.id)} />
+                      <span className="ms-2">{col.name}</span>
+                    </label>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </DropdownButton>
+          </div>
         </div>
       </div>
       <div className="row">
@@ -324,7 +367,7 @@ const ShowProduct = () => {
               <Skeleton count={10} />
             ) : (
               <>
-                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+                <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
                 {searchQuery && (
                   <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
                     Total Boxes: {totalBoxes}

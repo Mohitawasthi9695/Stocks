@@ -33,6 +33,11 @@ const NavLeft = () => {
                     Wooden Calculator
                   </Link>
                 </li>
+                <li>
+                  <Link to="/length_calculator" className="dropdown-item">
+                    Length Calculator
+                  </Link>
+                </li>
               </Dropdown.Menu>
             </ul>
           </Dropdown>

@@ -262,6 +262,13 @@ const menuItems = {
                   icon: 'feather icon-list',
                   type: 'item',
                   url: '/honeycomb_stock'
+                },
+                {
+                  id: 'zebra_stock',
+                  title: 'Zebra Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/zebra_stock'
                 }
               ]
             }
@@ -291,14 +298,14 @@ const menuItems = {
 
             {
               id: 'invoice_out_index',
-              title: 'View Out Invoice',
+              title: 'View Invoice',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-invoices-out'
             },
             {
               id: 'invoice_out_stock',
-              title: 'Total Out Stock',
+              title: 'Invoice Out Stock',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-out-stock'
@@ -391,6 +398,13 @@ const menuItems = {
                   icon: 'feather icon-list',
                   type: 'item',
                   url: '/godown/honeycomb_stock'
+                },
+                {
+                  id: 'zebra_stock',
+                  title: 'Zebra Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/zebra_stock_godown'
                 }
               ]
             }

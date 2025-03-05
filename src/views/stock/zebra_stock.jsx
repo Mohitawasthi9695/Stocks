@@ -22,7 +22,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/getstock/1`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/getstock/5`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -196,7 +196,7 @@ const ShowProduct = () => {
       return;
     }
 
-    // ✅ Define CSV Headers (Same as PDF for consistency)
+   
     const csvHeaders = [
       'Sr No',
       'Invoice No',
@@ -215,26 +215,26 @@ const ShowProduct = () => {
       'Area (sq. ft.)'
     ];
 
-    // ✅ Convert Data to CSV Format
+
     const csvData = filteredProducts.map((row, index) => ({
       'Sr No': index + 1,
       'Invoice No': row.invoice_no ?? 'N/A',
-      'Date': row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      Date: row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
       'Lot No': row.lot_no ?? 'N/A',
-      'Stock Code':  row.stock_code ?? 'N/A',
+      'Stock Code': `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
       'Shade No': row.shadeNo ?? 'N/A',
       'Pur. Shade No': row.purchase_shade_no ?? 'N/A',
-      'Length': row.length ?? 'N/A',
-      'Width': row.width ?? 'N/A',
-      'Unit': row.unit ?? 'N/A',
-      'Quantity': row.quantity ?? 0,
+      Length: row.length ?? 'N/A',
+      Width: row.width ?? 'N/A',
+      Unit: row.unit ?? 'N/A',
+      Quantity: row.quantity ?? 'N/A',
       'Out Quantity': row.out_quantity ?? 0,
       'Available Quantity': row.quantity - row.out_quantity ?? 0,
       'Area (m²)': row.area ?? 'N/A',
       'Area (sq. ft.)': row.area_sq_ft ?? 'N/A'
     }));
 
-    // ✅ Convert to CSV String and Trigger Download
+    
     const csvString = Papa.unparse({
       fields: csvHeaders,
       data: csvData
