@@ -11,14 +11,12 @@ import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 
-
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedColumns, setSelectedColumns] = useState([]);
-
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -58,234 +56,239 @@ const ShowProduct = () => {
     setSearchQuery(e.target.value);
   };
 
-const columns = [
-  {
-    id: 'sr_no',
-    name: 'Sr No',
-    selector: (_, index) => index + 1,
-    sortable: true
-  },
-  {
-    id: 'date',
-    name: 'Date',
-    selector: (row) => row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A', 
-    sortable: true
-  },
-  {
-    id: 'lot_no',
-    name: 'Lot No',
-    selector: (row) => row.lot_no,
-    sortable: true
-  },
-  {
-    id: 'invoice_no',
-    name: 'Invoice no',
-    selector: (row) => row.invoice_no,
-    sortable: true
-  },
-  {
-    id: 'product_category',
-    name: 'Product Category',
-    selector: (row) => row.product_category_name,
-    sortable: true
-  },
-  {
-    id: 'date_duplicate',
-    name: 'Date',
-    selector: (row) => row.date,
-    sortable: true
-  },
-  {
-    id: 'shade_no',
-    name: 'Shade no',
-    selector: (row) => row.shadeNo,
-    sortable: true
-  },
-  {
-    id: 'purchase_shade_no',
-    name: 'Pur. Shade no',
-    selector: (row) => row.purchase_shade_no,
-    sortable: true
-  },
-  {
-    id: 'length',
-    name: 'Length',
-    selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
-    sortable: true
-  },
-  {
-    id: 'width',
-    name: 'Width',
-    selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
-    sortable: true
-  },
-  {
-    id: 'pcs',
-    name: 'Pcs',
-    selector: (row) => row.pcs,
-    sortable: true
-  },
-  {
-    id: 'box',
-    name: 'Box',
-    selector: (row) => row.quantity,
-    sortable: true
-  },
-  {
-    id: 'out_box',
-    name: 'Out box',
-    selector: (row) => row.out_quantity ?? 0,
-    sortable: true
-  },
-  {
-    id: 'balance_boxes',
-    name: 'Balance boxes',
-    selector: (row) => row.quantity - row.out_quantity,
-    sortable: true
-  },
-  {
-    id: 'remark',
-    name: 'Remark',
-    selector: (row) => row.remark,
-    sortable: true
-  }
-];
-
+  const columns = [
+    {
+      id: 'sr_no',
+      name: 'Sr No',
+      selector: (_, index) => index + 1,
+      sortable: true
+    },
+    {
+      id: 'date',
+      name: 'Date',
+      selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
+      sortable: true
+    },
+    {
+      id: 'lot_no',
+      name: 'Lot No',
+      selector: (row) => row.lot_no,
+      sortable: true
+    },
+    {
+      id: 'invoice_no',
+      name: 'Invoice no',
+      selector: (row) => row.invoice_no,
+      sortable: true
+    },
+    {
+      id: 'product_category',
+      name: 'Product Category',
+      selector: (row) => row.product_category_name,
+      sortable: true
+    },
+    {
+      id: 'date_duplicate',
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
+      id: 'shade_no',
+      name: 'Shade no',
+      selector: (row) => row.shadeNo,
+      sortable: true
+    },
+    {
+      id: 'purchase_shade_no',
+      name: 'Pur. Shade no',
+      selector: (row) => row.purchase_shade_no,
+      sortable: true
+    },
+    {
+      id: 'length',
+      name: 'Length',
+      selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
+      sortable: true
+    },
+    {
+      id: 'width',
+      name: 'Width',
+      selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
+      sortable: true
+    },
+    {
+      id: 'pcs',
+      name: 'Pcs',
+      selector: (row) => row.pcs,
+      sortable: true
+    },
+    {
+      id: 'box',
+      name: 'Box',
+      selector: (row) => row.quantity,
+      sortable: true
+    },
+    {
+      id: 'out_box',
+      name: 'Out box',
+      selector: (row) => row.out_quantity ?? 0,
+      sortable: true
+    },
+    {
+      id: 'balance_boxes',
+      name: 'Balance boxes',
+      selector: (row) => row.quantity - row.out_quantity,
+      sortable: true
+    },
+    {
+      id: 'remark',
+      name: 'Remark',
+      selector: (row) => row.remark,
+      sortable: true
+    }
+  ];
 
   const exportToCSV = () => {
-      if (filteredProducts.length === 0) {
-        alert('No data available for export.');
-        return;
-      }
-  
-      // ✅ Define CSV Headers (Same as PDF for consistency)
-      const csvHeaders = [
-        'Sr No',
-        'Invoice No',
-        'Date',
-        'Lot No',
-        'Stock Code',
-        'Shade No',
-        'Pur. Shade No',
-        'Length',
-        'Width',
-        // 'Unit',
-        'Quantity',
-        'Out Quantity',
-        'Balance boxes',
+    if (filteredProducts.length === 0) {
+      alert('No data available for export.');
+      return;
+    }
 
-      ];
-  
-      // ✅ Convert Data to CSV Format
-      const csvData = filteredProducts.map((row, index) => ({
-        'Sr No': index + 1,
-        'Invoice No': row.invoice_no ?? 'N/A',
-        Date: row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
-        'Lot No': row.lot_no ?? 'N/A',
-        'Stock Code': `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
-        'Shade No': row.shadeNo ?? 'N/A',
-        'Pur. Shade No': row.purchase_shade_no ?? 'N/A',
-        Length: row.length ?? 'N/A',
-        Width: row.width ?? 'N/A',
-        Unit: row.unit ?? 'N/A',
-        Quantity: row.quantity ?? 'N/A',
-        'Out Quantity': row.out_quantity ?? 0,
-        'Balance boxes': row.quantity - row.out_quantity ?? 0,
+    // ✅ Define CSV Headers (Same as PDF for consistency)
+    const csvHeaders = [
+      'Sr No',
+      'Invoice No',
+      'Date',
+      'Lot No',
+      'Stock Code',
+      'Shade No',
+      'Pur. Shade No',
+      'Length',
+      'Width',
+      // 'Unit',
+      'Quantity',
+      'Out Quantity',
+      'Balance boxes'
+    ];
 
-      }));
-  
-      // ✅ Convert to CSV String and Trigger Download
-      const csvString = Papa.unparse({
-        fields: csvHeaders,
-        data: csvData
-      });
-  
-      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', 'stocks_list.csv');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-    const exportToPDF = () => {
-      if (filteredProducts.length === 0) {
-        alert('No data available for export.');
-        return;
-      }
-    
-      const doc = new jsPDF({
-        orientation: 'landscape', // Landscape for better table fitting
-        unit: 'mm',
-        format: 'a4'
-      });
-    
-      doc.text('Stocks List', 14, 10);
-    
-      const tableColumn = [
-        'Sr No', 'Invoice No', 'Date', 'Lot No', 'Stock Code', 'Shade No', 
-        'Pur. Shade No', 'Length', 'Width', 'Quantity', 'Out Qty', 'Avail Qty'
-      ];
-    
-      const tableRows = filteredProducts.map((row, index) => [
-        index + 1,
-        row.invoice_no ?? 'N/A',
-        row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
-        row.lot_no ?? 'N/A',
-        `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
-        row.shadeNo ?? 'N/A',
-        row.purchase_shade_no ?? 'N/A',
-        row.length ?? 'N/A',
-        row.width ?? 'N/A',
-        row.quantity ?? 'N/A',
-        row.out_quantity ?? 0,
-        row.quantity - row.out_quantity ?? 0,
-      ]);
-    
-      doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
-        startY: 20,
-        styles: {
-          fontSize: 8,
-          cellPadding: 1.5,
-          valign: 'middle',
-          halign: 'center',
-          overflow: 'linebreak',
-          lineWidth: 0.2, // ✅ Ensures vertical and horizontal lines
-          lineColor: [0, 0, 0] // ✅ Black border color
-        },
-        headStyles: {
-          fillColor: [22, 160, 133],
-          textColor: [255, 255, 255],
-          fontSize: 9,
-          halign: 'center',
-          lineWidth: 0.4
-        },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
-        tableLineColor: [0, 0, 0], // ✅ Black grid lines
-        tableLineWidth: 0.2, // ✅ Thin grid lines
-        columnStyles: {
-          0: { cellWidth: 'auto' },
-          1: { cellWidth: 'auto' },
-          2: { cellWidth: 'auto' },
-          3: { cellWidth: 'auto' },
-          4: { cellWidth: 'auto' },
-          5: { cellWidth: 'auto' },
-          6: { cellWidth: 'auto' },
-          7: { cellWidth: 'auto' },
-          8: { cellWidth: 'auto' },
-          9: { cellWidth: 'auto' },
-          10: { cellWidth: 'auto' },
-          11: { cellWidth: 'auto' }
-        },
-        margin: { top: 20, left: 10, right: 10 }
-      });
-    
-      doc.save('stocks_list.pdf');
-    };
-    
-    
+    // ✅ Convert Data to CSV Format
+    const csvData = filteredProducts.map((row, index) => ({
+      'Sr No': index + 1,
+      'Invoice No': row.invoice_no ?? 'N/A',
+      Date: row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      'Lot No': row.lot_no ?? 'N/A',
+      'Stock Code': `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
+      'Shade No': row.shadeNo ?? 'N/A',
+      'Pur. Shade No': row.purchase_shade_no ?? 'N/A',
+      Length: row.length ?? 'N/A',
+      Width: row.width ?? 'N/A',
+      Unit: row.unit ?? 'N/A',
+      Quantity: row.quantity ?? 'N/A',
+      'Out Quantity': row.out_quantity ?? 0,
+      'Balance boxes': row.quantity - row.out_quantity ?? 0
+    }));
+
+    // ✅ Convert to CSV String and Trigger Download
+    const csvString = Papa.unparse({
+      fields: csvHeaders,
+      data: csvData
+    });
+
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'stocks_list.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  const exportToPDF = () => {
+    if (filteredProducts.length === 0) {
+      alert('No data available for export.');
+      return;
+    }
+
+    const doc = new jsPDF({
+      orientation: 'landscape', // Landscape for better table fitting
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    doc.text('Stocks List', 14, 10);
+
+    const tableColumn = [
+      'Sr No',
+      'Invoice No',
+      'Date',
+      'Lot No',
+      'Stock Code',
+      'Shade No',
+      'Pur. Shade No',
+      'Length',
+      'Width',
+      'Quantity',
+      'Out Qty',
+      'Avail Qty'
+    ];
+
+    const tableRows = filteredProducts.map((row, index) => [
+      index + 1,
+      row.invoice_no ?? 'N/A',
+      row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      row.lot_no ?? 'N/A',
+      `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
+      row.shadeNo ?? 'N/A',
+      row.purchase_shade_no ?? 'N/A',
+      row.length ?? 'N/A',
+      row.width ?? 'N/A',
+      row.quantity ?? 'N/A',
+      row.out_quantity ?? 0,
+      row.quantity - row.out_quantity ?? 0
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: {
+        fontSize: 8,
+        cellPadding: 1.5,
+        valign: 'middle',
+        halign: 'center',
+        overflow: 'linebreak',
+        lineWidth: 0.2, // ✅ Ensures vertical and horizontal lines
+        lineColor: [0, 0, 0] // ✅ Black border color
+      },
+      headStyles: {
+        fillColor: [22, 160, 133],
+        textColor: [255, 255, 255],
+        fontSize: 9,
+        halign: 'center',
+        lineWidth: 0.4
+      },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+      tableLineColor: [0, 0, 0], // ✅ Black grid lines
+      tableLineWidth: 0.2, // ✅ Thin grid lines
+      columnStyles: {
+        0: { cellWidth: 'auto' },
+        1: { cellWidth: 'auto' },
+        2: { cellWidth: 'auto' },
+        3: { cellWidth: 'auto' },
+        4: { cellWidth: 'auto' },
+        5: { cellWidth: 'auto' },
+        6: { cellWidth: 'auto' },
+        7: { cellWidth: 'auto' },
+        8: { cellWidth: 'auto' },
+        9: { cellWidth: 'auto' },
+        10: { cellWidth: 'auto' },
+        11: { cellWidth: 'auto' }
+      },
+      margin: { top: 20, left: 10, right: 10 }
+    });
+
+    doc.save('stocks_list.pdf');
+  };
 
   const customStyles = {
     table: {
@@ -374,7 +377,6 @@ const columns = [
     setSelectedColumns((prev) => (prev.includes(columnId) ? prev.filter((id) => id !== columnId) : [...prev, columnId]));
   };
 
-
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -391,7 +393,7 @@ const columns = [
             </button>
           </div>
           <div className="col-md-0 d-flex justify-content-end">
-            <DropdownButton title="Display Columns" variant="secondary">
+            <DropdownButton title="Display Item" variant="secondary">
               <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {columns.map((col) => (
                   <Dropdown.Item key={col.id} as="div" onClick={(e) => e.stopPropagation()}>
@@ -411,18 +413,16 @@ const columns = [
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {loading ? (
               <Skeleton count={10} />
-            ) :
-              (
-                <>
-                  <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
-                  {searchQuery && (
-                    <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
-                      Total Boxes: {totalBoxes}
-                    </div>
-                  )}
-                </>
-              )
-            }
+            ) : (
+              <>
+                <DataTable columns={filteredColumns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
+                {searchQuery && (
+                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                    Total Boxes: {totalBoxes}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

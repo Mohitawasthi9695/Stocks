@@ -218,7 +218,7 @@ const ShowProduct = () => {
       'User Email': JSON.parse(localStorage.getItem('user'))?.email || 'N/A',
       'Lot No': row.lot_no || 'N/A',
       'Stock Code': row.stock_code || 'N/A',
-      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
+      'Invoice No': row.gate_pass_no,
       Date: row.stock_invoice?.date || 'N/A',
       'Shade No': row.shadeNo || 'N/A',
       'Pur. Shade No': row.purchase_shade_no || 'N/A',
@@ -237,40 +237,7 @@ const ShowProduct = () => {
     saveAs(blob, 'stocks_list.csv');
   };
 
-  // const exportToPDF = () => {
-  //   const doc = new jsPDF();
-  //   doc.text('Stock List', 20, 10);
-
-  //   doc.autoTable({
-  //     head: [
-  //       [
-  //         'Sr No', 'User Name', 'Lot No', 'Stock Code', 'Invoice No', 'Date',
-  //         'Shade No', 'Pur. Shade No', 'Width', 'Length', 'Unit',
-  //         'Area (m²)', 'Area (sq. ft.)', 'Wastage', 'Rack', 'Status'
-  //       ]
-  //     ],
-  //     body: filteredProducts.map((row, index) => [
-  //       index + 1,
-  //       JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
-  //       row.lot_no || 'N/A',
-  //       row.stock_code || 'N/A',
-  //       row.stock_invoice?.invoice_no || 'N/A',
-  //       row.stock_invoice?.date || 'N/A',
-  //       row.shadeNo || 'N/A',
-  //       row.purchase_shade_no || 'N/A',
-  //       row.width || 'N/A',
-  //       row.length || 'N/A',
-  //       row.unit || 'N/A',
-  //       row.area || 'N/A',
-  //       row.area_sq_ft || 'N/A',
-  //       row.wastage || 'N/A',
-  //       row.rack || 'N/A',
-  //       row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
-  //     ])
-  //   });
-
-  //   doc.save('stocks_list.pdf');
-  // };
+  
 
   const exportToPDF = () => {
     if (filteredProducts.length === 0) {
@@ -290,13 +257,12 @@ const ShowProduct = () => {
       'User Name',
       'Lot No',
       'Stock Code',
-      'Invoice No',
+      'Gate pass No',
       'Date',
       'Shade No',
       'Pur. Shade No',
       'Width',
       'Length',
-      'Unit',
       'Area (m²)',
       'Area (sq. ft.)',
       'Wastage',
@@ -309,13 +275,12 @@ const ShowProduct = () => {
       JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
       row.lot_no || 'N/A',
       row.stock_code || 'N/A',
-      row.invoice_no || 'N/A',
+      row.gate_pass_no,
       row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
       row.shadeNo || 'N/A',
       row.purchase_shade_no || 'N/A',
       row.width || 'N/A',
       row.length || 'N/A',
-      row.unit || 'N/A',
       row.area || 'N/A',
       row.area_sq_ft || 'N/A',
       row.wastage || 'N/A',

@@ -73,12 +73,14 @@ const OperatorInvoice = () => {
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = invoices.filter(
-      (invoice) =>
-        invoice.supplier_name.toLowerCase().includes(lowercasedQuery) || invoice.receiver_name.toLowerCase().includes(lowercasedQuery)
+    const filtered = invoices.filter((invoice) =>
+      Object.values(invoice).some((value) =>
+        value?.toString().toLowerCase().includes(lowercasedQuery)
+      )
     );
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
+  
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -232,7 +234,9 @@ const OperatorInvoice = () => {
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${row.status === 1 ? 'bg-success' : row.status === -1 ? 'bg-danger' : 'bg-warning'}`}
+            className={`badge ${
+              row.status === 1 ? 'bg-success' : row.status === -1 ? 'bg-danger' : 'bg-warning'
+            }`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
@@ -248,8 +252,8 @@ const OperatorInvoice = () => {
   const handleReject = async (id) => {
     try {
       await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout/reject/${id}`,
-        {},
+        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout/reject/${id}`, 
+        {}, 
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -263,6 +267,7 @@ const OperatorInvoice = () => {
       toast.error('Failed to reject stockout invoice');
     }
   };
+  
 
   const handleAddInvoice = () => {
     navigate('/invoice-out');

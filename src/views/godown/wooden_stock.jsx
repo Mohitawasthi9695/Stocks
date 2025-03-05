@@ -271,64 +271,60 @@ const ShowProduct = () => {
   //   doc.save('stocks_list.pdf');
   // };
 
-    const exportToPDF = () => {
-      if (filteredProducts.length === 0) {
-        alert('No data available for export.');
-        return;
-      }
-    
-      const doc = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: 'a4'
-      });
-    
-      doc.text('Stocks List', 14, 10);
-    
-      const tableColumn = [
-        'Sr No',
-          'User Name',
-          'Lot No',
-          'Stock Code',
-          'Invoice No',
-          'Date',
-          'Shade No',
-          'Pur. Shade No',
-          'Length',
-          'Width',
-          'Unit',
-          'Warehouse'
-      ];
-    
-      const tableRows = filteredProducts.map((row, index) => [
-        index + 1,
-              JSON.parse(localStorage.getItem('user')).username || 'N/A',
-              row.lot_no,
-              `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-              row.stock_invoice?.invoice_no || 'N/A',
-              row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
-              row.stock_product?.shadeNo || 'N/A',
-              row.stock_product?.purchase_shade_no || 'N/A',
-              row.length,
-              row.width,
-              row.unit,
-              row.warehouse
-    
-      ]);
-    
-      doc.autoTable({
-        head: [tableColumn],
-        body: tableRows,
-        startY: 20,
-        styles: { fontSize: 6 },
-        headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255] },
-        columnStyles: { 16: { cellWidth: 15 }, 17: { cellWidth: 15 } }, // Force columns to fit
-        theme: 'grid',
-      });
-    
-      doc.save('stocks_list.pdf');
-    };
+  const exportToPDF = () => {
+    if (filteredProducts.length === 0) {
+      alert('No data available for export.');
+      return;
+    }
 
+    const doc = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    doc.text('Stocks List', 14, 10);
+
+    const tableColumn = [
+      'Sr No',
+      'User Name',
+      'Lot No',
+      'Stock Code',
+      'Invoice No',
+      'Date',
+      'Shade No',
+      'Pur. Shade No',
+      'Length',
+      'Width',
+      'Rack'
+    ];
+
+    const tableRows = filteredProducts.map((row, index) => [
+      index + 1,
+      JSON.parse(localStorage.getItem('user')).username || 'N/A',
+      row.lot_no,
+      row.stock_code,
+      row.gate_pass_no,
+      row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      row.purchase_shade_no,
+      row.purchase_shade_no,
+      row.length,
+      row.width,
+      row.rack
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 6 },
+      headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255] },
+      columnStyles: { 16: { cellWidth: 15 }, 17: { cellWidth: 15 } }, // Force columns to fit
+      theme: 'grid'
+    });
+
+    doc.save('stocks_list.pdf');
+  };
 
   const customStyles = {
     table: {

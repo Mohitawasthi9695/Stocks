@@ -419,7 +419,7 @@ const ShowProduct = () => {
             </button>
           </div>
           <div className="col-md-0 d-flex justify-content-end">
-            <DropdownButton title="Display Columns" variant="secondary">
+            <DropdownButton title="Display Item" variant="secondary">
               <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {columns.map((col) => (
                   <Dropdown.Item key={col.id} as="div" onClick={(e) => e.stopPropagation()}>

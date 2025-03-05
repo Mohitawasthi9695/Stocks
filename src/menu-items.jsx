@@ -298,14 +298,14 @@ const menuItems = {
 
             {
               id: 'invoice_out_index',
-              title: 'View Out Invoice',
+              title: 'View Invoice',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-invoices-out'
             },
             {
               id: 'invoice_out_stock',
-              title: 'Total Out Stock',
+              title: 'Invoice Out Stock',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-out-stock'
