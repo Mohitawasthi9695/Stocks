@@ -1616,7 +1616,8 @@ const Invoice_out = () => {
                                   ))}
                                   <th>Rate</th>
                                   <th>Amount</th>
-                                  <th>Action</th>
+                                  <th >Add</th>
+                                  <th>Delete</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -1691,17 +1692,27 @@ const Invoice_out = () => {
                                       />
                                     </td>
                                     <td>
-                                      <FaPlus
+                                    <div>
+                                        <FaPlus
                                         className="text-green-500 cursor-pointer"
                                         onClick={() => handleAddRow(row)}
                                         style={{ fontSize: '20px' }}
                                       />
-                                      <FaTrash
+                                        </div>
+                                        </td>
+                                      <td>
+                                      <div>
+                                        <FaTrash
                                         className="text-red-500 cursor-pointer"
                                         onClick={() => handleDeleteRow(row.godown_id)}
                                         style={{ fontSize: '20px' }}
                                       />
-                                    </td>
+                                        </div>
+                                      </td>
+                                
+                                      
+                                     
+                                   
                                   </tr>
                                 ))}
                               </tbody>
