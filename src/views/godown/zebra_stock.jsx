@@ -123,6 +123,11 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
       name: 'Stock Code',
       selector: (row) => row.stock_code,
       sortable: true
@@ -219,12 +224,11 @@ const ShowProduct = () => {
       'Lot No': row.lot_no || 'N/A',
       'Stock Code': row.stock_code || 'N/A',
       'Invoice No': row.gate_pass_no,
-      Date: row.stock_invoice?.date || 'N/A',
+      Date: row.date || 'N/A',
       'Shade No': row.shadeNo || 'N/A',
       'Pur. Shade No': row.purchase_shade_no || 'N/A',
       Width: row.width || 'N/A',
       Length: row.length || 'N/A',
-      Unit: row.unit || 'N/A',
       'Area (m²)': row.area || 'N/A',
       'Area (sq. ft.)': row.area_sq_ft || 'N/A',
       Wastage: row.wastage || 'N/A',
@@ -254,11 +258,11 @@ const ShowProduct = () => {
 
     const tableColumn = [
       'Sr No',
+      'Date',
       'User Name',
       'Lot No',
       'Stock Code',
       'Gate pass No',
-      'Date',
       'Shade No',
       'Pur. Shade No',
       'Width',
@@ -272,11 +276,12 @@ const ShowProduct = () => {
 
     const tableRows = filteredProducts.map((row, index) => [
       index + 1,
+      row.date || 'N/A',
       JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
       row.lot_no || 'N/A',
       row.stock_code || 'N/A',
       row.gate_pass_no,
-      row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      // row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
       row.shadeNo || 'N/A',
       row.purchase_shade_no || 'N/A',
       row.width || 'N/A',
@@ -303,8 +308,8 @@ const ShowProduct = () => {
   const customStyles = {
     table: {
       style: {
-        borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0 // Removes spacing between cells
+        borderCollapse: 'separate', 
+        borderSpacing: 0
       }
     },
     header: {
@@ -314,7 +319,7 @@ const ShowProduct = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+        borderRadius: '8px 8px 0 0' 
       }
     },
     rows: {

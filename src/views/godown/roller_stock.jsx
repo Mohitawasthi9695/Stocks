@@ -123,6 +123,11 @@ const ShowProduct = () => {
       sortable: true
     },
     {
+      name: 'Date',
+      selector: (row) => row.date,
+      sortable: true
+    },
+    {
       name: 'Stock Code',
       selector: (row) => row.stock_code,
       sortable: true
@@ -219,12 +224,11 @@ const ShowProduct = () => {
       'Lot No': row.lot_no || 'N/A',
       'Stock Code': row.stock_code || 'N/A',
       'Invoice No': row.gate_pass_no,
-      Date: row.stock_invoice?.date || 'N/A',
+      Date: row.date || 'N/A',
       'Shade No': row.shadeNo || 'N/A',
       'Pur. Shade No': row.purchase_shade_no || 'N/A',
       Width: row.width || 'N/A',
       Length: row.length || 'N/A',
-      Unit: row.unit || 'N/A',
       'Area (m²)': row.area || 'N/A',
       'Area (sq. ft.)': row.area_sq_ft || 'N/A',
       Wastage: row.wastage || 'N/A',
@@ -276,7 +280,7 @@ const ShowProduct = () => {
       row.lot_no || 'N/A',
       row.stock_code || 'N/A',
       row.gate_pass_no,
-      row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      row.date || 'N/A',
       row.shadeNo || 'N/A',
       row.purchase_shade_no || 'N/A',
       row.width || 'N/A',

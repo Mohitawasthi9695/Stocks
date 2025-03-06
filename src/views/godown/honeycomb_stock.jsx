@@ -42,7 +42,7 @@ const ShowProduct = () => {
     fetchStocksData();
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
       Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
@@ -50,9 +50,13 @@ const ShowProduct = () => {
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 
+  
+  
+
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
+
   const handleRackUpdate = async (id, currentRack) => {
     Swal.fire({
       title: 'Update Rack',
@@ -105,6 +109,11 @@ const ShowProduct = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
+      sortable: true
+    },
+    {
+      name: 'Date',
+      selector: (row) => row.date,
       sortable: true
     },
     {
@@ -213,10 +222,10 @@ const ShowProduct = () => {
       'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
       'Lot No': row.lot_no,
       'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      Date: row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Invoice No': row.gate_pass_no || 'N/A',
+      Date: row.date || 'N/A',
+      'Shade No': row.shadeNo || 'N/A',
+      'Pur. Shade No': row.purchase_shade_no || 'N/A',
       Length: row.length,
       Width: row.width,
       Unit: row.unit
@@ -225,48 +234,6 @@ const ShowProduct = () => {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
-
-  // const exportToPDF = () => {
-  //   const doc = new jsPDF();
-  //   doc.text('Stocks List', 20, 10);
-  //   doc.autoTable({
-  //     head: [
-  //       [
-  //         'Sr No',
-  //         'User Name',
-  //         'Lot No',
-  //         'Stock Code',
-  //         'Invoice No',
-  //         'Date',
-  //         'Shade No',
-  //         'Pur. Shade No',
-  //         'Length',
-  //         'Width',
-  //         'Unit',
-  //         'Warehouse',
-  //         'Rack'
-  //       ]
-  //     ],
-  //     body: filteredProducts.map((row, index) => [
-  //       index + 1,
-  //       JSON.parse(localStorage.getItem('user')).username || 'N/A',
-  //       row.lot_no,
-  //       `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-  //       row.stock_invoice?.invoice_no || 'N/A',
-  //       row.stock_invoice?.date || 'N/A',
-  //       row.stock_product?.shadeNo || 'N/A',
-  //       row.stock_product?.purchase_shade_no || 'N/A',
-  //       row.length,
-  //       row.width,
-  //       row.unit,
-  //       row.warehouse,
-  //       row.rack || 'N/A',
-  //       row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
-  //     ])
-  //   });
-  //   doc.save('stocks_list.pdf');
-  // };
-
   const exportToPDF = () => {
     if (filteredProducts.length === 0) {
       alert('No data available for export.');
@@ -292,7 +259,6 @@ const ShowProduct = () => {
       'Pur. Shade No',
       'Length',
       'Width',
-      'Unit',
       'Warehouse',
       'Rack'
     ];
@@ -301,14 +267,13 @@ const ShowProduct = () => {
       index + 1,
       JSON.parse(localStorage.getItem('user')).username || 'N/A',
       row.lot_no,
-      `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      row.stock_invoice?.invoice_no || 'N/A',
-      row.stock_invoice?.date || 'N/A',
-      row.stock_product?.shadeNo || 'N/A',
-      row.stock_product?.purchase_shade_no || 'N/A',
+      row.stock_code || 'N/A',
+      row.gate_pass_no || 'N/A',
+      row.date || 'N/A',
+      row.shadeNo || 'N/A',
+      row.purchase_shade_no || 'N/A',
       row.length,
       row.width,
-      row.unit,
       row.warehouse,
       row.rack || 'N/A',
       row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
@@ -402,11 +367,12 @@ const ShowProduct = () => {
       }
     }
   };
+  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
-        <div className="col-md-4">
+      <div className="col-md-4">
           <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
         </div>
         <div className="col-md-8">

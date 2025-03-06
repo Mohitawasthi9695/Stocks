@@ -117,10 +117,16 @@ const ShowProduct = () => {
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
+
   const columns = [
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
+      sortable: true
+    },
+    {
+      name: 'date',
+      selector: (row) => row.date,
       sortable: true
     },
     {
@@ -211,19 +217,19 @@ const ShowProduct = () => {
         </div>
       )
     }
-  ];
+  ]
 
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
       'Sr No': index + 1,
+      'Date': row.date,
       'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
       'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
       'Lot No': row.lot_no,
       'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-      'Invoice No': row.stock_invoice?.invoice_no || 'N/A',
-      Date: row.stock_invoice?.date || 'N/A',
-      'Shade No': row.stock_product?.shadeNo || 'N/A',
-      'Pur. Shade No': row.stock_product?.purchase_shade_no || 'N/A',
+      'Invoice No': row.gate_pass_no,
+      'Shade No':  row.shadeNo,
+      'Pur. Shade No': row.purchase_shade_no,
       Length: row.length,
       Width: row.width,
       Unit: row.unit
@@ -232,44 +238,6 @@ const ShowProduct = () => {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
-
-  // const exportToPDF = () => {
-  //   const doc = new jsPDF();
-  //   doc.text('Stocks List', 20, 10);
-  //   doc.autoTable({
-  //     head: [
-  //       [
-  //         'Sr No',
-  //         'User Name',
-  //         'Lot No',
-  //         'Stock Code',
-  //         'Invoice No',
-  //         'Date',
-  //         'Shade No',
-  //         'Pur. Shade No',
-  //         'Length',
-  //         'Width',
-  //         'Unit',
-  //         'Warehouse'
-  //       ]
-  //     ],
-  //     body: filteredProducts.map((row, index) => [
-  //       index + 1,
-  //       JSON.parse(localStorage.getItem('user')).username || 'N/A',
-  //       row.lot_no,
-  //       `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
-  //       row.stock_invoice?.invoice_no || 'N/A',
-  //       row.stock_invoice?.date || 'N/A',
-  //       row.stock_product?.shadeNo || 'N/A',
-  //       row.stock_product?.purchase_shade_no || 'N/A',
-  //       row.length,
-  //       row.width,
-  //       row.unit,
-  //       row.warehouse
-  //     ])
-  //   });
-  //   doc.save('stocks_list.pdf');
-  // };
 
   const exportToPDF = () => {
     if (filteredProducts.length === 0) {
@@ -287,6 +255,7 @@ const ShowProduct = () => {
 
     const tableColumn = [
       'Sr No',
+      'Date',
       'User Name',
       'Lot No',
       'Stock Code',
@@ -301,6 +270,7 @@ const ShowProduct = () => {
 
     const tableRows = filteredProducts.map((row, index) => [
       index + 1,
+      row.date,
       JSON.parse(localStorage.getItem('user')).username || 'N/A',
       row.lot_no,
       row.stock_code,
@@ -329,8 +299,8 @@ const ShowProduct = () => {
   const customStyles = {
     table: {
       style: {
-        borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0 // Removes spacing between cells
+        borderCollapse: 'separate', 
+        borderSpacing: 0 
       }
     },
     header: {
@@ -340,7 +310,7 @@ const ShowProduct = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '10px',
-        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+        borderRadius: '8px 8px 0 0' 
       }
     },
     rows: {
@@ -362,11 +332,11 @@ const ShowProduct = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '10px',
-        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0' 
       },
       lastCell: {
         style: {
-          borderRight: 'none' // Removes border for the last cell
+          borderRight: 'none' 
         }
       }
     },
