@@ -1226,35 +1226,62 @@ const Invoice_out = () => {
   console.log('data', formData.invoice_no);
   const mainColor = '#3f4d67';
 
+  // const handleInputChange = (id, field, value) => {
+  //   setSelectedRows((prevSelectedRows) => {
+  //     const updatedRows = prevSelectedRows.map((row) => {
+  //       if (row.godown_id === id) {
+  //         let updatedRow = { ...row, [field]: value };
+
+  //         // Ensure `amount` updates when `rate` or dimensions change
+  //         if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
+  //           updatedRow.amount = calculateAmount(updatedRow);
+  //         }
+
+  //         return updatedRow;
+  //       }
+  //       return row;
+  //     });
+
+  //     // Update `out_products` in formData
+  //     setFormData((prevFormData) => ({
+  //       ...prevFormData,
+  //       out_products: updatedRows
+  //     }));
+
+  //     // Update total amount whenever selected rows change
+  //     updateTotalAmount(updatedRows);
+
+  //     return updatedRows;
+  //   });
+  // };
   const handleInputChange = (id, field, value) => {
     setSelectedRows((prevSelectedRows) => {
       const updatedRows = prevSelectedRows.map((row) => {
-        if (row.godown_id === id) {
-          let updatedRow = { ...row, [field]: value };
-
+        if (row.row_id === id) { // Use row_id for matching
+          const updatedRow = { ...row, [field]: value };
+  
           // Ensure `amount` updates when `rate` or dimensions change
           if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
             updatedRow.amount = calculateAmount(updatedRow);
           }
-
-          return updatedRow;
+  
+          return updatedRow; // Return the updated row
         }
-        return row;
+        return row; // Return unchanged rows
       });
-
+  
       // Update `out_products` in formData
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedRows
+        out_products: updatedRows,
       }));
-
+  
       // Update total amount whenever selected rows change
       updateTotalAmount(updatedRows);
-
-      return updatedRows;
+  
+      return updatedRows; // Return the updated rows
     });
   };
-
   const updateTotalAmount = (rows, updatedForm = formData) => {
     let totalAmount = 0;
 
@@ -1304,29 +1331,28 @@ const Invoice_out = () => {
   //   setSelectedRows([...selectedRows, newRow]);
   // };
   const handleAddRow = (originalRow) => {
-    if (!originalRow.godown_id) {
-      console.error("Error: Missing godown_id in originalRow", originalRow);
-      return;
-    }
-  
     setSelectedRows((prevRows) => {
-      // Clone the original row with a new unique identifier
+      // Create a deep copy of the original row
       const newRow = {
-        ...originalRow, // Keep all original row properties
-        id: Date.now(), // Unique ID for tracking
+        ...JSON.parse(JSON.stringify(originalRow)), // Deep clone
+        row_id: new Date().getTime(), // Assign a unique ID
+        amount: calculateAmount(originalRow) // Calculate initial amount
       };
   
+      // Add the new row to the selected rows
       const updatedRows = [...prevRows, newRow];
   
+      // Update out_products in formData
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedRows,
+        out_products: [...prevFormData.out_products, newRow], // Ensure it's a separate list
       }));
   
-      return updatedRows;
+      // Update total amount
+      updateTotalAmount(updatedRows);
+      return updatedRows; // Return the updated rows
     });
   };
-  
   
   
   // const handleDeleteRow = (rowId) => {
@@ -1637,14 +1663,15 @@ const Invoice_out = () => {
                                         type="text"
                                         value={row.width || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
-                                        onChange={(e) => handleInputChange(row.godown_id, 'width', e.target.value)}
+                                        // onChange={(e) => handleInputChange(row.godown_id, 'width', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.row_id, 'width', e.target.value)}
                                       />
                                     </td>
                                     <td>
                                       <select
                                         value={row.width_unit || ''}
                                         className="py-2"
-                                        onChange={(e) => handleInputChange(row.godown_id, 'width_unit', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.row_id, 'width_unit', e.target.value)}
                                       >
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
@@ -1656,14 +1683,14 @@ const Invoice_out = () => {
                                         type="text"
                                         value={row.length || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
-                                        onChange={(e) => handleInputChange(row.godown_id, 'length', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.row_id, 'length', e.target.value)}
                                       />
                                     </td>
                                     <td>
                                       <select
                                         value={row.length_unit || ''}
                                         className="py-2"
-                                        onChange={(e) => handleInputChange(row.godown_id, 'length_unit', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.row_id,'length_unit', e.target.value)}
                                       >
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
@@ -1675,7 +1702,7 @@ const Invoice_out = () => {
                                         type="number"
                                         value={row.out_pcs || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
-                                        onChange={(e) => handleInputChange(row.godown_id, 'out_pcs', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.row_id, 'out_pcs', e.target.value)}
                                       />
                                     </td>
                                     <td>{row.rack}</td>
@@ -1684,7 +1711,7 @@ const Invoice_out = () => {
                                         type="number"
                                         value={row.rate || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
-                                        onChange={(e) => handleInputChange(row.godown_id, 'rate', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.row_id, 'rate', e.target.value)}
                                       />
                                     </td>
                                     {/* Amount Field */}
@@ -1709,7 +1736,7 @@ const Invoice_out = () => {
                                       <div>
                                         <FaTrash
                                           className="text-red-500 cursor-pointer"
-                                          onClick={() => handleDeleteRow(row.godown_id)}
+                                          onClick={() => handleDeleteRow(row.row_id,)}
                                           style={{ fontSize: '20px' }}
                                         />
                                       </div>
