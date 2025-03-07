@@ -1104,55 +1104,6 @@ const Invoice_out = () => {
       return updatedForm;
     });
   };
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   console.log('Submitting Invoice with Data:', formData);
-
-  //   if (formData.out_products.length === 0) {
-  //     toast.error('Please select at least one product.');
-  //     return;
-  //   }
-
-  //   for (let product of formData.out_products) {
-  //     if (!product.rate || isNaN(product.rate)) {
-  //       toast.error('Each product must have a valid rate.');
-  //       return;
-  //     }
-  //     if (!product.amount || isNaN(product.amount)) {
-  //       toast.error('Each product must have a valid amount.');
-  //       return;
-  //     }
-  //   }
-
-  //   const result = await Swal.fire({
-  //     title: 'Are you sure?',
-  //     text: 'Do you want to create a new Invoice?',
-  //     icon: 'question',
-  //     showCancelButton: true,
-  //     confirmButtonColor: '#20B2AA',
-  //     confirmButtonText: 'Yes, create it!'
-  //   });
-
-  //   if (!result.isConfirmed) return;
-
-  //   try {
-  //     console.log('Sending API Request...');
-  //     const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${localStorage.getItem('token')}`
-  //       }
-  //     });
-
-  //     console.log('Response:', response.data);
-  //     toast.success('Invoice created successfully!');
-  //     navigate('/all-invoices-out');
-  //   } catch (error) {
-  //     console.error('API Error:', error.response?.data?.message || error);
-  //     toast.error(error.response?.data?.message || 'Error processing request');
-  //   }
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -1237,24 +1188,38 @@ const Invoice_out = () => {
     { id: 'rack', label: 'Rack' }
   ];
 
+  // const handleCheckboxChange = (id) => {
+  //   setSelectedRows((prevSelected) => {
+  //     const isAlreadySelected = prevSelected.some((row) => row.godown_id === id);
+
+  //     const updatedSelectedRows = isAlreadySelected
+  //       ? prevSelected.filter((row) => row.godown_id !== id) // Remove the item if already selected
+  //       : [...prevSelected, products.find((p) => p.godown_id === id)]; // Add the item if not selected
+
+  //     // Update formData.out_products immediately
+  //     setFormData((prevFormData) => ({
+  //       ...prevFormData,
+  //       out_products: updatedSelectedRows // Ensure this is updated correctly
+  //     }));
+
+  //     // Update total amount whenever selected rows change
+  //     updateTotalAmount(updatedSelectedRows);
+
+  //     return updatedSelectedRows;
+  //   });
+  // };
   const handleCheckboxChange = (id) => {
     setSelectedRows((prevSelected) => {
       const isAlreadySelected = prevSelected.some((row) => row.godown_id === id);
 
-      const updatedSelectedRows = isAlreadySelected
-        ? prevSelected.filter((row) => row.godown_id !== id) // Remove the item if already selected
-        : [...prevSelected, products.find((p) => p.godown_id === id)]; // Add the item if not selected
+      if (!isAlreadySelected) {
+        const selectedProduct = products.find((p) => p.godown_id === id);
+        if (selectedProduct) {
+          return [...prevSelected, { ...selectedProduct, row_id: new Date().getTime() }];
+        }
+      }
 
-      // Update formData.out_products immediately
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        out_products: updatedSelectedRows // Ensure this is updated correctly
-      }));
-
-      // Update total amount whenever selected rows change
-      updateTotalAmount(updatedSelectedRows);
-
-      return updatedSelectedRows;
+      return prevSelected;
     });
   };
 
@@ -1289,6 +1254,7 @@ const Invoice_out = () => {
       return updatedRows;
     });
   };
+
   const updateTotalAmount = (rows, updatedForm = formData) => {
     let totalAmount = 0;
 
@@ -1329,17 +1295,56 @@ const Invoice_out = () => {
     return isNaN(amount) ? '0.00' : amount.toFixed(2);
   };
 
-  const handleAddRow = (row) => {
-    const newRow = {
-      ...row,
-      godown_id: new Date().getTime(), // Unique ID
-      amount: (parseFloat(row.out_pcs || 0) * parseFloat(row.rate || 0)).toFixed(2)
-    };
-    setSelectedRows([...selectedRows, newRow]);
+  // const handleAddRow = (row) => {
+  //   const newRow = {
+  //     ...row,
+  //     godown_id: new Date().getTime(), // Unique ID
+  //     amount: (parseFloat(row.out_pcs || 0) * parseFloat(row.rate || 0)).toFixed(2)
+  //   };
+  //   setSelectedRows([...selectedRows, newRow]);
+  // };
+  const handleAddRow = (originalRow) => {
+    if (!originalRow.godown_id) {
+      console.error("Error: Missing godown_id in originalRow", originalRow);
+      return;
+    }
+  
+    setSelectedRows((prevRows) => {
+      // Clone the original row with a new unique identifier
+      const newRow = {
+        ...originalRow, // Keep all original row properties
+        id: Date.now(), // Unique ID for tracking
+      };
+  
+      const updatedRows = [...prevRows, newRow];
+  
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        out_products: updatedRows,
+      }));
+  
+      return updatedRows;
+    });
   };
-
+  
+  
+  
+  // const handleDeleteRow = (rowId) => {
+  //   setSelectedRows(selectedRows.filter((row) => row.godown_id !== rowId));
+  // };
   const handleDeleteRow = (rowId) => {
-    setSelectedRows(selectedRows.filter((row) => row.godown_id !== rowId));
+    setSelectedRows((prevRows) => {
+      const updatedRows = prevRows.filter((row) => row.godown_id !== rowId); // Use godown_id if needed
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        out_products: updatedRows
+      }));
+
+      updateTotalAmount(updatedRows);
+
+      return updatedRows;
+    });
   };
 
   return (
@@ -1616,7 +1621,7 @@ const Invoice_out = () => {
                                   ))}
                                   <th>Rate</th>
                                   <th>Amount</th>
-                                  <th >Add</th>
+                                  <th>Add</th>
                                   <th>Delete</th>
                                 </tr>
                               </thead>
@@ -1692,27 +1697,23 @@ const Invoice_out = () => {
                                       />
                                     </td>
                                     <td>
-                                    <div>
+                                      <div>
                                         <FaPlus
-                                        className="text-green-500 cursor-pointer"
-                                        onClick={() => handleAddRow(row)}
-                                        style={{ fontSize: '20px' }}
-                                      />
-                                        </div>
-                                        </td>
-                                      <td>
+                                          className="text-green-500 cursor-pointer"
+                                          onClick={() => handleAddRow(row)}
+                                          style={{ fontSize: '20px' }}
+                                        />
+                                      </div>
+                                    </td>
+                                    <td>
                                       <div>
                                         <FaTrash
-                                        className="text-red-500 cursor-pointer"
-                                        onClick={() => handleDeleteRow(row.godown_id)}
-                                        style={{ fontSize: '20px' }}
-                                      />
-                                        </div>
-                                      </td>
-                                
-                                      
-                                     
-                                   
+                                          className="text-red-500 cursor-pointer"
+                                          onClick={() => handleDeleteRow(row.godown_id)}
+                                          style={{ fontSize: '20px' }}
+                                        />
+                                      </div>
+                                    </td>
                                   </tr>
                                 ))}
                               </tbody>
