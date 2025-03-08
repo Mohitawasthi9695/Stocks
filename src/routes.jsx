@@ -317,6 +317,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/all_out_stock_godown',
+        element: lazy(() => import('./views/stockOut/all_out_stock_godown')),
+        allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
+      },
+      {
+        exact: 'true',
         path: '/accessory-add-out-stock/:id',
         element: lazy(() => import('./views/stockOut/accessory_stockout')),
         allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
