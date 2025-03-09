@@ -757,9 +757,9 @@ const Invoice_out = () => {
                                         className="py-2"
                                         onChange={(e) => handleInputChange(row.godown_id, 'width_unit', e.target.value)}
                                       >
-                                        <option value="Meter">Meter</option>
-                                        <option value="Inch">Inch</option>
-                                        <option value="centimeter">cm</option>
+                                        <option value="m">Meter</option>
+                                        <option value="in">Inch</option>
+                                        <option value="cm">cm</option>
                                       </select>
                                     </td>
 
@@ -777,9 +777,9 @@ const Invoice_out = () => {
                                         className="py-2"
                                         onChange={(e) => handleInputChange(row.godown_id, 'length_unit', e.target.value)}
                                       >
-                                        <option value="Meter">Meter</option>
-                                        <option value="Inch">Inch</option>
-                                        <option value="centimeter">cm</option>
+                                        <option value="m">Meter</option>
+                                        <option value="in">Inch</option>
+                                        <option value="cm">cm</option>
                                       </select>
                                     </td>
                                     <td key="out_pcs">
