@@ -176,17 +176,17 @@ const ShowProduct = () => {
     const csvData = filteredProducts.map((row, index) => ({
       'Sr No': index + 1,
       'Invoice No': row.invoice_no ?? 'N/A',
-      Date: row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
+      'Date': row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
       'Lot No': row.lot_no ?? 'N/A',
       'Stock Code': `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
       'Shade No': row.shadeNo ?? 'N/A',
       'Pur. Shade No': row.purchase_shade_no ?? 'N/A',
-      Length: row.length ?? 'N/A',
-      Width: row.width ?? 'N/A',
-      Unit: row.unit ?? 'N/A',
-      Quantity: row.quantity ?? 'N/A',
+      'Length': row.length ?? 'N/A',
+      'Width': row.width ?? 'N/A',
+      'Unit': row.unit ?? 'N/A',
+      'Quantity': row.quantity ?? 'N/A',
       'Out Quantity': row.out_quantity ?? 0,
-      'Balance boxes': row.quantity - row.out_quantity ?? 0
+      'Balance boxes': ((row.quantity ?? 0) - (row.out_quantity ?? 0)),
     }));
 
     // ✅ Convert to CSV String and Trigger Download
@@ -232,21 +232,26 @@ const ShowProduct = () => {
       'Avail Qty'
     ];
 
-    const tableRows = filteredProducts.map((row, index) => [
-      index + 1,
-      row.invoice_no ?? 'N/A',
-      row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
-      row.lot_no ?? 'N/A',
-      `${row.stock_product?.shadeNo ?? 'N/A'}-${row.stock_code ?? 'N/A'}`,
-      row.shadeNo ?? 'N/A',
-      row.purchase_shade_no ?? 'N/A',
-      row.length ?? 'N/A',
-      row.width ?? 'N/A',
-      row.quantity ?? 'N/A',
-      row.out_quantity ?? 0,
-      row.quantity - row.out_quantity ?? 0
-    ]);
+    const tableRows = filteredProducts.map((row, index) => {
+      const parsedDate = row.date && !isNaN(Date.parse(row.date))
+        ? new Date(row.date).toLocaleDateString('en-GB')
+        : 'N/A';
 
+      return [
+        index + 1,
+        row.invoice_no ?? 'N/A',
+        parsedDate,
+        row.lot_no ?? 'N/A',
+        row.stock_code ?? 'N/A',
+        row.shadeNo ?? 'N/A',
+        row.purchase_shade_no ?? 'N/A',
+        row.length ?? 'N/A',
+        row.width ?? 'N/A',
+        row.quantity ?? 0,   // Ensure numeric fields don't return 'N/A'
+        row.out_quantity ?? 0,
+        (row.quantity ?? 0) - (row.out_quantity ?? 0) // Prevent NaN
+      ];
+    });
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,

@@ -24,7 +24,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ const ShowProduct = () => {
       if (result.isConfirmed) {
         try {
           const response = await axios.put(
-            `${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock/${id}`,
+            `${import.meta.env.VITE_API_BASE_URL}/api/godownstock/${id}`,
             { rack: result.value },
             {
               headers: {
