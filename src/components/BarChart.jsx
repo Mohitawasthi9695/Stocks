@@ -5,6 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 const BarChartData = () => {
   const [barData, setBarData] = useState([]); // State to hold bar chart data
   const [loading, setLoading] = useState(true); // State for loading status
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 375);
 
   useEffect(() => {
     const fetchGraphData = async () => {
@@ -24,17 +25,32 @@ const BarChartData = () => {
     };
 
     fetchGraphData();
-  }, []);
+  
+
+
+  const handleResize = () => {
+    setIsMobile(window.innerWidth <= 375);
+  };
+
+  window.addEventListener('resize', handleResize);
+
+  return () => {
+    window.removeEventListener('resize', handleResize);
+  };
+}, []);
 
   // Render a loading message while data is being fetched
   if (loading) {
     return <div>Loading...</div>;
   }
+  
 
   return (
     <div>
-      <h3 className="text-center">STOCK SALES</h3>
-      <BarChart width={500} height={400} data={barData}>
+      <h3 className="text-center" style={{
+        paddingTop: '20px',
+      }}>STOCK SALES</h3>
+      <BarChart width={isMobile ? 300 : 450} height={400} data={barData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="product_name" /> {/* Use key from API response */}
         <YAxis />
