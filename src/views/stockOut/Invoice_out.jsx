@@ -1360,18 +1360,21 @@ const Invoice_out = () => {
   // };
   const handleDeleteRow = (rowId) => {
     setSelectedRows((prevRows) => {
-      const updatedRows = prevRows.filter((row) => row.godown_id !== rowId); // Use godown_id if needed
-
+      const updatedRows = prevRows.filter((row) => row.row_id !== rowId); // Use row_id for matching
+  
+      // Update `out_products` in formData
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedRows
+        out_products: updatedRows,
       }));
-
+  
+      // Update total amount
       updateTotalAmount(updatedRows);
-
+      
       return updatedRows;
     });
   };
+  
 
   return (
     <Container
