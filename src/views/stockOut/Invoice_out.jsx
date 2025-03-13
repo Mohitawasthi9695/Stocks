@@ -1152,12 +1152,15 @@ const Invoice_out = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
     console.log('Submitting Invoice with Data:', formData);
+
 
     if (formData.out_products.length === 0) {
       toast.error('Please select at least one product.');
       return;
     }
+
 
     for (let product of formData.out_products) {
       if (!product.rate || isNaN(product.rate)) {
@@ -1170,6 +1173,7 @@ const Invoice_out = () => {
       }
     }
 
+
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to create a new Invoice?',
@@ -1179,7 +1183,9 @@ const Invoice_out = () => {
       confirmButtonText: 'Yes, create it!'
     });
 
+
     if (!result.isConfirmed) return;
+
 
     try {
       console.log('Sending API Request...');
@@ -1189,6 +1195,7 @@ const Invoice_out = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
+
 
       console.log('Response:', response.data);
       toast.success('Invoice created successfully!');
@@ -1245,12 +1252,49 @@ const Invoice_out = () => {
       }
 
       return prevSelected;
+
+      if (!isAlreadySelected) {
+        const selectedProduct = products.find((p) => p.godown_id === id);
+        if (selectedProduct) {
+          return [...prevSelected, { ...selectedProduct, row_id: new Date().getTime() }];
+        }
+      }
+
+      return prevSelected;
     });
   };
 
   console.log('data', formData.invoice_no);
   const mainColor = '#3f4d67';
 
+  // const handleInputChange = (id, field, value) => {
+  //   setSelectedRows((prevSelectedRows) => {
+  //     const updatedRows = prevSelectedRows.map((row) => {
+  //       if (row.godown_id === id) {
+  //         let updatedRow = { ...row, [field]: value };
+
+  //         // Ensure `amount` updates when `rate` or dimensions change
+  //         if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
+  //           updatedRow.amount = calculateAmount(updatedRow);
+  //         }
+
+  //         return updatedRow;
+  //       }
+  //       return row;
+  //     });
+
+  //     // Update `out_products` in formData
+  //     setFormData((prevFormData) => ({
+  //       ...prevFormData,
+  //       out_products: updatedRows
+  //     }));
+
+  //     // Update total amount whenever selected rows change
+  //     updateTotalAmount(updatedRows);
+
+  //     return updatedRows;
+  //   });
+  // };
   const handleInputChange = (id, field, value) => {
     setSelectedRows((prevSelectedRows) => {
       const updatedRows = prevSelectedRows.map((row) => {
@@ -1266,12 +1310,13 @@ const Invoice_out = () => {
           return updatedRow; // Return the updated row
         }
         return row; // Return unchanged rows
+        return row; // Return unchanged rows
       });
 
       // Update `out_products` in formData
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedRows
+        out_products: updatedRows,
       }));
 
       // Update total amount whenever selected rows change
@@ -1599,6 +1644,7 @@ const Invoice_out = () => {
                                   <tr>
                                     <th scope="col" style={{ width: '50px' }}>
                                       <input type="checkbox" />
+                                      <input type="checkbox" />
                                     </th>
                                     {columns.map((column) => (
                                       <th key={column.id} scope="col">
@@ -1637,6 +1683,7 @@ const Invoice_out = () => {
                                       {column.label}
                                     </th>
                                   ))}
+                                  <th>Type</th>
                                   <th>Rate</th>
                                   <th>Amount</th>
                                   <th>Add</th>
@@ -1670,7 +1717,9 @@ const Invoice_out = () => {
                                     <td key="product_category">{row.product_category}</td>
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td> <td key="lot_no">{row.lot_no}</td>
+                                    <td key="pur_shadeNo">{row.product_shadeNo}</td> <td key="lot_no">{row.lot_no}</td>
                                     <td key="stock_code">{row.stock_code}</td>
+                                    <td>
                                     <td>
                                       <input
                                         type="text"
@@ -1680,6 +1729,7 @@ const Invoice_out = () => {
                                         disabled={row.type === 0} // Properly disable when type is 0
                                       />
                                     </td>
+                                    <td>
                                     <td>
                                       <select
                                         value={row.width_unit || ''}
@@ -1691,8 +1741,10 @@ const Invoice_out = () => {
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
                                         <option value="cm">cm</option>
+                                        <option value="cm">cm</option>
                                       </select>
                                     </td>
+                                    <td>
                                     <td>
                                       <input
                                         type="text"
@@ -1702,6 +1754,7 @@ const Invoice_out = () => {
                                         disabled={row.type === 0} // Properly disable when type is 0
                                       />
                                     </td>
+                                    <td>
                                     <td>
                                       <select
                                         value={row.length_unit || ''}
@@ -1713,10 +1766,13 @@ const Invoice_out = () => {
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
                                         <option value="cm">cm</option>
+                                        <option value="cm">cm</option>
                                       </select>
                                     </td>
                                     <td>
+                                    <td>
                                       <input
+                                        type="number"
                                         type="number"
                                         value={row.out_pcs || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
@@ -1726,17 +1782,23 @@ const Invoice_out = () => {
                                     </td>
                                     <td>{row.rack}</td>
                                     <td>
+                                    <td>{row.rack}</td>
+                                    <td>
                                       <input
                                         type="number"
                                         value={row.rate || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
                                         onChange={(e) => handleInputChange(row.row_id, 'rate', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.row_id, 'rate', e.target.value)}
                                       />
                                     </td>
                                     {/* Amount Field */}
                                     <td>
+                                    {/* Amount Field */}
+                                    <td>
                                       <input
                                         type="text"
+                                        value={row.amount || '0.00'}
                                         value={row.amount || '0.00'}
                                         className="py-2 border border-gray-300 px-2 w-full bg-gray-100"
                                         readOnly
