@@ -20,6 +20,7 @@ import PdfPreview from 'components/PdfPreview';
 import Papa from 'papaparse';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
+import StockOutInvoiceThermalPDF from 'components/StockOutInvoiceThermalPDF';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -29,6 +30,9 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
+  const [showThermalPdfModal, setShowThermalPdfModal] = useState(false);
+
+
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
@@ -205,7 +209,17 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
-          
+
+          <Button
+            variant="outline-dark"
+            size="sm"
+            onClick={() => {
+              setSelectedInvoice(row.id);
+              setShowThermalPdfModal(true);
+            }}
+          >
+            <MdPrint />
+          </Button>
 
           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
             <FaFileExcel />
@@ -475,6 +489,14 @@ const Index = () => {
       {invoiceAllDetails && selectedInvoice && (
         <StockOutInvoicePDF
           show={showPdfModal}
+          onHide={() => setShowPdfModal(false)}
+          invoiceData={invoiceAllDetails}
+          id={selectedInvoice}
+        />
+      )}
+      {invoiceAllDetails && selectedInvoice && (
+        <StockOutInvoiceThermalPDF
+          show={showThermalPdfModal}
           onHide={() => setShowPdfModal(false)}
           invoiceData={invoiceAllDetails}
           id={selectedInvoice}
