@@ -205,6 +205,7 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
+          
 
           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
             <FaFileExcel />

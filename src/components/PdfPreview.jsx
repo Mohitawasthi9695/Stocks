@@ -328,6 +328,7 @@ import { Modal } from 'react-bootstrap';
 import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 
 
+
 const PdfPreview = ({ show, onHide, invoiceData, id }) => {
   const invoice = invoiceData.find((invoice) => invoice.id === id);
   const [printMode, setPrintMode] = React.useState('normal');
