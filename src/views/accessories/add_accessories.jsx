@@ -11,12 +11,12 @@ import * as FileSaver from 'file-saver';
 import { date } from 'yup';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const AddAccessory = () => {
   const [formData, setFormData] = useState({
     product_category_id: '',
     accessory_name: '',
-    date:''
+    date: '',
+    remark: ''
   });
 
   const [categories, setCategories] = useState([]);
@@ -59,7 +59,7 @@ const AddAccessory = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to create this category?',
@@ -69,21 +69,21 @@ const AddAccessory = () => {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, create it!'
     });
-  
+
     if (!result.isConfirmed) {
       return;
     }
-  
+
     try {
       console.log('Submitting data:', formData);
-  
+
       await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/accessory`, formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-  
+
       // Show Toast Notification
       toast.success('Accessory added successfully!', {
         position: 'top-right',
@@ -94,7 +94,7 @@ const AddAccessory = () => {
         draggable: true,
         progress: undefined
       });
-  
+
       Swal.fire({
         icon: 'success',
         title: 'Success!',
@@ -106,7 +106,7 @@ const AddAccessory = () => {
       });
     } catch (error) {
       console.error('Error adding accessory:', error);
-      
+
       toast.error(error.response?.data?.message || 'Error adding accessory', {
         position: 'top-right',
         autoClose: 3000,
@@ -116,7 +116,7 @@ const AddAccessory = () => {
         draggable: true,
         progress: undefined
       });
-  
+
       Swal.fire({
         icon: 'error',
         title: 'Error!',
@@ -126,7 +126,6 @@ const AddAccessory = () => {
       });
     }
   };
-  
 
   const [file, setFile] = useState(null);
   const handleFileChange = (e) => {
@@ -286,7 +285,17 @@ const AddAccessory = () => {
                       <Form.Label>
                         <FaIdCard className="me-2" /> Product Category
                       </Form.Label>
-                      <Form.Select name="product_category_id" value={formData.product_category_id} onChange={handleChange}>
+                      <Form.Select
+                        name="product_category_id"
+                        value={formData.product_category_id}
+                        onChange={handleChange}
+                        style={{
+                          borderRadius: '5px',
+                          border: '1px solid rgb(94, 94, 94)',
+                          fontSize: '1rem',
+                          padding: '8px'
+                        }}
+                      >
                         <option value="">Select a Category</option>
                         {categories.length > 0 ? (
                           categories.map((category) => (
@@ -299,6 +308,13 @@ const AddAccessory = () => {
                         )}
                       </Form.Select>
                     </Form.Group>
+                    <div
+                      style={{
+                        marginTop: '23px'
+                      }}
+                    >
+                      <FormField icon={FaUser} label="Remark" name="remark" value={formData.remark} onChange={handleChange} />
+                    </div>
                   </Col>
                   <Col>
                     <FormField
@@ -308,14 +324,7 @@ const AddAccessory = () => {
                       value={formData.accessory_name}
                       onChange={handleChange}
                     />
-                    <FormField
-                      icon={FaUser}
-                      label="Date"
-                      type="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleChange}
-                    />
+                    <FormField icon={FaUser} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
                   </Col>
                 </Row>
                 {/* Submit Button */}

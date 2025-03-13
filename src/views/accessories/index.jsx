@@ -409,7 +409,7 @@ const handleUpdateUser  = async () => {
         </div>
         <div className="col-md-8 text-end">
           <Button variant="primary" onClick={handleAddUser}>
-            <MdPersonAdd className="me-2" /> Add Product Accessoryy
+            <MdPersonAdd className="me-2" /> Add Product Accessory
           </Button>
         </div>
       </div>
