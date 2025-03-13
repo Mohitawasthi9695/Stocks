@@ -1,76 +1,96 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7f6;
+  margin: 0;
+  padding: 0;
+}
 
-.cal-body1{
-    display: flex;
-    justify-content: center;
-    margin-bottom: 50px;
-  }
-  
-  .cal-body{
-    background-color: aquamarine;
-    padding: 10px 50px 50px 50px;
-    width: 400px;
-    /* margin-top: 50px; */
-    border-radius: 20px;
-  }
-  
-  .cal-field {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .cal-button {
-    text-align: center;
-    align-items: center;
-  }
-  
-  .input-field {
-    width: 100%;
-    max-width: 300px;
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-    transition: all 0.3s ease;
-    background-color: #f8f9fa;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  /* Hover effect */
-  .input-field:hover {
-    border-color: #007BFF;
-  }
-  
-  /* Focus effect */
-  .input-field:focus {
-    border-color: #0056b3;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
-  }
-  
-  .cal-tex {
-    font-size: 15px;  /* Slightly larger for better readability */
-    font-weight: 500;  /* Stronger emphasis */
-    color: #222;  /* Darker for a premium feel */
-    display: block;  /* Ensures proper spacing *
-    text-transform: capitalize;  /* Keeps proper formatting */
-    letter-spacing: 0.5px;  /* Adds slight spacing for clarity */
-  }
-  
-  .unit-dropdown{
-    padding-left: 10px;
-    margin-left: 20px;
-    height: 40px;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-    transition: all 0.3s ease;
-    background-color: #f8f9fa;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  
-  
-  
+.cal-body1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.cal-body {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+h1 {
+  color: #333;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.cal-field {
+  margin-bottom: 20px;
+}
+
+.cal-tex {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.unit-dropdown {
+  margin-left: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.cal-button button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.cal-button button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+hr {
+  border: 1px solid #ddd;
+}
+
+.result-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.result-container h3, .result-container p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
