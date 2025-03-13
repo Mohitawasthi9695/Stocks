@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import PdfPreview from 'components/PdfPreview';
+import ThermalPdfPreview from 'components/thermalPdfPriview';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 import Papa from 'papaparse';
@@ -25,6 +26,8 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
+  const [showThermalPdfModal, setShowThermalPdfModal] = useState(false);
+  const [pdfType, setPdfType] = useState('standard');
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -80,6 +83,11 @@ const Index = () => {
 
   const navigate = useNavigate();
 
+  const handlePrint = (type, invoiceId) => {
+    setSelectedInvoice(invoiceId);
+    setPdfType(type); // Set type dynamically
+    setShowPdfModal(true);
+  };
   const columns = [
     {
       name: 'Date',
@@ -110,7 +118,9 @@ const Index = () => {
     },
     {
       name: 'Action',
+      minWidth: '300px',
       cell: (row) => (
+
         <div className="d-flex">
           <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/add-product/${row.id}`)}>
             <MdAdd />
@@ -129,13 +139,24 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
-
+          <Button
+            variant="outline-dark"
+            size="sm"
+            // onClick={() => handlePrint('thermal', row.id)} // Open thermal PDF preview
+            onClick={() => {
+              setSelectedInvoice(row.id);
+              setShowThermalPdfModal(true);
+              console.log(row.id);
+            }}
+          
+          >
+            <MdPrint />
+          </Button>
           <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
             <MdDelete />
           </Button>
         </div>
       ),
-      width: '220px'
     }
   ];
 
@@ -266,31 +287,29 @@ const Index = () => {
       'Invoice Number': row.invoice_no || 'N/A',
       'Supplier Name': row.supplier_name || 'N/A',
       'Receiver Name': row.agent || 'N/A',
-      'Total Amount': row.total_amount || 'N/A',
-      
+      'Total Amount': row.total_amount || 'N/A'
     }));
-  
+
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'invoice_list.csv');
   };
-  
+
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
     doc.text('Invoice List', 14, 10);
-  
+
     const headers = [['Sr No', 'Date', 'Invoice Number', 'Supplier Name', 'Receiver Name', 'Total Amount']];
-  
+
     const body = filteredInvoices.map((row, index) => [
       index + 1,
       new Date(row.date).toLocaleDateString('en-GB'),
       row.invoice_no || 'N/A',
       row.supplier_name || 'N/A',
       row.agent || 'N/A',
-      row.total_amount || 'N/A',
-     
+      row.total_amount || 'N/A'
     ]);
-  
+
     doc.autoTable({
       head: headers,
       body: body,
@@ -300,12 +319,11 @@ const Index = () => {
       headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
       alternateRowStyles: { fillColor: [238, 238, 238] },
       tableLineColor: [0, 0, 0], // Black border lines
-      tableLineWidth: 0.2, // Thin border lines
+      tableLineWidth: 0.2 // Thin border lines
     });
-  
+
     doc.save('invoice_list.pdf');
   };
-  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -326,7 +344,7 @@ const Index = () => {
             <MdPersonAdd className="me-2" /> Add Invoice
           </Button>
         </div>
-       
+
         <div className="d-flex justify-content-end">
           <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
             <FaFileCsv className="w-5 h-5 me-1" />
@@ -374,6 +392,9 @@ const Index = () => {
       </div>
       {invoiceAllDetails && selectedInvoice && (
         <PdfPreview show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
+      )}
+      {invoiceAllDetails && selectedInvoice && (
+        <ThermalPdfPreview show={showThermalPdfModal} onHide={() => setShowThermalPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
       )}
     </div>
   );

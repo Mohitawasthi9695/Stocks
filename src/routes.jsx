@@ -416,6 +416,18 @@ const routes = [
         element: lazy(() => import('./views/godown/show_vertical_product')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
       },
+      {
+        exact: 'true',
+        path: '/thermal-PdfPriview',
+        element: lazy(() => import('./components/thermalPdfPriview')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/thermal_stockGatepass',
+        element: lazy(() => import('./components/thermal_stockGatepass')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
       
       {
         exact: 'true',
