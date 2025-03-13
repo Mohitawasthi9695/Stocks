@@ -124,6 +124,11 @@ const SuppliersPage = () => {
       sortable: true
     },
     {
+      name: 'Remarks',
+      selector: (row) => row.remark,
+      sortable: true
+    },
+    {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex">
