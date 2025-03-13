@@ -85,7 +85,7 @@ const Index = () => {
 
   const handlePrint = (type, invoiceId) => {
     setSelectedInvoice(invoiceId);
-    setPdfType(type); // Set type dynamically
+    setPdfType(type); 
     setShowPdfModal(true);
   };
   const columns = [
