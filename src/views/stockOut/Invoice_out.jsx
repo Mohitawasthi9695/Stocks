@@ -9,6 +9,7 @@
 // import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 // import Swal from 'sweetalert2';
 // import 'react-loading-skeleton/dist/skeleton.css';
+
 // import {
 //   FaFileInvoice,
 //   FaCalendarAlt,
@@ -211,55 +212,6 @@
 //       return updatedForm;
 //     });
 //   };
-//   // const handleSubmit = async (e) => {
-//   //   e.preventDefault();
-
-//   //   console.log('Submitting Invoice with Data:', formData);
-
-//   //   if (formData.out_products.length === 0) {
-//   //     toast.error('Please select at least one product.');
-//   //     return;
-//   //   }
-
-//   //   for (let product of formData.out_products) {
-//   //     if (!product.rate || isNaN(product.rate)) {
-//   //       toast.error('Each product must have a valid rate.');
-//   //       return;
-//   //     }
-//   //     if (!product.amount || isNaN(product.amount)) {
-//   //       toast.error('Each product must have a valid amount.');
-//   //       return;
-//   //     }
-//   //   }
-
-//   //   const result = await Swal.fire({
-//   //     title: 'Are you sure?',
-//   //     text: 'Do you want to create a new Invoice?',
-//   //     icon: 'question',
-//   //     showCancelButton: true,
-//   //     confirmButtonColor: '#20B2AA',
-//   //     confirmButtonText: 'Yes, create it!'
-//   //   });
-
-//   //   if (!result.isConfirmed) return;
-
-//   //   try {
-//   //     console.log('Sending API Request...');
-//   //     const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
-//   //       headers: {
-//   //         'Content-Type': 'application/json',
-//   //         Authorization: `Bearer ${localStorage.getItem('token')}`
-//   //       }
-//   //     });
-
-//   //     console.log('Response:', response.data);
-//   //     toast.success('Invoice created successfully!');
-//   //     navigate('/all-invoices-out');
-//   //   } catch (error) {
-//   //     console.error('API Error:', error.response?.data?.message || error);
-//   //     toast.error(error.response?.data?.message || 'Error processing request');
-//   //   }
-//   // };
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 
@@ -349,14 +301,17 @@
 //   //     const isAlreadySelected = prevSelected.some((row) => row.godown_id === id);
 
 //   //     const updatedSelectedRows = isAlreadySelected
-//   //       ? prevSelected.filter((row) => row.godown_id !== id)
-//   //       : [...prevSelected, products.find((p) => p.godown_id === id)];
+//   //       ? prevSelected.filter((row) => row.godown_id !== id) // Remove the item if already selected
+//   //       : [...prevSelected, products.find((p) => p.godown_id === id)]; // Add the item if not selected
 
-//   //     // ✅ Update formData.out_products immediately
+//   //     // Update formData.out_products immediately
 //   //     setFormData((prevFormData) => ({
 //   //       ...prevFormData,
-//   //       out_products: updatedSelectedRows
+//   //       out_products: updatedSelectedRows // Ensure this is updated correctly
 //   //     }));
+
+//   //     // Update total amount whenever selected rows change
+//   //     updateTotalAmount(updatedSelectedRows);
 
 //   //     return updatedSelectedRows;
 //   //   });
@@ -365,52 +320,74 @@
 //     setSelectedRows((prevSelected) => {
 //       const isAlreadySelected = prevSelected.some((row) => row.godown_id === id);
 
-//       const updatedSelectedRows = isAlreadySelected
-//         ? prevSelected.filter((row) => row.godown_id !== id) // Remove the item if already selected
-//         : [...prevSelected, products.find((p) => p.godown_id === id)]; // Add the item if not selected
+//       if (!isAlreadySelected) {
+//         const selectedProduct = products.find((p) => p.godown_id === id);
+//         if (selectedProduct) {
+//           return [...prevSelected, { ...selectedProduct, row_id: new Date().getTime() }];
+//         }
+//       }
 
-//       // Update formData.out_products immediately
-//       setFormData((prevFormData) => ({
-//         ...prevFormData,
-//         out_products: updatedSelectedRows // Ensure this is updated correctly
-//       }));
-
-//       // Update total amount whenever selected rows change
-//       updateTotalAmount(updatedSelectedRows);
-
-//       return updatedSelectedRows;
+//       return prevSelected;
 //     });
 //   };
 
 //   console.log('data', formData.invoice_no);
 //   const mainColor = '#3f4d67';
 
+//   // const handleInputChange = (id, field, value) => {
+//   //   setSelectedRows((prevSelectedRows) => {
+//   //     const updatedRows = prevSelectedRows.map((row) => {
+//   //       if (row.godown_id === id) {
+//   //         let updatedRow = { ...row, [field]: value };
+
+//   //         // Ensure `amount` updates when `rate` or dimensions change
+//   //         if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
+//   //           updatedRow.amount = calculateAmount(updatedRow);
+//   //         }
+
+//   //         return updatedRow;
+//   //       }
+//   //       return row;
+//   //     });
+
+//   //     // Update `out_products` in formData
+//   //     setFormData((prevFormData) => ({
+//   //       ...prevFormData,
+//   //       out_products: updatedRows
+//   //     }));
+
+//   //     // Update total amount whenever selected rows change
+//   //     updateTotalAmount(updatedRows);
+
+//   //     return updatedRows;
+//   //   });
+//   // };
 //   const handleInputChange = (id, field, value) => {
 //     setSelectedRows((prevSelectedRows) => {
 //       const updatedRows = prevSelectedRows.map((row) => {
-//         if (row.godown_id === id) {
-//           let updatedRow = { ...row, [field]: value };
+//         if (row.row_id === id) { // Use row_id for matching
+//           const updatedRow = { ...row, [field]: value };
 
 //           // Ensure `amount` updates when `rate` or dimensions change
 //           if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
 //             updatedRow.amount = calculateAmount(updatedRow);
 //           }
 
-//           return updatedRow;
+//           return updatedRow; // Return the updated row
 //         }
-//         return row;
+//         return row; // Return unchanged rows
 //       });
 
 //       // Update `out_products` in formData
 //       setFormData((prevFormData) => ({
 //         ...prevFormData,
-//         out_products: updatedRows
+//         out_products: updatedRows,
 //       }));
 
 //       // Update total amount whenever selected rows change
 //       updateTotalAmount(updatedRows);
 
-//       return updatedRows;
+//       return updatedRows; // Return the updated rows
 //     });
 //   };
 //   const updateTotalAmount = (rows, updatedForm = formData) => {
@@ -451,6 +428,58 @@
 //     let amount = rate * areaSqFt * out_pcs;
 
 //     return isNaN(amount) ? '0.00' : amount.toFixed(2);
+//   };
+
+//   // const handleAddRow = (row) => {
+//   //   const newRow = {
+//   //     ...row,
+//   //     godown_id: new Date().getTime(), // Unique ID
+//   //     amount: (parseFloat(row.out_pcs || 0) * parseFloat(row.rate || 0)).toFixed(2)
+//   //   };
+//   //   setSelectedRows([...selectedRows, newRow]);
+//   // };
+//   const handleAddRow = (originalRow) => {
+//     setSelectedRows((prevRows) => {
+//       // Create a deep copy of the original row
+//       const newRow = {
+//         ...JSON.parse(JSON.stringify(originalRow)), // Deep clone
+//         row_id: new Date().getTime(), // Assign a unique ID
+//         amount: calculateAmount(originalRow) // Calculate initial amount
+//       };
+
+//       // Add the new row to the selected rows
+//       const updatedRows = [...prevRows, newRow];
+
+//       // Update out_products in formData
+//       setFormData((prevFormData) => ({
+//         ...prevFormData,
+//         out_products: [...prevFormData.out_products, newRow], // Ensure it's a separate list
+//       }));
+
+//       // Update total amount
+//       updateTotalAmount(updatedRows);
+//       return updatedRows; // Return the updated rows
+//     });
+//   };
+
+//   // const handleDeleteRow = (rowId) => {
+//   //   setSelectedRows(selectedRows.filter((row) => row.godown_id !== rowId));
+//   // };
+//   const handleDeleteRow = (rowId) => {
+//     setSelectedRows((prevRows) => {
+//       const updatedRows = prevRows.filter((row) => row.row_id !== rowId); // Use row_id for matching
+
+//       // Update `out_products` in formData
+//       setFormData((prevFormData) => ({
+//         ...prevFormData,
+//         out_products: updatedRows,
+//       }));
+
+//       // Update total amount
+//       updateTotalAmount(updatedRows);
+
+//       return updatedRows;
+//     });
 //   };
 
 //   return (
@@ -687,12 +716,7 @@
 //                                 <thead className="table-dark">
 //                                   <tr>
 //                                     <th scope="col" style={{ width: '50px' }}>
-//                                       {/* Empty header for checkbox column */}
-//                                       <input
-//                                         type="checkbox"
-//                                         // onChange={(e) => setSelectedRows(e.target.checked ? products.map((row) => row.godown_id) : [])}
-//                                         // checked={selectedRows.length === products.length}
-//                                       />
+//                                       <input type="checkbox" />
 //                                     </th>
 //                                     {columns.map((column) => (
 //                                       <th key={column.id} scope="col">
@@ -732,6 +756,8 @@
 //                                   ))}
 //                                   <th>Rate</th>
 //                                   <th>Amount</th>
+//                                   <th>Add</th>
+//                                   <th>Delete</th>
 //                                 </tr>
 //                               </thead>
 //                               <tbody>
@@ -739,74 +765,90 @@
 //                                   <tr key={row.godown_id}>
 //                                     <td key="product_category">{row.product_category}</td>
 //                                     <td key="shadeNo">{row.product_shadeNo}</td>
-//                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
-//                                     <td key="lot_no">{row.lot_no}</td>
+//                                     <td key="pur_shadeNo">{row.product_shadeNo}</td> <td key="lot_no">{row.lot_no}</td>
 //                                     <td key="stock_code">{row.stock_code}</td>
-//                                     {/* <td key="width">{row.width}</td> */}
-//                                     <td key={`width-${row.godown_id}`}>
+//                                     <td>
 //                                       <input
 //                                         type="text"
 //                                         value={row.width || ''}
 //                                         className="py-2 border border-gray-300 px-2 w-full"
-//                                         onChange={(e) => handleInputChange(row.godown_id, 'width', e.target.value)}
+//                                         // onChange={(e) => handleInputChange(row.godown_id, 'width', e.target.value)}
+//                                         onChange={(e) => handleInputChange(row.row_id, 'width', e.target.value)}
 //                                       />
 //                                     </td>
-//                                     <td key="width_unit">
+//                                     <td>
 //                                       <select
 //                                         value={row.width_unit || ''}
 //                                         className="py-2"
-//                                         onChange={(e) => handleInputChange(row.godown_id, 'width_unit', e.target.value)}
+//                                         onChange={(e) => handleInputChange(row.row_id, 'width_unit', e.target.value)}
 //                                       >
 //                                         <option value="Meter">Meter</option>
 //                                         <option value="Inch">Inch</option>
-//                                         <option value="centimeter">cm</option>
+//                                         <option value="cm">cm</option>
 //                                       </select>
 //                                     </td>
-
-//                                     <td key={`length-${row.godown_id}`}>
+//                                     <td>
 //                                       <input
 //                                         type="text"
 //                                         value={row.length || ''}
 //                                         className="py-2 border border-gray-300 px-2 w-full"
-//                                         onChange={(e) => handleInputChange(row.godown_id, 'length', e.target.value)}
+//                                         onChange={(e) => handleInputChange(row.row_id, 'length', e.target.value)}
 //                                       />
 //                                     </td>
-//                                     <td key="length_unit">
+//                                     <td>
 //                                       <select
 //                                         value={row.length_unit || ''}
 //                                         className="py-2"
-//                                         onChange={(e) => handleInputChange(row.godown_id, 'length_unit', e.target.value)}
+//                                         onChange={(e) => handleInputChange(row.row_id,'length_unit', e.target.value)}
 //                                       >
 //                                         <option value="Meter">Meter</option>
 //                                         <option value="Inch">Inch</option>
-//                                         <option value="centimeter">cm</option>
+//                                         <option value="cm">cm</option>
 //                                       </select>
 //                                     </td>
-//                                     <td key="out_pcs">
+//                                     <td>
 //                                       <input
-//                                         type="text"
+//                                         type="number"
 //                                         value={row.out_pcs || ''}
-//                                         className="py-2"
-//                                         onChange={(e) => handleInputChange(row.godown_id, 'out_pcs', e.target.value)}
+//                                         className="py-2 border border-gray-300 px-2 w-full"
+//                                         onChange={(e) => handleInputChange(row.row_id, 'out_pcs', e.target.value)}
 //                                       />
 //                                     </td>
-//                                     <td key="rack">{row.rack}</td>
-
-//                                     <td key={`rate-${row.godown_id}`}>
+//                                     <td>{row.rack}</td>
+//                                     <td>
 //                                       <input
-//                                         type="text"
+//                                         type="number"
 //                                         value={row.rate || ''}
 //                                         className="py-2 border border-gray-300 px-2 w-full"
-//                                         onChange={(e) => handleInputChange(row.godown_id, 'rate', e.target.value)}
+//                                         onChange={(e) => handleInputChange(row.row_id, 'rate', e.target.value)}
 //                                       />
 //                                     </td>
-//                                     <td key={`amount-${row.godown_id}`}>
+//                                     {/* Amount Field */}
+//                                     <td>
 //                                       <input
 //                                         type="text"
-//                                         value={row.amount || ''}
+//                                         value={row.amount || '0.00'}
 //                                         className="py-2 border border-gray-300 px-2 w-full bg-gray-100"
 //                                         readOnly
 //                                       />
+//                                     </td>
+//                                     <td>
+//                                       <div>
+//                                         <FaPlus
+//                                           className="text-green-500 cursor-pointer"
+//                                           onClick={() => handleAddRow(row)}
+//                                           style={{ fontSize: '20px' }}
+//                                         />
+//                                       </div>
+//                                     </td>
+//                                     <td>
+//                                       <div>
+//                                         <FaTrash
+//                                           className="text-red-500 cursor-pointer"
+//                                           onClick={() => handleDeleteRow(row.row_id,)}
+//                                           style={{ fontSize: '20px' }}
+//                                         />
+//                                       </div>
 //                                     </td>
 //                                   </tr>
 //                                 ))}
@@ -901,6 +943,7 @@ import DataTable from 'react-data-table-component';
 import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { FaToggleOn, FaToggleOff } from 'react-icons/fa';
 
 import {
   FaFileInvoice,
@@ -916,6 +959,7 @@ import {
   FaQrcode
 } from 'react-icons/fa';
 import FormField from '../../components/FormField';
+import { FaExchangeAlt } from 'react-icons/fa';
 
 const Invoice_out = () => {
   const navigate = useNavigate();
@@ -929,6 +973,7 @@ const Invoice_out = () => {
   const [shadeNo, setShadeNo] = useState([]);
   const [invoice_no, SetInvoiceNo] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
+  const [type, setType] = useState(0);
 
   const [formData, setFormData] = useState({
     invoice_no: '',
@@ -1188,26 +1233,6 @@ const Invoice_out = () => {
     { id: 'rack', label: 'Rack' }
   ];
 
-  // const handleCheckboxChange = (id) => {
-  //   setSelectedRows((prevSelected) => {
-  //     const isAlreadySelected = prevSelected.some((row) => row.godown_id === id);
-
-  //     const updatedSelectedRows = isAlreadySelected
-  //       ? prevSelected.filter((row) => row.godown_id !== id) // Remove the item if already selected
-  //       : [...prevSelected, products.find((p) => p.godown_id === id)]; // Add the item if not selected
-
-  //     // Update formData.out_products immediately
-  //     setFormData((prevFormData) => ({
-  //       ...prevFormData,
-  //       out_products: updatedSelectedRows // Ensure this is updated correctly
-  //     }));
-
-  //     // Update total amount whenever selected rows change
-  //     updateTotalAmount(updatedSelectedRows);
-
-  //     return updatedSelectedRows;
-  //   });
-  // };
   const handleCheckboxChange = (id) => {
     setSelectedRows((prevSelected) => {
       const isAlreadySelected = prevSelected.some((row) => row.godown_id === id);
@@ -1226,59 +1251,32 @@ const Invoice_out = () => {
   console.log('data', formData.invoice_no);
   const mainColor = '#3f4d67';
 
-  // const handleInputChange = (id, field, value) => {
-  //   setSelectedRows((prevSelectedRows) => {
-  //     const updatedRows = prevSelectedRows.map((row) => {
-  //       if (row.godown_id === id) {
-  //         let updatedRow = { ...row, [field]: value };
-
-  //         // Ensure `amount` updates when `rate` or dimensions change
-  //         if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
-  //           updatedRow.amount = calculateAmount(updatedRow);
-  //         }
-
-  //         return updatedRow;
-  //       }
-  //       return row;
-  //     });
-
-  //     // Update `out_products` in formData
-  //     setFormData((prevFormData) => ({
-  //       ...prevFormData,
-  //       out_products: updatedRows
-  //     }));
-
-  //     // Update total amount whenever selected rows change
-  //     updateTotalAmount(updatedRows);
-
-  //     return updatedRows;
-  //   });
-  // };
   const handleInputChange = (id, field, value) => {
     setSelectedRows((prevSelectedRows) => {
       const updatedRows = prevSelectedRows.map((row) => {
-        if (row.row_id === id) { // Use row_id for matching
+        if (row.row_id === id) {
+          // Use row_id for matching
           const updatedRow = { ...row, [field]: value };
-  
+
           // Ensure `amount` updates when `rate` or dimensions change
           if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
             updatedRow.amount = calculateAmount(updatedRow);
           }
-  
+
           return updatedRow; // Return the updated row
         }
         return row; // Return unchanged rows
       });
-  
+
       // Update `out_products` in formData
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedRows,
+        out_products: updatedRows
       }));
-  
+
       // Update total amount whenever selected rows change
       updateTotalAmount(updatedRows);
-  
+
       return updatedRows; // Return the updated rows
     });
   };
@@ -1322,14 +1320,6 @@ const Invoice_out = () => {
     return isNaN(amount) ? '0.00' : amount.toFixed(2);
   };
 
-  // const handleAddRow = (row) => {
-  //   const newRow = {
-  //     ...row,
-  //     godown_id: new Date().getTime(), // Unique ID
-  //     amount: (parseFloat(row.out_pcs || 0) * parseFloat(row.rate || 0)).toFixed(2)
-  //   };
-  //   setSelectedRows([...selectedRows, newRow]);
-  // };
   const handleAddRow = (originalRow) => {
     setSelectedRows((prevRows) => {
       // Create a deep copy of the original row
@@ -1338,39 +1328,40 @@ const Invoice_out = () => {
         row_id: new Date().getTime(), // Assign a unique ID
         amount: calculateAmount(originalRow) // Calculate initial amount
       };
-  
+
       // Add the new row to the selected rows
       const updatedRows = [...prevRows, newRow];
-  
+
       // Update out_products in formData
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: [...prevFormData.out_products, newRow], // Ensure it's a separate list
+        out_products: [...prevFormData.out_products, newRow] // Ensure it's a separate list
       }));
-  
+
       // Update total amount
       updateTotalAmount(updatedRows);
       return updatedRows; // Return the updated rows
     });
   };
-  
-  
-  // const handleDeleteRow = (rowId) => {
-  //   setSelectedRows(selectedRows.filter((row) => row.godown_id !== rowId));
-  // };
   const handleDeleteRow = (rowId) => {
     setSelectedRows((prevRows) => {
-      const updatedRows = prevRows.filter((row) => row.godown_id !== rowId); // Use godown_id if needed
+      const updatedRows = prevRows.filter((row) => row.row_id !== rowId); // Use row_id for matching
 
+      // Update `out_products` in formData
       setFormData((prevFormData) => ({
         ...prevFormData,
         out_products: updatedRows
       }));
 
+      // Update total amount
       updateTotalAmount(updatedRows);
 
       return updatedRows;
     });
+  };
+
+  const handleToggleType = (rowId) => {
+    setSelectedRows((prevRows) => prevRows.map((row) => (row.row_id === rowId ? { ...row, type: row.type === 0 ? 1 : 0 } : row)));
   };
 
   return (
@@ -1640,6 +1631,7 @@ const Invoice_out = () => {
                             <table className="table table-hover table-bordered align-middle">
                               <thead className="table-dark">
                                 <tr>
+                                  <th>Action</th>
                                   {columns.map((column) => (
                                     <th key={column.id} scope="col">
                                       {column.label}
@@ -1649,11 +1641,32 @@ const Invoice_out = () => {
                                   <th>Amount</th>
                                   <th>Add</th>
                                   <th>Delete</th>
+                                  {/* <th>Action</th> */}
                                 </tr>
                               </thead>
                               <tbody>
                                 {selectedRows.map((row) => (
                                   <tr key={row.godown_id}>
+                                    <td>
+                                      <Button
+                                        onClick={() => handleToggleType(row.row_id)}
+                                        className={`flex items-center px-4 py-2 rounded-md transition duration-300 ${
+                                          row.type === 1 ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+                                        }`}
+                                      >
+                                        {row.type === 1 ? (
+                                          <>
+                                            <FaToggleOn className="me-2 text-white" />
+                                            Dimension
+                                          </>
+                                        ) : (
+                                          <>
+                                            <FaToggleOff className="me-2 text-white" />
+                                            PCS
+                                          </>
+                                        )}
+                                      </Button>
+                                    </td>
                                     <td key="product_category">{row.product_category}</td>
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td> <td key="lot_no">{row.lot_no}</td>
@@ -1663,15 +1676,17 @@ const Invoice_out = () => {
                                         type="text"
                                         value={row.width || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
-                                        // onChange={(e) => handleInputChange(row.godown_id, 'width', e.target.value)}
                                         onChange={(e) => handleInputChange(row.row_id, 'width', e.target.value)}
+                                        disabled={row.type === 0} // Properly disable when type is 0
                                       />
                                     </td>
                                     <td>
                                       <select
                                         value={row.width_unit || ''}
                                         className="py-2"
+                                        // onChange={(e) => handleInputChange(row.row_id, 'width_unit', e.target.value)}
                                         onChange={(e) => handleInputChange(row.row_id, 'width_unit', e.target.value)}
+                                        disabled={row.type === 0}
                                       >
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
@@ -1684,13 +1699,16 @@ const Invoice_out = () => {
                                         value={row.length || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
                                         onChange={(e) => handleInputChange(row.row_id, 'length', e.target.value)}
+                                        disabled={row.type === 0} // Properly disable when type is 0
                                       />
                                     </td>
                                     <td>
                                       <select
                                         value={row.length_unit || ''}
                                         className="py-2"
-                                        onChange={(e) => handleInputChange(row.row_id,'length_unit', e.target.value)}
+                                        // onChange={(e) => handleInputChange(row.row_id, 'length_unit', e.target.value)}
+                                        onChange={(e) => handleInputChange(row.row_id, 'length_unit', e.target.value)}
+                                        disabled={row.type === 0}
                                       >
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
@@ -1703,6 +1721,7 @@ const Invoice_out = () => {
                                         value={row.out_pcs || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
                                         onChange={(e) => handleInputChange(row.row_id, 'out_pcs', e.target.value)}
+                                        disabled={row.type === 1} // Properly disable when type is 1
                                       />
                                     </td>
                                     <td>{row.rack}</td>
@@ -1736,11 +1755,16 @@ const Invoice_out = () => {
                                       <div>
                                         <FaTrash
                                           className="text-red-500 cursor-pointer"
-                                          onClick={() => handleDeleteRow(row.row_id,)}
+                                          onClick={() => handleDeleteRow(row.row_id)}
                                           style={{ fontSize: '20px' }}
                                         />
                                       </div>
                                     </td>
+                                    {/* <td>
+                                      <Button onClick={() => handleToggleType(row.row_id)} variant="secondary">
+                                        {row.type === 0 ? <FaToggleOff className="me-2" /> : <FaToggleOn className="me-2" />}
+                                      </Button>
+                                    </td> */}
                                   </tr>
                                 ))}
                               </tbody>

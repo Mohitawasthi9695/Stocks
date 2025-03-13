@@ -20,7 +20,6 @@ import PdfPreview from 'components/PdfPreview';
 import Papa from 'papaparse';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
-import { FaPrint } from 'react-icons/fa';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -207,10 +206,6 @@ const Index = () => {
             <MdPrint />
           </Button>
 
-          <Button variant="outline-dark" size="sm" onClick={() => printThermalReceipt(row)}>
-        <FaPrint />
-      </Button>
-
           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
             <FaFileExcel />
           </Button>
@@ -222,45 +217,6 @@ const Index = () => {
       width: '250px'
     }
   ];
-
-
-  const handleThermalPrint = (row) => {
-    // Get the specific invoice details
-    const invoiceData = invoiceAllDetails.find((invoice) => invoice.id === row.id);
-    if (!invoiceData) {
-      console.error('Invoice not found for thermal print');
-      return;
-    }
-  
-    // Create the printable content
-    const thermalPrintContent = `
-      <div style="font-family: Arial, sans-serif; font-size: 12px; width: 80mm; padding: 10px;">
-        <h3 style="text-align: center;">Company Name</h3>
-        <p>Invoice No: ${invoiceData.invoice_no}</p>
-        <p>Date: ${invoiceData.date}</p>
-        <p>Customer: ${invoiceData.customer}</p>
-        <p>Company: ${invoiceData.company}</p>
-        <p>Total Amount: ${invoiceData.total_amount}</p>
-        <hr />
-        <p style="text-align: center;">Thank you for your purchase!</p>
-      </div>
-    `;
-  
-    // Open new window for printing
-    const printWindow = window.open('', '_blank', 'width=250,height=400');
-    printWindow.document.write('<html><head><title>Thermal Print</title></head><body>');
-    printWindow.document.write(thermalPrintContent);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    
-    // Wait for content to load and print
-    printWindow.onload = function () {
-      printWindow.print();
-      printWindow.close();
-    };
-  };
-  
-  
   const exportToCSV = () => {
     const csvData = filteredInvoices.map((row) => ({
       'Invoice No': row.invoice_no || '',
