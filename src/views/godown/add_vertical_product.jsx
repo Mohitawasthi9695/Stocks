@@ -18,7 +18,7 @@ const AddProduct = () => {
           console.error('API_BASE_URL is not defined');
           return;
         }
-        const response = await axios.get(`${API_BASE_URL}/api/godownverticalstock/${id}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/godownstock/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -86,9 +86,12 @@ const AddProduct = () => {
         gate_pass_date: item.gate_pass_date,
         date: item.date || new Date().toISOString().split('T')[0],
         product_id: item.product_id,
+        product_category_id : item.product_category_id,
         lot_no: item.lot_no,
         length: parseFloat(item.length) || 0,
         length_unit: item.length_unit,
+        width: parseFloat(item.width) || 0,
+        width_unit: item.width_unit,
         type: 'stock',
         rack: item.rack
       }));

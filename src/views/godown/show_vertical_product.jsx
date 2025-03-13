@@ -66,7 +66,7 @@ const ShowGodownStock = () => {
     if (!result.isConfirmed) return;
 
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock/${stockId}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godownstock/${stockId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
