@@ -21,6 +21,7 @@ const NavLeft = () => {
     padding: '0px 0',
     minWidth: '200px',
     paddingLeft: '10px',
+    maxWidth: '200px',
     
   };
 
@@ -28,7 +29,8 @@ const NavLeft = () => {
     color: '#333',
     fontWeight: '500',
     textDecoration: 'none',
-    marginTop: '-35px',
+    marginTop: '-30px',
+    paddingTop: '20px',
     marginBottom: '-10px'
   };
 
