@@ -33,7 +33,7 @@ const OperatorInvoice = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownout`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -41,26 +41,10 @@ const OperatorInvoice = () => {
         });
 
         const invoicesDetails = response.data.data;
-
-        const filteredFields = (data) => {
-          return data.map((invoice) => ({
-            invoice_no: invoice.invoice_no,
-            id: invoice.id,
-            supplier_name: invoice.customer,
-            company_name: invoice.company,
-            height: invoice.stock_out_details?.height,
-            date: invoice.date,
-            status: invoice.status,
-            payment_bank: invoice.payment_bank,
-            payment_mode: invoice.payment_mode,
-            payment_status: invoice.payment_status,
-            total_amount: invoice.total_amount
-          }));
-        };
-
+        console.log(invoicesDetails);
         setInvoiceAllDetails(invoicesDetails);
-        setInvoices(filteredFields(invoicesDetails));
-        setFilteredInvoices(filteredFields(invoicesDetails));
+        setInvoices(invoicesDetails);
+        setFilteredInvoices(invoicesDetails);
       } catch (error) {
         console.error(error);
         toast.error('Failed to fetch invoices');
@@ -80,7 +64,7 @@ const OperatorInvoice = () => {
     );
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
-  
+
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -111,17 +95,22 @@ const OperatorInvoice = () => {
   const columns = [
     {
       name: 'Invoice Number',
-      selector: (row) => row.invoice_no,
+      selector: (row) => row.stockout_invoice_no,
       sortable: true
     },
     {
-      name: 'Customer Name',
-      selector: (row) => row.supplier_name,
+      name: 'Stock Code ',
+      selector: (row) => row.stock_code,
       sortable: true
     },
     {
-      name: 'Supplier Name',
-      selector: (row) => row.company_name,
+      name: 'product_shadeNo',
+      selector: (row) => row.product_shadeNo,
+      sortable: true
+    },
+    {
+      name: 'Purchase ShadeNo',
+      selector: (row) => row.product_purchase_shade_no,
       sortable: true
     },
     {
@@ -130,67 +119,40 @@ const OperatorInvoice = () => {
       sortable: true
     },
     {
-      name: 'Bank',
-      selector: (row) => row.payment_bank,
+      name: 'Width',
+      selector: (row) => row.out_width,
       sortable: true
     },
     {
-      name: 'Total Amount',
-      selector: (row) => row.total_amount,
+      name: 'Length',
+      selector: (row) => row.out_length,
       sortable: true
     },
-    // {
-    //   name: 'Action',
-    //   width: '230px',
-    //   cell: (row) => (
-    //     <div className="d-flex">
-    //       {row.status === 0 ? (
-    //         <>
-    //           <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
-    //             <MdCheckCircle />
-    //           </Button>
-    //         </>
-    //       ) : (
-    //         <></>
-    //       )}
-    //       <Button
-    //         variant="outline-primary"
-    //         size="sm"
-    //         onClick={() => {
-    //           setSelectedInvoice(row.id);
-    //           setShowPdfModal(true);
-    //         }}
-    //       >
-    //         <MdPrint />
-    //       </Button>
-    //       <Button variant="outline-primary" size="sm" onClick={() => exportToExcel(row)}>
-    //         <FaFileExcel />
-    //       </Button>
-    //       <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/accessory-add-out-stock/${row.id}`)}>
-    //         <MdAdd />
-    //       </Button>
-    //     </div>
-    //   )
-    // },
-    // {
-    //   name: 'Status',
-    //   selector: (row) => (row.status === 1 ? 'Approved' : 'Pending'),
-    //   sortable: true,
-    //   cell: (row) => (
-    //     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-    //       <span
-    //         className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
-    //         style={{
-    //           padding: '5px 10px',
-    //           borderRadius: '8px',
-    //           whiteSpace: 'nowrap'
-    //         }}
-    //       >
-    //         {row.status === 1 ? 'Approved' : 'Pending'}
-    //       </span>
-    //     </div>
-    //   )
-    // }
+    {
+      name: 'PCS',
+      selector: (row) => row.out_pcs,
+      sortable: true
+    },
+    {
+      name: 'Rack',
+      selector: (row) => row.rack,
+      sortable: true
+    },
+    {
+      name: 'GST',
+      selector: (row) => row.gst,
+      sortable: true
+    },
+    {
+      name: 'rate',
+      selector: (row) => row.rate,
+      sortable: true
+    },
+    {
+      name: 'Amount',
+      selector: (row) => row.amount,
+      sortable: true
+    },
     {
       name: 'Action',
       width: '280px',
@@ -198,26 +160,16 @@ const OperatorInvoice = () => {
         <div className="d-flex">
           {row.status === 0 ? (
             <>
-              <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
+              <Button variant="outline-success" size="sm" onClick={() => handleStatusUpdate(row.id,1)}>
                 <MdCheckCircle />
               </Button>
-              <Button variant="outline-danger" size="sm" onClick={() => handleReject(row.id)} className="ms-2">
+              <Button variant="outline-danger" size="sm" onClick={() => handleStatusUpdate(row.id,2)} className="ms-2">
                 <MdCancel />
               </Button>
             </>
           ) : (
             <></>
           )}
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={() => {
-              setSelectedInvoice(row.id);
-              setShowPdfModal(true);
-            }}
-          >
-            <MdPrint />
-          </Button>
           <Button variant="outline-primary" size="sm" onClick={() => exportToExcel(row)}>
             <FaFileExcel />
           </Button>
@@ -234,9 +186,8 @@ const OperatorInvoice = () => {
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${
-              row.status === 1 ? 'bg-success' : row.status === -1 ? 'bg-danger' : 'bg-warning'
-            }`}
+            className={`badge ${row.status === 1 ? 'bg-success' : row.status === -1 ? 'bg-danger' : 'bg-warning'
+              }`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
@@ -249,47 +200,25 @@ const OperatorInvoice = () => {
       )
     }
   ];
-  const handleReject = async (id) => {
-    try {
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout/reject/${id}`, 
-        {}, 
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-      toast.error('Stockout Invoice rejected!');
-      setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: -1 } : inv)));
-      setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: -1 } : inv)));
-    } catch (error) {
-      toast.error('Failed to reject stockout invoice');
-    }
-  };
   
-
-  const handleAddInvoice = () => {
-    navigate('/invoice-out');
-  };
-  const handleApprove = async (id) => {
+  const handleStatusUpdate = async (id, status) => {
     try {
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout/approve/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-      toast.success('StockoutInovice approved successfully!');
-      setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
-      setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
+        await axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/api/godownout/${id}`,
+            { status },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            }
+        );
+        toast.success(`Stockout Invoice ${status === 1 ? 'approved' : 'rejected'} successfully!`);
+        setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status } : inv)));
+        setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status } : inv)));
     } catch (error) {
-      toast.error('Failed to approve gate pass');
+        toast.error(`Failed to ${status === 1 ? 'approve' : 'reject'} stockout invoice`);
     }
-  };
+};
   const customStyles = {
     table: {
       style: {

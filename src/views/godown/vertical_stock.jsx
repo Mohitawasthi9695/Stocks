@@ -23,11 +23,14 @@ const ShowProduct = () => {
   const [loading, setLoading] = useState(true);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
-
+  const categoryId = 3;
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstock`, {
+          params: {
+            category_id: categoryId
+          },
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'

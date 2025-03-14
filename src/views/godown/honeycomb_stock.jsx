@@ -24,7 +24,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownhoneycombstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstock`, {
           params: {
             category_id: categoryId
           },
@@ -80,7 +80,7 @@ useEffect(() => {
       if (result.isConfirmed) {
         try {
           const response = await axios.put(
-            `${import.meta.env.VITE_API_BASE_URL}/api/godownhoneycombstock/${id}`,
+            `${import.meta.env.VITE_API_BASE_URL}/api/godownstock/${id}`,
             { rack: result.value },
             {
               headers: {

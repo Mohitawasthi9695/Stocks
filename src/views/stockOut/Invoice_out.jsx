@@ -713,7 +713,7 @@ const Invoice_out = () => {
                               <tbody>
                                 {selectedRows.map((row) => (
                                   <tr key={row.godown_id}>
-                                     <td>
+                                     <td key="type">
                                       <div
                                         onClick={() => handleToggleType(row.row_id)}
                                         className="relative w-14 h-7 flex flex-col items-center justify-center rounded-full transition-all duration-300"
@@ -745,7 +745,7 @@ const Invoice_out = () => {
                                               content: '',
                                               height: '14px',
                                               width: '14px',
-                                              left: row.type === 1 ? '18px' : '3px', // Toggle circle position
+                                              left: row.type === 1 ? '18px' : '3px', 
                                               bottom: '3px',
                                               backgroundColor: 'white',
                                               transition: '0.4s',
