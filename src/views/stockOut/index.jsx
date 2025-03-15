@@ -193,12 +193,13 @@ const Index = () => {
     },
     {
       name: 'Actions',
+      minWidth: '350px', // Increase the width
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
           <Button variant="outline-success" size="sm" className="me-2">
             <FaEye onClick={() => navigate(`/invoices-out/${row.id}`)} />
           </Button>
-
+    
           <Button
             variant="outline-primary"
             size="sm"
@@ -209,7 +210,7 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
-
+    
           <Button
             variant="outline-dark"
             size="sm"
@@ -220,7 +221,7 @@ const Index = () => {
           >
             <MdPrint />
           </Button>
-
+    
           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
             <FaFileExcel />
           </Button>
@@ -229,8 +230,8 @@ const Index = () => {
           </Button>
         </div>
       ),
-      width: '250px'
-    }
+      width: '300px' // Increased width
+    }    
   ];
   const exportToCSV = () => {
     const csvData = filteredInvoices.map((row) => ({
@@ -497,7 +498,7 @@ const Index = () => {
       {invoiceAllDetails && selectedInvoice && (
         <StockOutInvoiceThermalPDF
           show={showThermalPdfModal}
-          onHide={() => setShowPdfModal(false)}
+          onHide={() => setShowThermalPdfModal(false)}
           invoiceData={invoiceAllDetails}
           id={selectedInvoice}
         />
