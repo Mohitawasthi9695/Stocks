@@ -20,6 +20,7 @@ import PdfPreview from 'components/PdfPreview';
 import { FaFileCsv } from 'react-icons/fa';
 import Papa from 'papaparse';
 import 'jspdf-autotable';
+import StockGatePassThermalPrint from 'components/StockGatePassThermalPrint';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -29,6 +30,8 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
+  const [showPdfModalThermal, setShowPdfModalThermal] = useState(false);
+
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
@@ -164,6 +167,18 @@ const Index = () => {
             <MdPrint />
           </Button>
 
+          <Button
+            variant="outline-dark"
+            size="sm"
+            onClick={() => {
+              setSelectedInvoice(row.id);
+              setShowPdfModalThermal(true);
+              console.log(row.id);
+            }}
+          >
+            <MdPrint />
+          </Button>
+
           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
             <FaFileExcel />
           </Button>
@@ -172,7 +187,7 @@ const Index = () => {
           </Button>
         </div>
       ),
-      width: '250px'
+      width: '300px'
     }
   ];
   const handleDelete = async (id) => {
@@ -409,6 +424,9 @@ const Index = () => {
       </div>
       {invoiceAllDetails && selectedInvoice && (
         <StockGatePass show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
+      )}
+      {invoiceAllDetails && selectedInvoice && (
+        <StockGatePassThermalPrint show={showPdfModalThermal} onHide={() => setShowPdfModalThermal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
       )}
     </div>
   );
