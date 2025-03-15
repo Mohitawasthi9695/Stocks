@@ -80,17 +80,14 @@ const WarehouseAccessoriesPage = () => {
       selector: (row) => row.stock_code,
       sortable: true
     },
-    { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
+    { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Items',
       selector: (row) => row.items,
       sortable: true
     },
-    {
-      name: 'Box/Bundle',
-      selector: (row) => row.box_bundle,
-      sortable: true
-    },
+    { name: 'Collection', selector: (row) => `${row.box_bundle}  ${row.box_bundle_unit}`, sortable: true },
+    { name: 'Out Collection', selector: (row) => `${row.out_box_bundle}  ${row.box_bundle_unit}`, sortable: true },
     {
       name: 'Quantity',
       selector: (row) => row.quantity,

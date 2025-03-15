@@ -438,6 +438,13 @@ const menuItems = {
               icon: 'feather icon-list',
               type: 'item',
               url: '/view_approve_gatepass'
+            },
+            {
+              id: 'all_godown_accessoryout',
+              title: 'Accessory StocksOut',
+              icon: 'feather icon-list',
+              type: 'item',
+              url: '/all-accessory-out'
             }
           ]
         }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Button } from 'react-bootstrap';
 import { MdDelete, MdPrint, MdPersonAdd, MdCheckCircle, MdAdd } from 'react-icons/md';
-import { FaFileExcel } from 'react-icons/fa';
+import { FaFileExcel,FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
@@ -170,6 +170,9 @@ const OperatorInvoice = () => {
           ) : (
             <></>
           )}
+          <Button variant="outline-success" size="sm" className="me-2">
+                      <FaEye onClick={() => navigate(`/view-accessory-out/${row.id}`)} />
+                    </Button>
           <Button variant="outline-primary" size="sm" onClick={() => exportToExcel(row)}>
             <FaFileExcel />
           </Button>

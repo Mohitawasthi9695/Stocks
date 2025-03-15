@@ -8,15 +8,16 @@ import Swal from "sweetalert2";
 
 const AccessoryOut = () => {
   const navigate = useNavigate();
-  const { id, no } = useParams();
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [allProducts, setAllProducts] = useState([]);
+  const [allAccessories, setAllAccessories] = useState([]);
+  const [allStockCodes, setAllStockCodes] = useState({});
   const mainColor = "#3f4d67";
   const [items, setItems] = useState([
     {
-      stockout_inovice_id: id,
-      godown_accessory_id: "",
-      product_accessory_id: "",
+      stockout_details_id: id,
+      accessory_id: "",
+      stock_code_id: "",
       lot_no: "",
       length: "",
       length_unit: "",
@@ -27,30 +28,37 @@ const AccessoryOut = () => {
   ]);
 
   useEffect(() => {
-    const fetchAllProducts = async () => {
+    const fetchAccessories = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/getaccessorycode`,
-          {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-          }
-        );
-        setAllProducts(response.data.data);
+        const accessoriesRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setAllAccessories(accessoriesRes.data.data);
       } catch (error) {
-        console.error(error);
-        toast.error("Failed to fetch products");
+        toast.error("Failed to fetch accessories");
       }
     };
-    fetchAllProducts();
+    fetchAccessories();
   }, []);
+
+  const fetchStockCodes = async (accessoryId, index) => {
+    try {
+      const stockCodesRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/getaccessorycode/${accessoryId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setAllStockCodes((prev) => ({ ...prev, [accessoryId]: stockCodesRes.data.data }));
+    } catch (error) {
+      toast.error("Failed to fetch stock codes");
+    }
+  };
 
   const handleAddRow = () => {
     setItems((prev) => [
       ...prev,
       {
-        stockout_inovice_id: id,
-        godown_accessory_id: "",
-        product_accessory_id: "",
+        stockout_details_id: id,
+        accessory_id: "",
+        stock_code_id: "",
         lot_no: "",
         length: "",
         length_unit: "",
@@ -67,74 +75,18 @@ const AccessoryOut = () => {
     }
   };
 
-  const handleRowChange = (index, field, value) => {
+  const handleAccessoryChange = (index, event) => {
+    const selectedAccessoryId = event.target.value;
     setItems((prev) => {
       const updated = [...prev];
-
-      if (field === "product_accessory_id") {
-        const selectedIds = updated.map((item) => item.product_accessory_id);
-        if (selectedIds.includes(value)) {
-          toast.error("This product is already selected in another row!");
-          return prev; // Prevent duplicate selection
-        }
-      }
-
-      updated[index][field] = value;
-
-      if (field === "items" || field === "box_bundle") {
-        const items = Number(updated[index].items) || 0;
-        const boxBundle = Number(updated[index].box_bundle) || 0;
-        updated[index].out_quantity = (items * boxBundle).toString();
-      }
+      updated[index] = { ...updated[index], accessory_id: selectedAccessoryId, stock_code_id: "" };
       return updated;
     });
-  };
-
-  const handleShadeNoChange = async (index, event) => {
-    setLoading(true);
-    const selectedProductId = event.target.value;
-    if (selectedProductId) {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/godownAccessory/${selectedProductId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        setLoading(false);
-        if (response.data && response.data.data) {
-          setItems((prev) => {
-            const updated = [...prev];
-            updated[index] = {
-              ...updated[index],
-              stockout_inovice_id: id,
-              product_accessory_id: response.data.data.product_accessory_id || "",
-              godown_accessory_id: response.data.data.id || "",
-              lot_no: response.data.data.lot_no || "N/A",
-              length: response.data.data.out_length || "N/A",
-              length_unit: response.data.data.unit || "N/A",
-              items: response.data.data.items || "N/A",
-              box_bundle: response.data.data.box_bundle || "N/A",
-              out_quantity: response.data.data.available_qty || "0",
-            };
-            return updated;
-          });
-        } else {
-          toast.error("No products found.");
-        }
-      } catch (error) {
-        setLoading(false);
-        toast.error(error.response?.data?.message || "Something went wrong.");
-      }
-    }
+    fetchStockCodes(selectedAccessoryId, index);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to create the new field?",
@@ -145,36 +97,60 @@ const AccessoryOut = () => {
       confirmButtonText: "Yes, create it!",
     });
 
-    if (!result.isConfirmed) {
-      return;
-    }
-
-    const payload = items.map((item) => ({
-      stockout_inovice_id: id,
-      godown_accessory_id: item.godown_accessory_id,
-      product_accessory_id: item.product_accessory_id,
-      lot_no: item.lot_no,
-      length: item.length,
-      length_unit: item.length_unit,
-      items: item.items,
-      box_bundle: item.box_bundle,
-      out_quantity: item.out_quantity,
-    }));
+    if (!result.isConfirmed) return;
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownaccessoryout`, payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownaccessoryout`, items, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}`, "Content-Type": "application/json" },
       });
       toast.success("Stock added successfully");
       navigate("/operator_invoice");
     } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Error adding stock");
+      toast.error("Error adding stock");
     }
   };
+  const handleStockCodeChange = async (index, event) => {
+    setLoading(true);
+    const selectedStock = event.target.value;
+
+    setItems((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], stock_code_id: selectedStock };
+      return updated;
+    });
+
+    if (selectedStock) {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/godownAccessory/${selectedStock}`,
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }
+        );
+
+        setLoading(false);
+        if (response.data.data) {
+          setItems((prev) => {
+            const updated = [...prev];
+            updated[index] = { ...updated[index], ...response.data.data };
+            return updated;
+          });
+        }
+      } catch (error) {
+        setLoading(false);
+        toast.error("Error fetching stock details");
+      }
+    }
+  };
+  const handleChange = (index, field, event) => {
+    const newValue = event.target.value;
+    setItems((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: newValue };
+      return updated;
+    });
+  };
+
 
   return (
     <Container fluid className="pt-4 px-4" style={{ border: "3px dashed #14ab7f", borderRadius: "8px", background: "#ff9d0014" }}>
@@ -184,23 +160,17 @@ const AccessoryOut = () => {
           <div className="card shadow border-0 rounded-lg">
             <div className="card-body p-4">
               <div className="d-flex justify-content-between align-items-center mb-4">
-                <h4>
-                  <FaPlus className="me-2" />
-                  Add Manually
-                </h4>
-                <Button variant="success" onClick={handleAddRow}>
-                  Add Row
-                </Button>
+                <h4><FaPlus className="me-2" />Add Manually</h4>
+                <Button variant="success" onClick={handleAddRow}>Add Row</Button>
               </div>
               <Table bordered responsive className="align-middle">
                 <thead className="text-white" style={{ backgroundColor: mainColor }}>
                   <tr>
+                    <th>Accessory</th>
                     <th>Stock Code</th>
                     <th>Lot No</th>
                     <th>Length</th>
                     <th>Length Unit</th>
-                    <th>Items</th>
-                    <th>Box/Bundle</th>
                     <th>Quantity</th>
                     <th>Action</th>
                   </tr>
@@ -209,30 +179,38 @@ const AccessoryOut = () => {
                   {items.map((item, index) => (
                     <tr key={index}>
                       <td>
-                        <Form.Select
-                          value={item.product_accessory_id}
-                          onChange={(e) => handleShadeNoChange(index, e)}
-                          required
-                        >
+                        <Form.Select value={item.accessory_id} onChange={(e) => handleAccessoryChange(index, e)} required>
+                          <option value="">Select Accessory</option>
+                          {allAccessories.map((acc) => (
+                            <option key={acc.id} value={acc.id}>{acc.accessory_name}</option>
+                          ))}
+                        </Form.Select>
+                      </td>
+                      <td>
+                        <Form.Select value={item.stock_code_id} onChange={(e) => handleStockCodeChange(index, e)} required>
                           <option value="">Select Stock Code</option>
-                          {allProducts.map((product) => (
-                            <option key={product.id} value={product.id}>
-                              {product.stock_code}
-                            </option>
+                          {(allStockCodes[item.accessory_id] || []).map((stock) => (
+                            <option key={stock.id} value={stock.id}>{stock.stock_code}</option>
                           ))}
                         </Form.Select>
                       </td>
                       <td><Form.Control type="text" value={item.lot_no} readOnly /></td>
-                      <td><Form.Control type="number" value={item.length}
-                      onChange={(e) => handleRowChange(index, 'length', e.target.value)} /></td>
-                      <td><Form.Control type="text" value={item.length_unit} readOnly /></td>
-                      <td><Form.Control type="number" value={item.items} readOnly /></td>
-                      <td><Form.Control type="number" value={item.box_bundle} readOnly /></td>
+                      <td><Form.Control type="text" value={item.length} onChange={(e) => handleChange(index, "length", e)} />
+
+                      </td>
+                      <td>
+                      <Form.Select value={item.length_unit} onChange={(e) => handleChange(index, 'length_unit', e)}>
+                        <option value="">Unit</option>
+                        <option value="m">Meter</option>
+                        <option value="ft">Feet</option>
+                      </Form.Select>
+                      </td>
+                      
                       <td>
                         <Form.Control
                           type="number"
-                          value={item.out_quantity}
-                          onChange={(e) => handleRowChange(index, 'out_quantity', e.target.value)}
+                          value={item.quantity}
+                          onChange={(e) => handleChange(index, "quantity", e)}
                         />
                       </td>
                       <td>
@@ -244,7 +222,6 @@ const AccessoryOut = () => {
                   ))}
                 </tbody>
               </Table>
-
               <div className="text-center mt-4">
                 <Button type="submit" style={{ backgroundColor: mainColor, borderColor: mainColor }} size="lg" onClick={handleSubmit}>
                   Submit Stock
