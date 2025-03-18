@@ -78,32 +78,48 @@ const Index = () => {
 
   const downloadExcel = (row) => {
     const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
-
+  
     if (!fullInvoice || !fullInvoice.all_stocks) {
       console.error('Godown data not found for this row:', row);
       return;
     }
-
-    // Extract required data
-    const extractedData = fullInvoice.all_stocks.map((godown) => ({
+  
+    // Convert full invoice details to an object for easier handling
+    const invoiceDetails = {
       GatePassNo: fullInvoice.gate_pass_no,
       Date: fullInvoice.gate_pass_date,
+      Status: fullInvoice.status === 1 ? 'Approved' : 'Pending',
+      GodownSupervisor: fullInvoice.godown_supervisor?.name || 'N/A',
+      WarehouseSupervisor: fullInvoice.warehouse_supervisor?.name || 'N/A',
+      TotalAmount: fullInvoice.total_amount || 0
+    };
+  
+    // Extract all stock details dynamically
+    const extractedData = fullInvoice.all_stocks.map((godown) => ({
+      ...invoiceDetails, // Include full invoice details in each row
+      StockID: godown.id,
       ProductType: godown.product_type,
       LotNo: godown.lot_no,
-      ProductName: godown.products.name,
-      ShadeNo: godown.products.shadeNo,
+      ProductName: godown.products?.name || 'N/A',
+      ShadeNo: godown.products?.shadeNo || 'N/A',
       StockCode: godown.stock_code,
       Width: godown.width,
       Length: godown.length,
       Pcs: godown.pcs,
       Quantity: godown.quantity,
-      Supervisor: fullInvoice.warehouse_supervisors.name
+     
     }));
+  
+    // Generate Excel file
     const ws = XLSX.utils.json_to_sheet(extractedData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'GatePassData');
+  
+    // Write file
     XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
   };
+  
+  
 
   const navigate = useNavigate();
 
