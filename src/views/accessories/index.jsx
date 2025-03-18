@@ -109,6 +109,11 @@ const SuppliersPage = () => {
       sortable: true
     },
     {
+      name: 'Date',
+      selector: (row) => row.date.toUpperCase(),
+      sortable: true
+    },
+    {
       name: 'Product Category',
       selector: (row) => row.product_category.toUpperCase(),
       sortable: true
@@ -116,11 +121,6 @@ const SuppliersPage = () => {
     {
       name: 'Accessory Name',
       selector: (row) => row.accessory_name.toUpperCase(),
-      sortable: true
-    },
-    {
-      name: 'Date',
-      selector: (row) => row.date.toUpperCase(),
       sortable: true
     },
     {
@@ -363,16 +363,14 @@ const handleUpdateUser  = async () => {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF('landscape');
-    doc.text('Suppliers List', 14, 10);
+    const doc = new jsPDF('potrait');
+    
 
-    const headers = [['Sr No', 'Date', 'Product Category', 'Accessory Name']];
-
-    const body = filteredSuppliers.map((row, index) => [index + 1, row.date, row.product_category, row.accessory_name]);
+    
 
     doc.autoTable({
-      head: [['Product Category', 'Accessory', 'Status']],
-      body: filteredSuppliers.map((row) => [row.product_categoryt, row.date, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
+      head: [['S no.','Date','Product Category', 'Accessory', 'Status']],
+      body: filteredSuppliers.map((row, index) => [ index+1,  row.date,row.product_category, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
       styles: {
         fontSize: 10, // Smaller font size to fit more data
         overflow: 'linebreak', // Wrap text within cells
@@ -380,9 +378,10 @@ const handleUpdateUser  = async () => {
       },
       columnStyles: {
         0: { cellWidth: 10}, // Auto-adjust column widths
-        1: { cellWidth: 40 },
-        2: { cellWidth: 90 },
-        3: { cellWidth: 30 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 70 },
+        4: { cellWidth: 30 },
       },
       tableWidth: 'wrap', // Ensure table fits within the page width
       margin: { top: 20 }, // Top margin for the table
