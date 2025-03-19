@@ -19,11 +19,15 @@ const ShowProduct = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
-
+  const [rackInputs, setRackInputs] = useState({});
+  const categoryId = 4; // Honeycomb category id
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownhoneycombstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstock`, {
+          params: {
+            category_id: categoryId
+          },
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -76,7 +80,7 @@ useEffect(() => {
       if (result.isConfirmed) {
         try {
           const response = await axios.put(
-            `${import.meta.env.VITE_API_BASE_URL}/api/godownhoneycombstock/${id}`,
+            `${import.meta.env.VITE_API_BASE_URL}/api/godownstock/${id}`,
             { rack: result.value },
             {
               headers: {
