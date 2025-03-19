@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Button } from 'react-bootstrap';
 import { MdDelete, MdPrint, MdPersonAdd, MdCheckCircle, MdAdd } from 'react-icons/md';
-import { FaFileExcel } from 'react-icons/fa';
+import { FaFileExcel,FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +33,7 @@ const OperatorInvoice = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownout`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -41,26 +41,10 @@ const OperatorInvoice = () => {
         });
 
         const invoicesDetails = response.data.data;
-
-        const filteredFields = (data) => {
-          return data.map((invoice) => ({
-            invoice_no: invoice.invoice_no,
-            id: invoice.id,
-            supplier_name: invoice.customer,
-            company_name: invoice.company,
-            height: invoice.stock_out_details?.height,
-            date: invoice.date,
-            status: invoice.status,
-            payment_bank: invoice.payment_bank,
-            payment_mode: invoice.payment_mode,
-            payment_status: invoice.payment_status,
-            total_amount: invoice.total_amount
-          }));
-        };
-
+        console.log(invoicesDetails);
         setInvoiceAllDetails(invoicesDetails);
-        setInvoices(filteredFields(invoicesDetails));
-        setFilteredInvoices(filteredFields(invoicesDetails));
+        setInvoices(invoicesDetails);
+        setFilteredInvoices(invoicesDetails);
       } catch (error) {
         console.error(error);
         toast.error('Failed to fetch invoices');
@@ -80,7 +64,7 @@ const OperatorInvoice = () => {
     );
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
-  
+
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -111,17 +95,22 @@ const OperatorInvoice = () => {
   const columns = [
     {
       name: 'Invoice Number',
-      selector: (row) => row.invoice_no,
+      selector: (row) => row.stockout_invoice_no,
       sortable: true
     },
     {
-      name: 'Customer Name',
-      selector: (row) => row.supplier_name,
+      name: 'Stock Code ',
+      selector: (row) => row.stock_code,
       sortable: true
     },
     {
-      name: 'Supplier Name',
-      selector: (row) => row.company_name,
+      name: 'product_shadeNo',
+      selector: (row) => row.product_shadeNo,
+      sortable: true
+    },
+    {
+      name: 'Purchase ShadeNo',
+      selector: (row) => row.product_purchase_shade_no,
       sortable: true
     },
     {
@@ -130,67 +119,40 @@ const OperatorInvoice = () => {
       sortable: true
     },
     {
-      name: 'Bank',
-      selector: (row) => row.payment_bank,
+      name: 'Width',
+      selector: (row) => row.out_width,
       sortable: true
     },
     {
-      name: 'Total Amount',
-      selector: (row) => row.total_amount,
+      name: 'Length',
+      selector: (row) => row.out_length,
       sortable: true
     },
-    // {
-    //   name: 'Action',
-    //   width: '230px',
-    //   cell: (row) => (
-    //     <div className="d-flex">
-    //       {row.status === 0 ? (
-    //         <>
-    //           <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
-    //             <MdCheckCircle />
-    //           </Button>
-    //         </>
-    //       ) : (
-    //         <></>
-    //       )}
-    //       <Button
-    //         variant="outline-primary"
-    //         size="sm"
-    //         onClick={() => {
-    //           setSelectedInvoice(row.id);
-    //           setShowPdfModal(true);
-    //         }}
-    //       >
-    //         <MdPrint />
-    //       </Button>
-    //       <Button variant="outline-primary" size="sm" onClick={() => exportToExcel(row)}>
-    //         <FaFileExcel />
-    //       </Button>
-    //       <Button variant="outline-warning" size="sm" className="me-2" onClick={() => navigate(`/accessory-add-out-stock/${row.id}`)}>
-    //         <MdAdd />
-    //       </Button>
-    //     </div>
-    //   )
-    // },
-    // {
-    //   name: 'Status',
-    //   selector: (row) => (row.status === 1 ? 'Approved' : 'Pending'),
-    //   sortable: true,
-    //   cell: (row) => (
-    //     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-    //       <span
-    //         className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
-    //         style={{
-    //           padding: '5px 10px',
-    //           borderRadius: '8px',
-    //           whiteSpace: 'nowrap'
-    //         }}
-    //       >
-    //         {row.status === 1 ? 'Approved' : 'Pending'}
-    //       </span>
-    //     </div>
-    //   )
-    // }
+    {
+      name: 'PCS',
+      selector: (row) => row.out_pcs,
+      sortable: true
+    },
+    {
+      name: 'Rack',
+      selector: (row) => row.rack,
+      sortable: true
+    },
+    {
+      name: 'GST',
+      selector: (row) => row.gst,
+      sortable: true
+    },
+    {
+      name: 'rate',
+      selector: (row) => row.rate,
+      sortable: true
+    },
+    {
+      name: 'Amount',
+      selector: (row) => row.amount,
+      sortable: true
+    },
     {
       name: 'Action',
       width: '280px',
@@ -198,26 +160,19 @@ const OperatorInvoice = () => {
         <div className="d-flex">
           {row.status === 0 ? (
             <>
-              <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
+              <Button variant="outline-success" size="sm" onClick={() => handleStatusUpdate(row.id,1)}>
                 <MdCheckCircle />
               </Button>
-              <Button variant="outline-danger" size="sm" onClick={() => handleReject(row.id)} className="ms-2">
+              <Button variant="outline-danger" size="sm" onClick={() => handleStatusUpdate(row.id,2)} className="ms-2">
                 <MdCancel />
               </Button>
             </>
           ) : (
             <></>
           )}
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={() => {
-              setSelectedInvoice(row.id);
-              setShowPdfModal(true);
-            }}
-          >
-            <MdPrint />
-          </Button>
+          <Button variant="outline-success" size="sm" className="me-2">
+                      <FaEye onClick={() => navigate(`/view-accessory-out/${row.id}`)} />
+                    </Button>
           <Button variant="outline-primary" size="sm" onClick={() => exportToExcel(row)}>
             <FaFileExcel />
           </Button>
@@ -234,9 +189,8 @@ const OperatorInvoice = () => {
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
-            className={`badge ${
-              row.status === 1 ? 'bg-success' : row.status === -1 ? 'bg-danger' : 'bg-warning'
-            }`}
+            className={`badge ${row.status === 1 ? 'bg-success' : row.status === -1 ? 'bg-danger' : 'bg-warning'
+              }`}
             style={{
               padding: '5px 10px',
               borderRadius: '8px',
@@ -249,149 +203,208 @@ const OperatorInvoice = () => {
       )
     }
   ];
-  const handleReject = async (id) => {
+  
+  const handleStatusUpdate = async (id, status) => {
     try {
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout/reject/${id}`, 
-        {}, 
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-      toast.error('Stockout Invoice rejected!');
-      setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: -1 } : inv)));
-      setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: -1 } : inv)));
+        await axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/api/godownout/${id}`,
+            { status },
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            }
+        );
+        toast.success(`Stockout Invoice ${status === 1 ? 'approved' : 'rejected'} successfully!`);
+        setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status } : inv)));
+        setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status } : inv)));
     } catch (error) {
-      toast.error('Failed to reject stockout invoice');
+        toast.error(`Failed to ${status === 1 ? 'approve' : 'reject'} stockout invoice`);
     }
+};
+const customStyles = {
+  table: {
+    style: {
+      borderCollapse: 'separate',
+      borderSpacing: 0
+    }
+  },
+  header: {
+    style: {
+      backgroundColor: '#2E8B57',
+      color: '#fff',
+      fontSize: '18px',
+      fontWeight: 'bold',
+      padding: '15px',
+      borderRadius: '8px 8px 0 0'
+    }
+  },
+  rows: {
+    style: {
+      backgroundColor: '#f0fff4',
+      borderBottom: '1px solid #e0e0e0',
+      transition: 'background-color 0.3s ease',
+      '&:hover': {
+        backgroundColor: '#e6f4ea',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+      }
+    }
+  },
+  headCells: {
+    style: {
+      backgroundColor: '#20B2AA',
+      color: '#fff',
+      fontSize: '12px',
+      fontWeight: 'bold',
+      textTransform: 'uppercase',
+      padding: '15px',
+      borderRight: '1px solid #e0e0e0'
+    },
+    lastCell: {
+      style: {
+        borderRight: 'none'
+      }
+    }
+  },
+  cells: {
+    style: {
+      fontSize: '14px',
+      color: '#333',
+      padding: '10px',
+      borderRight: '1px solid grey'
+    }
+  },
+  pagination: {
+    style: {
+      backgroundColor: '#3f4d67',
+      color: '#fff',
+      borderRadius: '0 0 8px 8px'
+    },
+    pageButtonsStyle: {
+      backgroundColor: 'transparent',
+      color: 'black',
+      border: 'none',
+      '&:hover': {
+        backgroundColor: 'rgba(255,255,255,0.2)'
+      },
+      '& svg': {
+        fill: 'white'
+      },
+      '&:focus': {
+        outline: 'none',
+        boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+      }
+    }
+  }
+};
+
+  const exportToCSV = () => {
+      try {
+          // Define column headers
+          const headers = [
+              ['Invoice No', 'Stock Code', 'Product Shade No', 'Purchase Shade No', 'Date', 'Width', 'Length', 'PCS', 'Rack', 'GST', 'Rate', 'Amount', 'Status']
+          ];
+  
+          // Map invoice data into an array
+          const data = filteredInvoices.map((row) => [
+              row.stockout_invoice_no,
+              row.stock_code,
+              row.product_shadeNo,
+              row.product_purchase_shade_no,
+              row.date,
+              row.out_width,
+              row.out_length,
+              row.out_pcs,
+              row.rack,
+              row.gst,
+              row.rate,
+              row.amount,
+              row.status === 1 ? 'Approved' : row.status === -1 ? 'Rejected' : 'Pending'
+          ]);
+  
+          // Create a new worksheet
+          const worksheet = XLSX.utils.aoa_to_sheet([...headers, ...data]);
+  
+          // Auto-adjust column widths
+          const columnWidths = headers[0].map(() => ({ wch: 15 })); // Each column gets 15 characters width
+          worksheet['!cols'] = columnWidths;
+  
+          // Create a new workbook and append the worksheet
+          const workbook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'StockOutInvoices');
+  
+          // Generate file name with timestamp
+          const fileName = `StockOutInvoices_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`;
+  
+          // Save the file
+          XLSX.writeFile(workbook, fileName);
+  
+          toast.success('Excel exported successfully!');
+      } catch (error) {
+          console.error('Error exporting Excel:', error);
+          toast.error('Failed to export Excel');
+      }
   };
   
 
-  const handleAddInvoice = () => {
-    navigate('/invoice-out');
-  };
-  const handleApprove = async (id) => {
-    try {
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/godownstockout/approve/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-      toast.success('StockoutInovice approved successfully!');
-      setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
-      setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
-    } catch (error) {
-      toast.error('Failed to approve gate pass');
-    }
-  };
-  const customStyles = {
-    table: {
-      style: {
-        borderCollapse: 'separate',
-        borderSpacing: 0
-      }
-    },
-    header: {
-      style: {
-        backgroundColor: '#2E8B57',
-        color: '#fff',
-        fontSize: '18px',
-        fontWeight: 'bold',
-        padding: '15px',
-        borderRadius: '8px 8px 0 0'
-      }
-    },
-    rows: {
-      style: {
-        backgroundColor: '#f0fff4',
-        borderBottom: '1px solid #e0e0e0',
-        transition: 'background-color 0.3s ease',
-        '&:hover': {
-          backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }
-      }
-    },
-    headCells: {
-      style: {
-        backgroundColor: '#20B2AA',
-        color: '#fff',
-        fontSize: '12px',
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-        padding: '15px',
-        borderRight: '1px solid #e0e0e0'
-      },
-      lastCell: {
-        style: {
-          borderRight: 'none'
-        }
-      }
-    },
-    cells: {
-      style: {
-        fontSize: '14px',
-        color: '#333',
-        padding: '10px',
-        borderRight: '1px solid grey'
-      }
-    },
-    pagination: {
-      style: {
-        backgroundColor: '#3f4d67',
-        color: '#fff',
-        borderRadius: '0 0 8px 8px'
-      },
-      pageButtonsStyle: {
-        backgroundColor: 'transparent',
-        color: 'black',
-        border: 'none',
-        '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
-        },
-        '& svg': {
-          fill: 'white'
-        },
-        '&:focus': {
-          outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
-        }
-      }
-    }
-  };
-
-  const exportToCSV = () => {
-    try {
-      const csv = Papa.unparse(filteredInvoices);
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      saveAs(blob, 'supplier_list.csv');
-    } catch (error) {
-      console.error('Error generating CSV:', error);
-      toast.error('Failed to export CSV');
-    }
-  };
-
   const exportToPDF = () => {
     try {
-      const doc = new jsPDF('landscape');
-      doc.setFontSize(14);
-      doc.text('Supplier List', 14, 10);
-      doc.autoTable({
-        head: [['Invoice Number', 'Customer Name', 'Supplier Name', 'Date', 'Bank', 'Total Amount']],
-        body: filteredInvoices.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
-      });
-      doc.save('supplier_list.pdf');
+        const doc = new jsPDF('landscape'); // Landscape mode for better table fit
+        doc.setFontSize(16);
+        doc.text('Stock Out Invoice List', 14, 10);
+        
+        // Define table columns
+        const tableColumn = [
+            'Invoice No', 
+            'Stock Code', 
+            'Product Shade No', 
+            'Purchase Shade No', 
+            'Date', 
+            'Width', 
+            'Length', 
+            'PCS', 
+            'Rack', 
+            'GST', 
+            'Rate', 
+            'Amount',
+            'Status'
+        ];
+        
+        // Prepare table rows from filtered invoice data
+        const tableRows = filteredInvoices.map((row) => [
+            row.stockout_invoice_no,
+            row.stock_code,
+            row.product_shadeNo,
+            row.product_purchase_shade_no,
+            row.date,
+            row.out_width,
+            row.out_length,
+            row.out_pcs,
+            row.rack,
+            row.gst,
+            row.rate,
+            row.amount,
+            row.status === 1 ? 'Approved' : row.status === -1 ? 'Rejected' : 'Pending'
+        ]);
+
+        // Auto-generate table
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 20, // Start below title text
+            styles: { fontSize: 10 },
+            headStyles: { fillColor: [32, 178, 170], textColor: [255, 255, 255] }, // Header styling
+            alternateRowStyles: { fillColor: [240, 255, 244] }, // Alternate row color
+            margin: { top: 20 },
+        });
+
+        // Save PDF
+        doc.save('StockOutInvoices.pdf');
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast.error('Failed to export PDF');
+        console.error('Error generating PDF:', error);
+        toast.error('Failed to export PDF');
     }
-  };
+};
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
