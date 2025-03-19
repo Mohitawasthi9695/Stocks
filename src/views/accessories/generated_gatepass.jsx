@@ -55,7 +55,8 @@ const Index = () => {
           godownSupervisor: gatepass.godown_supervisors.name,
           warehouseSupervisor: gatepass.warehouse_supervisors.name,
           date: gatepass.gate_pass_date,
-          total_amount: gatepass.total_amount
+          total_amount: gatepass.total_amount,
+          status: gatepass.status
         }));
         setInvoices(filteredFields);
         setFilteredInvoices(filteredFields);
@@ -103,7 +104,7 @@ const Index = () => {
     },
     {
       name: 'Status',
-      selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
+      selector: (row) => (row.status === 1 ? 'active' : 'inactive'),
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

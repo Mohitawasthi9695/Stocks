@@ -440,6 +440,18 @@ const routes = [
         element: lazy(() => import('./components/thermal_stockGatepass')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
       },
+      {
+        exact: 'true',
+        path: '/stock-tranfer',
+        element: lazy(() => import('./views/stocktransfer/stocktransfer')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/view_stock_transfer',
+        element: lazy(() => import('./views/stocktransfer/view_stock_transfer')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
       
       {
         exact: 'true',

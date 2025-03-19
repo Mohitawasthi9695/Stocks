@@ -345,6 +345,7 @@ const menuItems = {
         }
       ]
     },
+   
     {
       id: 'GoDownGatePass',
       title: 'Blinds Stock GatePass',
@@ -407,6 +408,37 @@ const menuItems = {
                   url: '/zebra_stock_godown'
                 }
               ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'StockTransfer',
+      title: 'Blinds Godown Transfer',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'transfer_form_godown',
+          title: 'Blinds Tranfer',
+          type: 'collapse',
+          icon: 'feather icon-box',
+
+          children: [
+            {
+              id: 'stock_transfer',
+              title: 'Stock Transfer',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/stock-tranfer'
+            },
+            {
+              id: 'view_stock_transfer',
+              title: 'View Stock Transfer',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/view_stock_transfer'
             }
           ]
         }
