@@ -138,7 +138,7 @@ const ShowProduct = () => {
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: 20,
+      startY: 10,
       theme: 'grid',
       styles: { fontSize: 10, cellPadding: 3 },
       headStyles: { fillColor: [32, 178, 170], textColor: '#FFF', fontStyle: 'bold' }, // LightSeaGreen header
