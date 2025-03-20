@@ -299,14 +299,14 @@ const WarehouseAccessoriesPage = () => {
       return;
     }
   
-    const doc = new jsPDF();
+    const doc = new jsPDF('landscape');
     doc.setFontSize(14);
     doc.text('Stock List', 80, 10);
   
     // Extract headers from `columns` array, excluding "Action"
-    const headers = columns
-      .filter((col) => col.name !== 'Action') // Exclude Action column
-      .map((col) => col.name);
+    const headers = ['Sr No', 'Category', 'Accessory Name', 'Stock Code', 'Length', 'Items', 'Box Bundle', 'Quantity', 'Out Quantity'];
+      // .filter((col) => col.name !== 'Action') // Exclude Action column
+      // .map((col) => col.name);
   
     // Prepare data dynamically
     const body = filteredAccessories.map((row, index) => {
@@ -320,7 +320,7 @@ const WarehouseAccessoriesPage = () => {
         row.box_bundle || 'N/A',
         row.quantity || 'N/A',
         row.out_quantity || 'N/A',
-        'Edit/Delete' // Placeholder for the Action column
+        
       ];
     });
   
