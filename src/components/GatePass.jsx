@@ -75,8 +75,7 @@ const styles = StyleSheet.create({
   },
   totalSection: {
     marginLeft: 'auto',
-    width: '40%',
-    marginTop: 10
+    width: '40%'
   },
   footerColumns: {
     flexDirection: 'row',
@@ -93,12 +92,6 @@ const styles = StyleSheet.create({
     fontSize: 8,
     marginBottom: 3
   },
-  qrCode: {
-    width: 100,
-    height: 100,
-    border: '1pt solid black',
-    alignSelf: 'center'
-  },
   signatureBox: {
     height: 60,
     borderBottom: '1pt solid black',
@@ -112,6 +105,7 @@ const styles = StyleSheet.create({
 
 const GatePass = ({ show, onHide, invoiceData, id }) => {
   const invoice = invoiceData.find((invoice) => invoice.id === id);
+  console.log(invoice.godown_accessories); 
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -125,7 +119,6 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
               <Text style={styles.header}>STOCK IN GATE PASS</Text>
 
               <View style={styles.flexContainer}>
-                {/* Gate Pass Details */}
                 <View style={[styles.borderBox, styles.column]}>
                   <Text style={styles.sectionTitle}>Gate Pass Details:</Text>
                   <View style={styles.row}>
@@ -138,11 +131,10 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                   </View>
                   <View style={styles.row}>
                     <Text style={styles.label}>Status:</Text>
-                    <Text style={styles.value}>{invoice.status === 0 ? 'Pending' : 'Completed'}</Text>
+                    <Text style={styles.value}>{invoice.status === 0 ? 'Pending' : 'Approved'}</Text>
                   </View>
                 </View>
 
-                {/* Warehouse Supervisor */}
                 <View style={[styles.borderBox, styles.column]}>
                   <Text style={styles.sectionTitle}>Warehouse Supervisor:</Text>
                   <View style={styles.row}>
@@ -151,7 +143,6 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                   </View>
                 </View>
 
-                {/* Godown Supervisor */}
                 <View style={[styles.borderBox, styles.column]}>
                   <Text style={styles.sectionTitle}>Godown Supervisor:</Text>
                   <View style={styles.row}>
@@ -161,7 +152,6 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                 </View>
               </View>
 
-              {/* Godown Accessories Information */}
               <View style={styles.borderBox}>
                 <Text style={styles.sectionTitle}>Godown Accessories:</Text>
                 <View style={styles.table}>
@@ -169,48 +159,20 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                     <Text style={styles.tableCell}>Lot No</Text>
                     <Text style={styles.tableCell}>Length</Text>
                     <Text style={styles.tableCell}>Items</Text>
+                    <Text style={styles.tableCell}>Accessory Name</Text>
                     <Text style={styles.tableCell}>Box Bundle</Text>
                     <Text style={styles.tableCell}>Quantity</Text>
                   </View>
                   {invoice.godown_accessories.map((accessory, index) => (
                     <View key={index} style={styles.tableRow}>
                       <Text style={styles.tableCell}>{accessory.lot_no}</Text>
-                      <Text style={styles.tableCell}>
-                        {accessory.length}
-                        {accessory.length_unit}
-                      </Text>
+                      <Text style={styles.tableCell}>{accessory.length}{accessory.length_unit}</Text>
                       <Text style={styles.tableCell}>{accessory.items}</Text>
+                      <Text style={styles.tableCell}>{accessory.accessory?.accessory_name}</Text>
                       <Text style={styles.tableCell}>{accessory.box_bundle}</Text>
                       <Text style={styles.tableCell}>{accessory.quantity}</Text>
                     </View>
                   ))}
-                </View>
-              </View>
-              <View style={styles.totalSection}>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Total Quantity:</Text>
-                  <Text style={styles.value}>
-                    {invoice.godown_accessories.reduce((total, accessory) => total + parseInt(accessory.quantity, 10), 0)}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.footerColumns}>
-                <View style={styles.footerColumn}>
-                  <Text style={styles.sectionTitle}>Terms & Conditions</Text>
-                  <Text style={styles.termsText}>1. Goods once sold will not be taken back</Text>
-                  <Text style={styles.termsText}>2. Interest @18% p.a. will be charged if payment is delayed</Text>
-                  <Text style={styles.termsText}>3. Subject to local jurisdiction</Text>
-                  <Text style={styles.termsText}>4. E.&O.E.</Text>
-                </View>
-                <View style={styles.footerColumn}>
-                  <View style={styles.signatureBox} />
-                  <Text style={styles.signatureText}>Supplier's Signature</Text>
-                  <Text style={styles.signatureText}>With Stamp</Text>
-                </View>
-                <View style={styles.footerColumn}>
-                  <View style={styles.signatureBox} />
-                  <Text style={styles.signatureText}>Receiver's Signature</Text>
-                  <Text style={styles.signatureText}>With Stamp</Text>
                 </View>
               </View>
             </Page>

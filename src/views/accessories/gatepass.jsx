@@ -195,7 +195,7 @@ const Invoice_out = () => {
         if (row.warehouse_accessory_id === id) {
           const updatedRow = { ...row, [field]: value };
           if (field === 'box_bundle') {
-            updatedRow.out_quantity = (Number(updatedRow.items) || 0) * (Number(value) || 0);
+            updatedRow.quantity = (Number(updatedRow.items) || 0) * (Number(value) || 0);
           }
           return updatedRow;
         }
@@ -264,10 +264,10 @@ const Invoice_out = () => {
     { id: 'stock_code', label: 'Warehouse Code' },
     { id: 'lot_no', label: 'LOT No' },
     { id: 'items', label: 'Items' },
-    { id: 'out_length', label: 'Length' },
+    { id: 'length', label: 'Length' },
     { id: 'length_unit', label: 'Unit' },
     { id: 'box_bundle', label: 'Box/Bundle' },
-    { id: 'out_quantity', label: 'Quantity' }
+    { id: 'quantity', label: 'Quantity' }
   ];
 
   const handleCheckboxChange = (id) => {
@@ -323,6 +323,7 @@ const Invoice_out = () => {
                   <Col md={4}>
                     <FormField icon={FaFileInvoice} label="GatePass No" name="invoice_no" value={invoice_no} readOnly />
                     <FormField icon={FaCity} label="place_of_supply" type="text" name="place_of_supply" value={formData.place_of_supply} onChange={handleChange} />
+                    <FormField icon={FaCity} label="driver_phone" type="number" name="driver_phone" value={formData.driver_phone} onChange={handleChange} />
                   </Col>
                   <Col md={4}>
                     <FormField icon={FaCalendarAlt} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
@@ -459,7 +460,7 @@ const Invoice_out = () => {
                                     <td key="stock_code">{row.stock_code || '-'}</td>
                                     <td key="lot_no">{row.lot_no || '-'}</td>
                                     <td key="items">{row.items || '-'}</td>
-                                    <td key="out_length">{row.out_length || '-'}</td>
+                                    <td key="length">{row.length || '-'}</td>
                                     <td key="length_unit">{row.length_unit || '-'}</td>
                                     <td key="box_bundle">
                                       <input
@@ -470,7 +471,7 @@ const Invoice_out = () => {
                                         onChange={(e) => handleInputChange(row.warehouse_accessory_id, 'box_bundle', e.target.value)}
                                       />
                                     </td>
-                                    <td key="out_quantity">{(row.box_bundle || 0) * (row.items || 0)}</td>
+                                    <td key="quantity">{(row.box_bundle || 0) * (row.items || 0)}</td>
                                   </tr>
                                 ))}
                               </tbody>
