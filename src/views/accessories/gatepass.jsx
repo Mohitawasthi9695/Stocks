@@ -370,12 +370,12 @@ const Invoice_out = () => {
                     </Form.Group>
 
                     <Form.Group style={{ marginLeft: '20px' }}>
-                      <Form.Label>Select Shade Number:</Form.Label>
+                      <Form.Label>Select Accessory:</Form.Label>
                       <Form.Control
                         as="select"
                         id="accessory_name"
                         className="form-select px-2"
-                        style={{ width: '8rem', minItems: 'fit-content' }}
+                        style={{ width: '15rem', minItems: 'fit-content' }}
                         disabled={!selectedCategoryId}
                         onChange={handleAccessoryChange}
                       >

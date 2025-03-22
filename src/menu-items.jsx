@@ -20,7 +20,8 @@ const filterMenuItem = (menu) => {
               'customers',
               'stock_to_godown',
               'approve_operator',
-              'godown_stock'
+              'godown_stock',
+              'StockTransfer'
             ].includes(item.id)
           )
       )
@@ -224,7 +225,7 @@ const menuItems = {
             },
             {
               id: 'list_stock',
-              title: 'View Blinds Invoice',
+              title: 'View Invoice',
               icon: 'feather icon-list',
               type: 'item',
               url: '/invoices'
@@ -336,7 +337,7 @@ const menuItems = {
             },
             {
               id: 'generated_gate_pass',
-              title: 'View Blinds Gate Pass',
+              title: 'View GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/generated_gate_pass'
@@ -439,6 +440,13 @@ const menuItems = {
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/view_stock_transfer'
+            },
+            {
+              id: 'view_get_transfer',
+              title: 'View Get Transfer',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/view_get_transfer'
             }
           ]
         }
@@ -459,21 +467,21 @@ const menuItems = {
           children: [
             {
               id: 'approve_accessory',
-              title: 'Accessory GatePass',
+              title: 'GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/approve/accessory'
             },
             {
               id: 'godown_accessory',
-              title: 'Accessory Stocks',
+              title: 'Stocks',
               icon: 'feather icon-list',
               type: 'item',
               url: '/view_approve_gatepass'
             },
             {
               id: 'all_godown_accessoryout',
-              title: 'Accessory StocksOut',
+              title: 'StocksOut',
               icon: 'feather icon-list',
               type: 'item',
               url: '/all-accessory-out'
@@ -533,7 +541,7 @@ const menuItems = {
             },
             {
               id: 'accessory_out_index',
-              title: 'View Accessory GatePass',
+              title: 'View GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/accessory/gatepassview'

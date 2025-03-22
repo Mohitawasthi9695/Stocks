@@ -452,6 +452,12 @@ const routes = [
         element: lazy(() => import('./views/stocktransfer/view_stock_transfer')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
       },
+      {
+        exact: 'true',
+        path: '/view_get_transfer',
+        element: lazy(() => import('./views/stocktransfer/view_stock')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
       
       {
         exact: 'true',

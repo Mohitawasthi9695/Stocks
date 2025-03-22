@@ -29,7 +29,7 @@ const AddProduct = () => {
         }
 
         const stockData = response.data.data;
-        const pcsCount = stockData.pcs || 1; // Default to 1 if pcs is missing
+        const pcsCount = (stockData.pcs-stockData.out_pcs) || 0; // Default to 1 if pcs is missing
 
         // Generate `pcsCount` rows by duplicating stockData
         const initialStocks = Array.from({ length: pcsCount }, () => ({
@@ -96,7 +96,7 @@ const AddProduct = () => {
         rack: item.rack
       }));
 
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock`, payload, {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock/${id}`, payload, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`

@@ -222,108 +222,189 @@ const OperatorInvoice = () => {
         toast.error(`Failed to ${status === 1 ? 'approve' : 'reject'} stockout invoice`);
     }
 };
-  const customStyles = {
-    table: {
-      style: {
-        borderCollapse: 'separate',
-        borderSpacing: 0
-      }
-    },
-    header: {
-      style: {
-        backgroundColor: '#2E8B57',
-        color: '#fff',
-        fontSize: '18px',
-        fontWeight: 'bold',
-        padding: '15px',
-        borderRadius: '8px 8px 0 0'
-      }
-    },
-    rows: {
-      style: {
-        backgroundColor: '#f0fff4',
-        borderBottom: '1px solid #e0e0e0',
-        transition: 'background-color 0.3s ease',
-        '&:hover': {
-          backgroundColor: '#e6f4ea',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-        }
-      }
-    },
-    headCells: {
-      style: {
-        backgroundColor: '#20B2AA',
-        color: '#fff',
-        fontSize: '12px',
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-        padding: '15px',
-        borderRight: '1px solid #e0e0e0'
-      },
-      lastCell: {
-        style: {
-          borderRight: 'none'
-        }
-      }
-    },
-    cells: {
-      style: {
-        fontSize: '14px',
-        color: '#333',
-        padding: '10px',
-        borderRight: '1px solid grey'
-      }
-    },
-    pagination: {
-      style: {
-        backgroundColor: '#3f4d67',
-        color: '#fff',
-        borderRadius: '0 0 8px 8px'
-      },
-      pageButtonsStyle: {
-        backgroundColor: 'transparent',
-        color: 'black',
-        border: 'none',
-        '&:hover': {
-          backgroundColor: 'rgba(255,255,255,0.2)'
-        },
-        '& svg': {
-          fill: 'white'
-        },
-        '&:focus': {
-          outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
-        }
+const customStyles = {
+  table: {
+    style: {
+      borderCollapse: 'separate',
+      borderSpacing: 0
+    }
+  },
+  header: {
+    style: {
+      backgroundColor: '#2E8B57',
+      color: '#fff',
+      fontSize: '18px',
+      fontWeight: 'bold',
+      padding: '15px',
+      borderRadius: '8px 8px 0 0'
+    }
+  },
+  rows: {
+    style: {
+      backgroundColor: '#f0fff4',
+      borderBottom: '1px solid #e0e0e0',
+      transition: 'background-color 0.3s ease',
+      '&:hover': {
+        backgroundColor: '#e6f4ea',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
       }
     }
-  };
+  },
+  headCells: {
+    style: {
+      backgroundColor: '#20B2AA',
+      color: '#fff',
+      fontSize: '12px',
+      fontWeight: 'bold',
+      textTransform: 'uppercase',
+      padding: '15px',
+      borderRight: '1px solid #e0e0e0'
+    },
+    lastCell: {
+      style: {
+        borderRight: 'none'
+      }
+    }
+  },
+  cells: {
+    style: {
+      fontSize: '14px',
+      color: '#333',
+      padding: '10px',
+      borderRight: '1px solid grey'
+    }
+  },
+  pagination: {
+    style: {
+      backgroundColor: '#3f4d67',
+      color: '#fff',
+      borderRadius: '0 0 8px 8px'
+    },
+    pageButtonsStyle: {
+      backgroundColor: 'transparent',
+      color: 'black',
+      border: 'none',
+      '&:hover': {
+        backgroundColor: 'rgba(255,255,255,0.2)'
+      },
+      '& svg': {
+        fill: 'white'
+      },
+      '&:focus': {
+        outline: 'none',
+        boxShadow: '0 0 5px rgba(255,255,255,0.5)'
+      }
+    }
+  }
+};
 
   const exportToCSV = () => {
-    try {
-      const csv = Papa.unparse(filteredInvoices);
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      saveAs(blob, 'supplier_list.csv');
-    } catch (error) {
-      console.error('Error generating CSV:', error);
-      toast.error('Failed to export CSV');
-    }
+      try {
+          // Define column headers
+          const headers = [
+              ['Invoice No', 'Stock Code', 'Product Shade No', 'Purchase Shade No', 'Date', 'Width', 'Length', 'PCS', 'Rack', 'GST', 'Rate', 'Amount', 'Status']
+          ];
+  
+          // Map invoice data into an array
+          const data = filteredInvoices.map((row) => [
+              row.stockout_invoice_no,
+              row.stock_code,
+              row.product_shadeNo,
+              row.product_purchase_shade_no,
+              row.date,
+              row.out_width,
+              row.out_length,
+              row.out_pcs,
+              row.rack,
+              row.gst,
+              row.rate,
+              row.amount,
+              row.status === 1 ? 'Approved' : row.status === -1 ? 'Rejected' : 'Pending'
+          ]);
+  
+          // Create a new worksheet
+          const worksheet = XLSX.utils.aoa_to_sheet([...headers, ...data]);
+  
+          // Auto-adjust column widths
+          const columnWidths = headers[0].map(() => ({ wch: 15 })); // Each column gets 15 characters width
+          worksheet['!cols'] = columnWidths;
+  
+          // Create a new workbook and append the worksheet
+          const workbook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'StockOutInvoices');
+  
+          // Generate file name with timestamp
+          const fileName = `StockOutInvoices_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`;
+  
+          // Save the file
+          XLSX.writeFile(workbook, fileName);
+  
+          toast.success('Excel exported successfully!');
+      } catch (error) {
+          console.error('Error exporting Excel:', error);
+          toast.error('Failed to export Excel');
+      }
   };
+  
 
   const exportToPDF = () => {
     try {
-      const doc = new jsPDF('landscape');
-      doc.setFontSize(14);
-      doc.text('Supplier List', 14, 10);
-      doc.autoTable({
-        head: [['Invoice Number', 'Customer Name', 'Supplier Name', 'Date', 'Bank', 'Total Amount']],
-        body: filteredInvoices.map((row) => [row.invoice_no, row.supplier_name, row.receiver_name, row.date, row.bank, row.total_amount])
-      });
-      doc.save('supplier_list.pdf');
+        const doc = new jsPDF('landscape'); // Landscape mode for better table fit
+        doc.setFontSize(16);
+        doc.text('Stock Out Invoice List', 14, 10);
+        
+        // Define table columns
+        const tableColumn = [
+            'Invoice No', 
+            'Stock Code', 
+            'Product Shade No', 
+            'Purchase Shade No', 
+            'Date', 
+            'Width', 
+            'Length', 
+            'PCS', 
+            'Rack', 
+            'GST', 
+            'Rate', 
+            'Amount',
+            'Status'
+        ];
+        
+        // Prepare table rows from filtered invoice data
+        const tableRows = filteredInvoices.map((row) => [
+            row.stockout_invoice_no,
+            row.stock_code,
+            row.product_shadeNo,
+            row.product_purchase_shade_no,
+            row.date,
+            row.out_width,
+            row.out_length,
+            row.out_pcs,
+            row.rack,
+            row.gst,
+            row.rate,
+            row.amount,
+            row.status === 1 ? 'Approved' : row.status === -1 ? 'Rejected' : 'Pending'
+        ]);
+
+        // Auto-generate table
+        doc.autoTable({
+            head: [tableColumn],
+            body: tableRows,
+            startY: 20, // Start below title text
+            styles: { fontSize: 10 },
+            headStyles: { fillColor: [32, 178, 170], textColor: [255, 255, 255] }, // Header styling
+            alternateRowStyles: { fillColor: [240, 255, 244] }, // Alternate row color
+            margin: { top: 20 },
+        });
+
+        // Save PDF
+        doc.save('StockOutInvoices.pdf');
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast.error('Failed to export PDF');
+        console.error('Error generating PDF:', error);
+        toast.error('Failed to export PDF');
     }
-  };
+};
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>

@@ -95,42 +95,61 @@ const ShowProduct = () => {
     saveAs(blob, 'stocks_list.csv');
   };
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('stocks List', 20, 10);
+    const doc = new jsPDF('landscape');
+  
+    // Add Title
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Stocks List', 20, 10);
+  
+    // Define Table Headers
+    const tableColumn = [
+      'Sr No',
+      'Lot No',
+      'Invoice No',
+      'Date',
+      'Shade No',
+      'Pur. Shade No',
+      'Length',
+      'Width',
+      'Unit',
+      'Quantity',
+      'Area (m²)',
+      'Area (sq. ft.)'
+    ];
+  
+    // Prepare Table Rows
+    const tableRows = filteredProducts.map((row, index) => [
+      index + 1, // Sr No
+      row.lot_no,
+      row.invoice_no,
+      row.date,
+      row.product_shade_no,
+      row.product_pur_shade_no,
+      Math.round(row.length),
+      Math.round(row.width),
+      row.length_unit, // Assuming length & width have the same unit
+      row.pcs,
+      row.area,
+      row.area_sq_ft
+    ]);
+  
+    // Add Table to PDF
     doc.autoTable({
-      head: [
-        [
-          'Sr No',
-          'Lot No',
-          'Invoice No',
-          'Date',
-          'Shade No',
-          'Pur. Shade No',
-          'Length',
-          'Width',
-          'Unit',
-          'Quantity',
-          'Area (m²)',
-          'Area (sq. ft.)'
-        ]
-      ],
-      body: filteredProducts.map((row) => [
-        row.sr_no,
-        row.lot_no,
-        row.invoice_no,
-        row.date,
-        row.shade_no,
-        row.pur_shade_no,
-        Math.round(row.length),
-        Math.round(row.width),
-        row.unit,
-        row.qty,
-        row.area,
-        row.area_sq_ft
-      ])
+      head: [tableColumn],
+      body: tableRows,
+      startY: 10,
+      theme: 'grid',
+      styles: { fontSize: 10, cellPadding: 3 },
+      headStyles: { fillColor: [32, 178, 170], textColor: '#FFF', fontStyle: 'bold' }, // LightSeaGreen header
+      alternateRowStyles: { fillColor: [240, 255, 244] } // Light background for readability
     });
+  
+    // Save the PDF
     doc.save('stocks_list.pdf');
   };
+  
+  
 
   const customStyles = {
     table: {

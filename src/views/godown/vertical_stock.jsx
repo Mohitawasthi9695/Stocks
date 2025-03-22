@@ -5,25 +5,22 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import axios from 'axios';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
+import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
-import { FaEye } from 'react-icons/fa6';
-import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { Button, Modal, Form } from 'react-bootstrap';
-import PdfPreview from 'components/PdfPreview';
-import { useNavigate } from 'react-router-dom';
+import { FiSave, FiPlus } from 'react-icons/fi';
 import Swal from 'sweetalert2';
+import { FiEdit } from 'react-icons/fi';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
-  const [selectedInvoice, setSelectedInvoice] = useState(null);
-  const [showPdfModal, setShowPdfModal] = useState(false);
-  const categoryId = 3;
+  const [rackInputs, setRackInputs] = useState({});
+  const categoryId = 3; // Hardcoded for now
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
@@ -37,8 +34,22 @@ const ShowProduct = () => {
           }
         });
         console.log('stocks data:', response.data);
-        setProducts(response.data);
-        setFilteredProducts(response.data);
+        const productsWithArea = response.data.map((product) => {
+          const areaM2 = product.length * product.width;
+          const areaSqFt = areaM2 * 10.7639;
+          return {
+            ...product,
+            area: areaM2.toFixed(3),
+            area_sq_ft: areaSqFt.toFixed(3)
+          };
+        });
+        setProducts(productsWithArea);
+        setFilteredProducts(productsWithArea);
+        const initialRackInputs = {};
+        productsWithArea.forEach((product) => {
+          initialRackInputs[product.id] = product.rack || '';
+        });
+        setRackInputs(initialRackInputs);
       } catch (error) {
         console.error('Error fetching stocks data:', error);
       } finally {
@@ -60,8 +71,54 @@ const ShowProduct = () => {
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
+  const handleRackChange = (id, value) => {
+    setRackInputs((prev) => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+  const handleRackUpdate = async (id, currentRack) => {
+    Swal.fire({
+      title: 'Update Rack',
+      input: 'text',
+      inputPlaceholder: 'Enter new rack value...',
+      inputValue: currentRack, // Set default value to current rack
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+      preConfirm: (value) => {
+        if (!value) {
+          Swal.showValidationMessage('Rack value cannot be empty!');
+        }
+        return value;
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/api/godownstock/${id}`,
+            { rack: result.value },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
 
-  const navigate = useNavigate();
+          if (response.status === 200) {
+            setProducts((prevProducts) =>
+              prevProducts.map((product) => (product.id === id ? { ...product, rack: result.value } : product))
+            );
+            toast.success('Rack updated successfully!');
+          }
+        } catch (error) {
+          console.error('Error updating rack:', error);
+          toast.error('Failed to update rack. Please try again.');
+        }
+      }
+    });
+  };
   const columns = [
     {
       name: 'Sr No',
@@ -73,12 +130,7 @@ const ShowProduct = () => {
       selector: (row) => row.date,
       sortable: true
     },
-
-    {
-      name: 'Stock Code',
-      selector: (row) => row.stock_code,
-      sortable: true
-    },
+    { name: 'Stock Code', selector: (row) => `${row.stock_code}`, sortable: true },
     {
       name: 'Lot No',
       selector: (row) => row.lot_no,
@@ -104,15 +156,48 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    { name: 'ToTalLength', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: 'Total Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
     {
-      name: 'Pcs',
-      selector: (row) => row.pcs ?? 0,
+      name: 'Area (m²)',
+      selector: (row) => row.area,
       sortable: true
     },
     {
+      name: 'Area (sq. ft.)',
+      selector: (row) => row.area_sq_ft,
+      sortable: true
+    },
+    {
+      name: 'Wastage',
+      selector: (row) => row.wastage,
+      sortable: true
+    },
+    {
+      name: 'Rack',
+      cell: (row) => (
+        <div className="d-flex align-items-center w-100" style={{ justifyContent: row.rack ? 'space-between' : 'center' }}>
+          {row.rack ? (
+            <>
+              <span style={{ paddingLeft: '15px', minWidth: '50px', textAlign: 'left' }}>{row.rack}</span>
+              <button className="btn btn-sm btn-warning" onClick={() => handleRackUpdate(row.id, row.rack)} title="Edit Rack">
+                <FiEdit /> {/* Pencil Icon */}
+              </button>
+            </>
+          ) : (
+            <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id, row.rack)} title="Add Rack">
+              <FiPlus /> {/* Add Icon */}
+            </button>
+          )}
+        </div>
+      ),
+      sortable: false,
+      width: '150px'
+    },
+    {
       name: 'Status',
-      selector: (row) => row.status, 
+      selector: (row) => row.status, // Keep it numeric for sorting
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -128,66 +213,9 @@ const ShowProduct = () => {
           </span>
         </div>
       )
-    },
-    {
-      name: 'Action',
-      cell: (row) => (
-        <div className="d-flex">
-          <Button
-            variant="outline-warning"
-            size="sm"
-            className="me-2"
-            onClick={() => navigate(`/add_vertical_product/${row.id}`)}
-          >
-            <MdAdd />
-          </Button>
-          <Button variant="outline-success" size="sm" className="me-2">
-            <FaEye onClick={() => navigate(`/show_vertical_product/${row.stock_in_id}`)} />
-          </Button>
-
-          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
-            <MdDelete />
-          </Button>
-        </div>
-      ),
-      width: '220px'
     }
   ];
-  const handleDelete = async (id) => {
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    });
-
-    if (!result.isConfirmed) return;
-
-    try {
-      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
-
-      Swal.fire('Deleted!', 'The product has been deleted.', 'success');
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      Swal.fire('Error!', 'Failed to delete the product. Please try again.', 'error');
-    }
-  };
-
   const exportToCSV = () => {
-    if (filteredProducts.length === 0) {
-      Swal.fire('No data available for export.', '', 'warning');
-      return;
-    }
-  
     const csvData = filteredProducts.map((row, index) => ({
       'Sr No': index + 1,
       'User Name': JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
@@ -195,76 +223,86 @@ const ShowProduct = () => {
       'Lot No': row.lot_no || 'N/A',
       'Stock Code': row.stock_code || 'N/A',
       'Invoice No': row.gate_pass_no,
-      'Date': row.date || 'N/A',
+      Date: row.date || 'N/A',
       'Shade No': row.shadeNo || 'N/A',
       'Pur. Shade No': row.purchase_shade_no || 'N/A',
-      'Total Length': `${row.length || 'N/A'} ${row.length_unit || ''}`,
-      'Pcs': row.pcs ?? 0,
-      'Status': row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
+      Width: row.width || 'N/A',
+      Length: row.length || 'N/A',
+      'Area (m²)': row.area || 'N/A',
+      'Area (sq. ft.)': row.area_sq_ft || 'N/A',
+      Wastage: row.wastage || 'N/A',
+      Rack: row.rack || 'N/A',
+      Status: row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
     }));
-  
+
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
+
   
+
   const exportToPDF = () => {
     if (filteredProducts.length === 0) {
-      Swal.fire('No data available for export.', '', 'warning');
+      // toast
+      alert('No data available for export.');
       return;
     }
-  
+
     const doc = new jsPDF({
       orientation: 'landscape',
       unit: 'mm',
       format: 'a4'
     });
-  
-    doc.text('Vertical Stocks List ', 14, 10);
-  
+
     const tableColumn = [
       'Sr No',
       'User Name',
-      'User Email',
       'Lot No',
       'Stock Code',
-      'Invoice No',
+      'Gate pass No',
       'Date',
       'Shade No',
       'Pur. Shade No',
-      'Total Length',
-      'Pcs',
+      'Width',
+      'Length',
+      'Area (m²)',
+      'Area (sq. ft.)',
+      'Wastage',
+      'Rack',
       'Status'
     ];
-  
+
     const tableRows = filteredProducts.map((row, index) => [
       index + 1,
       JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
-      JSON.parse(localStorage.getItem('user'))?.email || 'N/A',
       row.lot_no || 'N/A',
       row.stock_code || 'N/A',
       row.gate_pass_no,
       row.date || 'N/A',
       row.shadeNo || 'N/A',
       row.purchase_shade_no || 'N/A',
-      `${row.length || 'N/A'} ${row.length_unit || ''}`,
-      row.pcs ?? 0,
+      row.width || 'N/A',
+      row.length || 'N/A',
+      row.area || 'N/A',
+      row.area_sq_ft || 'N/A',
+      row.wastage || 'N/A',
+      row.rack || 'N/A',
       row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
     ]);
-  
+
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
       styles: { fontSize: 8 },
       headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255] },
-      columnStyles: { 10: { cellWidth: 15 }, 11: { cellWidth: 15 } },
-      theme: 'grid'
+      columnStyles: { 16: { cellWidth: 15 }, 17: { cellWidth: 15 } }, // Force columns to fit
+      theme: 'grid',
     });
-  
-    doc.save('stocks_list.pdf');
+    doc.save('stocks_list.pdf')
   };
-  
+
   const customStyles = {
     table: {
       style: {
@@ -340,21 +378,32 @@ const ShowProduct = () => {
       }
     }
   };
+
   const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
-          <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
+          <input
+            type="text"
+            placeholder="Search..."
+            id="search"
+            value={searchQuery}
+            onChange={handleSearch}
+            className="form-control"
+            style={{ borderRadius: '5px' }}
+          />
         </div>
         <div className="col-md-8">
           <div className="d-flex justify-content-end">
-            <button className="btn btn-info" onClick={exportToCSV}>
-              <FaFileCsv className="w-5 h-5 me-1" /> Export as CSV
+            <button type="button" className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" />
+              Export as CSV
             </button>
-            <button className="btn btn-info" onClick={exportToPDF}>
-              <AiOutlineFilePdf className="w-5 h-5 me-1" /> Export as PDF
+            <button type="button" className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              Export as PDF
             </button>
           </div>
         </div>
@@ -363,15 +412,34 @@ const ShowProduct = () => {
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {loading ? (
-              <Skeleton count={10} />
+              <div>
+                {[...Array(8)].map((_, index) => (
+                  <div key={index} style={{ display: 'flex', gap: '10px', padding: '10px' }}>
+                    <Skeleton width={50} height={20} />
+                    <Skeleton width={200} height={20} />
+                    <Skeleton width={200} height={20} />
+                  </div>
+                ))}
+              </div>
             ) : (
               <>
-                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
-                {searchQuery && (
-                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
-                    Total Boxes: {totalBoxes}
-                  </div>
-                )}
+                <div className="card-body p-0">
+                  <DataTable
+                    columns={columns}
+                    data={filteredProducts}
+                    pagination
+                    highlightOnHover
+                    striped
+                    responsive
+                    customStyles={customStyles}
+                    defaultSortFieldId={1}
+                  />
+                  {searchQuery && (
+                    <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                      Total Boxes: {totalBoxes}
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </div>

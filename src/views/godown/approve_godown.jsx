@@ -275,34 +275,46 @@ const Index = () => {
   };
 
   const downloadExcel = (row) => {
+    console.log('Row data:', row);
+  
     const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
-
     if (!fullInvoice || !fullInvoice.all_stocks) {
       console.error('Godown data not found for this row:', row);
+      toast.error('No data found to export.');
       return;
     }
-
+  
+    console.log('Full invoice data:', fullInvoice);
+  
     // Extract required data
     const extractedData = fullInvoice.all_stocks.map((godown) => ({
       GatePassNo: fullInvoice.gate_pass_no,
       Date: fullInvoice.gate_pass_date,
       ProductType: godown.product_type,
       LotNo: godown.lot_no,
-      ProductName: godown.products.name,
-      ShadeNo: godown.products.shadeNo,
+      ProductName: godown.products?.name || 'N/A',
+      ShadeNo: godown.products?.shadeNo || 'N/A',
       StockCode: godown.stock_code,
       Width: godown.get_width,
       Length: godown.get_length,
       AvailableHeight: godown.available_height,
       AvailableWidth: godown.available_width,
       Quantity: godown.get_quantity,
-      Supervisor: fullInvoice.warehouse_supervisors.name
+      Supervisor: fullInvoice.warehouse_supervisors?.name || 'N/A'
     }));
+  
+    console.log('Extracted data for Excel:', extractedData);
+  
+    // Create a worksheet and workbook
     const ws = XLSX.utils.json_to_sheet(extractedData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'GatePassData');
+  
+    // Save the file
     XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
+    toast.success('Excel file downloaded successfully!');
   };
+  
   // Export CSV
   const exportToCSV = () => {
     if (!filteredInvoices || filteredInvoices.length === 0) {

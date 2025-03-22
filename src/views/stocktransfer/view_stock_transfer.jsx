@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
+import { MdEdit, MdDelete, MdPersonAdd,MdCheckCircle, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
 import { FaEye } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
@@ -47,6 +47,7 @@ const Index = () => {
           gatepass_no: gatepass.gate_pass_no,
           id: gatepass.id,
           status: gatepass.status,
+          type: gatepass.type,
           godownSupervisor: gatepass.godown_supervisor.name,
           warehouseSupervisor: gatepass.warehouse_supervisor.name,
           date: gatepass.gate_pass_date,
@@ -103,7 +104,24 @@ const Index = () => {
   };
 
   const navigate = useNavigate();
-
+  const handleApprove = async (id) => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}/approve`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      toast.success('Gate pass approved successfully!');
+      setInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
+      setFilteredInvoices((prev) => prev.map((inv) => (inv.id === id ? { ...inv, status: 1 } : inv)));
+    } catch (error) {
+      toast.error('Failed to approve gate pass');
+    }
+  };
   const columns = [
     {
       name: 'Invoice Number',
@@ -148,6 +166,15 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
+          {row.status === 0 && row.type==2 ? (
+            <>
+              <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
+                <MdCheckCircle />
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
           <Button variant="outline-success" size="sm" className="me-2">
             <FaEye onClick={() => navigate(`/show-gatepass_details/${row.id}`)} />
           </Button>
@@ -172,7 +199,7 @@ const Index = () => {
           </Button>
         </div>
       ),
-      width: '250px'
+      width: '300px'
     }
   ];
   const handleDelete = async (id) => {

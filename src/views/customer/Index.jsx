@@ -121,13 +121,15 @@ const CustomersPage = () => {
       name: 'Registered Address',
       selector: (row) => row.reg_address,
       sortable: true,
-      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>
+      cell: (row) => <span>{row.reg_address.replace('\n', ', ')}</span>,
+      width: '300px'
     },
     {
       name: 'Work Address',
       selector: (row) => row.work_address,
       sortable: true,
-      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>
+      cell: (row) => <span>{row.work_address.replace('\n', ', ')}</span>,
+      width: '300px'
     },
     {
       name: 'Area',

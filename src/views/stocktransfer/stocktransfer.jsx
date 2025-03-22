@@ -40,7 +40,7 @@ const Invoice_out = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [formData, setFormData] = useState({
     invoice_no: '',
-    type: 'stock',
+    type: 'transfer',
     date: today,
     vehicle_no: '',
     place_of_supply: '',
@@ -247,8 +247,8 @@ const Invoice_out = () => {
         confirmButtonColor: '#3085d6'
       });
 
-      toast.success('Stocks out successfully');
-      navigate('/generated_gate_pass');
+      toast.success('Stocks Transfer successfully');
+      navigate('/view_stock_transfer');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding stock';
 

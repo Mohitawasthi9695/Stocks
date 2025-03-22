@@ -114,42 +114,84 @@ const ShowProduct = () => {
     saveAs(blob, 'stocks_list.csv');
   };
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('stocks List', 20, 10);
+    const doc = new jsPDF('l', 'mm', 'a4'); // Landscape mode for better table fitting
+  
+    // Add Title
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Stocks List', 14, 15);
+  
+    // Define Table Headers (Removed "Lot No." and "Area (m²)")
+    const headers = [
+      [
+        'Sr No',
+        'Invoice No',
+        'Date',
+        'Category',
+        'Stock Code',
+        'Shade No',
+        'Pur. Shade No',
+        'Length',
+        'Width',
+        'Pcs',
+        'Rate',
+        'Amount',
+        'Rack',
+        'Status'
+      ]
+    ];
+  
+    // Map the filteredProducts to rows (Excluded "Lot No." and "Area (m²)")
+    const rows = filteredProducts.map((product, index) => [
+      index + 1,
+      product.invoice_no,
+      product.date,
+      product.product_category,
+      product.stock_code || 'N/A',
+      product.product_shade_no,
+      product.product_pur_shade_no,
+      `${Number(product.length).toFixed(2)} ${product.length_unit}`,
+      `${Number(product.width).toFixed(2)} ${product.width_unit}`,
+      product.pcs,
+      product.rate,
+      product.amount,
+      product.rack,
+      product.status === 1 ? 'Approved' : 'Pending'
+    ]);
+  
+    // Generate the table in the PDF
     doc.autoTable({
-      head: [
-        [
-          'Sr No',
-          'Lot No',
-          'Invoice No',
-          'Date',
-          'Shade No',
-          'Pur. Shade No',
-          'Length',
-          'Width',
-          'Unit',
-          'Quantity',
-          'Area (m²)',
-          'Area (sq. ft.)'
-        ]
-      ],
-      body: filteredProducts.map((row) => [
-        row.sr_no,
-        row.lot_no,
-        row.invoice_no,
-        row.date,
-        row.shade_no,
-        row.pur_shade_no,
-        Math.round(row.length),
-        Math.round(row.width),
-        row.unit,
-        row.qty,
-        row.area,
-        row.area_sq_ft
-      ])
+      head: headers,
+      body: rows,
+      startY: 25,
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [32, 178, 170], textColor: '#FFF', fontStyle: 'bold' }, // LightSeaGreen header
+      alternateRowStyles: { fillColor: [240, 255, 244] }, // Alternating row colors for readability
+      columnStyles: {
+        0: { cellWidth: 12 }, // Sr No
+        1: { cellWidth: 20 }, // Invoice No
+        2: { cellWidth: 22 }, // Date
+        3: { cellWidth: 20 }, // Category
+        4: { cellWidth: 20 }, // Stock Code
+        5: { cellWidth: 22 }, // Shade No
+        6: { cellWidth: 25 }, // Pur. Shade No
+        7: { cellWidth: 20 }, // Length
+        8: { cellWidth: 20 }, // Width
+        9: { cellWidth: 12 }, // Pcs
+        10: { cellWidth: 18 }, // Rate
+        11: { cellWidth: 25 }, // Amount
+        12: { cellWidth: 15 }, // Rack
+        13: { cellWidth: 22 } // Status
+      }
     });
+  
+    // Save the PDF
     doc.save('stocks_list.pdf');
   };
+  
+  
+  
 
   const customStyles = {
     table: {

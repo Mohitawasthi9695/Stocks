@@ -24,7 +24,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gettransferstock`, {
           params: {
             category_id: categoryId
           },
