@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
 
 const GatePass = ({ show, onHide, invoiceData, id }) => {
   const invoice = invoiceData.find((invoice) => invoice.id === id);
-  console.log(invoice.godown_accessories); 
+  console.log(invoice.godown_accessories);
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -157,18 +157,21 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                 <View style={styles.table}>
                   <View style={styles.tableHeader}>
                     <Text style={styles.tableCell}>Lot No</Text>
+                    <Text style={styles.tableCell}>Accessory Name</Text>
                     <Text style={styles.tableCell}>Length</Text>
                     <Text style={styles.tableCell}>Items</Text>
-                    <Text style={styles.tableCell}>Accessory Name</Text>
                     <Text style={styles.tableCell}>Box Bundle</Text>
                     <Text style={styles.tableCell}>Quantity</Text>
                   </View>
                   {invoice.godown_accessories.map((accessory, index) => (
                     <View key={index} style={styles.tableRow}>
                       <Text style={styles.tableCell}>{accessory.lot_no}</Text>
-                      <Text style={styles.tableCell}>{accessory.length}{accessory.length_unit}</Text>
-                      <Text style={styles.tableCell}>{accessory.items}</Text>
                       <Text style={styles.tableCell}>{accessory.accessory?.accessory_name}</Text>
+                      <Text style={styles.tableCell}>
+                        {accessory.length}
+                        {accessory.length_unit}
+                      </Text>
+                      <Text style={styles.tableCell}>{accessory.items}</Text>
                       <Text style={styles.tableCell}>{accessory.box_bundle}</Text>
                       <Text style={styles.tableCell}>{accessory.quantity}</Text>
                     </View>
