@@ -285,7 +285,7 @@ const ProductCategory = () => {
         >
           <h3 className="text-white text-center m-0">Product Category</h3>
         </div>
-        <div className="px-3 pb-3">
+        <div className="table-responsive">
           <Table hover bordered className="mb-0">
             <thead>
               <tr>

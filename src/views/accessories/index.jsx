@@ -26,6 +26,7 @@ const SuppliersPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSupplier, setselectedSupplier] = useState(null);
   const [editedUser, setEditedUser] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
 
 
@@ -106,22 +107,26 @@ const SuppliersPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
+      width: '90px'
     },
     {
       name: 'Date',
       selector: (row) => row.date.toUpperCase(),
-      sortable: true
+      sortable: true,
+      width: '100px'
     },
     {
       name: 'Product Category',
       selector: (row) => row.product_category.toUpperCase(),
-      sortable: true
+      sortable: true,
+      
     },
     {
       name: 'Accessory Name',
       selector: (row) => row.accessory_name.toUpperCase(),
-      sortable: true
+      sortable: true,
+      width: '270px'
     },
     {
       name: 'Remarks',
@@ -398,12 +403,9 @@ const handleUpdateUser  = async () => {
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
-          <label htmlFor="search" className="me-2">
-            Search:{' '}
-          </label>
           <input
             type="text"
-            placeholder="Type here..."
+            placeholder="Search..."
             id="search"
             value={searchQuery}
             onChange={handleSearch}
@@ -411,9 +413,21 @@ const handleUpdateUser  = async () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end">
-          <Button variant="primary" onClick={handleAddUser}>
-            <MdPersonAdd className="me-2" /> Add Product Accessory
+        <div className="col-md-8 text-end mt-3 mt-md-0">
+          <Button variant="primary" onClick={handleAddUser}
+            style={{
+              marginRight: isMobile ? "25px" : "auto",
+              marginBottom: isMobile ? "-10px" : "auto",
+      
+              
+            }}
+          >
+            <MdPersonAdd className="me-2" style={{
+              height: '25px',
+              width :'23px'            }}/> 
+            <span className='d-none d-md-inline'>
+            Add Product Accessory
+            </span>
           </Button>
         </div>
       </div>
@@ -423,12 +437,20 @@ const handleUpdateUser  = async () => {
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <div className="d-flex justify-content-end">
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                  <FaFileCsv className="w-5 h-5 me-1" />
+                  <FaFileCsv className="w-5 h-5 me-1"  style={{
+                    height: '25px',
+                    width :'15px'
+                  }}/>
+                  <span className='d-none d-md-inline'>
                   Export as CSV
+                  </span>
                 </button>
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                  <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                  Export as PDF
+                  <AiOutlineFilePdf className="w-5 h-5 me-1"  style={{
+                    height: '25px',
+                    width :'20px'
+                  }}/>
+                  <span className='d-none d-md-inline'>Export as PDF</span>
                 </button>
               </div>
               <DataTable

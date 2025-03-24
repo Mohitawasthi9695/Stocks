@@ -24,6 +24,7 @@ const ReceiversPage = () => {
   const [selectedReceiver, setselectedReceiver] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <600);
 
   const people_type = 'Company';
   useEffect(() => {
@@ -76,22 +77,27 @@ const ReceiversPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
+      width: '90px'
     },
     {
       name: 'Company Name',
       selector: (row) => row.name,
-      sortable: true
+      sortable: true,
+      width: '230px',
+      
     },
     {
       name: 'Code',
       selector: (row) => row.code,
-      sortable: true
+      sortable: true,
+      width: '100px'
     },
     {
       name: 'GST No',
       selector: (row) => row.gst_no,
-      sortable: true
+      sortable: true,
+      width: '150px'
     },
     {
       name: 'CIN No',
@@ -106,17 +112,20 @@ const ReceiversPage = () => {
     {
       name: 'MSME No',
       selector: (row) => row.msme_no,
-      sortable: true
+      sortable: true,
+      width: '150px'
     },
     {
       name: 'Phone',
       selector: (row) => row.tel_no,
-      sortable: true
+      sortable: true,
+      width: '150px'
     },
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true
+      sortable: true,
+      width: '220px'
     },
     {
       name: 'Owner Mobile',
@@ -161,7 +170,8 @@ const ReceiversPage = () => {
     {
       name: 'Area',
       selector: (row) => row.area,
-      sortable: true
+      sortable: true,
+      width: '200px'
     },
     {
       name: 'Action',
@@ -435,7 +445,6 @@ const ReceiversPage = () => {
       <div className="row mb-3">
         <div className="col-md-4">
           <label htmlFor="search" className="me-2">
-            Search:{' '}
           </label>
           <input
             type="text"
@@ -447,9 +456,20 @@ const ReceiversPage = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end">
-          <Button variant="primary" onClick={handleAddUser}>
-            <MdPersonAdd className="me-2" /> Add Company
+        <div className="col-md-8 text-end mt-3 mt-md-0">
+          <Button variant="primary" onClick={handleAddUser} 
+            style={{
+              marginRight: isMobile ? "20px" : "auto",
+              marginBottom: isMobile ? "-10px" : "auto",
+            }}
+          >
+            <MdPersonAdd className="me-2" 
+              style={{
+                width: isMobile ? "20px" : "auto",
+                height: isMobile ? "20px" : "auto",
+              }}
+            /> 
+            <span className='d-none d-md-inline'>Add Company</span>
           </Button>
         </div>
       </div>
@@ -459,12 +479,22 @@ const ReceiversPage = () => {
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <div className="d-flex justify-content-end">
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                  <FaFileCsv className="w-5 h-5 me-1" />
-                  Export as CSV
+                  <FaFileCsv className="w-5 h-5 me-1" style={{
+                                      height: '25px',
+                                      width :'15px'
+                                    }}/>
+                                    <span className='d-none d-sm-inline'>Export as CSV</span> 
                 </button>
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                  <AiOutlineFilePdf className="w-5 h-5 me-1" />
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" 
+                    style={{
+                      height: '25px',
+                      width :'20px'
+                    }}
+                  />
+                  <span className='d-none d-sm-inline'>
                   Export as PDF
+                  </span>
                 </button>
               </div>
               <DataTable

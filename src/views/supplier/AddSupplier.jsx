@@ -21,6 +21,10 @@ const AddSupplier = () => {
     owner_mobile: '',
     logo: null
   });
+
+  // usestate for display screen size. 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
   const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,7 +88,7 @@ const AddSupplier = () => {
   const mainColor = '#3f4d67';
 
   return (
-    <Container fluid className="pt-4 px-5" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <Container fluid className="pt-4 px-2" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center">
         <Col md={12} lg={12}>
           <Card
