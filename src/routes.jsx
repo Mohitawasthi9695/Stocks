@@ -318,7 +318,7 @@ const routes = [
       {
         exact: 'true',
         path: '/all_out_stock_godown',
-        element: lazy(() => import('./views/stockOut/all_out_stock_godown')),
+        element: lazy(() => import('./views/stockOut/all_out_stock')),
         allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
@@ -371,6 +371,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/stocks/godown/cutStock/:id',
+        element: lazy(() => import('./views/godown/cut_stock')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor','sub_supervisor','operator']
+      },
+      {
+        exact: 'true',
         path: '/operator',
         element: lazy(() => import('./views/operator/operator'))
       },
@@ -420,7 +426,7 @@ const routes = [
         exact: 'true',
         path: '/add_vertical_product/:id',
         element: lazy(() => import('./views/godown/add_vertical_product')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+        allowedRoles: ['superadmin', 'admin', 'sub_supervisor']
       },
       {
         exact: 'true',

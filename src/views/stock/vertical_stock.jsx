@@ -44,14 +44,38 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
+      Object.keys(product).some((key) => {
+        const value = product[key];
+  
+        // Convert date values to string before comparison
+        if (key === "dateLocal" || key === "date") {
+          return new Date(value).toLocaleDateString('en-GB').toLowerCase().includes(lowercasedQuery);
+        }
+  
+        return value?.toString()?.toLowerCase().includes(lowercasedQuery);
+      })
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
+  
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
+  const searchFields = [
+    'dateLocal',
+    'invoice_no',
+    'purchase_shade_no',
+    'shadeNo',
+    'lot_no',
+    'length',
+    'width',
+    'invoice_no',
+    'lot_no',
+    'product_category_name',
+    'shadeNo',
+    'purchase_shade_no',
+  ];
 
   // const columns = [
   //   {

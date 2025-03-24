@@ -22,8 +22,11 @@ const AccessoryOut = () => {
       length: "",
       length_unit: "",
       items: "",
+      rate: 0,
+      gst: 0,
+      amount: 0,
       box_bundle: "",
-      out_quantity: "0",
+      out_quantity: 0,
     },
   ]);
 
@@ -63,6 +66,9 @@ const AccessoryOut = () => {
         length: "",
         length_unit: "",
         items: "",
+        rate: 0,
+        gst: 0,
+        amount: 0,
         box_bundle: "",
         out_quantity: "0",
       },
@@ -172,6 +178,9 @@ const AccessoryOut = () => {
                     <th>Length</th>
                     <th>Length Unit</th>
                     <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>GST</th>
+                    <th>Amount</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -199,18 +208,39 @@ const AccessoryOut = () => {
 
                       </td>
                       <td>
-                      <Form.Select value={item.length_unit} onChange={(e) => handleChange(index, 'length_unit', e)}>
-                        <option value="">Unit</option>
-                        <option value="m">Meter</option>
-                        <option value="ft">Feet</option>
-                      </Form.Select>
+                        <Form.Select value={item.length_unit} onChange={(e) => handleChange(index, 'length_unit', e)}>
+                          <option value="">Unit</option>
+                          <option value="m">Meter</option>
+                          <option value="ft">Feet</option>
+                        </Form.Select>
                       </td>
-                      
+
                       <td>
                         <Form.Control
                           type="number"
                           value={item.quantity}
                           onChange={(e) => handleChange(index, "quantity", e)}
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="number"
+                          value={item.rate}
+                          onChange={(e) => handleChange(index, "rate", e)}
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="number"
+                          value={item.gst}
+                          onChange={(e) => handleChange(index, "gst", e)}
+                        />
+                      </td>
+                      <td>
+                        <Form.Control
+                          type="number"
+                          value={item.amount}
+                          onChange={(e) => handleChange(index, "amount", e)}
                         />
                       </td>
                       <td>

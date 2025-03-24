@@ -4,6 +4,7 @@ import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaUserPlus, FaPlus, FaTrash } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 const AddProduct = () => {
   const { id } = useParams();
@@ -78,6 +79,19 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to submit the form?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, submit it!'
+    });
+  
+    if (!result.isConfirmed) {
+      return;
+    }
     try {
       const payload = godownStocks.map((item) => ({
         gate_pass_id: item.gate_pass_id || '',

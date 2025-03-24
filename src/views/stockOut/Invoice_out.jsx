@@ -464,7 +464,6 @@ const Invoice_out = () => {
                       label="Invoice no"
                       name="invoice_no"
                       value={formData.invoice_no}
-                      onChange={handleChange}
                       readOnly
                     />
                     <FormField
@@ -564,8 +563,8 @@ const Invoice_out = () => {
                       value={formData.reverse_charge}
                       onChange={handleChange}
                       options={[
-                        { id: 1, name: 'true' },
-                        { id: 0, name: 'false' }
+                        { id: 1, name: 'Yes' },
+                        { id: 0, name: 'No' }
                       ]}
                     />
                     <FormField

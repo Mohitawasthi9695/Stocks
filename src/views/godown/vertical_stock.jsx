@@ -158,7 +158,8 @@ const ShowProduct = () => {
     },
     { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     { name: 'Total Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
+    { name: 'Out Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
+    { name: 'Avaible Length', selector: (row) => `${row.length - row.out_length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Area (m²)',
       selector: (row) => row.area,
@@ -240,7 +241,7 @@ const ShowProduct = () => {
     saveAs(blob, 'stocks_list.csv');
   };
 
-  
+
 
   const exportToPDF = () => {
     if (filteredProducts.length === 0) {

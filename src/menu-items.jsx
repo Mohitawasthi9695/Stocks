@@ -47,6 +47,7 @@ const filterMenuItem = (menu) => {
             ['operator'].includes(userRole) &&
             [
               'approve_godown',
+              'StockTransfer',
               'users',
               'GodownAccessories',
               'approve_stock',
@@ -134,13 +135,13 @@ const menuItems = {
     },
     {
       id: 'products',
-      title: 'Blinds',
+      title: 'Product',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'products-id',
-          title: 'Blinds',
+          title: 'Product',
           icon: 'feather icon-package',
           type: 'collapse',
           style: {
@@ -152,14 +153,14 @@ const menuItems = {
           children: [
             {
               id: 'category2',
-              title: ' Blinds Category',
+              title: 'Category',
               type: 'item',
               url: '/product_category',
               icon: 'feather icon-package'
             },
             {
               id: 'category1',
-              title: ' Blinds',
+              title: ' Products',
               type: 'item',
               url: '/shades',
               icon: 'feather icon-package'
@@ -195,7 +196,7 @@ const menuItems = {
             },
             {
               id: 'add_warehouse_accessory',
-              title: 'Warehouse Accessories',
+              title: 'Stocks',
               type: 'item',
               url: '/warehouse_accessories',
               icon: 'feather icon-package'
@@ -206,13 +207,13 @@ const menuItems = {
     },
     {
       id: 'stockin',
-      title: 'Blinds In',
+      title: 'Blinds Stocks',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'stocks',
-          title: 'Blinds In',
+          title: 'Blinds Stocks',
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
@@ -232,7 +233,7 @@ const menuItems = {
             },
             {
               id: 'all_stocks',
-              title: 'Blinds Stocks',
+              title: 'Stocks',
               icon: 'feather icon-clipboard',
               type: 'collapse',
               children: [
@@ -279,13 +280,13 @@ const menuItems = {
     },
     {
       id: 'operator-stockout',
-      title: 'Blinds Stock Out',
+      title: 'Stocks Out',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'stocksout',
-          title: 'Blinds Out',
+          title: 'Stocks Out',
           type: 'collapse',
           icon: 'feather icon-box',
           children: [
@@ -306,7 +307,7 @@ const menuItems = {
             },
             {
               id: 'invoice_out_stock',
-              title: 'Invoice Out Stock',
+              title: 'Invoice Stock Out',
               icon: 'feather icon-file-minus',
               type: 'item',
               url: '/all-out-stock'
@@ -317,13 +318,13 @@ const menuItems = {
     },
     {
       id: 'WarehouseGatePass',
-      title: 'Blinds Godown GatePass',
+      title: 'Stocks Godown GatePass',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'send_to_godown',
-          title: 'Blinds GatePass',
+          title: 'Stocks GatePass',
           type: 'collapse',
           icon: 'feather icon-box',
 
@@ -349,20 +350,20 @@ const menuItems = {
    
     {
       id: 'GoDownGatePass',
-      title: 'Blinds Stock GatePass',
+      title: 'Stock GatePass',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'godown_gatepass',
-          title: 'Blinds GatePass',
+          title: 'Stock GatePass',
           type: 'collapse',
           icon: 'feather icon-box',
 
           children: [
             {
               id: 'approve_stock',
-              title: 'Blinds Stock GatePass',
+              title: 'View GatePass',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/approve/godown'

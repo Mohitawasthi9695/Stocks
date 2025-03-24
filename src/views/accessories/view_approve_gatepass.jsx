@@ -71,12 +71,14 @@ const Show_product = () => {
     { name: 'Gate Pass No', selector: (row) => row.gate_pass_no, sortable: true },
     { name: 'Date', selector: (row) => row.date, sortable: true },
     { name: 'Stock Code', selector: (row) => row.stock_code, sortable: true },
+    { name: 'Accessory Name', selector: (row) => row.product_accessory_name, sortable: true },
     { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
     { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: 'Pcs', selector: (row) => row.items, sortable: true },
     { name: 'Box/Bundle', selector: (row) => row.box_bundle, sortable: true },
     { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
     { name: 'Out Quantity', selector: (row) => row.out_quantity, sortable: true },
+    { name: 'Available Quantity', selector: (row) => (row.quantity-row.out_quantity), sortable: true },
     {
       name: 'Status',
       selector: (row) => row.status, // Keep it numeric for sorting

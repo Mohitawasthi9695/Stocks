@@ -188,7 +188,7 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                         <Text style={styles.tableCell}>Width</Text>
                                         <Text style={styles.tableCell}>Length</Text>
                                         <Text style={styles.tableCell}>Pcs</Text>
-                                        <Text style={styles.tableCell}>Quantity</Text>
+                                        {/* <Text style={styles.tableCell}>Quantity</Text> */}
                                     </View>
                                     {invoice.all_stocks.map((all_stock, index) => (
                                         <View key={index} style={styles.tableRow}>
@@ -200,7 +200,7 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                             <Text style={styles.tableCell}>{all_stock.width} {all_stock.width_unit}</Text>
                                             <Text style={styles.tableCell}>{all_stock.length} {all_stock.length_unit}</Text>
                                             <Text style={styles.tableCell}>{all_stock.pcs??1}</Text>
-                                            <Text style={styles.tableCell}>{all_stock.quantity}</Text>
+                                            {/* <Text style={styles.tableCell}>{all_stock.quantity}</Text> */}
                                         </View>
                                     ))}
                                 </View>

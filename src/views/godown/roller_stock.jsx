@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import axios from 'axios';
@@ -8,13 +10,14 @@ import { saveAs } from 'file-saver';
 import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { FaFileCsv } from 'react-icons/fa';
+import { FaFileCsv,FaEye } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import { FiSave, FiPlus } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import { FiEdit } from 'react-icons/fi';
 
 const ShowProduct = () => {
+   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -157,8 +160,9 @@ const ShowProduct = () => {
       sortable: true
     },
     { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
-    { name: 'Total Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
+  { name: 'Total Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+  { name: 'Out Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
+  { name: 'Avaible Length', selector: (row) => `${row.length-row.out_length}  ${row.length_unit}`, sortable: true },
     {
       name: 'Area (m²)',
       selector: (row) => row.area,
@@ -190,6 +194,18 @@ const ShowProduct = () => {
               <FiPlus /> {/* Add Icon */}
             </button>
           )}
+        </div>
+      ),
+      sortable: false,
+      width: '150px'
+    },
+    {
+      name: 'Cut Stock',
+      cell: (row) => (
+        <div className="d-flex align-items-center w-100" style={{ justifyContent: row.rack ? 'space-between' : 'center' }}>
+          <Button variant="outline-success" size="sm" className="me-2">
+            <FaEye onClick={() => navigate(`/stocks/godown/cutStock/${row.id}`)} />
+          </Button>
         </div>
       ),
       sortable: false,
