@@ -60,9 +60,13 @@ const ShowProduct = () => {
       selector: (_, index) => index + 1,
       sortable: true
     },
-    { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
     { name: 'Invoice No', selector: (row) => row.invoice_no, sortable: true },
     { name: 'Date', selector: (row) => row.date, sortable: true },
+    { name: 'Company Name', selector: (row) => row.company_name, sortable: true },
+    { name: 'Coompany Number', selector: (row) => row.company_phone_no, sortable: true },
+    { name: 'Customer', selector: (row) => row.buyer_name, sortable: true },
+    { name: 'Customer Number', selector: (row) => row.buyer_phone_no, sortable: true },
+    { name: 'Date', selector: (row) => row.buyer_name, sortable: true },
     { name: 'Category', selector: (row) => row.product_category, sortable: true },
     {
       name: 'Stock Code',
@@ -85,8 +89,6 @@ const ShowProduct = () => {
     { name: 'Rate', selector: (row) => row.rate, sortable: true },
     { name: 'Amount', selector: (row) => row.amount, sortable: true },
     { name: 'Rack', selector: (row) => row.rack, sortable: true },
-    { name: 'Area (m²)', selector: (row) => row.area, sortable: true },
-    { name: 'Area (sq. ft.)', selector: (row) => row.area_sq_ft, sortable: true },
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),

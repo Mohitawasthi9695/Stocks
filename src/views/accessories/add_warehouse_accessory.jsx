@@ -21,6 +21,7 @@ const AddProduct = () => {
       length_unit: '',
       items: '',
       box_bundle: '',
+      box_bundle_unit: '',
       quantity: '0'
     }
   ]);
@@ -51,6 +52,7 @@ const AddProduct = () => {
         length_unit: '',
         items: '',
         box_bundle: '',
+        box_bundle_unit: '',
         quantity: '0'
       }
     ]);
@@ -99,6 +101,7 @@ const AddProduct = () => {
       length_unit: item.length_unit,
       items: item.items,
       box_bundle: item.box_bundle,
+      box_bundle_unit: item.box_bundle_unit,
       quantity: item.quantity
     }));
     console.log(payload);
@@ -283,6 +286,7 @@ const AddProduct = () => {
                     <th>Length Unit</th>
                     <th>Items/pcs</th>
                     <th>Box/Bundle</th>
+                    <th>Box/Bundle Unit</th>
                     <th>Total Quantity</th>
                     <th>Action</th>
                   </tr>
@@ -324,8 +328,8 @@ const AddProduct = () => {
                       <td>
                         <Form.Select value={item.length_unit} onChange={(e) => handleRowChange(index, 'length_unit', e.target.value)}>
                           <option value="">Unit</option>
-                          <option value="meter">Meter</option>
-                          <option value="feet">Feet</option>
+                          <option value="m">Meter</option>
+                          <option value="ft">Feet</option>
                         </Form.Select>
                       </td>
                       <td>
@@ -337,6 +341,14 @@ const AddProduct = () => {
                           value={item.box_bundle}
                           onChange={(e) => handleRowChange(index, 'box_bundle', e.target.value)}
                         />
+                      </td>
+                      <td>
+                        <Form.Select value={item.box_bundle_unit} onChange={(e) => handleRowChange(index, 'box_bundle_unit', e.target.value)}>
+                          <option value="">Unit</option>
+                          <option value="box">Box</option>
+                          <option value="bundle">Bundle</option>
+                          <option value="packet">Packet</option>
+                        </Form.Select>
                       </td>
                       <td>
                         <Form.Control type="number" value={item.quantity} readOnly disabled />

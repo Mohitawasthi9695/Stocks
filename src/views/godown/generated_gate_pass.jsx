@@ -20,7 +20,6 @@ import PdfPreview from 'components/PdfPreview';
 import { FaFileCsv } from 'react-icons/fa';
 import Papa from 'papaparse';
 import 'jspdf-autotable';
-import StockGatePassThermalPrint from 'components/StockGatePassThermalPrint';
 
 const Index = () => {
   const [invoices, setInvoices] = useState([]);
@@ -30,8 +29,6 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
-  const [showPdfModalThermal, setShowPdfModalThermal] = useState(false);
-
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
@@ -78,48 +75,32 @@ const Index = () => {
 
   const downloadExcel = (row) => {
     const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
-  
+
     if (!fullInvoice || !fullInvoice.all_stocks) {
       console.error('Godown data not found for this row:', row);
       return;
     }
-  
-    // Convert full invoice details to an object for easier handling
-    const invoiceDetails = {
+
+    // Extract required data
+    const extractedData = fullInvoice.all_stocks.map((godown) => ({
       GatePassNo: fullInvoice.gate_pass_no,
       Date: fullInvoice.gate_pass_date,
-      Status: fullInvoice.status === 1 ? 'Approved' : 'Pending',
-      GodownSupervisor: fullInvoice.godown_supervisor?.name || 'N/A',
-      WarehouseSupervisor: fullInvoice.warehouse_supervisor?.name || 'N/A',
-      TotalAmount: fullInvoice.total_amount || 0
-    };
-  
-    // Extract all stock details dynamically
-    const extractedData = fullInvoice.all_stocks.map((godown) => ({
-      ...invoiceDetails, // Include full invoice details in each row
-      StockID: godown.id,
       ProductType: godown.product_type,
       LotNo: godown.lot_no,
-      ProductName: godown.products?.name || 'N/A',
-      ShadeNo: godown.products?.shadeNo || 'N/A',
+      ProductName: godown.products.name,
+      ShadeNo: godown.products.shadeNo,
       StockCode: godown.stock_code,
       Width: godown.width,
       Length: godown.length,
       Pcs: godown.pcs,
       Quantity: godown.quantity,
-     
+      Supervisor: fullInvoice.warehouse_supervisors.name
     }));
-  
-    // Generate Excel file
     const ws = XLSX.utils.json_to_sheet(extractedData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'GatePassData');
-  
-    // Write file
     XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
   };
-  
-  
 
   const navigate = useNavigate();
 
@@ -183,18 +164,6 @@ const Index = () => {
             <MdPrint />
           </Button>
 
-          <Button
-            variant="outline-dark"
-            size="sm"
-            onClick={() => {
-              setSelectedInvoice(row.id);
-              setShowPdfModalThermal(true);
-              console.log(row.id);
-            }}
-          >
-            <MdPrint />
-          </Button>
-
           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
             <FaFileExcel />
           </Button>
@@ -203,7 +172,7 @@ const Index = () => {
           </Button>
         </div>
       ),
-      width: '300px'
+      width: '250px'
     }
   ];
   const handleDelete = async (id) => {
@@ -441,9 +410,6 @@ const Index = () => {
       {invoiceAllDetails && selectedInvoice && (
         <StockGatePass show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
       )}
-      {invoiceAllDetails && selectedInvoice && (
-        <StockGatePassThermalPrint show={showPdfModalThermal} onHide={() => setShowPdfModalThermal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
-      )}
     </div>
   );
 };
@@ -461,7 +427,6 @@ export default Index;
 // import Skeleton from 'react-loading-skeleton';
 // import 'react-loading-skeleton/dist/skeleton.css';
 // import StockGatePass from 'components/StockGatePass';
-// import TheramalStockGatePass from 'components/thermal_stockGatepass';
 // import { AiOutlineFilePdf } from 'react-icons/ai';
 // import Swal from 'sweetalert2';
 // import * as XLSX from 'xlsx';
@@ -482,8 +447,6 @@ export default Index;
 //   const [loading, setLoading] = useState(true);
 //   const [selectedInvoice, setSelectedInvoice] = useState(null);
 //   const [showPdfModal, setShowPdfModal] = useState(false);
-//   const [showPdfModalThermal, setShowPdfModalThermal] = useState(false);
-//   const [pdfType, setPdfType] = useState('standard');
 //   useEffect(() => {
 //     const fetchInvoices = async () => {
 //       try {
@@ -601,7 +564,6 @@ export default Index;
 //     },
 //     {
 //       name: 'Action',
-//       width:"300px",
 //       cell: (row) => (
 //         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
 //           <Button variant="outline-success" size="sm" className="me-2">
@@ -619,17 +581,6 @@ export default Index;
 //           >
 //             <MdPrint />
 //           </Button>
-//           <Button
-//             variant="outline-dark"
-//             size="sm"
-//             onClick={() => {
-//               setSelectedInvoice(row.id);
-//               setShowPdfModalThermal(true);
-//               console.log(row.id);
-//             }}
-//           >
-//             <MdPrint />
-//           </Button>
 
 //           <Button variant="outline-info" size="sm" onClick={() => downloadExcel(row)}>
 //             <FaFileExcel />
@@ -639,14 +590,9 @@ export default Index;
 //           </Button>
 //         </div>
 //       ),
-    
+//       width: '250px'
 //     }
 //   ];
-//   const handlePrint = (type, invoiceId) => {
-//     setSelectedInvoice(invoiceId);
-//     setPdfType(type); // Set type dynamically
-//     setShowPdfModal(true);
-//   };
 //   const handleDelete = async (id) => {
 //     try {
 //       const result = await Swal.fire({
@@ -879,12 +825,8 @@ export default Index;
 //           </div>
 //         </div>
 //       </div>
-//       {invoiceAllDetails.length > 0 && selectedInvoice && (
-//   <StockGatePass show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
-// )}
-
-//         {invoiceAllDetails && selectedInvoice && (
-//         <TheramalStockGatePass show={showPdfModalThermal} onHide={() => setShowPdfModalThermal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
+//       {invoiceAllDetails && selectedInvoice && (
+//         <StockGatePass show={showPdfModal} onHide={() => setShowPdfModal(false)} invoiceData={invoiceAllDetails} id={selectedInvoice} />
 //       )}
 //     </div>
 //   );

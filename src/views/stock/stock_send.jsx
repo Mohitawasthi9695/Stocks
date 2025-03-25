@@ -109,7 +109,7 @@ const Invoice_out = () => {
     };
 
     fetchShadeNo();
-  }, [selectedCategoryId]); // Dependency added to fetch only when category is selected
+  }, [selectedCategoryId]);
 
   useEffect(() => {
     const fetchInvoiceNo = async () => {
@@ -273,7 +273,8 @@ const Invoice_out = () => {
     { id: 'width_combined', label: 'Width (Unit)' },
     { id: 'length_combined', label: 'Length (Unit)' },
     { id: 'pcs', label: 'Pcs' },
-    { id: 'out_quantity', label: 'Quantity' }
+    { id: 'out_quantity', label: 'Quantity' },
+    { id: 'type', label: 'Type' }
   ];
 
   const handleCheckboxChange = (id) => {
@@ -322,8 +323,8 @@ const Invoice_out = () => {
                 justifyContent: 'center'
               }}
             >
-              <FaUserPlus size={40} className="me-3" />
-              <h2 className="m-0 text-white">Generate GatePass For GoDown</h2>
+              <FaTruck size={40} className="me-3" />
+              <h2 className="m-0 text-white">GatePass</h2>
             </div>
             <Card.Body className="p-5">
               <Form onSubmit={handleSubmit}>
@@ -456,7 +457,7 @@ const Invoice_out = () => {
                                       {columns.map((column) => (
                                         <td key={column.id}>
                                           {column.id === 'width_combined'
-                                            ? `${row.width ?? ''} ${row.width_unit ?? ''}`.trim() 
+                                            ? `${row.width ?? ''} ${row.width_unit ?? ''}`.trim()
                                             : column.id === 'length_combined'
                                               ? `${row.length ?? ''} ${row.length_unit ?? ''}`.trim()
                                               : row[column.id] ?? ''}
@@ -501,6 +502,15 @@ const Invoice_out = () => {
                                         style={{ width: '5rem', paddingInline: '10px' }}
                                         value={row.out_quantity || ''}
                                         onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
+                                      ></input>
+                                    </td>
+                                    <td key="type">
+                                      <input
+                                        type="checkbox"
+                                        checked={row.type === 'gatepass'} 
+                                        onChange={(e) =>
+                                          handleInputChange(row.stock_available_id, 'type', e.target.checked ? 'gatepass' : 'stock')
+                                        }
                                       ></input>
                                     </td>
                                   </tr>

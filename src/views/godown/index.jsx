@@ -29,7 +29,7 @@ const Index = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownrollerstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'

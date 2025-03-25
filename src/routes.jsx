@@ -318,7 +318,7 @@ const routes = [
       {
         exact: 'true',
         path: '/all_out_stock_godown',
-        element: lazy(() => import('./views/stockOut/all_out_stock_godown')),
+        element: lazy(() => import('./views/stockOut/all_out_stock')),
         allowedRoles:  ['superadmin','admin', 'supervisor', 'operator']
       },
       {
@@ -371,6 +371,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/stocks/godown/cutStock/:id',
+        element: lazy(() => import('./views/godown/cut_stock')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor','sub_supervisor','operator']
+      },
+      {
+        exact: 'true',
         path: '/operator',
         element: lazy(() => import('./views/operator/operator'))
       },
@@ -400,6 +406,18 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/view-accessory-out/:id',
+        element: lazy(() => import('./views/stockOut/view_accessory_stockout')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/all-accessory-out',
+        element: lazy(() => import('./views/stockOut/all_accessory_stockout')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
         path: '/show-gatepass_details/:id',
         element: lazy(() => import('./views/godown/godown_gate_pass_detail')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
@@ -408,7 +426,7 @@ const routes = [
         exact: 'true',
         path: '/add_vertical_product/:id',
         element: lazy(() => import('./views/godown/add_vertical_product')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+        allowedRoles: ['superadmin', 'admin', 'sub_supervisor']
       },
       {
         exact: 'true',
@@ -426,6 +444,24 @@ const routes = [
         exact: 'true',
         path: '/thermal_stockGatepass',
         element: lazy(() => import('./components/thermal_stockGatepass')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/stock-tranfer',
+        element: lazy(() => import('./views/stocktransfer/stocktransfer')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/view_stock_transfer',
+        element: lazy(() => import('./views/stocktransfer/view_stock_transfer')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/view_get_transfer',
+        element: lazy(() => import('./views/stocktransfer/view_stock')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
       },
       

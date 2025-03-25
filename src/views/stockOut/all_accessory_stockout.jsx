@@ -11,6 +11,8 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import Swal from 'sweetalert2';
 import { BiBorderLeft } from 'react-icons/bi';
 import { text } from 'd3';
+import * as XLSX from 'xlsx';
+import { MdFileDownload } from 'react-icons/md';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Papa from 'papaparse';
@@ -18,10 +20,11 @@ import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
+
 const Show_product = () => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]); // For search
-  const [searchQuery, setSearchQuery] = useState(''); // Search query
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -31,12 +34,13 @@ const Show_product = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownAccessory`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessoryout`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
+
         console.log(response.data.data);
         const godownData = response.data.data;
         setProducts(godownData);
@@ -50,12 +54,24 @@ const Show_product = () => {
     };
 
     fetchProductData();
-  }, []);
+  }, [id]); // Ensure this effect re-runs when `id` changes
 
+  const downloadRowAsExcel = (row) => {
+    const ws = XLSX.utils.json_to_sheet([row]); // Convert single row to sheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Product_Data');
+
+    XLSX.writeFile(wb, `Product_${row.id}.xlsx`); // Download the file
+  };
+
+  // Update filtered Products when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter(
-      (product) => product.lot_no.toLowerCase().includes(lowercasedQuery) || product.length_unit.toLowerCase().includes(lowercasedQuery)
+      (product) =>
+        product.lot_no.toLowerCase().includes(lowercasedQuery) ||
+        product.type.toLowerCase().includes(lowercasedQuery) ||
+        product.unit.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -65,39 +81,21 @@ const Show_product = () => {
   };
 
   const navigate = useNavigate();
-
+  const unitText = '4 feet';
   const columns = [
     { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
-    { name: 'Gate Pass No', selector: (row) => row.gate_pass_no, sortable: true },
-    { name: 'Date', selector: (row) => row.date, sortable: true },
+    { name: 'Invoice No', selector: (row) => row.invoice_no, sortable: true },
+    { name: 'Date', selector: (row) => row.date ?? '', sortable: true },
+    { name: 'Accessory Name', selector: (row) => row.accessory_name, sortable: true },
     { name: 'Stock Code', selector: (row) => row.stock_code, sortable: true },
-    { name: 'Accessory Name', selector: (row) => row.product_accessory_name, sortable: true },
     { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
     { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: 'Pcs', selector: (row) => row.items, sortable: true },
-    { name: 'Box/Bundle', selector: (row) => row.box_bundle, sortable: true },
-    { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
-    { name: 'Out Quantity', selector: (row) => row.out_quantity, sortable: true },
-    { name: 'Available Quantity', selector: (row) => (row.quantity-row.out_quantity), sortable: true },
-    {
-      name: 'Status',
-      selector: (row) => row.status, // Keep it numeric for sorting
-      sortable: true,
-      cell: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span
-            className={`badge ${row.status === 1 ? 'bg-success' : row.status === 2 ? 'bg-warning' : 'bg-danger'}`}
-            style={{
-              padding: '5px 10px',
-              borderRadius: '8px',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            {row.status === 1 ? 'Approved' : row.status === 2 ? 'Stock Out' : 'Pending'}
-          </span>
-        </div>
-      )
-    }
+    { name: 'Pcs', selector: (row) => row.pcs , sortable: true },
+    { name: 'Rate', selector: (row) => row.rate, sortable: true },
+    { name: 'Gst', selector: (row) => row.gst, sortable: true },
+    { name: 'Amount', selector: (row) => row.amount, sortable: true },
+    { name: 'Rack', selector: (row) => row.rack, sortable: true },
+    { name: 'Remark', selector: (row) => row.remark, sortable: true },
   ];
 
   const handleEdit = (product) => {
@@ -111,6 +109,32 @@ const Show_product = () => {
       ...prevProduct,
       [name]: value
     }));
+  };
+
+  const handleUpdateProduct = async () => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/all_stocks/updateStock/${selectedProduct.id}`,
+        selectedProduct,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        setProducts((prev) => prev.map((prod) => (prod.id === selectedProduct.id ? { ...prod, ...selectedProduct } : prod)));
+        setFilteredProducts((prev) => prev.map((prod) => (prod.id === selectedProduct.id ? { ...prod, ...selectedProduct } : prod)));
+        toast.success('Product updated successfully!');
+        setShowEditModal(false);
+      } else {
+        throw new Error('Update failed');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Error updating product!');
+    }
   };
 
   const handleDelete = async (productId) => {
@@ -129,7 +153,7 @@ const Show_product = () => {
     }
 
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass${productId}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/all_stocks/getStockgatepass${productId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -207,24 +231,20 @@ const Show_product = () => {
       return;
     }
 
-    // Extract column headers dynamically from `columns` array
-    const headers = columns.map((col) => col.name);
+    const csvData = filteredProducts.map((row, index) => ({
+      'Sr No': index + 1,
+      'Gate Pass No': row.gate_pass_no,
+      'Gate Pass Date': row.gate_pass_date,
+      'Warehouse Code': row.stockin_code,
+      'Stock Code': row.stock_code,
+      'Lot No': row.lot_no,
+      Length: `${row.length} ${row.length_unit}`,
+      Width: `${row.width} ${row.width_unit}`,
+      Pcs: row.pcs ?? 1,
+      Quantity: row.quantity
+    }));
 
-    // Prepare CSV data dynamically
-    const csvData = filteredProducts.map((row, index) => {
-      let rowData = { 'Sr No': index + 1 }; // Add Serial Number manually
-
-      columns.forEach((col) => {
-        if (typeof col.selector === 'function') {
-          rowData[col.name] = col.selector(row);
-        }
-      });
-
-      return rowData;
-    });
-
-    // Convert to CSV and save
-    const csv = Papa.unparse({ fields: headers, data: csvData });
+    const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stock_list.csv');
     toast.success('CSV exported successfully!');
@@ -235,45 +255,40 @@ const Show_product = () => {
       toast.error('No data available for export.');
       return;
     }
-
+  
     const doc = new jsPDF();
-    doc.setFontSize(14);
+    doc.setFontSize(14); // Heading size adjusted
     doc.text('Stock List', 80, 10);
-
-    // Extract headers from `columns` array
-    const headers = columns.map((col) => col.name);
-
-    // Prepare data dynamically
-    const body = filteredProducts.map((row, index) => {
-      return [
-        index + 1, // Sr No
-        row.gate_pass_no || 'N/A', // Explicitly include Gate Pass No
-        row.date || 'N/A',
+  
+    doc.autoTable({
+      head: [['Sr No', 'Gate Pass No', 'Gate Pass Date', 'Warehouse Code', 'Stock Code',
+         'Lot No', 'Length', 'Width', 'Pcs', 'Quantity',]],
+      body: filteredProducts.map((row, index) => [
+        index + 1,
+        row.gate_pass_no || 'N/A',
+        row.gate_pass_date || 'N/A',
+        row.stockin_code || 'N/A',
         row.stock_code || 'N/A',
         row.lot_no || 'N/A',
         `${row.length} ${row.length_unit}` || 'N/A',
-        row.items || 'N/A',
-        row.box_bundle || 'N/A',
+        `${row.width} ${row.width_unit}` || 'N/A',
+        row.pcs ?? 1,
         row.quantity || 'N/A',
-        row.out_quantity || 'N/A',
-        row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
-      ];
-    });
-
-    doc.autoTable({
-      head: [headers],
-      body: body,
+    
+      ]),
       startY: 20,
       theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 3 },
-      headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 8 },
+      styles: { fontSize: 9, cellPadding: 3 }, // Body text size
+      headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 8 }, // **Smaller column heading font size**
       alternateRowStyles: { fillColor: [240, 240, 240] },
-      margin: { top: 20 }
+      margin: { top: 20 },
     });
-
+  
     doc.save('stock_list.pdf');
     toast.success('PDF exported successfully!');
   };
+  
+  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>

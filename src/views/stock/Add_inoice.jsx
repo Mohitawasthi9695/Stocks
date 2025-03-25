@@ -208,16 +208,17 @@ const Add_inoice = () => {
         background: '#ff9d0014'
       }}
     >
-      <Row className="justify-content-center">
+      <Row className="justify-content-center" >
         <Col md={12} lg={12}>
-          <Card className="shadow-lg border-0" style={{ borderRadius: '15px' }}>
+          <Card className="shadow-lg border-0" style={{ borderRadius: '15px'}}>
             <div
               className="p-4 text-white text-center"
               style={{
                 backgroundColor: '#20B2AA',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                // borderRadius: '15px 15px 0 0'
               }}
             >
               <FaUserPlus size={40} className="me-3" />

@@ -4,6 +4,7 @@ import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaUserPlus, FaPlus, FaTrash } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 const AddProduct = () => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const AddProduct = () => {
           console.error('API_BASE_URL is not defined');
           return;
         }
-        const response = await axios.get(`${API_BASE_URL}/api/godownverticalstock/${id}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/godownstock/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -29,7 +30,7 @@ const AddProduct = () => {
         }
 
         const stockData = response.data.data;
-        const pcsCount = stockData.pcs || 1; // Default to 1 if pcs is missing
+        const pcsCount = (stockData.pcs-stockData.out_pcs) || 0; // Default to 1 if pcs is missing
 
         // Generate `pcsCount` rows by duplicating stockData
         const initialStocks = Array.from({ length: pcsCount }, () => ({
@@ -78,6 +79,19 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to submit the form?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, submit it!'
+    });
+  
+    if (!result.isConfirmed) {
+      return;
+    }
     try {
       const payload = godownStocks.map((item) => ({
         gate_pass_id: item.gate_pass_id || '',
@@ -86,14 +100,17 @@ const AddProduct = () => {
         gate_pass_date: item.gate_pass_date,
         date: item.date || new Date().toISOString().split('T')[0],
         product_id: item.product_id,
+        product_category_id : item.product_category_id,
         lot_no: item.lot_no,
         length: parseFloat(item.length) || 0,
         length_unit: item.length_unit,
+        width: parseFloat(item.width) || 0,
+        width_unit: item.width_unit,
         type: 'stock',
         rack: item.rack
       }));
 
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock`, payload, {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownverticalstock/${id}`, payload, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`

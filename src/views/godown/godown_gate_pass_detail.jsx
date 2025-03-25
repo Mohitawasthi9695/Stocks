@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 import { BiBorderLeft } from 'react-icons/bi';
 import { text } from 'd3';
 import * as XLSX from 'xlsx';
-import { MdFileDownload } from 'react-icons/md';
+import { MdFileDownload,MdAdd } from 'react-icons/md';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Papa from 'papaparse';
@@ -56,6 +56,7 @@ const Show_product = () => {
               width: width || 'N/A',
               length: length || 'N/A',
               pcs: all_stocks.pcs,
+              type: all_stocks.type,
               length_unit: all_stocks.length_unit,
               width_unit: all_stocks.width_unit || 'N/A',
               type: all_stocks.type,
@@ -113,6 +114,28 @@ const Show_product = () => {
     { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     { name: 'Pcs', selector: (row) => row.pcs ?? 1, sortable: true },
+     {
+          name: 'Action',
+          cell: (row) => (
+            <div className="d-flex">
+              {row.type === 'gatepass' ? (
+                <>
+                  <Button
+                    variant="outline-warning"
+                    size="sm"
+                    className="me-2"
+                    onClick={() => navigate(`/add_vertical_product/${row.id}`)}
+                  >
+                    <MdAdd />
+                  </Button>
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
+          ),
+          width: '150px'
+        }
   ];
 
   const handleEdit = (product) => {
