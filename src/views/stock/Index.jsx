@@ -93,31 +93,37 @@ const Index = () => {
       name: 'Date',
       selector: (row) => new Date(row.date).toLocaleDateString('en-GB'), // Format: DD/MM/YYYY
       sortable: true,
-      width: '100px'
+      width: '100px',
+      center: true
     },
     {
       name: 'Invoice No.',
       selector: (row) => row.invoice_no,
       sortable: true,
-      width: '120px'
+      width: '120px',
+      center: true
     },
     {
       name: 'Supplier Name',
       selector: (row) => row.supplier_name,
       sortable: true,
-      width: '200px'
+      wrap: true,
+      center: true
     },
 
     {
       name: 'Receiver Name',
       selector: (row) => row.agent,
-      sortable: true
+      sortable: true,
+      center: true,
+      wrap: true
     },
 
     {
       name: 'Total Amount',
       selector: (row) => row.total_amount,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       name: 'Action',
@@ -353,17 +359,23 @@ const Index = () => {
         </div>
 
         <div className="d-flex justify-content-end" style={{
-          marginBottom: '-20px',
+          marginBottom: '-15px',
           marginTop: '10px'
         }}>
           <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}> 
-            <FaFileCsv className="w-5 h-5 me-1" />
+            <FaFileCsv className="w-5 h-5 me-1"  style={{
+                    height: '25px',
+                    width: '15px'
+                  }}/>
             <span className='d-none d-md-inline'>
             Export as CSV
             </span>
           </button>
           <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-            <AiOutlineFilePdf className="w-5 h-5 me-1" />
+            <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
+                    height: '25px',
+                    width: '20px'
+                  }} />
             <span className='d-none d-md-inline'>Export as PDF</span>
           </button>
         </div>

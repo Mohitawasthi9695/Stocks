@@ -18,6 +18,7 @@ const ShowProduct = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedColumns, setSelectedColumns] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -162,91 +163,106 @@ const ShowProduct = () => {
       id: 'sr_no',
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'date',
       name: 'Date',
       selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'stock_code',
       name: 'Stock Code',
       selector: (row) => row.stock_code,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'lot_no',
       name: 'Lot No',
       selector: (row) => row.lot_no,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'invoice_no',
       name: 'Invoice no',
       selector: (row) => row.invoice_no,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'product_category',
-      name: 'Product Category',
+      name: 'Pro Cat',
       selector: (row) => row.product_category_name,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'shade_no',
       name: 'Shade no',
       selector: (row) => row.shadeNo,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'purchase_shade_no',
       name: 'Pur. Shade no',
       selector: (row) => row.purchase_shade_no,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'length',
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'width',
       name: 'Width',
       selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'pcs',
       name: 'Pcs',
       selector: (row) => row.pcs,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'quantity',
       name: 'Box',
       selector: (row) => row.quantity,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'out_box',
       name: 'Out box',
       selector: (row) => row.out_quantity ?? 0,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'balance_boxes',
       name: 'balance boxes',
       selector: (row) => row.quantity - row.out_quantity,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       id: 'remark',
       name: 'Remark',
       selector: (row) => row.remark,
-      sortable: true
+      sortable: true,
+      center: true
     }
   ];
 
@@ -434,16 +450,27 @@ const ShowProduct = () => {
           <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
         </div>
         <div className="col-md-8">
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-end mt-4">
             <button className="btn btn-info" onClick={exportToCSV}>
-              <FaFileCsv className="w-5 h-5 me-1" /> Export as CSV
+              <FaFileCsv className="w-5 h-5 me-1 " style={{
+                width: '20px',
+                height: '20px'
+              }} /> 
+              <span className='d-none d-md-inline'>Export as CSV</span>
             </button>
             <button className="btn btn-info" onClick={exportToPDF}>
-              <AiOutlineFilePdf className="w-5 h-5 me-1" /> Export as PDF
+
+              <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
+                width: '25px',
+                height: '25px'
+              }}  /> 
+              <span className='d-none d-md-inline'>Export as PDF</span>
             </button>
           </div>
-          <div className="col-md-0 d-flex justify-content-end">
-            <DropdownButton title="Display Item" variant="secondary">
+          <div className="col-md-0 d-flex justify-content-end " style={{
+            marginBottom: '-15px'
+          }}>
+            <DropdownButton title="Display Item" variant="primary" >
               <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {columns.map((col) => (
                   <Dropdown.Item key={col.id} as="div" onClick={(e) => e.stopPropagation()}>

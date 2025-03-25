@@ -108,27 +108,32 @@ const Index = () => {
     {
       name: 'Invoice Number',
       selector: (row) => row.gatepass_no,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       name: 'Godown Supervisor Name',
       selector: (row) => row.godownSupervisor,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       name: 'WareHouser Supervisor',
       selector: (row) => row.warehouseSupervisor,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       name: 'Date',
       selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
+      center: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
@@ -359,19 +364,28 @@ const Index = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end">
+        <div className="col-md-8 text-end mt-4 mt-md-0">
           <Button variant="primary" onClick={handleAddInvoice}>
-            <MdPersonAdd className="me-2" /> Add Gate pass
+            <MdPersonAdd className="me-2" /> 
+            <span className='d-none d-md-inline'>
+            Add Gate pass
+            </span>
           </Button>
         </div>
-        <div className="d-flex justify-content-end">
+        <div className="d-flex justify-content-end" style={{
+          marginBottom: '-10px'
+        }}>
           <button type="button" className="btn btn-info" onClick={exportToCSV}>
             <FaFileCsv className="w-5 h-5 me-1" />
+            <span className='d-none d-md-inline'>
             Export as CSV
+            </span>
           </button>
           <button type="button" className="btn btn-info" onClick={exportToPDF}>
             <AiOutlineFilePdf className="w-5 h-5 me-1" />
+            <span className='d-none d-md-inline'>
             Export as PDF
+            </span>
           </button>
         </div>
       </div>

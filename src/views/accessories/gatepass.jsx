@@ -375,7 +375,7 @@ const Invoice_out = () => {
                         as="select"
                         id="accessory_name"
                         className="form-select px-2"
-                        style={{ width: '15rem', minItems: 'fit-content' }}
+                        style={{ width: '8rem', minItems: 'fit-content' }}
                         disabled={!selectedCategoryId}
                         onChange={handleAccessoryChange}
                       >
