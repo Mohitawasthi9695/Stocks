@@ -174,10 +174,14 @@ const ShowProduct = () => {
       selector: (row) => row.out_pcs,
       sortable: true
     },
-    ,
+    {
+      name: 'Transfer Pcs',
+      selector: (row) => row.transfer,
+      sortable: true
+    },
     {
       name: 'Avaible Pcs',
-      selector: (row) => row.pcs - row.out_pcs,
+      selector: (row) => (row.pcs - (row.out_pcs + row.transfer)) ?? 0, 
       sortable: true
     },
     {

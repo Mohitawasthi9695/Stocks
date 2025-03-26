@@ -226,6 +226,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/all-stock',
+        element: lazy(() => import('./views/stock/show_stock')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor']
+      },
+      {
+        exact: 'true',
         path: '/roller_stock',
         element: lazy(() => import('./views/stock/roller_stock')),
         allowedRoles: ['superadmin', 'admin', 'supervisor']
@@ -450,19 +456,37 @@ const routes = [
         exact: 'true',
         path: '/stock-tranfer',
         element: lazy(() => import('./views/stocktransfer/stocktransfer')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+        allowedRoles: ['superadmin', 'admin', 'sub_supervisor']
       },
       {
         exact: 'true',
         path: '/view_stock_transfer',
         element: lazy(() => import('./views/stocktransfer/view_stock_transfer')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+        allowedRoles: ['superadmin', 'admin', 'sub_supervisor']
       },
       {
         exact: 'true',
         path: '/view_get_transfer',
         element: lazy(() => import('./views/stocktransfer/view_stock')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor']
+        allowedRoles: ['superadmin', 'admin', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/accessory-tranfer',
+        element: lazy(() => import('./views/accessorytransfer/accessorytransfer')),
+        allowedRoles: ['superadmin', 'admin', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/view_accessory_transfer',
+        element: lazy(() => import('./views/accessorytransfer/view_accessory_transfer')),
+        allowedRoles: ['superadmin', 'admin', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/view_accessory_get_transfer',
+        element: lazy(() => import('./views/accessorytransfer/view_accessory')),
+        allowedRoles: ['superadmin', 'admin', 'sub_supervisor']
       },
       
       {

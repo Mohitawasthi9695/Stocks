@@ -4,7 +4,7 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { FaEye } from 'react-icons/fa';
+import { FaEye,FaTruck,FaPlusCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -361,7 +361,7 @@ const Index = () => {
         </div>
         <div className="col-md-8 text-end">
           <Button variant="primary" onClick={handleAddInvoice}>
-            <MdPersonAdd className="me-2" /> Add Gate pass
+            <FaPlusCircle className="me-2"/>Add Gate pass <FaTruck className="me-2" />
           </Button>
         </div>
         <div className="d-flex justify-content-end">

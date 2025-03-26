@@ -790,6 +790,7 @@ const Invoice_out = () => {
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
                                         <option value="cm">cm</option>
+                                        <option value="ft">Feet</option>
                                       </select>
                                     </td>
                                     <td>
@@ -812,6 +813,7 @@ const Invoice_out = () => {
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
                                         <option value="cm">cm</option>
+                                        <option value="ft">Feet</option>
                                       </select>
                                     </td>
                                     <td>

@@ -22,7 +22,7 @@ const ShowProduct = () => {
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/getstock/1`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -32,12 +32,12 @@ const ShowProduct = () => {
         const productsWithArea = response.data.map((product) => {
           const areaM2 = product.length * product.width * product.quantity;
           const areaSqFt = areaM2 * 10.7639;
-          const dateLocal = new Date(product.date).toLocaleDateString('en-GB');
+          const dateLocal = new Date(product.date).toLocaleDateString('en-GB'); // Convert date to local date format
           return {
             ...product,
             area: areaM2.toFixed(3),
             area_sq_ft: areaSqFt.toFixed(3),
-            dateLocal, 
+            dateLocal, // Add new property to product object
           };
         });
         setProducts(productsWithArea);
