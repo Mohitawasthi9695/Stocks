@@ -22,6 +22,8 @@ const ShowProduct = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [rackInputs, setRackInputs] = useState({});
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
   const categoryId = 2; // Wooden category ID
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -383,12 +385,26 @@ const ShowProduct = () => {
           <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
         </div>
         <div className="col-md-8">
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-end mt-4 mt-md-0" style={{
+            marginBottom: '-10px'
+          }}>
             <button className="btn btn-info" onClick={exportToCSV}>
-              <FaFileCsv className="w-5 h-5 me-1" /> Export as CSV
+              <FaFileCsv className="w-5 h-5 me-1"  style={{
+                width: isMobile ? '20px' : '0px',
+                height: isMobile ? '25px' : '0px'
+              }}/> 
+              <span className='d-none d-md-inline'>
+              Export as CSV
+              </span>
             </button>
             <button className="btn btn-info" onClick={exportToPDF}>
-              <AiOutlineFilePdf className="w-5 h-5 me-1" /> Export as PDF
+              <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
+                width: isMobile ? '20px' : '0px',
+                height: isMobile ? '25px' : '0px'
+              }}/> 
+              <span className='d-none d-md-inline'>
+              Export as PDF
+              </span>
             </button>
           </div>
         </div>
