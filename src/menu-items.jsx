@@ -21,7 +21,8 @@ const filterMenuItem = (menu) => {
               'stock_to_godown',
               'approve_operator',
               'godown_stock',
-              'StockTransfer'
+              'StockTransfer',
+              'accessoryTransfer'
             ].includes(item.id)
           )
       )
@@ -36,8 +37,9 @@ const filterMenuItem = (menu) => {
               'Accessory',
               'stockin',
               'Warehouse_Accessories',
-              'WarehouseGatePass'
-              // 'godown-stockout'
+              'WarehouseGatePass',
+              // 'godown-stockout',
+              'all_stock'
             ].includes(item.id)
           )
       )
@@ -61,7 +63,8 @@ const filterMenuItem = (menu) => {
               'stockin',
               'Warehouse_Accessories',
               'WarehouseGatePass',
-              'godownStock'
+              'godownStock',
+              'all_stock'
             ].includes(item.id)
           )
       )
@@ -215,7 +218,7 @@ const menuItems = {
           id: 'stocks',
           title: 'Blinds Stocks',
           type: 'collapse',
-          icon: 'feather icon-box',
+          icon: 'feather icon-clipboard',
           children: [
             {
               id: 'add_invoice',
@@ -234,9 +237,16 @@ const menuItems = {
             {
               id: 'all_stocks',
               title: 'Stocks',
-              icon: 'feather icon-clipboard',
+              icon: 'feather icon-copy',
               type: 'collapse',
               children: [
+                {
+                  id: 'all_stock',
+                  title: 'All Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: '/all-stock'
+                },
                 {
                   id: 'roller_stock',
                   title: 'Roller Stocks',
@@ -332,14 +342,14 @@ const menuItems = {
             {
               id: 'create_gate_pass',
               title: 'Add GatePass',
-              icon: 'feather icon-file-plus',
+              icon: 'feather icon-log-in',
               type: 'item',
               url: '/stockout/godown'
             },
             {
               id: 'generated_gate_pass',
               title: 'View GatePass',
-              icon: 'feather icon-file-plus',
+              icon: 'feather icon-eye',
               type: 'item',
               url: '/generated_gate_pass'
             }
@@ -454,6 +464,44 @@ const menuItems = {
       ]
     },
     {
+      id: 'accessoryTransfer',
+      title: 'Accessory Godown Transfer',
+      type: 'group',
+      icon: 'icon-ui',
+      children: [
+        {
+          id: 'accessory_transfer_form_godown',
+          title: 'Accessory Transfer',
+          type: 'collapse',
+          icon: 'feather icon-box',
+
+          children: [
+            {
+              id: 'accessory_transfer',
+              title: 'accessory Transfer',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/accessory-tranfer'
+            },
+            {
+              id: 'view_accessory_transfer',
+              title: 'View accessory Transfer',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/view_accessory_transfer'
+            },
+            {
+              id: 'view_get_transfer',
+              title: 'View Get Transfer',
+              icon: 'feather icon-file-plus',
+              type: 'item',
+              url: '/view_accessory_get_transfer'
+            }
+          ]
+        }
+      ]
+    },
+    {
       id: 'GodownAccessories',
       title: 'Accessories Stock',
       type: 'group',
@@ -469,7 +517,7 @@ const menuItems = {
             {
               id: 'approve_accessory',
               title: 'GatePass',
-              icon: 'feather icon-file-plus',
+              icon: 'feather icon-log-in',
               type: 'item',
               url: '/approve/accessory'
             },
@@ -531,19 +579,19 @@ const menuItems = {
           id: 'accessories_gatepass',
           title: 'Accessory GatePass',
           type: 'collapse',
-          icon: 'feather icon-box',
+          icon: 'feather icon-link',
           children: [
             {
               id: 'invoice_out',
               title: 'Add GatePass',
-              icon: 'feather icon-file-plus',
+              icon: 'feather icon-log-in',
               type: 'item',
               url: '/accessory/gatepass'
             },
             {
               id: 'accessory_out_index',
               title: 'View GatePass',
-              icon: 'feather icon-file-plus',
+              icon: 'feather icon-eye',
               type: 'item',
               url: '/accessory/gatepassview'
             }

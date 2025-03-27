@@ -28,39 +28,55 @@ const Index = () => {
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [showThermalPdfModal, setShowThermalPdfModal] = useState(false);
   const [pdfType, setPdfType] = useState('standard');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+
+
 
   useEffect(() => {
+    console.log("Fetching Data for Page:", currentPage); // Debugging
     const fetchInvoices = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice?page=${currentPage}&per_page=10`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json'
+            }
           }
-        });
-        const invoicesDetails = response.data.data;
-        console.log(invoicesDetails);
-        setInvoiceAllDetails(invoicesDetails);
-        const filteredFields = (data) => {
-          return invoicesDetails.map((invoice) => ({
+        );
+  
+        const { page_number, total_record_count, records } = response.data;
+  
+        console.log("Received Page:", page_number); // Debugging
+        console.log("Total Records:", total_record_count);
+  
+        setCurrentPage(page_number); // Ensure state updates correctly
+        setInvoices(records);
+        setInvoiceAllDetails(records);
+        setFilteredInvoices(
+          records.map(invoice => ({
             invoice_no: invoice.invoice_no,
             id: invoice.id,
-            supplier_name: invoice.supplier.name,
+            supplier_name: invoice.supplier?.name || "N/A",
             agent: invoice.agent,
             date: invoice.date,
             total_amount: invoice.total_amount
-          }));
-        };
-        setInvoices(filteredFields);
-        setFilteredInvoices(filteredFields); // Initialize filtered users
+          }))
+        );
+        setTotalRecords(total_record_count);
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
+  
     fetchInvoices();
-  }, []);
+  }, [currentPage]); 
+  
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
 
@@ -85,7 +101,7 @@ const Index = () => {
 
   const handlePrint = (type, invoiceId) => {
     setSelectedInvoice(invoiceId);
-    setPdfType(type); 
+    setPdfType(type);
     setShowPdfModal(true);
   };
   const columns = [
@@ -110,7 +126,6 @@ const Index = () => {
       wrap: true,
       center: true
     },
-
     {
       name: 'Receiver Name',
       selector: (row) => row.agent,
@@ -158,7 +173,7 @@ const Index = () => {
               setShowThermalPdfModal(true);
               console.log(row.id);
             }}
-          
+
           >
             <MdPrint />
           </Button>
@@ -197,11 +212,11 @@ const Index = () => {
       }
     } catch (error) {
       // Log error for debugging and notify user
-      console.error('Error deleting supplier:', error);
+      console.error('Error deleting INVOICE:', error);
 
       // Provide user feedback
       if (error.response && error.response.data && error.response.data.message) {
-        toast.error(`Failed to delete supplier: ${error.response.data.message}`);
+        toast.error(`Failed to delete INVOICE: ${error.response.data.message}`);
       } else {
         toast.error('An unexpected error occurred while deleting the Invoice.');
       }
@@ -405,9 +420,12 @@ const Index = () => {
                   pagination
                   highlightOnHover
                   striped
-                  responsive
                   customStyles={customStyles}
                   defaultSortFieldId={1}
+                  paginationServer
+                  paginationTotalRows={totalRecords}
+                  paginationPerPage={10}
+                  onChangePage={(page) => setCurrentPage(page)}
                 />
               </div>
             )}

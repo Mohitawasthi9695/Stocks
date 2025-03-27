@@ -5,16 +5,14 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import axios from 'axios';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
+import { toast } from 'react-toastify';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
-import { FiSave } from 'react-icons/fi';
-import { FiPlus } from 'react-icons/fi';
-import { FiEdit } from 'react-icons/fi';
-import 'jspdf-autotable';
+import { FiSave, FiPlus } from 'react-icons/fi';
 import Swal from 'sweetalert2';
-import { toast } from 'react-toastify';
+import { FiEdit } from 'react-icons/fi';
 
 const ShowProduct = () => {
   const [products, setProducts] = useState([]);
@@ -22,13 +20,10 @@ const ShowProduct = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [rackInputs, setRackInputs] = useState({});
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
-
-  const categoryId = 2; // Wooden category ID
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownstock`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gettransferstock`, {
           params: {
             category_id: categoryId
           },
@@ -38,12 +33,19 @@ const ShowProduct = () => {
           }
         });
         console.log('stocks data:', response.data);
-        setProducts(response.data);
-        setFilteredProducts(response.data);
-
-        // Correct rack initialization
+        const productsWithArea = response.data.map((product) => {
+          const areaM2 = product.length * product.width;
+          const areaSqFt = areaM2 * 10.7639;
+          return {
+            ...product,
+            area: areaM2.toFixed(3),
+            area_sq_ft: areaSqFt.toFixed(3)
+          };
+        });
+        setProducts(productsWithArea);
+        setFilteredProducts(productsWithArea);
         const initialRackInputs = {};
-        response.data.forEach((product) => {
+        productsWithArea.forEach((product) => {
           initialRackInputs[product.id] = product.rack || '';
         });
         setRackInputs(initialRackInputs);
@@ -65,12 +67,21 @@ const ShowProduct = () => {
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+  const handleRackChange = (id, value) => {
+    setRackInputs((prev) => ({
+      ...prev,
+      [id]: value
+    }));
+  };
   const handleRackUpdate = async (id, currentRack) => {
     Swal.fire({
       title: 'Update Rack',
       input: 'text',
       inputPlaceholder: 'Enter new rack value...',
-      inputValue: currentRack || '', // Ensure empty string if undefined
+      inputValue: currentRack, // Set default value to current rack
       showCancelButton: true,
       confirmButtonText: 'Save',
       cancelButtonText: 'Cancel',
@@ -98,10 +109,6 @@ const ShowProduct = () => {
             setProducts((prevProducts) =>
               prevProducts.map((product) => (product.id === id ? { ...product, rack: result.value } : product))
             );
-            setRackInputs((prev) => ({
-              ...prev,
-              [id]: result.value
-            }));
             toast.success('Rack updated successfully!');
           }
         } catch (error) {
@@ -111,18 +118,6 @@ const ShowProduct = () => {
       }
     });
   };
-
-  const handleRackChange = (id, value) => {
-    setRackInputs((prev) => ({
-      ...prev,
-      [id]: value
-    }));
-  };
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
   const columns = [
     {
       name: 'Sr No',
@@ -130,18 +125,14 @@ const ShowProduct = () => {
       sortable: true
     },
     {
-      name: 'date',
+      name: 'Date',
       selector: (row) => row.date,
       sortable: true
     },
+    { name: 'Stock Code', selector: (row) => `${row.stock_code}`, sortable: true },
     {
       name: 'Lot No',
       selector: (row) => row.lot_no,
-      sortable: true
-    },
-    {
-      name: 'Stock Code',
-      selector: (row) => row.stock_code,
       sortable: true
     },
     {
@@ -164,26 +155,22 @@ const ShowProduct = () => {
       selector: (row) => row.purchase_shade_no,
       sortable: true
     },
-    { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
+    { name: 'Total Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
     {
-      name: 'Pcs',
-      selector: (row) => row.pcs,
+      name: 'Area (m²)',
+      selector: (row) => row.area,
       sortable: true
     },
     {
-      name: 'Sold Pcs',
-      selector: (row) => row.out_pcs,
+      name: 'Area (sq. ft.)',
+      selector: (row) => row.area_sq_ft,
       sortable: true
     },
     {
-      name: 'Transfer Pcs',
-      selector: (row) => row.transfer,
-      sortable: true
-    },
-    {
-      name: 'Avaible Pcs',
-      selector: (row) => (row.pcs - (row.out_pcs + row.transfer)) ?? 0, 
+      name: 'Wastage',
+      selector: (row) => row.wastage,
       sortable: true
     },
     {
@@ -198,7 +185,7 @@ const ShowProduct = () => {
               </button>
             </>
           ) : (
-            <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id, '')} title="Add Rack">
+            <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id, row.rack)} title="Add Rack">
               <FiPlus /> {/* Add Icon */}
             </button>
           )}
@@ -226,30 +213,37 @@ const ShowProduct = () => {
         </div>
       )
     }
-  ]
-
+  ];
   const exportToCSV = () => {
     const csvData = filteredProducts.map((row, index) => ({
       'Sr No': index + 1,
-      'Date': row.date,
-      'User Name': JSON.parse(localStorage.getItem('user')).username || 'N/A',
-      'User Email': JSON.parse(localStorage.getItem('user')).email || 'N/A',
-      'Lot No': row.lot_no,
-      'Stock Code': `${row.stock_product?.shadeNo}-${row.stock_code}` || 'N/A',
+      'User Name': JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
+      'User Email': JSON.parse(localStorage.getItem('user'))?.email || 'N/A',
+      'Lot No': row.lot_no || 'N/A',
+      'Stock Code': row.stock_code || 'N/A',
       'Invoice No': row.gate_pass_no,
-      'Shade No':  row.shadeNo,
-      'Pur. Shade No': row.purchase_shade_no,
-      Length: row.length,
-      Width: row.width,
-      Unit: row.unit
+      Date: row.date || 'N/A',
+      'Shade No': row.shadeNo || 'N/A',
+      'Pur. Shade No': row.purchase_shade_no || 'N/A',
+      Width: row.width || 'N/A',
+      Length: row.length || 'N/A',
+      'Area (m²)': row.area || 'N/A',
+      'Area (sq. ft.)': row.area_sq_ft || 'N/A',
+      Wastage: row.wastage || 'N/A',
+      Rack: row.rack || 'N/A',
+      Status: row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
     }));
+
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'stocks_list.csv');
   };
 
+  
+
   const exportToPDF = () => {
     if (filteredProducts.length === 0) {
+      // toast
       alert('No data available for export.');
       return;
     }
@@ -260,56 +254,59 @@ const ShowProduct = () => {
       format: 'a4'
     });
 
-    doc.text('Stocks List', 14, 10);
-
     const tableColumn = [
       'Sr No',
-      'Date',
       'User Name',
       'Lot No',
       'Stock Code',
-      'Invoice No',
+      'Gate pass No',
       'Date',
       'Shade No',
       'Pur. Shade No',
-      'Length',
       'Width',
-      'Rack'
+      'Length',
+      'Area (m²)',
+      'Area (sq. ft.)',
+      'Wastage',
+      'Rack',
+      'Status'
     ];
 
     const tableRows = filteredProducts.map((row, index) => [
       index + 1,
-      row.date,
-      JSON.parse(localStorage.getItem('user')).username || 'N/A',
-      row.lot_no,
-      row.stock_code,
+      JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
+      row.lot_no || 'N/A',
+      row.stock_code || 'N/A',
       row.gate_pass_no,
-      row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A',
-      row.purchase_shade_no,
-      row.purchase_shade_no,
-      row.length,
-      row.width,
-      row.rack
+      row.date || 'N/A',
+      row.shadeNo || 'N/A',
+      row.purchase_shade_no || 'N/A',
+      row.width || 'N/A',
+      row.length || 'N/A',
+      row.area || 'N/A',
+      row.area_sq_ft || 'N/A',
+      row.wastage || 'N/A',
+      row.rack || 'N/A',
+      row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
     ]);
 
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 20,
-      styles: { fontSize: 6 },
+      styles: { fontSize: 8 },
       headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255] },
       columnStyles: { 16: { cellWidth: 15 }, 17: { cellWidth: 15 } }, // Force columns to fit
-      theme: 'grid'
+      theme: 'grid',
     });
-
-    doc.save('stocks_list.pdf');
+    doc.save('stocks_list.pdf')
   };
 
   const customStyles = {
     table: {
       style: {
-        borderCollapse: 'separate', 
-        borderSpacing: 0 
+        borderCollapse: 'separate', // Ensures border styles are separate
+        borderSpacing: 0 // Removes spacing between cells
       }
     },
     header: {
@@ -318,8 +315,8 @@ const ShowProduct = () => {
         color: '#fff',
         fontSize: '18px',
         fontWeight: 'bold',
-        padding: '10px',
-        borderRadius: '8px 8px 0 0' 
+        padding: '15px',
+        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
       }
     },
     rows: {
@@ -340,12 +337,12 @@ const ShowProduct = () => {
         fontSize: '12px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        padding: '10px',
-        borderRight: '1px solid #e0e0e0' 
+        padding: '15px',
+        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
       },
       lastCell: {
         style: {
-          borderRight: 'none' 
+          borderRight: 'none' // Removes border for the last cell
         }
       }
     },
@@ -380,35 +377,32 @@ const ShowProduct = () => {
       }
     }
   };
+
   const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
-          <input type="text" placeholder="Search..." id="search" value={searchQuery} onChange={handleSearch} className="form-control" />
+          <input
+            type="text"
+            placeholder="Search..."
+            id="search"
+            value={searchQuery}
+            onChange={handleSearch}
+            className="form-control"
+            style={{ borderRadius: '5px' }}
+          />
         </div>
         <div className="col-md-8">
-          <div className="d-flex justify-content-end mt-4 mt-md-0" style={{
-            marginBottom: '-10px'
-          }}>
-            <button className="btn btn-info" onClick={exportToCSV}>
-              <FaFileCsv className="w-5 h-5 me-1"  style={{
-                width: isMobile ? '20px' : '0px',
-                height: isMobile ? '25px' : '0px'
-              }}/> 
-              <span className='d-none d-md-inline'>
+          <div className="d-flex justify-content-end">
+            <button type="button" className="btn btn-info" onClick={exportToCSV}>
+              <FaFileCsv className="w-5 h-5 me-1" />
               Export as CSV
-              </span>
             </button>
-            <button className="btn btn-info" onClick={exportToPDF}>
-              <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
-                width: isMobile ? '20px' : '0px',
-                height: isMobile ? '25px' : '0px'
-              }}/> 
-              <span className='d-none d-md-inline'>
+            <button type="button" className="btn btn-info" onClick={exportToPDF}>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
               Export as PDF
-              </span>
             </button>
           </div>
         </div>
@@ -417,15 +411,34 @@ const ShowProduct = () => {
         <div className="col-12">
           <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
             {loading ? (
-              <Skeleton count={10} />
+              <div>
+                {[...Array(8)].map((_, index) => (
+                  <div key={index} style={{ display: 'flex', gap: '10px', padding: '10px' }}>
+                    <Skeleton width={50} height={20} />
+                    <Skeleton width={200} height={20} />
+                    <Skeleton width={200} height={20} />
+                  </div>
+                ))}
+              </div>
             ) : (
               <>
-                <DataTable columns={columns} data={filteredProducts} pagination highlightOnHover customStyles={customStyles} />
-                {searchQuery && (
-                  <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
-                    Total Boxes: {totalBoxes}
-                  </div>
-                )}
+                <div className="card-body p-0">
+                  <DataTable
+                    columns={columns}
+                    data={filteredProducts}
+                    pagination
+                    highlightOnHover
+                    striped
+                    responsive
+                    customStyles={customStyles}
+                    defaultSortFieldId={1}
+                  />
+                  {searchQuery && (
+                    <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
+                      Total Boxes: {totalBoxes}
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </div>

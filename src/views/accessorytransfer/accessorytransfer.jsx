@@ -31,7 +31,7 @@ const Invoice_out = () => {
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
   const [sub_supervisors, setSub_supervisor] = useState([]);
-  const [shadeNo, setShadeNo] = useState([]);
+  const [accessory, setAccessory] = useState([]);
   const [invoice_no, SetInvoiceNo] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const today = new Date().toISOString().split('T')[0];
@@ -72,20 +72,20 @@ const Invoice_out = () => {
   const handleCategoryChange = async (event) => {
     const categoryId = event.target.value;
     setSelectedCategoryId(categoryId);
-    setShadeNo([]);
+    setAccessory([]);
 
     if (categoryId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${categoryId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/category/${categoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-        setShadeNo(response.data.data || []);
+        setAccessory(response.data.data || []);
       } catch (error) {
         console.error('Error fetching ShadeNo:', error);
-        setShadeNo([]);
+        setAccessory([]);
       }
     }
   };
@@ -94,17 +94,17 @@ const Invoice_out = () => {
       if (!selectedCategoryId) return;
 
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/productshadeno/${selectedCategoryId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/category/${selectedCategoryId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
         console.log(response.data.data);
-        setShadeNo(response.data.data);
+        setAccessory(response.data.data);
       } catch (error) {
         console.error('Error fetching ShadeNo:', error);
-        setShadeNo([]);
+        setAccessory([]);
       }
     };
 
@@ -141,7 +141,7 @@ const Invoice_out = () => {
     if (selectedShadeId) {
       try {
         setLoading(true);
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gettranferstocks/${selectedShadeId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gettranferaccessory/${selectedShadeId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -235,7 +235,7 @@ const Invoice_out = () => {
     }
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/transfergatepass`, formData, {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/transfer/accessorygatepass`, formData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -266,13 +266,16 @@ const Invoice_out = () => {
   };
 
   const columns = [
-    { id: 'product_category', label: 'Product Category' },
-    { id: 'product_shadeNo', label: 'Shade No' },
-    { id: 'product_purchase_shade_no', label: 'Pur. Shade No' },
+    { id: 'accessory_category_name', label: 'Accessory Category' },
+    { id: 'accessory_name', label: 'Accessory' },
     { id: 'lot_no', label: 'LOT No' },
-    { id: 'width_combined', label: 'Width (Unit)' },
+    { id: 'stock_code', label: 'Stock Code' },
     { id: 'length_combined', label: 'Length (Unit)' },
-    { id: 'pcs', label: 'Pcs' }
+    { id: 'items', label: 'items' },
+    { id: 'box_bundle', label: 'box_bundle' },
+    { id: 'out_quantity', label: 'out_quantity' },
+    { id: 'remark', label: 'remark' },
+    { id: 'rack', label: 'rack' },
   ];
 
   const handleCheckboxChange = (id) => {
@@ -392,19 +395,19 @@ const Invoice_out = () => {
                     </Form.Group>
 
                     <Form.Group style={{ marginLeft: '20px' }}>
-                      <Form.Label>Select Shade/Purchase Number:</Form.Label>
+                      <Form.Label>Select Accessory:</Form.Label>
                       <Form.Control
                         as="select"
-                        id="shadeNo"
+                        id="Accessory"
                         className="form-select px-2"
                         style={{ width: '12rem', minWidth: 'fit-content' }}
                         disabled={!selectedCategoryId}
                         onChange={handleShadeNoChange}
                       >
                         <option value="">Select</option>
-                        {shadeNo.map((shade) => (
+                        {accessory.map((shade) => (
                           <option key={shade.id} value={shade.id}>
-                            {shade.shadeNo} / {shade.purchase_shade_no}
+                            {shade.accessory_name}
                           </option>
                         ))}
                       </Form.Control>
@@ -454,9 +457,7 @@ const Invoice_out = () => {
                                       </td>
                                       {columns.map((column) => (
                                         <td key={column.id}>
-                                          {column.id === 'width_combined'
-                                            ? `${row.width ?? ''} ${row.width_unit ?? ''}`.trim()
-                                            : column.id === 'length_combined'
+                                          {column.id === 'length_combined'
                                               ? `${row.length ?? ''} ${row.length_unit ?? ''}`.trim()
                                               : row[column.id] ?? ''}
                                         </td>
@@ -486,20 +487,24 @@ const Invoice_out = () => {
                               <tbody>
                                 {selectedRows.map((row) => (
                                   <tr key={row.stock_available_id}>
-                                    <td key="product_category">{row.product_category}</td>
-                                    <td key="stock_in_id" hidden>{row.stock_in_id}</td>
-                                    <td key="shadeNo">{row.product_shadeNo}</td>
-                                    <td key="pur_shadeNo">{row.product_shadeNo}</td>
-                                    <td key="lot_no">{row.lot_no}</td>
-                                    <td key="width">{row.width} {row.width_unit}</td>
-                                    <td key="length">{row.length} {row.length_unit}</td>
-                                    <td key="pcs"> <input
-                                      type="number"
-                                      className="form-control"
-                                      style={{ width: '5rem', paddingInline: '10px' }}
-                                      value={row.pcs || ''}
-                                      onChange={(e) => handleInputChange(row.stock_available_id, 'pcs', e.target.value)}
-                                    ></input></td>
+                                    <td key='accessory_category_name'>{row.accessory_category_name}</td>
+                                    <td key='accessory_name'>{row.accessory_name}</td>
+                                    <td key='lot_no'>{row.lot_no}</td>
+                                    <td key='stock_code'>{row.stock_code}</td>
+                                    <td key='length'>{row.length} {row.length_unit}</td>
+                                    <td key='items'>{row.items}</td>
+                                    <td key='box_bundle'>{row.box_bundle}{row.box_bundle_unit}</td>
+                                    <td key='out_quantity'>
+                                      <input
+                                        type="number"
+                                        className="form-control"
+                                        style={{ width: '5rem', paddingInline: '10px' }}
+                                        value={row.out_quantity || ''}
+                                        onChange={(e) => handleInputChange(row.stock_available_id, 'out_quantity', e.target.value)}
+                                      />
+                                    </td>
+                                    <td key='remark'>{row.remark}</td>
+                                    <td key='rack'>{row.rack}</td>
                                   </tr>
                                 ))}
                               </tbody>

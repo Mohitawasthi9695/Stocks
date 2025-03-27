@@ -18,12 +18,11 @@ const ShowProduct = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedColumns, setSelectedColumns] = useState([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/category/getstock/1`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -33,12 +32,12 @@ const ShowProduct = () => {
         const productsWithArea = response.data.map((product) => {
           const areaM2 = product.length * product.width * product.quantity;
           const areaSqFt = areaM2 * 10.7639;
-          const dateLocal = new Date(product.date).toLocaleDateString('en-GB');
+          const dateLocal = new Date(product.date).toLocaleDateString('en-GB'); // Convert date to local date format
           return {
             ...product,
             area: areaM2.toFixed(3),
             area_sq_ft: areaSqFt.toFixed(3),
-            dateLocal, 
+            dateLocal, // Add new property to product object
           };
         });
         setProducts(productsWithArea);
@@ -84,130 +83,109 @@ const ShowProduct = () => {
       id: 'sr_no',
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true,
-      center: true,
-      width: '85px'
-     
+      sortable: true
     },
     {
       id: 'date',
       name: 'Date',
       selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
-      sortable: true,
-      width: '100px',
-      center: true,
+      sortable: true
     },
     {
       id: 'stock_code',
       name: 'Stock Code',
       selector: (row) => row.stock_code,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'lot_no',
       name: 'Lot No',
       selector: (row) => row.lot_no,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'invoice_no',
       name: 'Invoice no',
       selector: (row) => row.invoice_no,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'product_category',
       name: 'Product Category',
       selector: (row) => row.product_category_name,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'shade_no',
       name: 'Shade no',
       selector: (row) => row.shadeNo,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'purchase_shade_no',
       name: 'Pur. Shade no',
       selector: (row) => row.purchase_shade_no,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'length',
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'width',
       name: 'Width',
       selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'quantity',
       name: 'Quantity',
       selector: (row) => row.quantity,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'out_quantity',
       name: 'Out Quantity',
       selector: (row) => row.out_quantity ?? 0,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'available_quantity',
       name: 'Avaible Quantity',
       selector: (row) => row.quantity - row.out_quantity,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'total_length',
       name: 'Total Length',
       selector: (row) => Number(row.length * row.quantity).toFixed(2),
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'issue_length',
       name: 'Issue Length',
       selector: (row) => Number(row.length * row.out_quantity).toFixed(2),
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'area_m2',
       name: 'm²',
       selector: (row) => row.area,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'area_ft2',
       name: 'ft²',
       selector: (row) => row.area_sq_ft,
-      sortable: true,
-      center: true,
+      sortable: true
     },
     {
       id: 'remark',
       name: 'Remark',
       selector: (row) => row.remark,
-      sortable: true,
-      center: true,
+      sortable: true
     }
   ];
 
@@ -468,38 +446,22 @@ const ShowProduct = () => {
           />
         </div>
         <div className="col-md-8">
-          <div className="d-flex justify-content-end mt-4 mt-md-0" style={{
-            marginRight: isMobile ? '20px' : '0px',
-          }}>
+          <div className="d-flex justify-content-end">
             <button type="button" className="btn btn-info" onClick={exportToCSV}>
-              <FaFileCsv className="w-5 h-5 me-1" 
-                style={{
-                  width: '20px',
-                  height: '20px',
-                }}
-              />
-              <span className='d-none d-md-inline'>
+              <FaFileCsv className="w-5 h-5 me-1" />
               Export as CSV
-              </span>
             </button>
             <button type="button" className="btn btn-info" onClick={exportToPDF}>
-              <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
-                  width: '20px',
-                  height: '20px',
-                }}/>
-              <span className='d-none d-md-inline'>
+              <AiOutlineFilePdf className="w-5 h-5 me-1" />
               Export as PDF
-              </span>
             </button>
           </div>
-          <div className="col-md-0 d-flex justify-content-end" style={{ marginBottom: '-10px' }}>
-            <DropdownButton title="Display Items" variant="primary" style={{
-                    marginRight: isMobile ? '20px' : '0',
-                  }}>
-              <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto', marginRight: '10px' }}>
+          <div className="col-md-0 d-flex justify-content-end">
+            <DropdownButton title="Display Items" variant="secondary">
+              <Dropdown.Menu style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {columns.map((col) => (
-                  <Dropdown.Item key={col.id} as="div" onClick={(e) => e.stopPropagation()} >
-                    <label className="d-flex align-items-center" style={{ cursor: 'pointer' }} >
+                  <Dropdown.Item key={col.id} as="div" onClick={(e) => e.stopPropagation()}>
+                    <label className="d-flex align-items-center" style={{ cursor: 'pointer' }}>
                       <input type="checkbox" checked={selectedColumns.includes(col.id)} onChange={() => handleColumnToggle(col.id)} />
                       <span className="ms-2">{col.name}</span>
                     </label>
