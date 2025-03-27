@@ -128,7 +128,7 @@ const Index = () => {
   };
   const columns = [
     {
-      name: 'Invoice Number',
+      name: 'GatePass Number',
       selector: (row) => row.gatepass_no,
       sortable: true
     },
