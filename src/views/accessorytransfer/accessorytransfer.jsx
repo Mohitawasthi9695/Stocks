@@ -40,7 +40,7 @@ const Invoice_out = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [formData, setFormData] = useState({
     invoice_no: '',
-    type: 'transfer',
+    type: 'accessoryTransfer',
     date: today,
     vehicle_no: '',
     place_of_supply: '',

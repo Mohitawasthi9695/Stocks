@@ -219,7 +219,7 @@ const AddAccessory = () => {
   };
 
   return (
-    <Container fluid className="pt-4 px-5" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <Container fluid className="pt-4 px-3" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center">
         <h2 className="text-center mb-4 fw-bold text-primary">Product Accessory</h2>
 

@@ -20,7 +20,9 @@ const ShowProduct = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [rackInputs, setRackInputs] = useState({});
-  const categoryId = 3;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  const categoryId = 3; // Hardcoded for now
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
@@ -397,14 +399,23 @@ const ShowProduct = () => {
           />
         </div>
         <div className="col-md-8">
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-end mt-4 mt-md-0" style={{
+            marginBottom: isMobile ? '-20px' : '0',
+          }}>
             <button type="button" className="btn btn-info" onClick={exportToCSV}>
               <FaFileCsv className="w-5 h-5 me-1" />
+              <span className='d-none d-ms-inline'>
               Export as CSV
+              </span>
             </button>
             <button type="button" className="btn btn-info" onClick={exportToPDF}>
-              <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
+                width: isMobile ? '20px' : '',
+                height: isMobile ? '25px' : '',
+              }}/>
+              <span className='d-none d-ms-inline'>
               Export as PDF
+              </span>
             </button>
           </div>
         </div>

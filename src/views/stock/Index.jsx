@@ -108,28 +108,37 @@ const Index = () => {
     {
       name: 'Date',
       selector: (row) => new Date(row.date).toLocaleDateString('en-GB'), // Format: DD/MM/YYYY
-      sortable: true
+      sortable: true,
+      width: '100px',
+      center: true
     },
     {
-      name: 'Invoice Number',
+      name: 'Invoice No.',
       selector: (row) => row.invoice_no,
-      sortable: true
+      sortable: true,
+      width: '120px',
+      center: true
     },
     {
       name: 'Supplier Name',
       selector: (row) => row.supplier_name,
-      sortable: true
+      sortable: true,
+      wrap: true,
+      center: true
     },
     {
       name: 'Receiver Name',
       selector: (row) => row.agent,
-      sortable: true
+      sortable: true,
+      center: true,
+      wrap: true
     },
 
     {
       name: 'Total Amount',
       selector: (row) => row.total_amount,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       name: 'Action',
@@ -151,6 +160,7 @@ const Index = () => {
               setShowPdfModal(true);
               console.log(row.id);
             }}
+             
           >
             <MdPrint />
           </Button>
@@ -354,20 +364,34 @@ const Index = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end">
+        <div className="col-md-8 text-end mt-3 mt-md-0">
           <Button variant="primary" onClick={handleAddInvoice}>
-            <MdPersonAdd className="me-2" /> Add Invoice
+            <MdPersonAdd className="me-2" /> 
+            <span className='d-none d-md-inline'>
+            Add Invoice
+            </span>
           </Button>
         </div>
 
-        <div className="d-flex justify-content-end">
-          <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-            <FaFileCsv className="w-5 h-5 me-1" />
+        <div className="d-flex justify-content-end" style={{
+          marginBottom: '-15px',
+          marginTop: '10px'
+        }}>
+          <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}> 
+            <FaFileCsv className="w-5 h-5 me-1"  style={{
+                    height: '25px',
+                    width: '15px'
+                  }}/>
+            <span className='d-none d-md-inline'>
             Export as CSV
+            </span>
           </button>
           <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-            <AiOutlineFilePdf className="w-5 h-5 me-1" />
-            Export as PDF
+            <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
+                    height: '25px',
+                    width: '20px'
+                  }} />
+            <span className='d-none d-md-inline'>Export as PDF</span>
           </button>
         </div>
       </div>

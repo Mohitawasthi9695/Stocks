@@ -19,6 +19,7 @@ import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import 'jspdf-autotable';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
+import { FaDisplay } from 'react-icons/fa6';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -26,6 +27,7 @@ const ProductsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   const handleToggleStatus = async (receiverId, currentStatus) => {
     try {
@@ -103,32 +105,38 @@ const ProductsPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
+      width: '100px'
     },
     {
       name: 'Date',
       selector: (row) => row.date,
-      sortable: true
+      sortable: true,
+      width: '100px'
     },
     {
       name: 'Product Category',
       selector: (row) => row.product_category.product_category,
-      sortable: true
+      sortable: true,
+      width: '180px',
     },
     {
       name: 'Name',
       selector: (row) => row.name,
-      sortable: true
+      sortable: true,
+      width: '180px',
     },
     {
       name: 'Shade No',
       selector: (row) => row.shadeNo,
-      sortable: true
+      sortable: true,
+      width: '110px',
     },
     {
       name: 'Purchase Shade No',
       selector: (row) => row.purchase_shade_no,
-      sortable: true
+      sortable: true,
+      width: '200px',
     },
     {
       name: 'Action',
@@ -249,7 +257,8 @@ const ProductsPage = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0'
+        borderRadius: '8px 8px 0 0',
+        textAlign: 'center'
       }
     },
     rows: {
@@ -271,7 +280,8 @@ const ProductsPage = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0'
+        borderRight: '1px solid #e0e0e0',
+        
       },
       lastCell: {
         style: {
@@ -284,7 +294,7 @@ const ProductsPage = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey'
+        borderRight: '1px solid grey',
       }
     },
     pagination: {
@@ -398,9 +408,18 @@ const ProductsPage = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end">
-          <Button variant="primary" onClick={handleAddProduct}>
-            <MdPersonAdd className="me-2" /> Add Product
+        <div className="col-md-8 text-end mt-3 mt-md-0">
+          <Button variant="primary" onClick={handleAddProduct} style={{
+            marginRight: isMobile ? "20px" : "auto",
+            marginBottom: isMobile ? "-10px" : "auto",
+          }}>
+            <MdPersonAdd className="me-2" style={{
+            width: isMobile ? "20px" : "auto",
+            height: isMobile ? "20px" : "auto",
+          }} /> 
+            <span className='d-none d-md-inline'>
+            Add Product
+            </span>
           </Button>
         </div>
       </div>
@@ -410,12 +429,18 @@ const ProductsPage = () => {
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <div className="d-flex justify-content-end">
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                  <FaFileCsv className="w-5 h-5 me-1" />
-                  Export as CSV
+                  <FaFileCsv className="w-5 h-5 me-1"  style={{
+                    height: '25px',
+                    width :'15px'
+                  }}/>
+                  <span className='d-none d-md-inline'>Export as CSV</span>
                 </button>
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                  <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                  Export as PDF
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
+                    height: '25px',
+                    width :'20px'
+                  }} />
+                  <span className='d-none d-md-inline'>Export as PDF</span>
                 </button>
               </div>
               <DataTable

@@ -21,7 +21,8 @@ const CustomersPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCustomer, setselectedCustomer] = useState(null);
   const [filteredSuppliers, setFilteredSuppliers] = useState([]);
-  const people_type= "Customer";
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+  const people_type = 'Customer';
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
@@ -70,7 +71,8 @@ const CustomersPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
+      width: '90px'
     },
     {
       name: 'Customer Name',
@@ -80,7 +82,8 @@ const CustomersPage = () => {
     {
       name: 'Code',
       selector: (row) => row.code,
-      sortable: true
+      sortable: true,
+      width: '90px'
     },
     {
       name: 'GST No',
@@ -105,12 +108,14 @@ const CustomersPage = () => {
     {
       name: 'Phone',
       selector: (row) => row.tel_no,
-      sortable: true
+      sortable: true,
+      wrap: true
     },
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true
+      sortable: true,
+      width: '200px'
     },
     {
       name: 'Owner Mobile',
@@ -147,10 +152,10 @@ const CustomersPage = () => {
             <MdDelete />
           </Button>
         </div>
-      )
+      ),
+  
     }
   ];
-
 
   const handleDelete = async (userId) => {
     try {
@@ -323,26 +328,24 @@ const CustomersPage = () => {
 
   const exportToCSV = () => {
     if (filteredCustomers.length === 0) {
-      toast.error("No data available to export.");
+      toast.error('No data available to export.');
       return;
     }
-  
+
     const csv = Papa.unparse(filteredCustomers);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, "customer_list.csv");
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'customer_list.csv');
   };
-  
+
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
-    
+
     // Title
     doc.text('Customers List', 14, 10);
-  
+
     // Define table headers
-    const headers = [
-      ['Customer Name', 'Code', 'GST No', 'CIN No', 'PAN No', 'MSME No', 'Phone', 'Owner Mobile', 'Registered Address',]
-    ];
-  
+    const headers = [['Customer Name', 'Code', 'GST No', 'CIN No', 'PAN No', 'MSME No', 'Phone', 'Owner Mobile', 'Registered Address']];
+
     // Map data for table body
     const body = filteredCustomers.map((row) => [
       row.name,
@@ -353,9 +356,9 @@ const CustomersPage = () => {
       row.msme_no,
       row.tel_no,
       row.owner_mobile,
-      row.reg_address,
+      row.reg_address
     ]);
-  
+
     // Add table to PDF
     doc.autoTable({
       head: headers,
@@ -364,14 +367,12 @@ const CustomersPage = () => {
       theme: 'grid',
       styles: { fontSize: 10, cellPadding: 3 },
       headStyles: { fillColor: [22, 160, 133], textColor: 255, fontStyle: 'bold' },
-      alternateRowStyles: { fillColor: [238, 238, 238] },
+      alternateRowStyles: { fillColor: [238, 238, 238] }
     });
-  
+
     // Save PDF
     doc.save('customers_list.pdf');
   };
-  
-  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
@@ -390,9 +391,16 @@ const CustomersPage = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end">
+        <div
+          className="col-md-8 text-end mt-4 mt-md-0 "
+          style={{
+            marginBottom: isMobile ? '-20px' : '0',
+            paddingRight: isMobile ? '20px' : '0' 
+          }}
+        >
           <Button variant="primary" onClick={handleAddUser}>
-            <MdPersonAdd className="me-2" /> Add Customer
+            <MdPersonAdd className="me-2" />
+            <span className="d-none d-md-inline">Add Customer</span>
           </Button>
         </div>
       </div>
@@ -403,12 +411,18 @@ const CustomersPage = () => {
               <div className="card-body p-0" style={{ borderRadius: '8px' }}>
                 <div className="d-flex justify-content-end">
                   <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                    <FaFileCsv className="w-5 h-5 me-1" />
-                    Export as CSV
+                    <FaFileCsv className="w-5 h-5 me-1" style={{
+                      width: isMobile ? '20px' : '',
+                      height: isMobile ? '25px' : ''
+                    }}/>
+                    <span className="d-none d-md-inline">Export as CSV</span>
                   </button>
                   <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                    <AiOutlineFilePdf className="w-5 h-5 me-1" />
-                    Export as PDF
+                    <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
+                      width: isMobile ? '25px' : '',
+                      height: isMobile ? '25px' : ''
+                    }}/>
+                    <span className="d-none d-md-inline">Export as PDF</span>
                   </button>
                 </div>
                 <DataTable

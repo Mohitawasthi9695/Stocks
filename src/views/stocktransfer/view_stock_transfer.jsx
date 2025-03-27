@@ -29,6 +29,7 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
@@ -386,19 +387,31 @@ const Index = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end">
+        <div className="col-md-8 text-end mt-4 mt-md-0" >
           <Button variant="primary" onClick={handleAddInvoice}>
             <MdAddCircle className="me-2" />Transfer <FaShare className="ms-2" />
           </Button>
         </div>
         <div className="d-flex justify-content-end">
           <button type="button" className="btn btn-info" onClick={exportToCSV}>
-            <FaFileCsv className="w-5 h-5 me-1" />
+            <FaFileCsv className="w-5 h-5 me-1" 
+              style={{
+                width: isMobile ? '20px' : '0',
+                height: isMobile ? '25px' : '0'
+              }}
+            />
+            <span className='d-none d-md-inline'>
             Export as CSV
+            </span>
           </button>
           <button type="button" className="btn btn-info" onClick={exportToPDF}>
-            <AiOutlineFilePdf className="w-5 h-5 me-1" />
+            <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
+                width: isMobile ? '20px' : '0',
+                height: isMobile ? '25px' : '0'
+              }}/>
+            <span className='d-none d-md-inline'>
             Export as PDF
+            </span>
           </button>
         </div>
       </div>

@@ -159,11 +159,11 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                   <Text style={styles.sectionTitle}>Authority:</Text>
                   <View style={styles.row}>
                     <Text style={styles.label}>Warehouse Supervisor:</Text>
-                    <Text style={styles.value}>{invoice.warehouse_supervisor.name}</Text>
+                    <Text style={styles.value}>{invoice.warehouse_supervisor}</Text>
                   </View>
                   <View style={styles.row}>
                     <Text style={styles.label}>Godown Supervisor:</Text>
-                    <Text style={styles.value}>{invoice.godown_supervisor.name}</Text>
+                    <Text style={styles.value}>{invoice.godown_supervisor}</Text>
                   </View>
                 </View>
               </View>
@@ -174,6 +174,8 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                   <View style={styles.tableHeader}>
                     <Text style={styles.tableCell}>Lot No</Text>
                     <Text style={styles.tableCell}>Accessory Name</Text>
+                    <Text style={styles.tableCell}>Warehouse Acc. Code</Text>
+                    <Text style={styles.tableCell}>Godown Acc. Code</Text>
                     <Text style={styles.tableCell}>Length</Text>
                     <Text style={styles.tableCell}>Items</Text>
                     <Text style={styles.tableCell}>Box Bundle</Text>
@@ -183,6 +185,8 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                     <View key={index} style={styles.tableRow}>
                       <Text style={styles.tableCell}>{accessory.lot_no}</Text>
                       <Text style={styles.tableCell}>{accessory.accessory?.accessory_name}</Text>
+                      <Text style={styles.tableCell}>{accessory.warehouse_accessory.stock_code}</Text>
+                      <Text style={styles.tableCell}>{accessory.stock_code}</Text>
                       <Text style={styles.tableCell}>
                         {accessory.length}
                         {accessory.length_unit}

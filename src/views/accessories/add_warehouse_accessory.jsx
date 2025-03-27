@@ -209,7 +209,7 @@ const AddProduct = () => {
   };
 
   return (
-    <Container fluid className="pt-4 px-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <Container fluid className="pt-4 px-3" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center g-4">
         <h2 className="text-center mb-4 fw-bold">WareHouse Accessory</h2>
 
@@ -265,8 +265,8 @@ const AddProduct = () => {
           </div>
         </div>
         <Col md={12}>
-          <div className="card shadow border-0 rounded-lg">
-            <div className="card-body p-4">
+          <div className="card shadow border-0 rounded-lg" style={{ borderRadius: '12px', margin: '-10px' }}>
+            <div className="card-body ">
               <div className="d-flex justify-content-between align-items-center mb-4">
                 <h4>
                   <FaPlus className="me-2" />
@@ -294,7 +294,7 @@ const AddProduct = () => {
                 <tbody>
                   {items.map((item, index) => (
                     <tr key={index}>
-                      <td>
+                      <td >
                         <Form.Select
                           value={item.product_accessory_id}
                           onChange={(e) => handleRowChange(index, 'product_accessory_id', e.target.value)}

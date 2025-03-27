@@ -16,6 +16,7 @@ const ShowProduct = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -43,8 +44,8 @@ const ShowProduct = () => {
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter((product) =>
-      ['width', 'length', 'invoice_no', 'lot_no']
-        .map((key) => product[key]?.toString()?.toLowerCase() || '')
+      ['date','buyer_name','company_name', 'length', 'invoice_no', 'lot_no', 'Product Category', 'product_pur_shade_no' ]
+        .map((key) => product[key]?.toString()?.toLowerCase() || '') 
         .some((value) => value.includes(lowercasedQuery))
     );
     setFilteredProducts(filtered);
@@ -58,41 +59,51 @@ const ShowProduct = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
+      width: '90px',
+      center: 'true'
     },
-    { name: 'Invoice No', selector: (row) => row.invoice_no, sortable: true },
-    { name: 'Date', selector: (row) => row.date, sortable: true },
-    { name: 'Company Name', selector: (row) => row.company_name, sortable: true },
-    { name: 'Coompany Number', selector: (row) => row.company_phone_no, sortable: true },
-    { name: 'Customer', selector: (row) => row.buyer_name, sortable: true },
-    { name: 'Customer Number', selector: (row) => row.buyer_phone_no, sortable: true },
-    { name: 'Date', selector: (row) => row.buyer_name, sortable: true },
-    { name: 'Category', selector: (row) => row.product_category, sortable: true },
+    { name: 'Invoice No', selector: (row) => row.invoice_no, sortable: true,
+      center: 'true' },
+    { name: 'Date', selector: (row) => row.date, sortable: true ,
+      center: 'true'},
+    { name: 'Company Name', selector: (row) => row.company_name, sortable: true ,
+      center: true, width: '140px',wrap: true },
+    { name: 'Company Number', selector: (row) => row.company_phone_no, sortable: true ,
+      center: 'true', width: '120px' },
+    { name: 'Customer', selector: (row) => row.buyer_name, sortable: true, center: true },
+    { name: 'Customer Number', selector: (row) => row.buyer_phone_no, sortable: true, center: true },
+    { name: 'Date', selector: (row) => row.buyer_name, sortable: true, center: true },
+    { name: 'Category', selector: (row) => row.product_category, sortable: true, center: true },
     {
       name: 'Stock Code',
       selector: (row) => row.stock_code || 'N/A',
-      sortable: true
+      sortable: true,
+      center: true
     },
-    { name: 'Shade No', selector: (row) => row.product_shade_no, sortable: true },
-    { name: 'Pur. Shade No', selector: (row) => row.product_pur_shade_no, sortable: true },
+    { name: 'Shade No', selector: (row) => row.product_shade_no, sortable: true, center: true},
+    { name: 'Pur. Shade No', selector: (row) => row.product_pur_shade_no, sortable: true, center: true},
     {
       name: 'Length',
       selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`,
-      sortable: true
+      sortable: true,
+      center: true
     },
     {
       name: 'Width',
       selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`,
-      sortable: true
+      sortable: true,
+      center: true
     },
-    { name: 'Pcs', selector: (row) => row.pcs, sortable: true },
-    { name: 'Rate', selector: (row) => row.rate, sortable: true },
-    { name: 'Amount', selector: (row) => row.amount, sortable: true },
-    { name: 'Rack', selector: (row) => row.rack, sortable: true },
+    { name: 'Pcs', selector: (row) => row.pcs, sortable: true, center: true, width: '70px' },
+    { name: 'Rate', selector: (row) => row.rate, sortable: true, center: true, width: '80px' },
+    { name: 'Amount', selector: (row) => row.amount, sortable: true, center: true },
+    { name: 'Rack', selector: (row) => row.rack, sortable: true , center: true, width: '90px' },
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
+      center: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
@@ -286,14 +297,23 @@ const ShowProduct = () => {
           />
         </div>
         <div className="col-md-8">
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-end mt-4 mt-md-0" style={{
+            marginBottom: isMobile ? '-20px' : '0'
+          }}>
             <button type="button" className="btn btn-info" onClick={exportToCSV}>
-              <FaFileCsv className="w-5 h-5 me-1" />
+              <FaFileCsv className="w-5 h-5 me-1" 
+              style={{
+                width: isMobile ? '30px' : '20px',
+              }}/>
+              <span className="d-none d-md-inline">
               Export as CSV
+              </span>
             </button>
             <button type="button" className="btn btn-info" onClick={exportToPDF}>
               <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              <span className="d-none d-md-inline">
               Export as PDF
+              </span>
             </button>
           </div>
         </div>

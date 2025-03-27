@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
@@ -21,6 +20,7 @@ const WarehouseAccessoriesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedAccessory, setSelectedAccessory] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   useEffect(() => {
     const fetchAccessories = async () => {
@@ -59,12 +59,14 @@ const WarehouseAccessoriesPage = () => {
     {
       name: 'Sr No',
       selector: (_, index) => index + 1,
-      sortable: true
+      sortable: true,
+      width: '90px'
     },
     {
       name: 'Date',
       selector: (row) => row.date,
-      sortable: true
+      sortable: true,
+      width: '100px'
     },
     {
       name: 'Product Category',
@@ -74,21 +76,23 @@ const WarehouseAccessoriesPage = () => {
     {
       name: 'Product Accessory',
       selector: (row) => row.product_accessory_name,
-      sortable: true
+      sortable: true,
+      width: '200px'
     },
     {
       name: 'Accessory Code',
       selector: (row) => row.stock_code,
       sortable: true
     },
-    { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true, width: '100px' },
     {
       name: 'Items',
       selector: (row) => row.items,
-      sortable: true
+      sortable: true,
+      width: '100px'
     },
     { name: 'Collection', selector: (row) => `${row.box_bundle}  ${row.box_bundle_unit}`, sortable: true },
-    { name: 'Out Collection', selector: (row) => `${row.out_box_bundle}  ${row.box_bundle_unit}`, sortable: true },
+    { name: 'Out Collection', selector: (row) => `${row.out_box_bundle}  ${row.box_bundle_unit}`, sortable: true,width: '150px' },
     {
       name: 'Quantity',
       selector: (row) => row.quantity,
@@ -269,45 +273,45 @@ const WarehouseAccessoriesPage = () => {
       toast.error('No data available for export.');
       return;
     }
-  
+
     // Extract headers dynamically from columns array
-    const headers = columns.map(col => col.name);
-  
+    const headers = columns.map((col) => col.name);
+
     // Prepare CSV data dynamically
     const csvData = filteredAccessories.map((row, index) => {
       let rowData = { 'Sr No': index + 1 }; // Add Serial Number manually
-  
-      columns.forEach(col => {
+
+      columns.forEach((col) => {
         if (typeof col.selector === 'function') {
           rowData[col.name] = col.selector(row);
         }
       });
-  
+
       return rowData;
     });
-  
+
     // Convert to CSV and save
     const csv = Papa.unparse({ fields: headers, data: csvData });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'warehouse_accessories.csv');
     toast.success('CSV exported successfully!');
   };
-  
+
   const exportToPDF = () => {
     if (!filteredAccessories || filteredAccessories.length === 0) {
       toast.error('No data available for export.');
       return;
     }
-  
+
     const doc = new jsPDF('landscape');
     doc.setFontSize(14);
     doc.text('Stock List', 80, 10);
-  
+
     // Extract headers from `columns` array, excluding "Action"
     const headers = ['Sr No', 'Category', 'Accessory Name', 'Stock Code', 'Length', 'Items', 'Box Bundle', 'Quantity', 'Out Quantity'];
-      // .filter((col) => col.name !== 'Action') // Exclude Action column
-      // .map((col) => col.name);
-  
+    // .filter((col) => col.name !== 'Action') // Exclude Action column
+    // .map((col) => col.name);
+
     // Prepare data dynamically
     const body = filteredAccessories.map((row, index) => {
       return [
@@ -319,11 +323,10 @@ const WarehouseAccessoriesPage = () => {
         row.items || 'N/A',
         row.box_bundle || 'N/A',
         row.quantity || 'N/A',
-        row.out_quantity || 'N/A',
-        
+        row.out_quantity || 'N/A'
       ];
     });
-  
+
     doc.autoTable({
       head: [headers],
       body: body,
@@ -334,19 +337,15 @@ const WarehouseAccessoriesPage = () => {
       alternateRowStyles: { fillColor: [240, 240, 240] },
       margin: { top: 20 }
     });
-  
+
     doc.save('stock_list.pdf');
     toast.success('PDF exported successfully!');
   };
-  
-  
+
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
-          <label htmlFor="search" className="me-2">
-            Search:{' '}
-          </label>
           <input
             type="text"
             placeholder="Search accessories"
@@ -358,20 +357,33 @@ const WarehouseAccessoriesPage = () => {
           />
         </div>
 
-        <div className="col-md-8 text-end">
+        <div className="col-md-8 text-end mt-3 mt-md-0">
           <Button variant="primary" onClick={() => navigate('/add_warehouse_accessories')}>
-            <MdPersonAdd className="me-2" /> Add Stock
+            <MdPersonAdd className="me-2" />
+            <span className="d-none d-md-inline"> Add Warehouse Accessory</span>
           </Button>
         </div>
 
-        <div className="d-flex justify-content-end">
+        <div className="d-flex justify-content-end" style={{ marginTop: '10px', marginBottom: '-10px' }}>
           <button type="button" className="btn btn-info" onClick={exportToCSV}>
-            <FaFileCsv className="w-5 h-5 me-1" />
-            Export as CSV
+            <FaFileCsv
+              className="w-5 h-5 me-1"
+              style={{
+                width: isMobile ? '15px' : 'auto',
+                height: isMobile ? '20px' : 'auto'
+              }}
+            />
+            <span className="d-none d-md-inline">Export as CSV</span>
           </button>
           <button type="button" className="btn btn-info" onClick={exportToPDF}>
-            <AiOutlineFilePdf className="w-5 h-5 me-1" />
-            Export as PDF
+            <AiOutlineFilePdf
+              className="w-5 h-5 me-1"
+              style={{
+                width: isMobile ? '20px' : 'auto',
+                height: isMobile ? '20px' : 'auto'
+              }}
+            />
+            <span className="d-none d-md-inline">Export as PDF</span>
           </button>
         </div>
       </div>

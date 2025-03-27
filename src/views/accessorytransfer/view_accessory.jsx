@@ -1,68 +1,65 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
+import { Button, Modal, Form } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
+import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import axios from 'axios';
-import Papa from 'papaparse';
-import { saveAs } from 'file-saver';
-import { toast } from 'react-toastify';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import DataTableExtensions from 'react-data-table-component-extensions';
+import Swal from 'sweetalert2';
+import { BiBorderLeft } from 'react-icons/bi';
+import { text } from 'd3';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
-import { FiSave, FiPlus } from 'react-icons/fi';
-import Swal from 'sweetalert2';
-import { FiEdit } from 'react-icons/fi';
+import Papa from 'papaparse';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
-const ShowProduct = () => {
+const Show_product = () => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredProducts, setFilteredProducts] = useState([]); // For search
+  const [searchQuery, setSearchQuery] = useState(''); // Search query
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [rackInputs, setRackInputs] = useState({});
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+
+  const { id } = useParams();
+
   useEffect(() => {
-    const fetchStocksData = async () => {
+    const fetchProductData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gettransferstock`, {
-          params: {
-            category_id: categoryId
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownAccessory`, {
+          params:{
+            type: 'transfer'
           },
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
-        console.log('stocks data:', response.data);
-        const productsWithArea = response.data.map((product) => {
-          const areaM2 = product.length * product.width;
-          const areaSqFt = areaM2 * 10.7639;
-          return {
-            ...product,
-            area: areaM2.toFixed(3),
-            area_sq_ft: areaSqFt.toFixed(3)
-          };
-        });
-        setProducts(productsWithArea);
-        setFilteredProducts(productsWithArea);
-        const initialRackInputs = {};
-        productsWithArea.forEach((product) => {
-          initialRackInputs[product.id] = product.rack || '';
-        });
-        setRackInputs(initialRackInputs);
-      } catch (error) {
-        console.error('Error fetching stocks data:', error);
+        console.log(response.data.data);
+        const godownData = response.data.data;
+        setProducts(godownData);
+        setFilteredProducts(godownData);
+      } catch (err) {
+        console.error(err);
+        toast.error('Failed to fetch data.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStocksData();
+    fetchProductData();
   }, []);
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = products.filter((product) =>
-      Object.values(product).some((value) => value?.toString()?.toLowerCase().includes(lowercasedQuery))
+    const filtered = products.filter(
+      (product) => product.lot_no.toLowerCase().includes(lowercasedQuery) || product.length_unit.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -70,130 +67,22 @@ const ShowProduct = () => {
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
-  const handleRackChange = (id, value) => {
-    setRackInputs((prev) => ({
-      ...prev,
-      [id]: value
-    }));
-  };
-  const handleRackUpdate = async (id, currentRack) => {
-    Swal.fire({
-      title: 'Update Rack',
-      input: 'text',
-      inputPlaceholder: 'Enter new rack value...',
-      inputValue: currentRack, // Set default value to current rack
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      cancelButtonText: 'Cancel',
-      preConfirm: (value) => {
-        if (!value) {
-          Swal.showValidationMessage('Rack value cannot be empty!');
-        }
-        return value;
-      }
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axios.put(
-            `${import.meta.env.VITE_API_BASE_URL}/api/godownstock/${id}`,
-            { rack: result.value },
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-              }
-            }
-          );
 
-          if (response.status === 200) {
-            setProducts((prevProducts) =>
-              prevProducts.map((product) => (product.id === id ? { ...product, rack: result.value } : product))
-            );
-            toast.success('Rack updated successfully!');
-          }
-        } catch (error) {
-          console.error('Error updating rack:', error);
-          toast.error('Failed to update rack. Please try again.');
-        }
-      }
-    });
-  };
+  const navigate = useNavigate();
+
   const columns = [
-    {
-      name: 'Sr No',
-      selector: (_, index) => index + 1,
-      sortable: true
-    },
-    {
-      name: 'Date',
-      selector: (row) => row.date,
-      sortable: true
-    },
-    { name: 'Stock Code', selector: (row) => `${row.stock_code}`, sortable: true },
-    {
-      name: 'Lot No',
-      selector: (row) => row.lot_no,
-      sortable: true
-    },
-    {
-      name: 'GatePass no',
-      selector: (row) => row.gate_pass_no,
-      sortable: true
-    },
-    {
-      name: 'Product Category',
-      selector: (row) => row.product_category_name,
-      sortable: true
-    },
-    {
-      name: 'Shade no',
-      selector: (row) => row.shadeNo,
-      sortable: true
-    },
-    {
-      name: 'Pur. Shade no',
-      selector: (row) => row.purchase_shade_no,
-      sortable: true
-    },
-    { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
-    { name: 'Total Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
-    {
-      name: 'Area (m²)',
-      selector: (row) => row.area,
-      sortable: true
-    },
-    {
-      name: 'Area (sq. ft.)',
-      selector: (row) => row.area_sq_ft,
-      sortable: true
-    },
-    {
-      name: 'Wastage',
-      selector: (row) => row.wastage,
-      sortable: true
-    },
-    {
-      name: 'Rack',
-      cell: (row) => (
-        <div className="d-flex align-items-center w-100" style={{ justifyContent: row.rack ? 'space-between' : 'center' }}>
-          {row.rack ? (
-            <>
-              <span style={{ paddingLeft: '15px', minWidth: '50px', textAlign: 'left' }}>{row.rack}</span>
-              <button className="btn btn-sm btn-warning" onClick={() => handleRackUpdate(row.id, row.rack)} title="Edit Rack">
-                <FiEdit /> {/* Pencil Icon */}
-              </button>
-            </>
-          ) : (
-            <button className="btn btn-sm btn-success" onClick={() => handleRackUpdate(row.id, row.rack)} title="Add Rack">
-              <FiPlus /> {/* Add Icon */}
-            </button>
-          )}
-        </div>
-      ),
-      sortable: false,
-      width: '150px'
-    },
+    { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
+    { name: 'Gate Pass No', selector: (row) => row.gate_pass_no, sortable: true },
+    { name: 'Date', selector: (row) => row.date, sortable: true },
+    { name: 'Stock Code', selector: (row) => row.stock_code, sortable: true },
+    { name: 'Accessory Name', selector: (row) => row.product_accessory_name, sortable: true },
+    { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
+    { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
+    { name: 'Pcs', selector: (row) => row.items, sortable: true },
+    { name: 'Box/Bundle', selector: (row) => row.box_bundle, sortable: true },
+    { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
+    { name: 'Out Quantity', selector: (row) => row.out_quantity, sortable: true },
+    { name: 'Available Quantity', selector: (row) => (row.quantity-row.out_quantity), sortable: true },
     {
       name: 'Status',
       selector: (row) => row.status, // Keep it numeric for sorting
@@ -208,107 +97,58 @@ const ShowProduct = () => {
               whiteSpace: 'nowrap'
             }}
           >
-            {row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'}
+            {row.status === 1 ? 'Approved' : row.status === 2 ? 'Stock Out' : 'Pending'}
           </span>
         </div>
       )
     }
   ];
-  const exportToCSV = () => {
-    const csvData = filteredProducts.map((row, index) => ({
-      'Sr No': index + 1,
-      'User Name': JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
-      'User Email': JSON.parse(localStorage.getItem('user'))?.email || 'N/A',
-      'Lot No': row.lot_no || 'N/A',
-      'Stock Code': row.stock_code || 'N/A',
-      'Invoice No': row.gate_pass_no,
-      Date: row.date || 'N/A',
-      'Shade No': row.shadeNo || 'N/A',
-      'Pur. Shade No': row.purchase_shade_no || 'N/A',
-      Width: row.width || 'N/A',
-      Length: row.length || 'N/A',
-      'Area (m²)': row.area || 'N/A',
-      'Area (sq. ft.)': row.area_sq_ft || 'N/A',
-      Wastage: row.wastage || 'N/A',
-      Rack: row.rack || 'N/A',
-      Status: row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
-    }));
 
-    const csv = Papa.unparse(csvData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'stocks_list.csv');
+  const handleEdit = (product) => {
+    setSelectedProduct(product);
+    setShowEditModal(true);
   };
 
-  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value
+    }));
+  };
 
-  const exportToPDF = () => {
-    if (filteredProducts.length === 0) {
-      // toast
-      alert('No data available for export.');
-      return;
+  const handleDelete = async (productId) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (!result.isConfirmed) {
+      return; // Exit if user cancels
     }
 
-    const doc = new jsPDF({
-      orientation: 'landscape',
-      unit: 'mm',
-      format: 'a4'
-    });
-
-    const tableColumn = [
-      'Sr No',
-      'User Name',
-      'Lot No',
-      'Stock Code',
-      'Gate pass No',
-      'Date',
-      'Shade No',
-      'Pur. Shade No',
-      'Width',
-      'Length',
-      'Area (m²)',
-      'Area (sq. ft.)',
-      'Wastage',
-      'Rack',
-      'Status'
-    ];
-
-    const tableRows = filteredProducts.map((row, index) => [
-      index + 1,
-      JSON.parse(localStorage.getItem('user'))?.username || 'N/A',
-      row.lot_no || 'N/A',
-      row.stock_code || 'N/A',
-      row.gate_pass_no,
-      row.date || 'N/A',
-      row.shadeNo || 'N/A',
-      row.purchase_shade_no || 'N/A',
-      row.width || 'N/A',
-      row.length || 'N/A',
-      row.area || 'N/A',
-      row.area_sq_ft || 'N/A',
-      row.wastage || 'N/A',
-      row.rack || 'N/A',
-      row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
-    ]);
-
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [22, 160, 133], textColor: [255, 255, 255] },
-      columnStyles: { 16: { cellWidth: 15 }, 17: { cellWidth: 15 } }, // Force columns to fit
-      theme: 'grid',
-    });
-    doc.save('stocks_list.pdf')
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass${productId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      console.log(response.data);
+      toast.success('Product deleted successfully');
+      setProducts((prev) => prev.filter((product) => product.id !== productId));
+      setFilteredProducts((prev) => prev.filter((product) => product.id !== productId));
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to delete Product');
+    }
   };
 
   const customStyles = {
-    table: {
-      style: {
-        borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0 // Removes spacing between cells
-      }
-    },
     header: {
       style: {
         backgroundColor: '#2E8B57',
@@ -316,13 +156,14 @@ const ShowProduct = () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+        borderRadius: '8px 8px 8px 8px'
       }
     },
     rows: {
       style: {
         backgroundColor: '#f0fff4',
         borderBottom: '1px solid #e0e0e0',
+
         transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: '#e6f4ea',
@@ -338,12 +179,7 @@ const ShowProduct = () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
-      },
-      lastCell: {
-        style: {
-          borderRight: 'none' // Removes border for the last cell
-        }
+        borderRight: '1px solid #e0e0e0'
       }
     },
     cells: {
@@ -351,7 +187,7 @@ const ShowProduct = () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey' // Vertical lines between cells
+        borderRight: '1px solid #e0e0e0'
       }
     },
     pagination: {
@@ -362,26 +198,89 @@ const ShowProduct = () => {
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: 'black', // Makes the arrows white
-        border: 'none',
+        color: '#fff',
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)'
-        },
-        '& svg': {
-          fill: 'white'
-        },
-        '&:focus': {
-          outline: 'none',
-          boxShadow: '0 0 5px rgba(255,255,255,0.5)'
         }
       }
     }
   };
+  const exportToCSV = () => {
+    if (!filteredProducts || filteredProducts.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
 
-  const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
+    // Extract column headers dynamically from `columns` array
+    const headers = columns.map((col) => col.name);
+
+    // Prepare CSV data dynamically
+    const csvData = filteredProducts.map((row, index) => {
+      let rowData = { 'Sr No': index + 1 }; // Add Serial Number manually
+
+      columns.forEach((col) => {
+        if (typeof col.selector === 'function') {
+          rowData[col.name] = col.selector(row);
+        }
+      });
+
+      return rowData;
+    });
+
+    // Convert to CSV and save
+    const csv = Papa.unparse({ fields: headers, data: csvData });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'stock_list.csv');
+    toast.success('CSV exported successfully!');
+  };
+
+  const exportToPDF = () => {
+    if (!filteredProducts || filteredProducts.length === 0) {
+      toast.error('No data available for export.');
+      return;
+    }
+
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text('Stock List', 80, 10);
+
+    // Extract headers from `columns` array
+    const headers = columns.map((col) => col.name);
+
+    // Prepare data dynamically
+    const body = filteredProducts.map((row, index) => {
+      return [
+        index + 1, // Sr No
+        row.gate_pass_no || 'N/A', // Explicitly include Gate Pass No
+        row.date || 'N/A',
+        row.stock_code || 'N/A',
+        row.lot_no || 'N/A',
+        `${row.length} ${row.length_unit}` || 'N/A',
+        row.items || 'N/A',
+        row.box_bundle || 'N/A',
+        row.quantity || 'N/A',
+        row.out_quantity || 'N/A',
+        row.status === 1 ? 'Approved' : row.status === 2 ? 'Sold Out' : 'Pending'
+      ];
+    });
+
+    doc.autoTable({
+      head: [headers],
+      body: body,
+      startY: 20,
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 8 },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      margin: { top: 20 }
+    });
+
+    doc.save('stock_list.pdf');
+    toast.success('PDF exported successfully!');
+  };
 
   return (
-    <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
+    <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
         <div className="col-md-4">
           <input
@@ -390,26 +289,32 @@ const ShowProduct = () => {
             id="search"
             value={searchQuery}
             onChange={handleSearch}
-            className="form-control"
+            className="pe-5 ps-2 py-2"
             style={{ borderRadius: '5px' }}
           />
         </div>
         <div className="col-md-8">
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-end mt-4" style={{
+            margin: isMobile ? '-10px' : '',
+          }}>
             <button type="button" className="btn btn-info" onClick={exportToCSV}>
               <FaFileCsv className="w-5 h-5 me-1" />
+              <span className='d-none d-md-inline'>
               Export as CSV
+              </span>
             </button>
             <button type="button" className="btn btn-info" onClick={exportToPDF}>
               <AiOutlineFilePdf className="w-5 h-5 me-1" />
+              <span className='d-none d-md-inline'>
               Export as PDF
+              </span>
             </button>
           </div>
         </div>
       </div>
       <div className="row">
         <div className="col-12">
-          <div className="card border-0 shadow-none" style={{ background: '#f5f0e6' }}>
+          <div className="card shadow-lg border-0 rounded-lg">
             {loading ? (
               <div>
                 {[...Array(8)].map((_, index) => (
@@ -417,29 +322,25 @@ const ShowProduct = () => {
                     <Skeleton width={50} height={20} />
                     <Skeleton width={200} height={20} />
                     <Skeleton width={200} height={20} />
+                    <Skeleton width={200} height={20} />
+                    <Skeleton width={200} height={20} />
+                    <Skeleton width={200} height={20} />
                   </div>
                 ))}
               </div>
             ) : (
-              <>
-                <div className="card-body p-0">
-                  <DataTable
-                    columns={columns}
-                    data={filteredProducts}
-                    pagination
-                    highlightOnHover
-                    striped
-                    responsive
-                    customStyles={customStyles}
-                    defaultSortFieldId={1}
-                  />
-                  {searchQuery && (
-                    <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
-                      Total Boxes: {totalBoxes}
-                    </div>
-                  )}
-                </div>
-              </>
+              <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+                <DataTable
+                  columns={columns}
+                  data={filteredProducts}
+                  pagination
+                  highlightOnHover
+                  striped
+                  responsive
+                  customStyles={customStyles}
+                  defaultSortFieldId={1}
+                />
+              </div>
             )}
           </div>
         </div>
@@ -448,4 +349,4 @@ const ShowProduct = () => {
   );
 };
 
-export default ShowProduct;
+export default Show_product;

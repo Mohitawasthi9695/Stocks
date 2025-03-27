@@ -25,6 +25,7 @@ const UsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   const handleDelete = async (userId) => {
     const result = await Swal.fire({

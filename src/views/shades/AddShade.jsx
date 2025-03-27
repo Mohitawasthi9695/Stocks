@@ -167,7 +167,7 @@ const AddProduct = () => {
   return (
     <Container
       fluid
-      className="pt-4 px-5"
+      className="pt-4 px-2"
       style={{
         border: '3px dashed #14ab7f',
         borderRadius: '8px',
@@ -253,7 +253,7 @@ const AddProduct = () => {
                 <Row>
                   <Col md={6}>
                     {/* Dropdown for Product Category */}
-                    <FormField icon={FaUser} type= 'date' label="Date" name="date" value={formData.date} onChange={handleChange} />
+                    <FormField icon={FaUser} type="date" label="Date" name="date" value={formData.date} onChange={handleChange} />
                     <Form.Group controlId="productCategory" style={{ marginBottom: '16px' }}>
                       <Form.Label>
                         <FaIdCard className="me-2" />
