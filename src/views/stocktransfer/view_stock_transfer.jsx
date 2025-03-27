@@ -3,8 +3,8 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit,MdDelete, MdPersonAdd,MdCheckCircle, MdPlusOne, MdAdd, MdPrint, MdAddCircle } from 'react-icons/md';
-import { FaEye,FaShare } from 'react-icons/fa';
+import { MdEdit, MdDelete, MdPersonAdd, MdCheckCircle, MdPlusOne, MdAdd, MdPrint, MdAddCircle } from 'react-icons/md';
+import { FaEye, FaShare } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -33,7 +33,10 @@ const Index = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gettransfergatepass`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass`, {
+          params: {
+            type: 'transfer'
+          },
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -167,7 +170,7 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
-          {row.status === 0 && row.type==2 ? (
+          {row.status === 0 && row.type == 2 ? (
             <>
               <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
                 <MdCheckCircle />
@@ -394,23 +397,23 @@ const Index = () => {
         </div>
         <div className="d-flex justify-content-end">
           <button type="button" className="btn btn-info" onClick={exportToCSV}>
-            <FaFileCsv className="w-5 h-5 me-1" 
+            <FaFileCsv className="w-5 h-5 me-1"
               style={{
                 width: isMobile ? '20px' : '0',
                 height: isMobile ? '25px' : '0'
               }}
             />
             <span className='d-none d-md-inline'>
-            Export as CSV
+              Export as CSV
             </span>
           </button>
           <button type="button" className="btn btn-info" onClick={exportToPDF}>
             <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
-                width: isMobile ? '20px' : '0',
-                height: isMobile ? '25px' : '0'
-              }}/>
+              width: isMobile ? '20px' : '0',
+              height: isMobile ? '25px' : '0'
+            }} />
             <span className='d-none d-md-inline'>
-            Export as PDF
+              Export as PDF
             </span>
           </button>
         </div>
