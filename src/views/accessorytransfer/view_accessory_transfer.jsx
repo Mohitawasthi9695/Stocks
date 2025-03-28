@@ -44,11 +44,13 @@ const Index = () => {
         const invoicesDetails = response.data.data;
         console.log(invoicesDetails);
         setInvoiceAllDetails(invoicesDetails);
+        console.log(invoiceAllDetails);
         const filteredFields = invoicesDetails.map((gatepass) => ({
           gatepass_no: gatepass.gate_pass_no,
           id: gatepass.id,
-          godownSupervisor: gatepass.godown_supervisors.name,
-          warehouseSupervisor: gatepass.warehouse_supervisors.name,
+          type:gatepass.type,
+          godown_supervisor: gatepass.godown_supervisors.name,
+          warehouse_supervisor: gatepass.warehouse_supervisors.name,
           date: gatepass.gate_pass_date,
           total_amount: gatepass.total_amount,
           status: gatepass.status
@@ -83,7 +85,7 @@ const Index = () => {
   };
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = invoices.filter((invoice) => invoice.godownSupervisor.toLowerCase().includes(lowercasedQuery));
+    const filtered = invoices.filter((invoice) => invoice.godown_supervisor.toLowerCase().includes(lowercasedQuery));
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
 
@@ -111,12 +113,12 @@ const Index = () => {
     },
     {
       name: 'Godown Supervisor Name',
-      selector: (row) => row.godownSupervisor,
+      selector: (row) => row.godown_supervisor,
       sortable: true
     },
     {
       name: 'WareHouser Supervisor',
-      selector: (row) => row.warehouseSupervisor,
+      selector: (row) => row.warehouse_supervisor,
       sortable: true
     },
     {
@@ -142,7 +144,7 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
-          {row.status === 0 ? (
+           {row.status ==0 && row.type == 2 ? (
             <>
               <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
                 <MdCheckCircle />
@@ -330,7 +332,7 @@ const Index = () => {
       'Sr No': index + 1,
       'Gate Pass No': row.gatepass_no,
       'Gate Pass Date': row.date,
-      'Godown Supervisor': row.godownSupervisor,
+      'Godown Supervisor': row.godown_supervisor,
       'Warehouse Supervisor': row.warehouseSupervisor,
       //   'Total Amount': row.total_amount,
       Status: row.status === 1 ? 'Approved' : 'Pending'
@@ -360,7 +362,7 @@ const Index = () => {
         index + 1,
         row.gatepass_no,
         row.date,
-        row.godownSupervisor,
+        row.godown_supervisor,
         row.warehouseSupervisor,
         // row.total_amount,
         row.status === 1 ? 'Approved' : 'Pending'

@@ -42,17 +42,19 @@ const Index = () => {
           }
         });
         const invoicesDetails = response.data.data;
-        console.log(invoicesDetails);
+        console.log(invoicesDetails); 
         setInvoiceAllDetails(invoicesDetails);
         const filteredFields = invoicesDetails.map((gatepass) => ({
           gatepass_no: gatepass.gate_pass_no,
           id: gatepass.id,
+          type:gatepass.type,
           godownSupervisor: gatepass.godown_supervisors.name,
           warehouseSupervisor: gatepass.warehouse_supervisors.name,
           date: gatepass.gate_pass_date,
           total_amount: gatepass.total_amount,
           status: gatepass.status
         }));
+
         setInvoices(filteredFields);
         setFilteredInvoices(filteredFields);
       } catch (error) {
@@ -92,7 +94,6 @@ const Index = () => {
   };
 
   const navigate = useNavigate();
-
     const columns = [
         {
             name: 'S no.',
@@ -142,7 +143,8 @@ const Index = () => {
             name: 'Action',
             cell: (row) => (
                 <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
-                    {row.status === 0 ? (
+                   
+                    {row.status ==0 && row.type == 2 ? (
                         <>
                             <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
                                 <MdCheckCircle />

@@ -250,7 +250,7 @@ const Invoice_out = () => {
       });
 
       toast.success('Stocks Transfer successfully');
-      navigate('/view_stock_transfer');
+      navigate('/view_accessory_transfer');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding stock';
 

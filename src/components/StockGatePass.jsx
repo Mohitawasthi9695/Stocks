@@ -139,7 +139,7 @@ const StockGatePass = ({ show, onHide, invoiceData, id }) => {
                                     </View>
                                     <View style={styles.row}>
                                         <Text style={styles.label}>Status:</Text>
-                                        <Text style={styles.value}>{invoice.status === 0 ? 'Pending' : 'Completed'}</Text>
+                                        <Text style={styles.value}>{invoice.status == 0 ? 'Pending' : 'Approved'}</Text>
                                     </View>
                                    
                                 </View>

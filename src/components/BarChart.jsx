@@ -16,7 +16,7 @@ const BarChartData = () => {
             'Content-Type': 'application/json',
           },
         });
-        setBarData(response.data.data); // Bind the API response to the barData state
+        setBarData(response.data.data); 
       } catch (error) {
         console.error('Error fetching bar chart data:', error);
       } finally {
@@ -52,17 +52,17 @@ const BarChartData = () => {
       }}>STOCK SALES</h3>
       <BarChart width={isMobile ? 300 : 450} height={400} data={barData}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="product_name" /> {/* Use key from API response */}
+        <XAxis dataKey="product_name" /> 
         <YAxis />
         <Tooltip
           formatter={(value, name, props) => {
-            const shadeNo = props.payload?.product_shadeNo || 'N/A';
+            const shadeNo = props.payload?.product_purchase_shade_no || 'N/A';
             return [`${value} (${shadeNo})`, name];
           }}
         />
         <Tooltip />
-        <Bar dataKey="stock_in" fill="#8884d8" /> {/* Key for stock_in */}
-        <Bar dataKey="stock_out" fill="#82ca9d" /> {/* Key for stock_out */}
+        <Bar dataKey="stock_in" fill="#8884d8" /> 
+        <Bar dataKey="stock_out" fill="#82ca9d" />
       </BarChart>
     </div>
   );
