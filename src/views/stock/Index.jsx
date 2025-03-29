@@ -47,6 +47,7 @@ const Index = () => {
             }
           }
         );
+        console.log(response.data);
   
         const { page_number, total_record_count, records } = response.data;
   

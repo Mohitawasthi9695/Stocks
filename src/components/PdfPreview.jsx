@@ -1,9 +1,14 @@
+
+
 // import React from 'react';
 // import { Modal } from 'react-bootstrap';
 // import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 
+
+
 // const PdfPreview = ({ show, onHide, invoiceData, id }) => {
 //   const invoice = invoiceData.find((invoice) => invoice.id === id);
+//   const [printMode, setPrintMode] = React.useState('normal');
 
 //   // Unique shade numbers
 //   const uniqueShadeNumbers = [...new Set(invoice.stock_in.map((item) => item.products.shadeNo))];
@@ -121,6 +126,95 @@
 //       marginBottom: 3
 //     }
 //   };
+//   const handlePrint = () => {
+//     if (printMode === 'normal') {
+//       window.print(); // Print using normal printer
+//     } else {
+//       printThermalReceipt(); // Print using a thermal printer
+//     }
+//   };
+//   const printThermalReceipt = () => {
+//     let receiptContent = `
+//       ==================================
+//                VISHAL HiTech      
+//           GSTIN: ${invoice.supplier.gst_no}
+//           CIN No: ${invoice.supplier.cin_no}
+//       ==================================
+//       INVOICE DETAILS
+//       ----------------------------------
+//       Invoice No: ${invoice.invoice_no}
+//       Date: ${invoice.date}
+//       ACK No:${invoice.ack_no}
+      
+//       SUPPLIER DETAILS
+//       ----------------------------------
+//       Name: ${invoice.supplier.name}
+//       GSTIN: ${invoice.supplier.gst_no}
+//       CIN No: ${invoice.supplier.cin_no}
+
+//       WAREHOUSE SUPERVISOR
+//       ----------------------------------
+//       Name: ${invoice.user.name}
+//       Number:${invoice.user.phone}
+
+//       TRANSPORT DETAILS
+//       ----------------------------------
+//       E-way Bill:${invoice.ewaybill}
+//       Transport Name: ${invoice.transport.transport}
+//       Vehicle No: ${invoice.transport.vehicle_no}
+//       Agent Name: ${invoice.agent}
+//       Warehouse:${invoice.warehouse}
+//       Place:${invoice.place_of_supply}
+     
+
+//       ----------------------------------
+      
+//       PRODUCTS
+//       ----------------------------------
+//       | No | Category  | Shade  | Qty | PCS | Unique Shade No | Quantity |
+//     `;
+
+//     const shadeQuantityMap = invoice.stock_in.reduce((acc, item) => {
+//       const shadeNo = item.products.shadeNo;
+//       acc[shadeNo] = (acc[shadeNo] || 0) + item.quantity;
+//       return acc;
+//     }, {});
+  
+//     invoice.stock_in.forEach((item, index) => {
+//       receiptContent += `
+//         | ${index + 1} | ${item.products.product_category.product_category} | ${item.products.shadeNo} | ${item.quantity} | ${item.pcs} | ${item.products.shadeNo} | ${shadeQuantityMap[item.products.shadeNo]} |`;
+//     });
+
+//     receiptContent += `
+//       ----------------------------------
+//       TOTAL QUANTITY: ${totalQuantity}
+//       SUBTOTAL: ₹${invoice.subtotal}
+//       GST (${invoice.gst_rate}%): ₹${invoice.gst_amount}
+//       GRAND TOTAL: ₹${invoice.total_amount}
+//    ----------------------------------
+//       SUPPLIER'S SIGNATURE: ____________
+      
+//       RECEIVER'S SIGNATURE: ____________
+//       ----------------------------------
+
+//               TERMS & CONDITIONS
+//       ----------------------------------
+//       1. Goods once sold will not be taken back.
+//       2. Interest @18% p.a. will be charged if payment is delayed.
+//       3. Subject to local jurisdiction.
+//       4. E.&O.E.
+
+//       ----------------------------------
+//         Thank You for Your Business!
+//       ==================================
+//     `;
+//     const printWindow = window.open("", "", "width=300,height=600");
+//     printWindow.document.write(`<pre>${receiptContent}</pre>`);
+//     printWindow.document.close();
+//     printWindow.print();
+//     printWindow.close();
+//   };
+
 
 //   return (
 //     <Modal show={show} onHide={onHide} size="lg">
@@ -128,6 +222,18 @@
 //         <Modal.Title>Invoice PDF</Modal.Title>
 //       </Modal.Header>
 //       <Modal.Body style={{ height: '80vh' }}>
+//         <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
+//           <select value={printMode} onChange={(e) => setPrintMode(e.target.value)}>
+//             <option value="normal">Normal Printer</option>
+//             <option value="thermal">Thermal Printer</option>
+//           </select>
+//           <button
+//             onClick={handlePrint}
+//             style={{ padding: '5px 10px', backgroundColor: '#007bff', color: 'white', border: 'none', cursor: 'pointer' }}
+//           >
+//             Print
+//           </button>
+//         </div>
 //         <PDFViewer width="100%" height="100%">
 //           <Document>
 //             <Page size="A4" style={styles.page}>
@@ -222,10 +328,10 @@
 //                     <Text style={styles.tableCell}>Width</Text>
 //                     <Text style={styles.tableCell}>Quantity</Text>
 //                     <Text style={styles.tableCell}>PCS</Text>
-//                     <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px' }]}>
+//                     <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2', paddingTop: '5px' }]}>
 //                       Unique <br /> Shade No.
 //                     </Text>
-//                     <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px'}]}>
+//                     <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2', paddingTop: '5px' }]}>
 //                       Total <br /> Qty
 //                     </Text>
 //                   </View>
@@ -239,8 +345,10 @@
 //                       <Text style={styles.tableCell}>{`${item.width}\n${item.width_unit}`}</Text>
 //                       <Text style={styles.tableCell}>{item.quantity}</Text>
 //                       <Text style={styles.tableCell}>{item.pcs}</Text>
-//                       <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px'}]}>{uniqueShadeNumbers[index] || ''}</Text>
-//                       <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px'}]}>
+//                       <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2', paddingTop: '5px' }]}>
+//                         {uniqueShadeNumbers[index] || ''}
+//                       </Text>
+//                       <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2', paddingTop: '5px' }]}>
 //                         {totalQuantityByShadeArray[index] !== undefined ? totalQuantityByShadeArray[index] : ''}
 //                       </Text>
 //                     </View>
@@ -327,11 +435,8 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 
-
-
 const PdfPreview = ({ show, onHide, invoiceData, id }) => {
   const invoice = invoiceData.find((invoice) => invoice.id === id);
-  const [printMode, setPrintMode] = React.useState('normal');
 
   // Unique shade numbers
   const uniqueShadeNumbers = [...new Set(invoice.stock_in.map((item) => item.products.shadeNo))];
@@ -449,95 +554,6 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
       marginBottom: 3
     }
   };
-  const handlePrint = () => {
-    if (printMode === 'normal') {
-      window.print(); // Print using normal printer
-    } else {
-      printThermalReceipt(); // Print using a thermal printer
-    }
-  };
-  const printThermalReceipt = () => {
-    let receiptContent = `
-      ==================================
-               VISHAL HiTech      
-          GSTIN: ${invoice.supplier.gst_no}
-          CIN No: ${invoice.supplier.cin_no}
-      ==================================
-      INVOICE DETAILS
-      ----------------------------------
-      Invoice No: ${invoice.invoice_no}
-      Date: ${invoice.date}
-      ACK No:${invoice.ack_no}
-      
-      SUPPLIER DETAILS
-      ----------------------------------
-      Name: ${invoice.supplier.name}
-      GSTIN: ${invoice.supplier.gst_no}
-      CIN No: ${invoice.supplier.cin_no}
-
-      WAREHOUSE SUPERVISOR
-      ----------------------------------
-      Name: ${invoice.user.name}
-      Number:${invoice.user.phone}
-
-      TRANSPORT DETAILS
-      ----------------------------------
-      E-way Bill:${invoice.ewaybill}
-      Transport Name: ${invoice.transport.transport}
-      Vehicle No: ${invoice.transport.vehicle_no}
-      Agent Name: ${invoice.agent}
-      Warehouse:${invoice.warehouse}
-      Place:${invoice.place_of_supply}
-     
-
-      ----------------------------------
-      
-      PRODUCTS
-      ----------------------------------
-      | No | Category  | Shade  | Qty | PCS | Unique Shade No | Quantity |
-    `;
-
-    const shadeQuantityMap = invoice.stock_in.reduce((acc, item) => {
-      const shadeNo = item.products.shadeNo;
-      acc[shadeNo] = (acc[shadeNo] || 0) + item.quantity;
-      return acc;
-    }, {});
-  
-    invoice.stock_in.forEach((item, index) => {
-      receiptContent += `
-        | ${index + 1} | ${item.products.product_category.product_category} | ${item.products.shadeNo} | ${item.quantity} | ${item.pcs} | ${item.products.shadeNo} | ${shadeQuantityMap[item.products.shadeNo]} |`;
-    });
-
-    receiptContent += `
-      ----------------------------------
-      TOTAL QUANTITY: ${totalQuantity}
-      SUBTOTAL: ₹${invoice.subtotal}
-      GST (${invoice.gst_rate}%): ₹${invoice.gst_amount}
-      GRAND TOTAL: ₹${invoice.total_amount}
-   ----------------------------------
-      SUPPLIER'S SIGNATURE: ____________
-      
-      RECEIVER'S SIGNATURE: ____________
-      ----------------------------------
-
-              TERMS & CONDITIONS
-      ----------------------------------
-      1. Goods once sold will not be taken back.
-      2. Interest @18% p.a. will be charged if payment is delayed.
-      3. Subject to local jurisdiction.
-      4. E.&O.E.
-
-      ----------------------------------
-        Thank You for Your Business!
-      ==================================
-    `;
-    const printWindow = window.open("", "", "width=300,height=600");
-    printWindow.document.write(`<pre>${receiptContent}</pre>`);
-    printWindow.document.close();
-    printWindow.print();
-    printWindow.close();
-  };
-
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
@@ -545,18 +561,6 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
         <Modal.Title>Invoice PDF</Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ height: '80vh' }}>
-        <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
-          <select value={printMode} onChange={(e) => setPrintMode(e.target.value)}>
-            <option value="normal">Normal Printer</option>
-            <option value="thermal">Thermal Printer</option>
-          </select>
-          <button
-            onClick={handlePrint}
-            style={{ padding: '5px 10px', backgroundColor: '#007bff', color: 'white', border: 'none', cursor: 'pointer' }}
-          >
-            Print
-          </button>
-        </div>
         <PDFViewer width="100%" height="100%">
           <Document>
             <Page size="A4" style={styles.page}>
@@ -651,10 +655,10 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                     <Text style={styles.tableCell}>Width</Text>
                     <Text style={styles.tableCell}>Quantity</Text>
                     <Text style={styles.tableCell}>PCS</Text>
-                    <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2', paddingTop: '5px' }]}>
+                    <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px' }]}>
                       Unique <br /> Shade No.
                     </Text>
-                    <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2', paddingTop: '5px' }]}>
+                    <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px'}]}>
                       Total <br /> Qty
                     </Text>
                   </View>
@@ -668,10 +672,8 @@ const PdfPreview = ({ show, onHide, invoiceData, id }) => {
                       <Text style={styles.tableCell}>{`${item.width}\n${item.width_unit}`}</Text>
                       <Text style={styles.tableCell}>{item.quantity}</Text>
                       <Text style={styles.tableCell}>{item.pcs}</Text>
-                      <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2', paddingTop: '5px' }]}>
-                        {uniqueShadeNumbers[index] || ''}
-                      </Text>
-                      <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2', paddingTop: '5px' }]}>
+                      <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px'}]}>{uniqueShadeNumbers[index] || ''}</Text>
+                      <Text style={[styles.tableCell, { backgroundColor: '#7fc9b2' , paddingTop: '5px'}]}>
                         {totalQuantityByShadeArray[index] !== undefined ? totalQuantityByShadeArray[index] : ''}
                       </Text>
                     </View>
