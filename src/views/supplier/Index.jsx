@@ -454,7 +454,7 @@ const SuppliersPage = () => {
         row.status === 1 ? 'Active' : 'Inactive'
       ]),
       styles: {
-        fontSize: 7, // Adjusted to fit more text
+        fontSize: 8, // Adjusted to fit more text
         cellPadding: 0.5, // Reduce padding to utilize space
         overflow: 'linebreak', // Prevent text from overflowing outside cells
         lineWidth: 0.3 // Border thickness
