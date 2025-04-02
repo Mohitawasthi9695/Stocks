@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { PieChart, Pie, Cell } from "recharts";
-import { useMediaQuery } from "react-responsive";
-
 
 const PieChartData = () => {
   const [pieData, setPieData] = useState([]);
@@ -37,8 +35,6 @@ const PieChartData = () => {
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042","#FF8072","#FF8042","#FF8062","#FF8442","#FF6042","#FF8842"];
 
-  const isMobile = useMediaQuery({ query: '(max-width: 375px)' });
-
   // Render loading message while fetching data
   if (loading) {
     return <div>Loading...</div>;
@@ -46,9 +42,7 @@ const PieChartData = () => {
 
   return (
     <div>
-      <h3 className="text-center" style={{
-        paddingTop: '20px',
-      }}>STOCK IN</h3>
+      <h3 className="text-center">STOCK IN</h3>
       <PieChart width={600} height={400}>
         <Pie
           data={pieData}
@@ -56,7 +50,7 @@ const PieChartData = () => {
           cy="50%"
           labelLine={false}
           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-          outerRadius={isMobile ? 79 : 140}
+          outerRadius={150}
           fill="#8884d8"
           dataKey="value"
         >
@@ -70,6 +64,5 @@ const PieChartData = () => {
 };
 
 export default PieChartData;
-
 
 

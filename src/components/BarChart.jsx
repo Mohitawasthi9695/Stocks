@@ -5,7 +5,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 const BarChartData = () => {
   const [barData, setBarData] = useState([]); // State to hold bar chart data
   const [loading, setLoading] = useState(true); // State for loading status
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 375);
 
   useEffect(() => {
     const fetchGraphData = async () => {
@@ -16,7 +15,7 @@ const BarChartData = () => {
             'Content-Type': 'application/json',
           },
         });
-        setBarData(response.data.data); 
+        setBarData(response.data.data); // Bind the API response to the barData state
       } catch (error) {
         console.error('Error fetching bar chart data:', error);
       } finally {
@@ -25,48 +24,32 @@ const BarChartData = () => {
     };
 
     fetchGraphData();
-  
-
-
-  const handleResize = () => {
-    setIsMobile(window.innerWidth <= 375);
-  };
-
-  window.addEventListener('resize', handleResize);
-
-  return () => {
-    window.removeEventListener('resize', handleResize);
-  };
-}, []);
+  }, []);
 
   // Render a loading message while data is being fetched
   if (loading) {
     return <div>Loading...</div>;
   }
-  
 
   return (
     <div>
-      <h3 className="text-center" style={{
-        paddingTop: '20px',
-      }}>STOCK SALES</h3>
-      <BarChart width={isMobile ? 300 : 450} height={400} data={barData}>
+      <h3 className="text-center">STOCK SALES</h3>
+      <BarChart width={500} height={400} data={barData}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="shadeNo" /> 
+        <XAxis dataKey="product_name" /> {/* Use key from API response */}
         <YAxis />
         <Tooltip
           formatter={(value, name, props) => {
-            const shadeNo = props.payload?.product_purchase_shade_no || 'N/A';
+            const shadeNo = props.payload?.product_shadeNo || 'N/A';
             return [`${value} (${shadeNo})`, name];
           }}
         />
         <Tooltip />
-        <Bar dataKey="stock_in" fill="#8884d8" /> 
-        <Bar dataKey="stock_out" fill="#82ca9d" />
+        <Bar dataKey="stock_in" fill="#8884d8" /> {/* Key for stock_in */}
+        <Bar dataKey="stock_out" fill="#82ca9d" /> {/* Key for stock_out */}
       </BarChart>
     </div>
   );
 };
 
 export default BarChartData;
-

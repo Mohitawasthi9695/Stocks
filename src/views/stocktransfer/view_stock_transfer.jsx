@@ -397,23 +397,23 @@ const Index = () => {
         </div>
         <div className="d-flex justify-content-end">
           <button type="button" className="btn btn-info" onClick={exportToCSV}>
-            <FaFileCsv className="w-5 h-5 me-1"
+            <FaFileCsv className="w-5 h-5 me-1" 
               style={{
                 width: isMobile ? '20px' : '0',
                 height: isMobile ? '25px' : '0'
               }}
             />
             <span className='d-none d-md-inline'>
-              Export as CSV
+            Export as CSV
             </span>
           </button>
           <button type="button" className="btn btn-info" onClick={exportToPDF}>
             <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
-              width: isMobile ? '20px' : '0',
-              height: isMobile ? '25px' : '0'
-            }} />
+                width: isMobile ? '20px' : '0',
+                height: isMobile ? '25px' : '0'
+              }}/>
             <span className='d-none d-md-inline'>
-              Export as PDF
+            Export as PDF
             </span>
           </button>
         </div>
