@@ -178,6 +178,11 @@ const navigate = useNavigate();
       sortable: true
     },
     {
+      name: 'Type',
+      selector: (row) =>  {row.type === 1 ? 'Sent' : 'Received'},
+      sortable: true
+    },
+    {
       name: 'Rack',
       cell: (row) => (
         <div className="d-flex align-items-center w-100" style={{ justifyContent: row.rack ? 'space-between' : 'center' }}>

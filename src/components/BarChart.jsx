@@ -52,7 +52,7 @@ const BarChartData = () => {
       }}>STOCK SALES</h3>
       <BarChart width={isMobile ? 300 : 450} height={400} data={barData}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="product_name" /> 
+        <XAxis dataKey="shadeNo" /> 
         <YAxis />
         <Tooltip
           formatter={(value, name, props) => {

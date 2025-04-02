@@ -534,7 +534,7 @@ const Invoice_out = () => {
                       value={formData.company_id}
                       onChange={handleChange}
                       options={receivers}
-                      add={'/add-Receiver'}
+                      add={'/company'}
                       required
                     />
                     <FormField

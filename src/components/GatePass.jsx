@@ -158,11 +158,11 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                 <View style={[styles.borderBox, styles.column]}>
                   <Text style={styles.sectionTitle}>Authority:</Text>
                   <View style={styles.row}>
-                    <Text style={styles.label}>Warehouse Supervisor:</Text>
+                    <Text style={styles.label}>Sender:</Text>
                     <Text style={styles.value}>{invoice.warehouse_supervisors.name}</Text>
                   </View>
                   <View style={styles.row}>
-                    <Text style={styles.label}>Godown Supervisor:</Text>
+                    <Text style={styles.label}>Receiver:</Text>
                     <Text style={styles.value}>{invoice.godown_supervisors.name}</Text>
                   </View>
                 </View>
