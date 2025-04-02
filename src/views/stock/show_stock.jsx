@@ -556,7 +556,6 @@
 
 
 
-
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
@@ -582,9 +581,6 @@ const ShowProduct = () => {
   const [endDate, setEndDate] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  
 
   useEffect(() => {
     const fetchStocksData = async () => {
@@ -592,8 +588,8 @@ const ShowProduct = () => {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stocks`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
         const productsWithArea = response.data.map((product) => {
           const areaM2 = product.length * product.width * product.quantity;
@@ -604,7 +600,7 @@ const ShowProduct = () => {
             area: areaM2.toFixed(3),
             area_sq_ft: areaSqFt.toFixed(3),
             dateLocal,
-            date: product.date
+            date: product.date,
           };
         });
         setProducts(productsWithArea);
@@ -640,7 +636,6 @@ const ShowProduct = () => {
     }
 
     setFilteredProducts(filtered);
-    setCurrentPage(1); // Reset to first page after filtering
   }, [searchQuery, products, startDate, endDate, selectedCategory]);
 
   const handleSearch = (e) => {
@@ -663,7 +658,7 @@ const ShowProduct = () => {
     { id: 'sr_no', name: 'Sr No', selector: (_, index) => index + 1, sortable: true, center: true, width: '90px' },
     { id: 'date', name: 'Date', selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'), sortable: true, center: true, width: '100px' },
     { id: 'stock_code', name: 'Stock Code', selector: (row) => row.stock_code, sortable: true, center: true, width: '120px' },
-    { id: 'lot_no', name: 'Lot No', selector: (row) => row.lot_no, sortable: true , center: true, },
+    { id: 'lot_no', name: 'Lot No', selector: (row) => row.lot_no, sortable: true, center: true },
     { id: 'invoice_no', name: 'Invoice no', selector: (row) => row.invoice_no, sortable: true },
     { id: 'product_category', name: 'Product Category', selector: (row) => row.product_category_name, sortable: true },
     { id: 'shade_no', name: 'Shade no', selector: (row) => row.shadeNo, sortable: true },
@@ -677,7 +672,7 @@ const ShowProduct = () => {
     { id: 'issue_length', name: 'Issue Length', selector: (row) => Number(row.length * row.out_quantity).toFixed(2), sortable: true },
     { id: 'area_m2', name: 'm²', selector: (row) => row.area, sortable: true },
     { id: 'area_ft2', name: 'ft²', selector: (row) => row.area_sq_ft, sortable: true },
-    { id: 'remark', name: 'Remark', selector: (row) => row.remark, sortable: true }
+    { id: 'remark', name: 'Remark', selector: (row) => row.remark, sortable: true },
   ];
 
   const exportToCSV = () => {
@@ -907,7 +902,6 @@ const ShowProduct = () => {
       }
     }
   };
-
   const totalBoxes = searchQuery ? filteredProducts.reduce((sum, row) => sum + (row.quantity || 0), 0) : null;
 
   useEffect(() => {
@@ -919,19 +913,11 @@ const ShowProduct = () => {
     setSelectedColumns((prev) => (prev.includes(columnId) ? prev.filter((id) => id !== columnId) : [...prev, columnId]));
   };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3 ">
         {/* ... (search and filter inputs remain the same) */}
-        <div className="col-md-4" >
+        <div className="col-md-4">
           <input
             type="text"
             placeholder="Search..."
@@ -942,9 +928,7 @@ const ShowProduct = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="d-flex justify-content-end w-50 ms-auto" style={{
-          marginRight : "10px"
-        }}>
+        <div className="d-flex justify-content-end w-50 ms-auto" style={{ marginRight: '10px' }}>
           <div className="col-md-4 w-25" style={{ width: '15px' }}>
             <input
               type="date"
@@ -958,8 +942,7 @@ const ShowProduct = () => {
             <input type="date" value={endDate} onChange={handleEndDateChange} className="form-control" style={{ borderRadius: '5px' }} />
           </div>
         </div>
-        <div
-          className="col-md-4"
+        <div className="col-md-4"
           style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', marginLeft: 'auto', width: 'auto', marginBottom: '-15px' }}
         >
           <div className="d-flex justify-content-end">
@@ -1027,35 +1010,14 @@ const ShowProduct = () => {
               <>
                 <DataTable
                   columns={filteredColumns}
-                  data={currentItems}
-                  pagination={false}
+                  data={filteredProducts} // Use filteredProducts directly
+                  pagination
                   highlightOnHover
                   striped
                   responsive
                   customStyles={customStyles}
                   defaultSortFieldId={1}
                 />
-                <nav>
-                  <ul className="pagination justify-content-center pt-3">
-                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => paginate(currentPage - 1)}>
-                        Previous
-                      </button>
-                    </li>
-                    {Array.from({ length: totalPages }).map((_, index) => (
-                      <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                        <button className="page-link" onClick={() => paginate(index + 1)}>
-                          {index + 1}
-                        </button>
-                      </li>
-                    ))}
-                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => paginate(currentPage + 1)}>
-                        Next
-                      </button>
-                    </li>
-                  </ul>
-                </nav>
                 {searchQuery && (
                   <div style={{ padding: '10px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', background: '#ddd' }}>
                     Total Boxes: {totalBoxes}

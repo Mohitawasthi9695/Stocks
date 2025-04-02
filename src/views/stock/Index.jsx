@@ -122,7 +122,7 @@ const Index = () => {
     },
     {
       name: 'Supplier Name',
-      selector: (row) => row.supplier_name,
+      selector: (row) => row.supplier?.name || "N/A",
       sortable: true,
       wrap: true,
       center: true
