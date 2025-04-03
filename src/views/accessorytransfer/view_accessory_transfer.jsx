@@ -3,8 +3,8 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdCheckCircle, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { FaEye } from 'react-icons/fa';
+import { MdEdit, MdDelete,MdAddCircle , MdCheckCircle, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
+import { FaEye,FaShare } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -48,7 +48,7 @@ const Index = () => {
         const filteredFields = invoicesDetails.map((gatepass) => ({
           gatepass_no: gatepass.gate_pass_no,
           id: gatepass.id,
-          type:gatepass.type,
+          type: gatepass.type,
           godown_supervisor: gatepass.godown_supervisors.name,
           warehouse_supervisor: gatepass.warehouse_supervisors.name,
           date: gatepass.gate_pass_date,
@@ -144,7 +144,7 @@ const Index = () => {
       name: 'Action',
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
-           {row.status ==0 && row.type == 2 ? (
+          {row.status == 0 && row.type == 2 ? (
             <>
               <Button variant="outline-success" size="sm" onClick={() => handleApprove(row.id)}>
                 <MdCheckCircle />
@@ -209,7 +209,7 @@ const Index = () => {
   };
 
   const handleAddInvoice = () => {
-    navigate('/add-invoice');
+    navigate('/accessory-tranfer');
   };
 
   const customStyles = {
@@ -395,13 +395,7 @@ const Index = () => {
         </div>
         <div className="col-md-8 text-end mt-3 mt-md-0" >
           <Button variant="primary" onClick={handleAddInvoice}>
-            <MdPersonAdd className="me-2" style={{
-              width: isMobile ? '25px' : '0',
-              height: isMobile ? '25px' : '0'
-            }} />
-            <span className='d-none d-md-inline'>
-              Add Invoice
-            </span>
+            <MdAddCircle className="me-2" />Transfer <FaShare className="ms-2" />
           </Button>
 
           <div className="d-flex justify-content-end">

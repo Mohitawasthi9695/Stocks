@@ -14,7 +14,6 @@ const filterMenuItem = (menu) => {
               'approve_godown',
               'operator-stockout',
               'godownStock',
-              'suppliers',
               'godown-stockout',
               'GodownAccessories',
               'GoDownGatePass',
