@@ -73,34 +73,52 @@ const Index = () => {
     setSearchQuery(e.target.value);
   };
 
+
   const downloadExcel = (row) => {
-    const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
-
-    if (!fullInvoice || !fullInvoice.all_stocks) {
-      console.error('Godown data not found for this row:', row);
-      return;
+    try {
+      const fullInvoice = invoiceAllDetails.find((invoice) => invoice.id === row.id);
+  
+      if (!fullInvoice || !fullInvoice.all_stocks) {
+        console.error('Godown data not found for this row:', row);
+        toast.error('Gate pass data not found for export.');
+        return;
+      }
+  
+      // Extract required data
+      const extractedData = fullInvoice.all_stocks.map((godown) => ({
+        GatePassNo: fullInvoice.gate_pass_no,
+        Date: fullInvoice.gate_pass_date,
+        VehicleNo: fullInvoice.vehicle_no,
+        PlaceOfSupply: fullInvoice.place_of_supply,
+        DriverName: fullInvoice.driver_name,
+        DriverPhone: fullInvoice.driver_phone,
+        WarehouseSupervisor: fullInvoice.warehouse_supervisor?.name || 'N/A',
+        GodownSupervisor: fullInvoice.godown_supervisor?.name || 'N/A',
+        ProductType: godown.type,
+        LotNo: godown.lot_no,
+        ProductName: godown.products_category || 'N/A', // ✅ FIXED
+        ShadeNo: godown.products_shadeNo || godown.products_purchase_shade_no || 'N/A', // ✅ FIXED
+        StockCode: godown.stock_code,
+        StockInCode: godown.stockin_code,
+        Width: `${godown.width} ${godown.width_unit}`,
+        Length: `${godown.length} ${godown.length_unit}`,
+        Pcs: godown.pcs,
+        Quantity: godown.quantity,
+      }));
+      
+  
+      const ws = XLSX.utils.json_to_sheet(extractedData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'GatePassData');
+      XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
+  
+      toast.success('Excel downloaded successfully!');
+    } catch (error) {
+      console.error('Excel Export Error:', error);
+      toast.error('Failed to export Excel. Please try again.');
     }
-
-    // Extract required data
-    const extractedData = fullInvoice.all_stocks.map((godown) => ({
-      GatePassNo: fullInvoice.gate_pass_no,
-      Date: fullInvoice.gate_pass_date,
-      ProductType: godown.product_type,
-      LotNo: godown.lot_no,
-      ProductName: godown.products.name,
-      ShadeNo: godown.products.shadeNo,
-      StockCode: godown.stock_code,
-      Width: godown.width,
-      Length: godown.length,
-      Pcs: godown.pcs,
-      Quantity: godown.quantity,
-      Supervisor: fullInvoice.warehouse_supervisors.name
-    }));
-    const ws = XLSX.utils.json_to_sheet(extractedData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'GatePassData');
-    XLSX.writeFile(wb, `GatePass_${fullInvoice.gate_pass_no}.xlsx`);
   };
+  
 
   const navigate = useNavigate();
 

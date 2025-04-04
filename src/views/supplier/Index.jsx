@@ -78,34 +78,40 @@ const SuppliersPage = () => {
       name: 'Supplier Name',
       width: '140px',
       selector: (row) => row.name,
-      sortable: true
+      sortable: true,
+      wrap: true
     },
     {
       name: 'Code',
       selector: (row) => row.code,
       sortable: true,
+      width: '120px'
    
 
     },
     {
       name: 'GST No',
       selector: (row) => row.gst_no,
-      sortable: true
+      sortable: true,
+      width: '150px'
     },
     {
       name: 'CIN No',
       selector: (row) => row.cin_no,
-      sortable: true
+      sortable: true,
+      width: '150px'
     },
     {
       name: 'PAN No',
       selector: (row) => row.pan_no,
-      sortable: true
+      sortable: true,
+      width: '120px'
     },
     {
       name: 'MSME No',
       selector: (row) => row.msme_no,
-      sortable: true
+      sortable: true,
+      width: '150px'
     },
     {
       name: 'Phone',
@@ -115,7 +121,8 @@ const SuppliersPage = () => {
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true
+      sortable: true,
+      width: '190px'
     },
     {
       name: 'Owner Mobile',
@@ -125,34 +132,40 @@ const SuppliersPage = () => {
     },
     {
       name: 'Registered Address',
-      width: '300px',
+      width: '200px',
       selector: (row) => row.reg_address,
       sortable: true,
-      cell: (row) => (
-        <details>
-          <summary style={{ cursor: 'pointer' }}>
-            {row.reg_address.split('\n')[0]} {/* Show only the first line in truncated view */}
-          </summary>
-          <span>{row.reg_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
-        </details>
-      )
+      wrap: true
+      // cell: (row) => (
+      //   <details>
+      //     <summary style={{ cursor: 'pointer' }}>
+      //       {row.reg_address.split('\n')[0]} {/* Show only the first line in truncated view */}
+      //     </summary>
+      //     <span>{row.reg_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
+      //   </details>
+      // )
     },
     {
       name: 'Work Address',
       selector: (row) => row.work_address,
       sortable: true,
-      cell: (row) => (
-        <details>
-          <summary style={{ cursor: 'pointer' }}>{row.work_address.split('\n')[0]}</summary>
-          <span>{row.work_address.replace('\n', ', ')}</span>
-        </details>
-      ),
-      width: '150px'
+      // cell: (row) => (
+      //   <details>
+      //     <summary style={{ cursor: 'pointer' }}>{row.work_address.split('\n')[0]}</summary>
+      //     <span>{row.work_address.replace('\n', ', ')}</span>
+      //   </details>
+      // ),
+      width: '150px',
+      center: true,
+      wrap: true
     },
     {
       name: 'Area',
       selector: (row) => row.area,
-      sortable: true
+      sortable: true,
+      width: '150px',
+      center: true,
+      wrap: true
     },
     {
       name: 'Action',
@@ -419,8 +432,9 @@ const SuppliersPage = () => {
   const exportToPDF = () => {
     const doc = new jsPDF('landscape'); // Landscape for more width
     doc.text('Suppliers List', 14, 10);
-
+  
     doc.autoTable({
+      startY: 15,
       head: [
         [
           'Supplier Name',
@@ -435,8 +449,7 @@ const SuppliersPage = () => {
           'Registered Address',
           'Work Address',
           'Area',
-          'Status'
-        ]
+        ],
       ],
       body: filteredSuppliers.map((row) => [
         row.name,
@@ -451,37 +464,36 @@ const SuppliersPage = () => {
         row.reg_address,
         row.work_address,
         row.area,
-        row.status === 1 ? 'Active' : 'Inactive'
       ]),
       styles: {
-        fontSize: 8, // Adjusted to fit more text
-        cellPadding: 0.5, // Reduce padding to utilize space
-        overflow: 'linebreak', // Prevent text from overflowing outside cells
-        lineWidth: 0.3 // Border thickness
+        fontSize: 8,
+        cellPadding: 1,
+        overflow: 'linebreak', // Text will wrap inside cell
+        halign: 'left',
       },
       columnStyles: {
-        0: { cellWidth: 'auto' },
-        1: { cellWidth: 'auto' },
-        2: { cellWidth: 'auto' },
-        3: { cellWidth: 'auto' },
-        4: { cellWidth: 'auto' },
-        5: { cellWidth: 'auto' },
-        6: { cellWidth: 'auto' },
-        7: { cellWidth: 'auto' },
-        8: { cellWidth: 'auto' },
-        9: { cellWidth: 'auto' },
-        10: { cellWidth: 'auto' },
-        11: { cellWidth: 'auto' },
-        12: { cellWidth: 'auto' }
+        0: { cellWidth: 20 }, // Supplier Name
+        1: { cellWidth: 20 }, // Code
+        2: { cellWidth: 20 }, // GST No
+        3: { cellWidth: 20 }, // CIN No
+        4: { cellWidth: 20 }, // PAN No
+        5: { cellWidth: 27 }, // MSME No
+        6: { cellWidth: 20 }, // Phone
+        7: { cellWidth: 25 }, // Email
+        8: { cellWidth: 30 }, // Owner Mobile
+        9: { cellWidth: 30 }, // Registered Address
+        10: { cellWidth: 30 }, // Work Address
+        11: { cellWidth: 20 }, // Area
+        12: { cellWidth: 20 }, // Status
       },
-      theme: 'grid', // Ensures vertical and horizontal table lines
-      tableWidth: 'wrap', // Ensures no extra gaps on the page
-      margin: { top: 10, left: 5, right: 5, bottom: 5 } // Utilize full page
+      theme: 'grid',
+      tableWidth: 'wrap',
+      margin: { top: 10, left: 5, right: 5, bottom: 5 },
     });
-
+  
     doc.save('supplier_list.pdf');
   };
-
+  
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">

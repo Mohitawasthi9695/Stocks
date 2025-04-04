@@ -68,20 +68,25 @@ const Show_product = () => {
   const navigate = useNavigate();
 
   const columns = [
-    { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
-    { name: 'Date', selector: (row) => row.date, sortable: true },
-    { name: 'Ware Code', selector: (row) => row.stock_code, sortable: true },
-    { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
-    { name: 'Invoice no', selector: (row) => row.invoice_no, sortable: true },
-    { name: 'Product Category', selector: (row) => row.product_category_name, sortable: true },
-    { name: 'Shade no', selector: (row) => row.shadeNo, sortable: true },
-    { name: 'Pur. Shade no', selector: (row) => row.purchase_shade_no, sortable: true },
-    { name: 'Length', selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`, sortable: true },
-    { name: 'Width', selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`, sortable: true },
-    { name: 'Pcs', selector: (row) => row.pcs, sortable: true },
-    { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
+    { name: 'Sr No', selector: (_, index) => index + 1, sortable: true, 
+    center: true,
+    width: '90px' },
+    { name: 'Date', selector: (row) => row.date, sortable: true,
+    center: true, 
+    width: '100px' },
+    { name: 'Ware Code', selector: (row) => row.stock_code, sortable: true, center: true},
+    { name: 'Lot No', selector: (row) => row.lot_no, sortable: true, center: true},
+    { name: 'Invoice no', selector: (row) => row.invoice_no, sortable: true, center: true},
+    { name: 'Product Category', selector: (row) => row.product_category_name, sortable: true, center: true },
+    { name: 'Shade no', selector: (row) => row.shadeNo, sortable: true, center: true },
+    { name: 'Pur. Shade no', selector: (row) => row.purchase_shade_no, sortable: true, center: true },
+    { name: 'Length', selector: (row) => `${Number(row.length).toFixed(2)} ${row.length_unit}`, sortable: true, center: true },
+    { name: 'Width', selector: (row) => `${Number(row.width).toFixed(2)} ${row.width_unit}`, sortable: true, center: true },
+    { name: 'Pcs', selector: (row) => row.pcs, sortable: true , center: true },
+    { name: 'Quantity', selector: (row) => row.quantity, sortable: true, center: true },
     {
       name: 'Action',
+      center: true,
       cell: (row) => (
         <div className="d-flex">
           <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>

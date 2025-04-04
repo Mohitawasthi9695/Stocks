@@ -4,7 +4,7 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MdEdit, MdDelete, MdPersonAdd, MdPlusOne, MdAdd, MdPrint } from 'react-icons/md';
-import { FaEye, FaFileCsv } from 'react-icons/fa';
+import { FaEye,FaPlus, FaFileCsv } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -28,56 +28,39 @@ const Index = () => {
   const [showPdfModal, setShowPdfModal] = useState(false);
   const [showThermalPdfModal, setShowThermalPdfModal] = useState(false);
   const [pdfType, setPdfType] = useState('standard');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
-
-
 
   useEffect(() => {
-    console.log("Fetching Data for Page:", currentPage); // Debugging
     const fetchInvoices = async () => {
-      setLoading(true);
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice?page=${currentPage}&per_page=10`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json'
-            }
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/stockin/invoice`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
           }
-        );
-        console.log(response.data);
-  
-        const { page_number, total_record_count, records } = response.data;
-  
-        console.log("Received Page:", page_number); // Debugging
-        console.log("Total Records:", total_record_count);
-  
-        setCurrentPage(page_number); // Ensure state updates correctly
-        setInvoices(records);
-        setInvoiceAllDetails(records);
-        setFilteredInvoices(
-          records.map(invoice => ({
+        });
+        const invoicesDetails = response.data.data;
+        console.log(invoicesDetails);
+        setInvoiceAllDetails(invoicesDetails);
+        const filteredFields = (data) => {
+          return invoicesDetails.map((invoice) => ({
             invoice_no: invoice.invoice_no,
             id: invoice.id,
-            supplier_name: invoice.supplier?.name || "N/A",
+            supplier_name: invoice.supplier.name,
             agent: invoice.agent,
             date: invoice.date,
             total_amount: invoice.total_amount
-          }))
-        );
-        setTotalRecords(total_record_count);
+          }));
+        };
+        setInvoices(filteredFields);
+        setFilteredInvoices(filteredFields); // Initialize filtered users
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading
       }
     };
-  
     fetchInvoices();
-  }, [currentPage]); 
-  
+  }, []);
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
 
@@ -102,35 +85,36 @@ const Index = () => {
 
   const handlePrint = (type, invoiceId) => {
     setSelectedInvoice(invoiceId);
-    setPdfType(type);
+    setPdfType(type); 
     setShowPdfModal(true);
   };
   const columns = [
+    { id: 'sr_no', name: 'Sr No', selector: (_, index) => index + 1, sortable: true, center: true, width: '90px' },
     {
       name: 'Date',
       selector: (row) => new Date(row.date).toLocaleDateString('en-GB'), // Format: DD/MM/YYYY
-      sortable: true,
-      width: '100px',
-      center: true
+      sortable: true, 
+      center: true, 
+      width: '100px'
     },
     {
-      name: 'Invoice No.',
+      name: 'Invoice Number',
       selector: (row) => row.invoice_no,
-      sortable: true,
-      width: '120px',
-      center: true
+      sortable: true, 
+      center: true,
     },
     {
       name: 'Supplier Name',
-      selector: (row) => row.supplier?.name || "N/A",
-      sortable: true,
-      wrap: true,
-      center: true
+      selector: (row) => row.supplier_name,
+      sortable: true, 
+      center: true,
+      wrap: true
     },
+
     {
       name: 'Receiver Name',
       selector: (row) => row.agent,
-      sortable: true,
+      sortable: true, 
       center: true,
       wrap: true
     },
@@ -161,7 +145,6 @@ const Index = () => {
               setShowPdfModal(true);
               console.log(row.id);
             }}
-             
           >
             <MdPrint />
           </Button>
@@ -174,7 +157,6 @@ const Index = () => {
               setShowThermalPdfModal(true);
               console.log(row.id);
             }}
-
           >
             <MdPrint />
           </Button>
@@ -213,11 +195,11 @@ const Index = () => {
       }
     } catch (error) {
       // Log error for debugging and notify user
-      console.error('Error deleting INVOICE:', error);
+      console.error('Error deleting supplier:', error);
 
       // Provide user feedback
       if (error.response && error.response.data && error.response.data.message) {
-        toast.error(`Failed to delete INVOICE: ${error.response.data.message}`);
+        toast.error(`Failed to delete supplier: ${error.response.data.message}`);
       } else {
         toast.error('An unexpected error occurred while deleting the Invoice.');
       }
@@ -365,34 +347,20 @@ const Index = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end mt-3 mt-md-0">
+        <div className="col-md-8 text-end">
           <Button variant="primary" onClick={handleAddInvoice}>
-            <MdPersonAdd className="me-2" /> 
-            <span className='d-none d-md-inline'>
-            Add Invoice
-            </span>
+            <FaPlus className="me-2" /> Add Invoice
           </Button>
         </div>
 
-        <div className="d-flex justify-content-end" style={{
-          marginBottom: '-15px',
-          marginTop: '10px'
-        }}>
-          <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}> 
-            <FaFileCsv className="w-5 h-5 me-1"  style={{
-                    height: '25px',
-                    width: '15px'
-                  }}/>
-            <span className='d-none d-md-inline'>
+        <div className="d-flex justify-content-end">
+          <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
+            <FaFileCsv className="w-5 h-5 me-1" />
             Export as CSV
-            </span>
           </button>
           <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-            <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
-                    height: '25px',
-                    width: '20px'
-                  }} />
-            <span className='d-none d-md-inline'>Export as PDF</span>
+            <AiOutlineFilePdf className="w-5 h-5 me-1" />
+            Export as PDF
           </button>
         </div>
       </div>
@@ -421,12 +389,9 @@ const Index = () => {
                   pagination
                   highlightOnHover
                   striped
+                  responsive
                   customStyles={customStyles}
                   defaultSortFieldId={1}
-                  paginationServer
-                  paginationTotalRows={totalRecords}
-                  paginationPerPage={10}
-                  onChangePage={(page) => setCurrentPage(page)}
                 />
               </div>
             )}

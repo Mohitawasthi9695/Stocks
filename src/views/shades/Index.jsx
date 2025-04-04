@@ -106,37 +106,43 @@ const ProductsPage = () => {
       name: 'Sr No',
       selector: (_, index) => index + 1,
       sortable: true,
-      width: '100px'
+      width: '100px',
+      center: true
     },
     {
       name: 'Date',
       selector: (row) => row.date,
       sortable: true,
-      width: '100px'
+      width: '100px',
+      center: true
     },
     {
       name: 'Product Category',
       selector: (row) => row.product_category.product_category,
       sortable: true,
       width: '180px',
+      center: true
     },
     {
       name: 'Name',
       selector: (row) => row.name,
       sortable: true,
       width: '180px',
+      center: true
     },
     {
       name: 'Shade No',
       selector: (row) => row.shadeNo,
       sortable: true,
       width: '110px',
+      center: true
     },
     {
       name: 'Purchase Shade No',
       selector: (row) => row.purchase_shade_no,
       sortable: true,
       width: '200px',
+      center: true
     },
     {
       name: 'Action',

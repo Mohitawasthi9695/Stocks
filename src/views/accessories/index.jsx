@@ -366,39 +366,39 @@ const handleUpdateUser  = async () => {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'suppliers_list.csv');
   };
+  
 
   const exportToPDF = () => {
-    const doc = new jsPDF('potrait');
-    
-
-    
-
+    const doc = new jsPDF('potrait'); // Landscape for more width
+    doc.text('Suppliers List', 14, 10);
+  
     doc.autoTable({
+      startY: 15,
       head: [['S no.','Date','Product Category', 'Accessory', 'Status']],
       body: filteredSuppliers.map((row, index) => [ index+1,  row.date,row.product_category, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
+      
       styles: {
-        fontSize: 10, // Smaller font size to fit more data
-        overflow: 'linebreak', // Wrap text within cells
-        cellPadding: 1 // Reduce padding for tighter fit
+        fontSize: 9,
+        cellPadding: 1,
+        overflow: 'linebreak', // Text will wrap inside cell
+        halign: 'left',
       },
       columnStyles: {
-        0: { cellWidth: 10}, // Auto-adjust column widths
-        1: { cellWidth: 30 },
-        2: { cellWidth: 40 },
-        3: { cellWidth: 70 },
-        4: { cellWidth: 30 },
+        0: { cellWidth: 10 }, // Supplier Name
+        1: { cellWidth: 35 }, // Code
+        2: { cellWidth: 35 }, // GST No
+        3: { cellWidth: 70 }, // CIN No
+        4: { cellWidth: 35 }, // PAN No
       },
-      tableWidth: 'wrap', // Ensure table fits within the page width
-      margin: { top: 20 }, // Top margin for the table
-      didDrawPage: (data) => {
-        doc.text('Accessory List (continued)', 14, 10);
-      },
-      pageBreak: 'auto' // Automatically breaks into new pages if needed
+      theme: 'grid',
+      tableWidth: 'wrap',
+      margin: { top: 10, left: 5, right: 5, bottom: 5 },
     });
   
-    doc.save('accessory_list.pdf');
+    doc.save('supplier_list.pdf');
   };
-
+  
+  
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -488,6 +488,11 @@ const handleUpdateUser  = async () => {
               <Form.Group className="mb-3">
                 <Form.Label>Accessory Name</Form.Label>
                 <Form.Control type="text" name="accessory_name" value={selectedSupplier?.accessory_name || ''} onChange={handleChange} />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Remark</Form.Label>
+                <Form.Control type="text" name="remark" value={selectedSupplier?.remark || ''} onChange={handleChange} />
               </Form.Group>
 
               {/* Status Dropdown */}
