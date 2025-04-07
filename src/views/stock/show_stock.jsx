@@ -591,6 +591,7 @@ const ShowProduct = () => {
             'Content-Type': 'application/json',
           },
         });
+        console.log('stocks data:', response.data);
         const productsWithArea = response.data.map((product) => {
           const areaM2 = product.length * product.width * product.quantity;
           const areaSqFt = areaM2 * 10.7639;
@@ -653,7 +654,7 @@ const ShowProduct = () => {
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
   };
-
+  
   const columns = [
     { id: 'sr_no', name: 'Sr No', selector: (_, index) => index + 1, sortable: true, center: true, width: '90px', center: true },
     { id: 'date', name: 'Date', selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'), sortable: true, center: true, width: '100px' },
@@ -673,6 +674,13 @@ const ShowProduct = () => {
     { id: 'area_m2', name: 'm²', selector: (row) => row.area, sortable: true, center: true },
     { id: 'area_ft2', name: 'ft²', selector: (row) => row.area_sq_ft, sortable: true, center: true },
     { id: 'remark', name: 'Remark', selector: (row) => row.remark, sortable: true, center: true },
+    {
+          id: 'status',
+          name: 'Status',
+          selector: (row) => row.status === 1 ? 'Available' : 'Sold Out',
+          sortable: true,
+          center: true 
+        }
   ];
 
   const exportToCSV = () => {
