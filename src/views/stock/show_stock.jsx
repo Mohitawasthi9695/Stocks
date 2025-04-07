@@ -679,7 +679,21 @@ const ShowProduct = () => {
           name: 'Status',
           selector: (row) => row.status === 1 ? 'Available' : 'Sold Out',
           sortable: true,
-          center: true 
+          center: true ,
+          cell: (row) => (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span
+                className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: '8px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {row.status === 1 ? 'Available' : 'Sold Out'}
+              </span>
+            </div>
+          )
         }
   ];
 
