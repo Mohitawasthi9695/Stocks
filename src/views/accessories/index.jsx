@@ -14,9 +14,6 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
-// import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import 'jspdf-autotable';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 
 const SuppliersPage = () => {
@@ -25,44 +22,7 @@ const SuppliersPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedSupplier, setselectedSupplier] = useState(null);
-  const [editedUser, setEditedUser] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-
-
-  const handleToggleStatus = async (supplierId, currentStatus) => {
-    console.log('Toggling status for supplier:', supplierId, 'Current status:', currentStatus);
-
-    const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle the status
-    try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/accessory/${supplierId}`, // Fix the endpoint with correct supplierId
-        { status: updatedStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      console.log('Response from API:', response.data);
-
-      // Update the frontend state
-      setSupplier((prevSuppliers) =>
-        prevSuppliers.map((supplier) => (supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier))
-      );
-
-      setFilteredSupplier((prevFilteredSuppliers) =>
-        prevFilteredSuppliers.map((supplier) => (supplier.id === supplierId ? { ...supplier, status: updatedStatus } : supplier))
-      );
-
-      toast.success('Status updated successfully!');
-    } catch (error) {
-      console.error('Error updating status:', error);
-      toast.error('Failed to update status!');
-    }
-  };
 
   useEffect(() => {
     const fetchSupplier = async () => {
@@ -73,24 +33,26 @@ const SuppliersPage = () => {
             'Content-Type': 'application/json'
           }
         });
-        console.log(response);
+        console.log("Fetched Suppliers:", response.data.data);
         setSupplier(response.data.data);
         setFilteredSupplier(response.data.data);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching suppliers:", error);
+        toast.error("Failed to load accessories.");
       }
     };
     fetchSupplier();
   }, []);
 
-  // Update filtered Suppliers when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = suppliers.filter((supplier) => {
       const statusText = supplier.status === 1 ? 'active' : 'inactive';
       return (
-        supplier.product_category.toLowerCase().includes(lowercasedQuery) ||
-        supplier.accessory_name.code.toLowerCase().includes(lowercasedQuery) ||
+        (supplier.product_category && supplier.product_category.toLowerCase().includes(lowercasedQuery)) ||
+        (supplier.accessory_name && typeof supplier.accessory_name === 'string' && supplier.accessory_name.toLowerCase().includes(lowercasedQuery)) ||
+        (supplier.accessory_name && typeof supplier.accessory_name === 'object' && supplier.accessory_name.code && supplier.accessory_name.code.toLowerCase().includes(lowercasedQuery)) ||
+        (supplier.remark && supplier.remark.toLowerCase().includes(lowercasedQuery)) ||
         statusText.includes(lowercasedQuery)
       );
     });
@@ -112,25 +74,24 @@ const SuppliersPage = () => {
     },
     {
       name: 'Date',
-      selector: (row) => row.date.toUpperCase(),
+      selector: (row) => row.date?.toUpperCase() || '',
       sortable: true,
       width: '100px'
     },
     {
       name: 'Product Category',
-      selector: (row) => row.product_category.toUpperCase(),
+      selector: (row) => row.product_category?.toUpperCase() || '',
       sortable: true,
-      
     },
     {
       name: 'Accessory Name',
-      selector: (row) => row.accessory_name.toUpperCase(),
+      selector: (row) => (typeof row.accessory_name === 'string' ? row.accessory_name?.toUpperCase() : row.accessory_name?.code?.toUpperCase() || ''),
       sortable: true,
       width: '270px'
     },
     {
       name: 'Remarks',
-      selector: (row) => row.remark,
+      selector: (row) => row.remark || '',
       sortable: true
     },
     {
@@ -150,7 +111,6 @@ const SuppliersPage = () => {
 
   const handleDelete = async (supplierId) => {
     try {
-      // Display confirmation modal
       const result = await Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -162,124 +122,111 @@ const SuppliersPage = () => {
       });
 
       if (result.isConfirmed) {
-        // Attempt to delete supplier
-        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${supplierId}`, {
-          // Fix the endpoint
+        await axios.delete(`<span class="math-inline">\{import\.meta\.env\.VITE\_API\_BASE\_URL\}/api/accessory/</span>{supplierId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-
-        // Update state on successful deletion
         setSupplier((prevSuppliers) => prevSuppliers.filter((supplier) => supplier.id !== supplierId));
         setFilteredSupplier((prevFilteredSuppliers) => prevFilteredSuppliers.filter((supplier) => supplier.id !== supplierId));
-
-        toast.success('Supplier deleted successfully');
-        Swal.fire('Deleted!', 'The supplier has been deleted.', 'success');
+        toast.success('Accessory deleted successfully');
+        Swal.fire('Deleted!', 'The accessory has been deleted.', 'success');
       }
     } catch (error) {
-      // Log error for debugging and notify user
-      console.error('Error deleting supplier:', error);
-
-      // Provide user feedback
+      console.error('Error deleting accessory:', error);
       if (error.response && error.response.data && error.response.data.message) {
-        toast.error(`Failed to delete supplier: ${error.response.data.message}`);
+        toast.error(`Failed to delete accessory: ${error.response.data.message}`);
       } else {
-        toast.error('An unexpected error occurred while deleting the supplier.');
+        toast.error('An unexpected error occurred while deleting the accessory.');
       }
-
-      // Display error notification in confirmation dialog
-      Swal.fire('Error!', 'There was a problem deleting the supplier.', 'error');
+      Swal.fire('Error!', 'There was a problem deleting the accessory.', 'error');
     }
   };
 
   const handleEdit = (supplier) => {
-    setselectedSupplier(supplier);
+    // Ensure we extract product_category_id for editing
+    const updatedSupplier = {
+      ...supplier,
+      product_category_id: supplier.product_category_id || supplier.product_category?.id || '', // Fallback if needed
+      accessory_name: supplier.accessory_name,
+      remark: supplier.remark,
+      date: supplier.date
+    };
+    setselectedSupplier(updatedSupplier);
     setShowEditModal(true);
   };
+  
 
-  // const handleUpdateUser = async () => {
-  //   try {
-  //     if (!selectedSupplier || !selectedSupplier.id) {
-  //       toast.error('Invalid supplier selected for update!');
-  //       return;
-  //     }
-
-  //     const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //         'Content-Type': 'application/json'
-  //       }
-  //     });
-
-  //     if (response.status === 200) {
-  //       toast.success('Supplier updated successfully!');
-
-  //       setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
-
-  //       setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? selectedSupplier : sup)));
-
-  //       setShowEditModal(false);
-  //     } else {
-  //       throw new Error('Unexpected response status');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error during update:', error);
-  //     toast.error('Error updating supplier!');
-  //   }
-  // };
-
-const handleUpdateUser  = async () => {
-  try {
-    if (!selectedSupplier || !selectedSupplier.id) {
-      toast.error('Invalid supplier selected for update!');
-      return;
-    }
-
-    // Log the selected supplier to check its state
-    console.log('Updating supplier:', selectedSupplier);
-
-    const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json'
+  const handleUpdateUser = async () => {
+    try {
+      if (!selectedSupplier || !selectedSupplier.id) {
+        toast.error('Invalid supplier selected for update!');
+        return;
       }
-    });
-
-    if (response.status === 200) {
-      toast.success('Supplier updated successfully!');
-
-      // Update the suppliers state
-      setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
-      setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
-
-      setShowEditModal(false);
-    } else {
-      throw new Error('Unexpected response status');
+  
+      const payload = {
+        product_category_id: selectedSupplier.product_category_id,
+        accessory_name: selectedSupplier.accessory_name,
+        remark: selectedSupplier.remark,
+        date: selectedSupplier.date
+      };
+  
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+  
+      if (response.status === 200) {
+        toast.success('Supplier updated successfully!');
+  
+        // Update local state
+        setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...payload } : sup)));
+        setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...payload } : sup)));
+  
+        setShowEditModal(false);
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (error) {
+      console.error('Error during update:', error);
+      toast.error('Error updating supplier!');
     }
-  } catch (error) {
-    console.error('Error during update:', error);
-    toast.error('Error updating supplier!');
-  }
-};
+  };
+  
   const handleAddUser = () => {
     navigate('/add_accessories');
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setselectedSupplier((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+    setselectedSupplier((prev) => {
+      if (name === 'accessory_name' && typeof prev?.accessory_name === 'object') {
+        return {
+          ...prev,
+          accessory_name: {
+            ...prev.accessory_name,
+            code: value, // Assuming you are editing the 'code' property
+          },
+        };
+      }
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
- 
 
   const customStyles = {
     table: {
       style: {
-        borderCollapse: 'separate', // Ensures border styles are separate
-        borderSpacing: 0 // Removes spacing between cells
+        borderCollapse: 'separate',
+        borderSpacing: 0
       }
     },
     header: {
@@ -289,7 +236,7 @@ const handleUpdateUser  = async () => {
         fontSize: '18px',
         fontWeight: 'bold',
         padding: '15px',
-        borderRadius: '8px 8px 0 0' // Adjusted to only affect top corners
+        borderRadius: '8px 8px 0 0'
       }
     },
     rows: {
@@ -312,11 +259,11 @@ const handleUpdateUser  = async () => {
         fontWeight: 'bold',
         textTransform: 'uppercase',
         padding: '15px',
-        borderRight: '1px solid #e0e0e0' // Vertical lines between header cells
+        borderRight: '1px solid #e0e0e0'
       },
       lastCell: {
         style: {
-          borderRight: 'none' // Removes border for the last cell
+          borderRight: 'none'
         }
       }
     },
@@ -326,7 +273,7 @@ const handleUpdateUser  = async () => {
         fontSize: '14px',
         color: '#333',
         padding: '12px',
-        borderRight: '1px solid grey' // Vertical lines between cells
+        borderRight: '1px solid grey'
       }
     },
     pagination: {
@@ -337,7 +284,7 @@ const handleUpdateUser  = async () => {
       },
       pageButtonsStyle: {
         backgroundColor: 'transparent',
-        color: 'black', // Makes the arrows white
+        color: 'black',
         border: 'none',
         '&:hover': {
           backgroundColor: 'rgba(255,255,255,0.2)'
@@ -359,46 +306,52 @@ const handleUpdateUser  = async () => {
         'Sr No': index + 1,
         Date: row.date,
         'Product Category': row.product_category,
-        'Accessory Name': row.accessory_name
+        'Accessory Name': typeof row.accessory_name === 'string' ? row.accessory_name : row.accessory_name?.code || '',
+        Remarks: row.remark,
       }))
     );
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'suppliers_list.csv');
+    saveAs(blob, 'accessories_list.csv');
   };
-  
+
 
   const exportToPDF = () => {
-    const doc = new jsPDF('potrait'); // Landscape for more width
-    doc.text('Suppliers List', 14, 10);
-  
+    const doc = new jsPDF('potrait');
+    doc.text('Accessories List', 14, 10);
+
     doc.autoTable({
       startY: 15,
-      head: [['S no.','Date','Product Category', 'Accessory', 'Status']],
-      body: filteredSuppliers.map((row, index) => [ index+1,  row.date,row.product_category, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
-      
+      head: [['S no.', 'Date', 'Product Category', 'Accessory', 'Remarks']],
+      body: filteredSuppliers.map((row, index) => [
+        index + 1,
+        row.date || '',
+        row.product_category || '',
+        typeof row.accessory_name === 'string' ? row.accessory_name : row.accessory_name?.code || '',
+        row.remark || '',
+      ]),
       styles: {
         fontSize: 9,
         cellPadding: 1,
-        overflow: 'linebreak', // Text will wrap inside cell
+        overflow: 'linebreak',
         halign: 'left',
       },
       columnStyles: {
-        0: { cellWidth: 10 }, // Supplier Name
-        1: { cellWidth: 35 }, // Code
-        2: { cellWidth: 35 }, // GST No
-        3: { cellWidth: 70 }, // CIN No
-        4: { cellWidth: 35 }, // PAN No
+        0: { cellWidth: 10 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 60 },
+        4: { cellWidth: 40 },
       },
       theme: 'grid',
       tableWidth: 'wrap',
       margin: { top: 10, left: 5, right: 5, bottom: 5 },
     });
-  
-    doc.save('supplier_list.pdf');
+
+    doc.save('accessories_list.pdf');
   };
-  
-  
+
+
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">
@@ -418,15 +371,14 @@ const handleUpdateUser  = async () => {
             style={{
               marginRight: isMobile ? "25px" : "auto",
               marginBottom: isMobile ? "-10px" : "auto",
-      
-              
             }}
           >
             <MdPersonAdd className="me-2" style={{
               height: '25px',
-              width :'23px'            }}/> 
+              width: '23px'
+            }} />
             <span className='d-none d-md-inline'>
-            Add Product Accessory
+              Add Product Accessory
             </span>
           </Button>
         </div>
@@ -437,19 +389,19 @@ const handleUpdateUser  = async () => {
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <div className="d-flex justify-content-end">
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                  <FaFileCsv className="w-5 h-5 me-1"  style={{
+                  <FaFileCsv className="w-5 h-5 me-1" style={{
                     height: '25px',
-                    width :'15px'
-                  }}/>
+                    width: '15px'
+                  }} />
                   <span className='d-none d-md-inline'>
-                  Export as CSV
+                    Export as CSV
                   </span>
                 </button>
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                  <AiOutlineFilePdf className="w-5 h-5 me-1"  style={{
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
                     height: '25px',
-                    width :'20px'
-                  }}/>
+                    width: '20px'
+                  }} />
                   <span className='d-none d-md-inline'>Export as PDF</span>
                 </button>
               </div>
@@ -470,39 +422,46 @@ const handleUpdateUser  = async () => {
       {showEditModal && selectedSupplier && (
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
           <Modal.Header closeButton style={{ backgroundColor: '#3f4d67' }}>
-            <Modal.Title className="text-white">Edit Supplier</Modal.Title>
+            <Modal.Title className="text-white">Edit Accessory</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ backgroundColor: '#f0fff4' }}>
             <Form>
-              {/* Product Category Field */}
+              <Form.Group className="mb-3">
+                <Form.Label>Date</Form.Label>
+                <Form.Control type="date" name="date" value={selectedSupplier.date || ''} onChange={handleChange} />
+              </Form.Group>
+
               <Form.Group className="mb-3">
                 <Form.Label>Product Category</Form.Label>
                 <Form.Control type="text" name="product_category" value={selectedSupplier.product_category || ''} onChange={handleChange} />
               </Form.Group>
 
-              {/* Accessory Name Field */}
-              {/* <Form.Group className="mb-3">
-                <Form.Label>Accessory Name</Form.Label>
-                <Form.Control type="text" name="accessory_name" value={selectedSupplier.accessory_name || ''} onChange={handleChange} />
-              </Form.Group> */}
-              <Form.Group className="mb-3">
-                <Form.Label>Accessory Name</Form.Label>
-                <Form.Control type="text" name="accessory_name" value={selectedSupplier?.accessory_name || ''} onChange={handleChange} />
-              </Form.Group>
+              {typeof selectedSupplier.accessory_name === 'string' ? (
+                <Form.Group className="mb-3">
+                  <Form.Label>Accessory Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="accessory_name"
+                    value={selectedSupplier.accessory_name || ''}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              ) : (
+                <Form.Group className="mb-3">
+                  <Form.Label>Accessory Code</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="accessory_name" // This will target the 'code' property in handleChange
+                    value={selectedSupplier.accessory_name?.code || ''}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              )}
 
               <Form.Group className="mb-3">
                 <Form.Label>Remark</Form.Label>
-                <Form.Control type="text" name="remark" value={selectedSupplier?.remark || ''} onChange={handleChange} />
-              </Form.Group>
-
-              {/* Status Dropdown */}
-              <Form.Group className="mb-3">
-                <Form.Label>Status</Form.Label>
-                <Form.Select name="status" value={selectedSupplier.status} onChange={handleChange}>
-                  <option value={1}>Active</option>
-                  <option value={0}>Inactive</option>
-                </Form.Select>
-              </Form.Group>
+                <Form.Control type="text" name="remark" value={selectedSupplier.remark || ''} onChange={handleChange} />
+                </Form.Group>
             </Form>
           </Modal.Body>
           <Modal.Footer style={{ backgroundColor: '#f0fff4' }}>

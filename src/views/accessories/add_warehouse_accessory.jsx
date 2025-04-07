@@ -181,7 +181,7 @@ const AddProduct = () => {
 
   const handleDownloads = async () => {
     try {
-      const filePath = `${window.location.origin}/StockIN.csv`; // Ensure file is in 'public' folder
+      const filePath = `${window.location.origin}/warehouse_accessories.csv`; // Ensure file is in 'public' folder
       const response = await fetch(filePath);
 
       if (!response.ok) throw new Error('File not found');
@@ -192,7 +192,7 @@ const AddProduct = () => {
       // Convert CSV to Excel
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'StockIN');
+      XLSX.utils.book_append_sheet(wb, ws, 'warehouse_accessories');
 
       const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const excelBlob = new Blob([excelBuffer], {
@@ -299,6 +299,9 @@ const AddProduct = () => {
                           value={item.product_accessory_id}
                           onChange={(e) => handleRowChange(index, 'product_accessory_id', e.target.value)}
                           required
+                          style={{
+                            width: '250px',
+                          }}
                         >
                           <option value="">Select Product</option>
                           {allProducts.map((product) => (
@@ -309,7 +312,9 @@ const AddProduct = () => {
                         </Form.Select>
                       </td>
                       <td>
-                        <Form.Control type="text" value={item.lot_no} onChange={(e) => handleRowChange(index, 'lot_no', e.target.value)} />
+                        <Form.Control type="text" value={item.lot_no} onChange={(e) => handleRowChange(index, 'lot_no', e.target.value)} style={{
+                          width: '90px',
+                        }} />
                       </td>
                       <td>
                         <Form.Control
@@ -323,23 +328,37 @@ const AddProduct = () => {
                           type="number"
                           value={item.length}
                           onChange={(e) => handleRowChange(index, 'length', e.target.value)}
+                          style={{
+                            width: '90px',
+                          }}
                         />
                       </td>
                       <td>
-                        <Form.Select value={item.length_unit} onChange={(e) => handleRowChange(index, 'length_unit', e.target.value)}>
+                        <Form.Select value={item.length_unit} onChange={(e) => handleRowChange(index, 'length_unit', e.target.value)}
+                          style={{
+                            width: '100px',
+                          }}  
+                        >
                           <option value="">Unit</option>
                           <option value="m">Meter</option>
                           <option value="ft">Feet</option>
                         </Form.Select>
                       </td>
                       <td>
-                        <Form.Control type="number" value={item.items} onChange={(e) => handleRowChange(index, 'items', e.target.value)} />
+                        <Form.Control type="number" value={item.items} onChange={(e) => handleRowChange(index, 'items', e.target.value)} 
+                          style={{
+                            width: '100px',
+                          }}   
+                        />
                       </td>
                       <td>
                         <Form.Control
                           type="number"
                           value={item.box_bundle}
                           onChange={(e) => handleRowChange(index, 'box_bundle', e.target.value)}
+                          style={{
+                            width: '100px',
+                          }} 
                         />
                       </td>
                       <td>
@@ -351,7 +370,11 @@ const AddProduct = () => {
                         </Form.Select>
                       </td>
                       <td>
-                        <Form.Control type="number" value={item.quantity} readOnly disabled />
+                        <Form.Control type="number" value={item.quantity} readOnly disabled 
+                          style={{
+                            width: '120px',
+                          }} 
+                        />
                       </td>
                       <td>
                         <Button variant="danger" onClick={() => handleDeleteRow(index)} disabled={items.length === 1}>

@@ -28,34 +28,57 @@ const ProductsPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+  const [categories, setCategories] = useState([]);
 
-  const handleToggleStatus = async (receiverId, currentStatus) => {
-    try {
-      const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/products/${receiverId}`,
-        { status: updatedStatus },
-        {
+
+  // const handleToggleStatus = async (receiverId, currentStatus) => {
+  //   try {
+  //     const updatedStatus = currentStatus === 1 ? 0 : 1; // Toggle status
+  //     await axios.put(
+  //       `${import.meta.env.VITE_API_BASE_URL}/api/products/${receiverId}`,
+  //       { status: updatedStatus },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //           'Content-Type': 'application/json'
+  //         }
+  //       }
+  //     );
+
+  //     toast.success('Status updated successfully!');
+  //     setProducts((prevReceivers) =>
+  //       prevReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
+  //     );
+
+  //     setFilteredProducts((prevFilteredReceivers) =>
+  //       prevFilteredReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
+  //     );
+  //   } catch (error) {
+  //     toast.error('Failed to update status!');
+  //     console.error(error);
+  //   }
+  // };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products/category`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
-        }
-      );
-
-      toast.success('Status updated successfully!');
-      setProducts((prevReceivers) =>
-        prevReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
-      );
-
-      setFilteredProducts((prevFilteredReceivers) =>
-        prevFilteredReceivers.map((receiver) => (receiver.id === receiverId ? { ...receiver, status: updatedStatus } : receiver))
-      );
-    } catch (error) {
-      toast.error('Failed to update status!');
-      console.error(error);
-    }
-  };
+        });
+        setCategories(response.data.data); // Assuming response.data.data contains the array
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error('Failed to load product categories');
+      }
+    };
+  
+    fetchCategories();
+  }, []);
+  
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -194,18 +217,18 @@ const ProductsPage = () => {
   };
   const [file, setFile] = useState(null);
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-      const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
-      if (!['xls', 'xlsx', 'csv'].includes(fileExtension)) {
-        toast.error('Unsupported file format. Please upload an .xls or .xlsx file.');
-        setFile(null);
-      } else {
-        setFile(selectedFile);
-      }
-    }
-  };
+  // const handleFileChange = (e) => {
+  //   const selectedFile = e.target.files[0];
+  //   if (selectedFile) {
+  //     const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
+  //     if (!['xls', 'xlsx', 'csv'].includes(fileExtension)) {
+  //       toast.error('Unsupported file format. Please upload an .xls or .xlsx file.');
+  //       setFile(null);
+  //     } else {
+  //       setFile(selectedFile);
+  //     }
+  //   }
+  // };
   const handleEdit = (product) => {
     setSelectedProduct(product);
     setShowEditModal(true);
@@ -484,6 +507,24 @@ const ProductsPage = () => {
               </Form.Group>
 
               <Form.Group className="mb-3">
+  <Form.Label>Product Category</Form.Label>
+  <Form.Select
+    name="product_category_id"
+    value={selectedProduct.product_category_id || ''}
+    onChange={handleChange}
+    className="bg-white shadow-sm"
+  >
+    <option value="">Select Category</option>
+    {categories.map((cat) => (
+      <option key={cat.id} value={cat.id}>
+        {cat.product_category}
+      </option>
+    ))}
+  </Form.Select>
+</Form.Group>
+
+
+              <Form.Group className="mb-3">
                 <Form.Label>Shade No</Form.Label>
                 <Form.Control
                   type="text"
@@ -504,13 +545,7 @@ const ProductsPage = () => {
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Status</Form.Label>
-                <Form.Select name="status" value={selectedProduct.status || ''} onChange={handleChange} className="bg-white shadow-sm">
-                  <option value={1}>Active</option>
-                  <option value={0}>Inactive</option>
-                </Form.Select>
-              </Form.Group>
+
             </Form>
           </Modal.Body>
           <Modal.Footer style={{ backgroundColor: '#f0fff4' }}>

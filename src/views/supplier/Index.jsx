@@ -674,14 +674,6 @@ const SuppliersPage = () => {
                   className="bg-white shadow-sm"
                 />
               </Form.Group>
-
-              <Form.Group className="mb-3">
-                <Form.Label>Status</Form.Label>
-                <Form.Select name="status" value={selectedSupplier?.status || ''} onChange={handleChange} className="bg-white shadow-sm">
-                  <option value={1}>Active</option>
-                  <option value={0}>Inactive</option>
-                </Form.Select>
-              </Form.Group>
             </Form>
           </Modal.Body>
           <Modal.Footer style={{ backgroundColor: '#f0fff4' }}>
