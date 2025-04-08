@@ -232,7 +232,7 @@ const Index = () => {
   };
 
   const handleAddInvoice = () => {
-    navigate('/stock-tranfer');
+    navigate('/accessory-tranfer');
   };
 
   const customStyles = {
