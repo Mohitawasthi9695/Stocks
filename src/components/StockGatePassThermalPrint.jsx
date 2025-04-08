@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     page: {
         padding: 5,
         fontFamily: 'Courier',
-        fontSize: 8, // Optimized for thermal printing
+        fontSize: 8, // O
     },
     centerText: {
         textAlign: 'center',
@@ -59,7 +59,8 @@ const StockGatePassThermalPrint = ({ show, onHide, invoiceData, id }) => {
             <Modal.Body style={{ height: '80vh' }}>
                 <PDFViewer width="100%" height="100%">
                     <Document>
-                        <Page size={{ width: 226, height: 'auto' }} style={styles.page}>
+                    <Page size={{ width: 226, height: 800 }} style={styles.page}>
+
                             {/* Header */}
                             <Text style={styles.centerText}>STOCK IN GATE PASS</Text>
                             <View style={styles.separator} />

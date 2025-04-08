@@ -353,6 +353,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/all_stock_gatepass',
+        element: lazy(() => import('./views/godown/all_stock')),
+        allowedRoles: ['superadmin', 'admin', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
         path: '/generated_gate_pass',
         element: lazy(() => import('./views/godown/generated_gate_pass')),
         allowedRoles: ['superadmin', 'admin', 'supervisor']

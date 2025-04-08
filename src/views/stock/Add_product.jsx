@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect,useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
@@ -50,6 +50,8 @@ const AddProduct = () => {
     };
     fetchCategories();
   }, []);
+
+  const fileInputRef = useRef(null);
 
   const handleCategoryChange = async (event, index) => {
     const categoryId = event.target.value;
@@ -159,6 +161,15 @@ const AddProduct = () => {
       return;
     }
 
+    if (response.status === 201) {
+      toast.success('Stock added successfully');
+      setFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''; // 🔄 Reset file input field
+      }
+      navigate('/stocks');
+    }
+    
     const formData = new FormData();
     formData.append('csv_file', file);
 
@@ -283,6 +294,7 @@ const AddProduct = () => {
                         id="excel"
                         onChange={handleFileChange}
                         style={{ fontSize: '0.9rem' }}
+                        ref={fileInputRef}
                       />
                       <button
                         type="submit"
@@ -312,18 +324,18 @@ const AddProduct = () => {
               </Button>
               <form onSubmit={handleSubmit}>
                 <div style={{ overflowX: 'auto' }}>
-                  <Table bordered hover responsive style={{ minWidth: '1500px' }}>
+                  <Table bordered hover responsive style={{ minWidth: '1800px' }}>
                     <thead>
                       <tr className="text-white text-center">
-                        <th style={{ width: '0px' }}>ProductName</th>
-                        <th style={{ width: '300px' }}>Shade No</th>
+                        <th style={{ width: '120px' }}>ProductName</th>
+                        <th style={{ width: '220px' }}>Shade No</th>
                         <th style={{ width: '120px' }}>Pur. Shade No</th>
                         <th style={{ width: '150px' }}>Date</th>
                         <th style={{ width: '150px' }}>LOT No</th>
                         <th style={{ width: '150px' }}>Width</th>
-                        <th style={{ width: '100px' }}>Unit</th>
-                        <th style={{ width: '150px' }}>Length</th>
-                        <th style={{ width: '100px' }}>Unit</th>
+                        <th style={{ width: '150px' }}>Unit</th>
+                        <th style={{ width: '200px' }}>Length</th>
+                        <th style={{ width: '150px' }}>Unit</th>
                         <th style={{ width: '120px' }}>Pcs</th>
                         <th style={{ width: '150px' }}>Quantity</th>
                         <th style={{ width: '120px' }}>Remark</th>
@@ -459,7 +471,7 @@ const AddProduct = () => {
                             />
                           </td>
                           <td>
-                            <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
+                            <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem', padding: '0rem 1rem', paddingBottom: '0.2rem' }}>
                               <FaTrash />
                             </Button>
                           </td>

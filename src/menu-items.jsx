@@ -385,6 +385,13 @@ const menuItems = {
               type: 'collapse',
               children: [
                 {
+                  id: 'all_stock_gatepass',
+                  title: 'All Stocks',
+                  icon: 'feather icon-list',
+                  type: 'item',
+                  url: 'all_stock_gatepass'
+                },
+                {
                   id: 'roller_stock',
                   title: 'Roller Stocks',
                   icon: 'feather icon-list',
