@@ -77,13 +77,13 @@ const AddProduct = () => {
             product_category_id: categoryId,
             product_id: '',
             purchase_shadeNo: '',
-            products: [...response.data.data], 
+            products: [...response.data.data],
           };
-        
+
           console.log("Updated Products in State:", updatedItems[index].products);
           return updatedItems;
         });
-        
+
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -123,10 +123,10 @@ const AddProduct = () => {
   const handleRowChange = (index, field, value) => {
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
-  
+
       if (field === 'product_id') {
         const selectedProduct = updatedItems[index].products.find(
-          (product) => product.id === parseInt(value) 
+          (product) => product.id === parseInt(value)
         );
         updatedItems[index].product_id = value;
         updatedItems[index].purchase_shadeNo = selectedProduct ? selectedProduct.purchase_shade_no : '';
@@ -136,7 +136,7 @@ const AddProduct = () => {
       return updatedItems;
     });
   };
-  
+
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -303,164 +303,164 @@ const AddProduct = () => {
           </div>
         </Col>
         <h4 className="text-center font-weight-bold">or</h4>
-        <Col md={12} lg={12} className="absolute mt-3">
-          <div className="card shadow-lg border-0 rounded-lg" style={{ borderRadius: '10px' }}>
-            <div className="card-body p-5" style={{ borderRadius: '8px' }}>
-              <h3 className="text-center mb-4 gap-2">Add Manually</h3>
-              <Button variant="success" onClick={handleAddRow} className="px-1 py-1 ms-auto d-block">
-                <FaPlus /> Add Item
+        <Col md={12} lg={12} className="position-relative mt-2">
+          <div className="card shadow-lg border-0 rounded-lg">
+            <div className="card-body p-3">
+              <h3 className="text-center mb-3 fs-5">Add Manually</h3>
+              <Button variant="success" onClick={handleAddRow} className="px-1 py-1 ms-auto d-block mb-2" size="sm">
+                <FaPlus size={12} /> Add Item
               </Button>
               <form onSubmit={handleSubmit}>
-                <div style={{ overflowX: 'auto' }}>
-                  <Table bordered hover responsive style={{ minWidth: '1500px' }}>
+                <div className="table-responsive">
+                  <Table bordered hover responsive className="table-sm" style={{ fontSize: '0.85rem' }}>
                     <thead>
                       <tr className="text-white text-center">
-                        <th style={{ width: '0px' }}>ProductName</th>
-                        <th style={{ width: '300px' }}>Shade No</th>
-                        <th style={{ width: '120px' }}>Pur. Shade No</th>
-                        <th style={{ width: '150px' }}>Date</th>
-                        <th style={{ width: '150px' }}>LOT No</th>
-                        <th style={{ width: '150px' }}>Width</th>
-                        <th style={{ width: '100px' }}>Unit</th>
-                        <th style={{ width: '150px' }}>Length</th>
-                        <th style={{ width: '100px' }}>Unit</th>
-                        <th style={{ width: '120px' }}>Pcs</th>
-                        <th style={{ width: '150px' }}>Quantity</th>
-                        <th style={{ width: '120px' }}>Remark</th>
-                        <th style={{ width: '120px' }}>Actions</th>
+                        <th>Product</th>
+                        <th>Shade No/Purchase</th>
+                        <th>Date</th>
+                        <th>LOT No</th>
+                        <th>Width </th>
+                        <th>Length</th>
+                        <th>Pcs</th>
+                        <th>Qty</th>
+                        <th>Remark</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {items.map((item, index) => (
                         <tr key={index} className="text-center">
-                          <td>
+                          <td className="p-1">
                             <Form.Control
                               as="select"
                               value={item.product_category_id}
-                              className="form-select px-2"
-                              style={{ width: '8rem', color: 'black' }}
+                              className="form-select py-1 px-1"
+                              style={{ width: '6.5rem', fontSize: '0.8rem' }}
                               onChange={(e) => handleCategoryChange(e, index)}
                             >
                               <option value="">Select</option>
                               {categories.map((category) => (
-                                <option key={category.id} value={category.id} style={{ color: 'black' }}>
+                                <option key={category.id} value={category.id}>
                                   {category.product_category}
                                 </option>
                               ))}
                             </Form.Control>
                           </td>
-                          <td>
+                          <td className="p-1">
                             <Form.Control
                               as="select"
                               value={item.product_id}
                               onChange={(e) => handleRowChange(index, 'product_id', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                              className="py-1 px-1"
+                              style={{ fontSize: '0.8rem', width: '9rem' }}
                             >
-                              <option value="">Select Shade No.</option>
+                              <option value="">Select</option>
                               {item.products?.map((product) => (
                                 <option key={product.id} value={product.id}>
                                   {product.shadeNo} / {product.purchase_shade_no}
                                 </option>
                               ))}
-
                             </Form.Control>
                           </td>
-                          <td>
-                            <Form.Control
-                              type="text"
-                              value={item.purchase_shadeNo}
-                              disabled
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            />
-                          </td>
-                          <td>
+                          <td className="p-1">
                             <Form.Control
                               type="date"
                               value={item.date}
-                              className="form-control px-2"
-                              style={{ width: '8rem', color: 'black' }}
-                              onChange={(e) => handleDateChange(e, index)} // Add this function
+                              className="py-1 px-1"
+                              style={{ fontSize: '1rem', width: '9rem' }}
+                              onChange={(e) => handleDateChange(e, index)}
                             />
                           </td>
-                          <td>
+                          <td className="p-1">
                             <Form.Control
                               type="text"
                               value={item.lot_no}
                               onChange={(e) => handleRowChange(index, 'lot_no', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                              className="py-1 px-1"
+                              style={{ fontSize: '1rem', width: '7rem' }}
                             />
                           </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.width}
-                              onChange={(e) => handleRowChange(index, 'width', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            />
+                          <td className="p-1">
+                            <div className="d-flex gap-1">
+                              <Form.Control
+                                type="number"
+                                value={item.width}
+                                onChange={(e) => handleRowChange(index, 'width', e.target.value)}
+                                className="py-1 px-1"
+                                style={{ fontSize: '1rem', width: '5rem' }}
+                              />
+                              <Form.Control
+                                as="select"
+                                value={item.width_unit}
+                                onChange={(e) => handleRowChange(index, 'width_unit', e.target.value)}
+                                className="py-1 px-1"
+                                style={{ fontSize: '1rem', width: '3rem' }}
+                              >
+                                <option value="">Unit</option>
+                                <option selected value="m">m</option>
+                                <option value="in">in</option>
+                                <option value="ft">ft</option>
+                              </Form.Control>
+                            </div>
                           </td>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.width_unit}
-                              onChange={(e) => handleRowChange(index, 'width_unit', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            >
-                              <option value="">Select Unit</option>
-                              <option value="m">Meter</option>
-                              <option value="in">Inch</option>
-                              <option value="ft">Feet</option>
-                              <option value="mm">MM</option>
-                            </Form.Control>
+                          <td className="p-1">
+                            <div className="d-flex gap-1">
+                              <Form.Control
+                                type="number"
+                                value={item.length}
+                                onChange={(e) => handleRowChange(index, 'length', e.target.value)}
+                                className="py-1 px-1"
+                                style={{ fontSize: '1rem', width: '5rem' }}
+                              />
+                              <Form.Control
+                                as="select"
+                                value={item.length_unit}
+                                onChange={(e) => handleRowChange(index, 'length_unit', e.target.value)}
+                                className="py-1 px-1"
+                                style={{ fontSize: '1rem', width: '3rem' }}
+                              >
+                                <option value="">Unit</option>
+                                <option selected value="m">m</option>
+                                <option value="in">in</option>
+                                <option value="ft">ft</option>
+                              </Form.Control>
+                            </div>
                           </td>
-                          <td>
-                            <Form.Control
-                              type="number"
-                              value={item.length}
-                              onChange={(e) => handleRowChange(index, 'length', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            />
-                          </td>
-                          <td>
-                            <Form.Control
-                              as="select"
-                              value={item.length_unit}
-                              onChange={(e) => handleRowChange(index, 'length_unit', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
-                            >
-                              <option value="">Select Unit</option>
-                              <option value="m">Meter</option>
-                              <option value="in">Inch</option>
-                              <option value="ft">Feet</option>
-                            </Form.Control>
-                          </td>
-                          <td>
+                          <td className="p-1">
                             <Form.Control
                               type="number"
                               value={item.pcs}
                               onChange={(e) => handleRowChange(index, 'pcs', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                              className="py-1 px-1"
+                              style={{ fontSize: '1rem', width: '4rem' }}
                             />
                           </td>
-
-                          <td>
+                          <td className="p-1">
                             <Form.Control
                               type="number"
                               value={item.quantity}
                               onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                              className="py-1 px-1"
+                              style={{ fontSize: '1rem', width: '4rem' }}
                             />
                           </td>
-                          <td>
+                          <td className="p-1">
                             <Form.Control
                               type="text"
                               value={item.remark}
                               onChange={(e) => handleRowChange(index, 'remark', e.target.value)}
-                              style={{ fontSize: '0.9rem', height: '3rem' }}
+                              className="py-1 px-1"
+                              style={{ fontSize: '1rem', width: '5rem' }}
                             />
                           </td>
-                          <td>
-                            <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
-                              <FaTrash />
+                          <td className="p-1">
+                            <Button
+                              variant="danger"
+                              onClick={() => handleDeleteRow(index)}
+                              size="sm"
+                              className="py-1 px-2"
+                            >
+                              <FaTrash size={12} />
                             </Button>
                           </td>
                         </tr>
@@ -471,14 +471,15 @@ const AddProduct = () => {
                 <Button
                   variant="primary"
                   type="submit"
-                  className="mt-5 d-block m-auto"
+                  className="mt-3 d-block mx-auto"
+                  size="sm"
                   style={{
                     backgroundColor: mainColor,
                     borderColor: mainColor,
-                    width: '10rem'
+                    width: '8rem'
                   }}
                 >
-                  <FaUserPlus className="me-2" /> Add Stock
+                  <FaUserPlus className="me-1" size={12} /> Add Stock
                 </Button>
               </form>
             </div>

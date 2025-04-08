@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
-import { FaPlus, FaTrash, FaFileExcel, FaUpload, FaDownload,FaPlusCircle } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -16,7 +16,7 @@ const AddProduct = () => {
     {
       product_accessory_id: '',
       lot_no: '',
-      date:'',
+      date: '',
       length: '',
       length_unit: '',
       items: '',
@@ -47,13 +47,14 @@ const AddProduct = () => {
       {
         product_accessory_id: '',
         lot_no: '',
-        date:'',
+        date: '',
         length: '',
         length_unit: '',
         items: '',
         box_bundle: '',
         box_bundle_unit: '',
-        quantity: '0'
+        quantity: '0',
+        remark:'',
       }
     ]);
   };
@@ -90,7 +91,7 @@ const AddProduct = () => {
       confirmButtonText: 'Yes, create it!'
     });
 
-    if(!result.isConfirmed){
+    if (!result.isConfirmed) {
       return;
     }
     const payload = items.map((item) => ({
@@ -102,18 +103,19 @@ const AddProduct = () => {
       items: item.items,
       box_bundle: item.box_bundle,
       box_bundle_unit: item.box_bundle_unit,
-      quantity: item.quantity
+      quantity: item.quantity,
+      remark: item.remark,
     }));
     console.log(payload);
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory`, payload, {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownAccessory`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         }
       });
       toast.success('Stock added successfully');
-      navigate('/warehouse_accessories');
+      navigate('/godown_accessories');
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'Error adding stock');
@@ -148,7 +150,7 @@ const AddProduct = () => {
     const formData = new FormData();
     formData.append('csv_file', file);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/warehouseAccessory/import-file`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownAccessory/import`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data'
@@ -161,7 +163,7 @@ const AddProduct = () => {
           text: 'Stock added successfully!'
         }).then(() => {
           setFile(null);
-          navigate('/warehouse_accessories');
+          navigate('/godown_accessories');
         });
       }
     } catch (error) {
@@ -211,7 +213,7 @@ const AddProduct = () => {
   return (
     <Container fluid className="pt-4 px-3" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <Row className="justify-content-center g-4">
-        <h2 className="text-center mb-4 fw-bold">WareHouse Accessory</h2>
+        <h2 className="text-center mb-4 fw-bold">Godown Accessory</h2>
 
         <div className="card shadow-lg border-0 mb-4 mx-auto" style={{ borderRadius: '12px', maxWidth: '700px' }}>
           <div className="card-body p-4 mx-auto">
@@ -225,14 +227,11 @@ const AddProduct = () => {
                     </label>
                     <div className="d-flex align-items-center gap-2">
                       <FaFileExcel className="text-success fs-4" />
-                      {/* <a href="/products.csv" download className="text-decoration-none">
-                        <FaDownload onClick={handleDownload} className="text-success fs-5" style={{ cursor: 'pointer' }} />
-                      </a> */}
                       <Button
                         onClick={handleDownloads}
                         style={{
-                          all: 'unset', // Removes all default button styles
-                          cursor: 'pointer', // Ensures the cursor changes on hover
+                          all: 'unset',
+                          cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center'
                         }}
@@ -276,93 +275,154 @@ const AddProduct = () => {
                   Add Row
                 </Button>
               </div>
-              <Table bordered responsive className="align-middle">
-                <thead className="text-white" style={{ backgroundColor: mainColor }}>
-                  <tr>
-                    <th>Product</th>
-                    <th>Lot No</th>
-                    <th>date</th>
-                    <th>Length</th>
-                    <th>Length Unit</th>
-                    <th>Items/pcs</th>
-                    <th>Box/Bundle</th>
-                    <th>Box/Bundle Unit</th>
-                    <th>Total Quantity</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((item, index) => (
-                    <tr key={index}>
-                      <td >
-                        <Form.Select
-                          value={item.product_accessory_id}
-                          onChange={(e) => handleRowChange(index, 'product_accessory_id', e.target.value)}
-                          required
-                        >
-                          <option value="">Select Product</option>
-                          {allProducts.map((product) => (
-                            <option key={product.id} value={product.id}>
-                              {product.accessory_name}
-                            </option>
-                          ))}
-                        </Form.Select>
-                      </td>
-                      <td>
-                        <Form.Control type="text" value={item.lot_no} onChange={(e) => handleRowChange(index, 'lot_no', e.target.value)} />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="date"
-                          value={item.date}
-                          onChange={(e) => handleRowChange(index, 'date', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="number"
-                          value={item.length}
-                          onChange={(e) => handleRowChange(index, 'length', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <Form.Select value={item.length_unit} onChange={(e) => handleRowChange(index, 'length_unit', e.target.value)}>
-                          <option value="">Unit</option>
-                          <option value="m">Meter</option>
-                          <option value="ft">Feet</option>
-                        </Form.Select>
-                      </td>
-                      <td>
-                        <Form.Control type="number" value={item.items} onChange={(e) => handleRowChange(index, 'items', e.target.value)} />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="number"
-                          value={item.box_bundle}
-                          onChange={(e) => handleRowChange(index, 'box_bundle', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <Form.Select value={item.box_bundle_unit} onChange={(e) => handleRowChange(index, 'box_bundle_unit', e.target.value)}>
-                          <option value="">Unit</option>
-                          <option value="box">Box</option>
-                          <option value="bundle">Bundle</option>
-                          <option value="packet">Packet</option>
-                        </Form.Select>
-                      </td>
-                      <td>
-                        <Form.Control type="number" value={item.quantity} readOnly disabled />
-                      </td>
-                      <td>
-                        <Button variant="danger" onClick={() => handleDeleteRow(index)} disabled={items.length === 1}>
-                          <FaTrash />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
 
+              <div className="table-responsive">
+                <Table bordered className="align-middle">
+                  <thead className="text-white" style={{ backgroundColor: mainColor }}>
+                    <tr>
+                      <th>Accessory</th>
+                      <th>Lot No</th>
+                      <th>Date</th>
+                      <th>Length</th>
+                      <th>Unit</th>
+                      <th>Items/pcs</th>
+                      <th>Box/Bundle</th>
+                      <th>Type</th>
+                      <th>Total Quantity</th>
+                      <th>Remark</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map((item, index) => (
+                      <tr key={index}>
+                        <td style={{ minWidth: "100px" }}>
+                          <Form.Select
+                            size="sm"
+                            value={item.product_accessory_id}
+                            onChange={(e) => handleRowChange(index, 'product_accessory_id', e.target.value)}
+                            required
+                            style={{ fontSize: '0.9rem', width: '8rem' }}
+                          >
+                            <option value="">Select Accessory</option>
+                            {allProducts.map((product) => (
+                              <option key={product.id} value={product.id}>
+                                {product.accessory_name}
+                              </option>
+                            ))}
+                          </Form.Select>
+                        </td>
+                        <td style={{ minWidth: "60px" }}>
+                          <Form.Control
+                            size="sm"
+                            type="text"
+                            value={item.lot_no}
+                            onChange={(e) => handleRowChange(index, 'lot_no', e.target.value)}
+                            style={{ fontSize: '0.9rem', width: '8rem',padding: '0.5rem' }}
+                          />
+                        </td>
+                        <td style={{ maxWidth: "180px"}}>
+                          <Form.Control
+                            size="sm"
+                            type="date"
+                            value={item.date}
+                            onChange={(e) => handleRowChange(index, 'date', e.target.value)}
+                            style={{ fontSize: '0.9rem', width: '8rem',padding: '0.5rem' }}
+
+                          />
+                        </td>
+                        <td style={{ minWidth: "100px" }}>
+                          <Form.Control
+                            size="sm"
+                            type="number"
+                            value={item.length}
+                            onChange={(e) => handleRowChange(index, 'length', e.target.value)}
+                            style={{ fontSize: '0.9rem', width: '6rem',padding: '0.5rem' }}
+                          />
+                        </td>
+                        <td style={{ minWidth: "100px" }}>
+                          <Form.Select
+                            size="sm"
+                            value={item.length_unit}
+                            onChange={(e) => handleRowChange(index, 'length_unit', e.target.value)}
+                            style={{ fontSize: '0.9rem', width: '5rem',padding: '0.5rem' }}
+
+                          >
+                            <option value="">Unit</option>
+                            <option value="m">Meter</option>
+                            <option value="ft">Feet</option>
+                          </Form.Select>
+                        </td>
+                        <td style={{ minWidth: "100px" }}>
+                          <Form.Control
+                            size="sm"
+                            type="number"
+                            value={item.items}
+                            onChange={(e) => handleRowChange(index, 'items', e.target.value)}
+                            style={{ fontSize: '0.9rem', width: '6rem',padding: '0.5rem' }}
+
+                          />
+                        </td>
+                        <td style={{ minWidth: "100px" }}>
+                          <Form.Control
+                            size="sm"
+                            type="number"
+                            value={item.box_bundle}
+                            onChange={(e) => handleRowChange(index, 'box_bundle', e.target.value)}
+                            style={{ fontSize: '0.9rem', width: '6rem',padding: '0.5rem' }}
+
+                          />
+                        </td>
+                        <td style={{ minWidth: "100px" }}>
+                          <Form.Select
+                            size="sm"
+                            value={item.box_bundle_unit}
+                            onChange={(e) => handleRowChange(index, 'box_bundle_unit', e.target.value)}
+                            style={{ fontSize: '0.9rem', width: '5rem',padding: '0.5rem' }}
+
+                          >
+                            <option value="">Unit</option>
+                            <option value="box">Box</option>
+                            <option value="bundle">Bundle</option>
+                            <option value="packet">Packet</option>
+                          </Form.Select>
+                        </td>
+                        <td style={{ minWidth: "100px" }}>
+                          <Form.Control
+                            size="sm"
+                            type="number"
+                            value={item.quantity}
+                            readOnly
+                            disabled
+                            style={{ fontSize: '0.9rem', width: '6rem',padding: '0.5rem' }}
+
+                          />
+                        </td>
+                        <td style={{ minWidth: "100px" }}>
+                          <Form.Control
+                            size="sm"
+                            type="text"
+                            value={item.remark}
+                            onChange={(e) => handleRowChange(index, 'remark', e.target.value)}
+                            style={{ fontSize: '0.9rem', width: '10rem',padding: '0.5rem' }}
+
+                          />
+                        </td>
+                        <td>
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => handleDeleteRow(index)}
+                            disabled={items.length === 1}
+                          >
+                            <FaTrash />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
               <div className="text-center mt-4">
                 <Button type="submit" style={{ backgroundColor: mainColor, borderColor: mainColor }} size="lg" onClick={handleSubmit}>
                   Submit Stock

@@ -205,10 +205,6 @@ const Index = () => {
     }
   };
 
-  const handleAddInvoice = () => {
-    navigate('/add-invoice');
-  };
-
   const customStyles = {
     table: {
       style: {
@@ -391,16 +387,6 @@ const Index = () => {
           />
         </div>
         <div className="col-md-8 text-end mt-3 mt-md-0" >
-          <Button variant="primary" onClick={handleAddInvoice}>
-            <MdPersonAdd className="me-2" style={{
-                  width: isMobile ? '25px' :'0',
-                  height: isMobile ? '25px' : '0'
-                }}/> 
-            <span className='d-none d-md-inline'>
-            Add Invoice
-            </span>
-          </Button>
-
           <div className="d-flex justify-content-end">
             <button type="button" className="btn btn-info" onClick={exportToCSV}>
               <FaFileCsv className="w-5 h-5 me-1" style={{

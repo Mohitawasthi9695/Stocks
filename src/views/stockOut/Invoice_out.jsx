@@ -125,7 +125,7 @@ const Invoice_out = () => {
         SetInvoiceNo(response.data.data);
         setFormData((prevData) => ({
           ...prevData,
-          invoice_no: response.data.data || '' // Ensure it's set
+          invoice_no: response.data.data || ''
         }));
       } catch (error) {
         console.error('Error fetching Invoice No:', error);
@@ -694,7 +694,7 @@ const Invoice_out = () => {
                         <option value="">Select</option>
                         {shadeNo.map((shade) => (
                           <option key={shade.id} value={shade.id}>
-                            {shade.shadeNo}
+                            {shade.shadeNo}/{shade.purchase_shade_no}
                           </option>
                         ))}
                       </Form.Control>

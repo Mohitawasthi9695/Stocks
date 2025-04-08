@@ -11,7 +11,7 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import Swal from 'sweetalert2';
 import { BiBorderLeft } from 'react-icons/bi';
 import { text } from 'd3';
-import { FaFileCsv } from 'react-icons/fa';
+import { FaFileCsv, FaPlusCircle } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
@@ -66,6 +66,9 @@ const Show_product = () => {
   };
 
   const navigate = useNavigate();
+  const handleAddAccessory = () => {
+    navigate('/add_godown_accessories');
+  }
 
   const columns = [
     { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
@@ -80,7 +83,7 @@ const Show_product = () => {
     { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
     { name: 'Out Quantity', selector: (row) => row.out_quantity, sortable: true },
     { name: 'Transfer', selector: (row) => row.transfer, sortable: true },
-    { name: 'Available Quantity', selector: (row) => (row.quantity-row.out_quantity), sortable: true },
+    { name: 'Available Quantity', selector: (row) => (row.quantity - row.out_quantity), sortable: true },
     {
       name: 'Status',
       selector: (row) => row.status, // Keep it numeric for sorting
@@ -97,6 +100,23 @@ const Show_product = () => {
           >
             {row.status === 1 ? 'Approved' : row.status === 2 ? 'Stock Out' : 'Pending'}
           </span>
+        </div>
+      )
+    },
+    {
+      name: 'Action',
+      cell: (row) => (
+        <div className="d-flex">
+          {row.type == 'entry' && (
+            <>
+              {/* <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
+                <MdEdit />
+              </Button> */}
+              <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+                <MdDelete />
+              </Button>
+            </>
+          )}
         </div>
       )
     }
@@ -131,7 +151,7 @@ const Show_product = () => {
     }
 
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass${productId}`, {
+      const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/godownAccessory/${productId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -249,7 +269,7 @@ const Show_product = () => {
     const body = filteredProducts.map((row, index) => {
       return [
         index + 1, // Sr No
-        row.gate_pass_no || 'N/A', // Explicitly include Gate Pass No
+        row.gate_pass_no || 'Added',
         row.date || 'N/A',
         row.stock_code || 'N/A',
         row.lot_no || 'N/A',
@@ -283,7 +303,7 @@ const Show_product = () => {
         <div className="col-md-4">
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search accessories"
             id="search"
             value={searchQuery}
             onChange={handleSearch}
@@ -291,23 +311,27 @@ const Show_product = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8">
-          <div className="d-flex justify-content-end mt-4" style={{
-            margin: isMobile ? '-10px' : '',
-          }}>
-            <button type="button" className="btn btn-info" onClick={exportToCSV}>
-              <FaFileCsv className="w-5 h-5 me-1" />
-              <span className='d-none d-md-inline'>
+        <div className="col-md-8 text-end mt-3 mt-md-0">
+          <Button variant="primary" onClick={() => navigate('/add_godown_accessories')}>
+            <FaPlusCircle className="me-2" />
+            <span className="d-none d-md-inline"> Add Accessory</span>
+          </Button>
+        </div>
+        <div className="d-flex justify-content-end mt-4" style={{
+          margin: isMobile ? '-10px' : '',
+        }}>
+          <button type="button" className="btn btn-info" onClick={exportToCSV}>
+            <FaFileCsv className="w-5 h-5 me-1" />
+            <span className='d-none d-md-inline'>
               Export as CSV
-              </span>
-            </button>
-            <button type="button" className="btn btn-info" onClick={exportToPDF}>
-              <AiOutlineFilePdf className="w-5 h-5 me-1" />
-              <span className='d-none d-md-inline'>
+            </span>
+          </button>
+          <button type="button" className="btn btn-info" onClick={exportToPDF}>
+            <AiOutlineFilePdf className="w-5 h-5 me-1" />
+            <span className='d-none d-md-inline'>
               Export as PDF
-              </span>
-            </button>
-          </div>
+            </span>
+          </button>
         </div>
       </div>
       <div className="row">

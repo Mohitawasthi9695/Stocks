@@ -16,7 +16,7 @@ const filterMenuItem = (menu) => {
               'godownStock',
               'godown-stockout',
               'GodownAccessories',
-              'GoDownGatePass',
+              'GoDownGatePass', 
               'customers',
               'stock_to_godown',
               'approve_operator',
@@ -35,8 +35,8 @@ const filterMenuItem = (menu) => {
               'operator-stockout',
               'suppliers',
               'products',
-              'Accessory',
               'stockin',
+              'add_warehouse_accessory',
               'Warehouse_Accessories',
               'WarehouseGatePass',
               // 'godown-stockout',
@@ -62,6 +62,7 @@ const filterMenuItem = (menu) => {
               'products',
               'Accessory',
               'stockin',
+              'accessoryTransfer',
               'Warehouse_Accessories',
               'WarehouseGatePass',
               'godownStock',
@@ -204,7 +205,7 @@ const menuItems = {
               type: 'item',
               url: '/warehouse_accessories',
               icon: 'feather icon-package'
-            }
+            },
           ]
         }
       ]
@@ -244,7 +245,7 @@ const menuItems = {
                 {
                   id: 'all_stock',
                   title: 'All Stocks',
-                  icon: 'feather icon-list',
+                  icon: 'feather icon-align-justify',
                   type: 'item',
                   url: '/all-stock'
                 },
@@ -284,7 +285,14 @@ const menuItems = {
                   url: '/zebra_stock'
                 }
               ]
-            }
+            },
+            {
+              id: 'all_gatepass_out_stock',
+              title: 'All Out Stocks',
+              icon: 'feather icon-airplay',
+              type: 'item',
+              url: '/gatepass-stocks'
+            },
           ]
         }
       ]
@@ -527,7 +535,7 @@ const menuItems = {
               title: 'Stocks',
               icon: 'feather icon-list',
               type: 'item',
-              url: '/view_approve_gatepass'
+              url: '/godown_accessory'
             },
             {
               id: 'all_godown_accessoryout',
@@ -560,7 +568,7 @@ const menuItems = {
               url: '/operator_invoice'
             },
             {
-              id: 'approve_operator',
+              id: 'approve_operator1',
               title: 'view all out Invoice ',
               icon: 'feather icon-file-minus',
               type: 'item',

@@ -7,7 +7,7 @@ import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { FaFileCsv } from 'react-icons/fa';
+import { FaFileCsv, FaPlusCircle } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
@@ -359,8 +359,8 @@ const WarehouseAccessoriesPage = () => {
 
         <div className="col-md-8 text-end mt-3 mt-md-0">
           <Button variant="primary" onClick={() => navigate('/add_warehouse_accessories')}>
-            <MdPersonAdd className="me-2" />
-            <span className="d-none d-md-inline"> Add Warehouse Accessory</span>
+            <FaPlusCircle className="me-2" />
+            <span className="d-none d-md-inline"> Add Accessory</span>
           </Button>
         </div>
 

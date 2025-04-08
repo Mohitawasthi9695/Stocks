@@ -126,7 +126,7 @@ const Index = () => {
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
       cell: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} >
           <span
             className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
             style={{

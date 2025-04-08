@@ -1,268 +1,535 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Table, Form, Button, Container, Row, Col } from "react-bootstrap";
-import { FaPlus, FaTrash } from "react-icons/fa";
-import axios from "axios";
-import { toast } from "react-toastify";
-import Swal from "sweetalert2";
+import React, { useState, useEffect } from 'react';
+import { Table, Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate, useParams } from 'react-router-dom';
+import { FaUser, FaUserPlus, FaTrash, FaPlus } from 'react-icons/fa';
+import Skeleton from 'react-loading-skeleton';
+import DataTable from 'react-data-table-component';
+import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
+import Swal from 'sweetalert2';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { FaToggleOn, FaToggleOff } from 'react-icons/fa';
+import {
+  FaFileInvoice,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+} from 'react-icons/fa';
+import FormField from '../../components/FormField';
+import { FaExchangeAlt } from 'react-icons/fa';
 
-const AccessoryOut = () => {
+const Invoice_out = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [allAccessories, setAllAccessories] = useState([]);
-  const [allStockCodes, setAllStockCodes] = useState({});
-  const mainColor = "#3f4d67";
-  const [items, setItems] = useState([
-    {
-      stockout_details_id: id,
-      accessory_id: "",
-      stock_code_id: "",
-      lot_no: "",
-      length: "",
-      length_unit: "",
-      items: "",
-      rate: 0,
-      gst: 0,
-      amount: 0,
-      box_bundle: "",
-      out_quantity: 0,
-    },
-  ]);
+  const [items, setItems] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [accessories, setAccessories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [type, setType] = useState(0);
 
   useEffect(() => {
-    const fetchAccessories = async () => {
+    const fetchCategories = async () => {
       try {
-        const accessoriesRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products/category`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
         });
-        setAllAccessories(accessoriesRes.data.data);
+        setCategories(response.data.data || []);
       } catch (error) {
-        toast.error("Failed to fetch accessories");
+        console.error('Error fetching categories:', error);
+        setCategories([]);
       }
     };
-    fetchAccessories();
+    fetchCategories();
   }, []);
 
-  const fetchStockCodes = async (accessoryId, index) => {
-    try {
-      const stockCodesRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/getaccessorycode/${accessoryId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  const handleCategoryChange = async (event) => {
+    const categoryId = event.target.value;
+    setSelectedCategoryId(categoryId);
+    setAccessories([]);
+    if (categoryId) {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/category/${categoryId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('Fetched Accessories:', response.data.data);
+        setAccessories(response.data.data || []);
+      } catch (error) {
+        console.error('Error fetching accessories:', error);
+        setAccessories([]);
+      }
+    }
+  };
+
+  const handleaccessoriesChange = async (event) => {
+    setLoading(true);
+    const selectedProductId = event.target.value;
+    if (selectedProductId) {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godown/getaccessory/${selectedProductId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        setLoading(false);
+        if (response.data) {
+          console.log('Fetched Product Data:', response.data.data);
+          setProducts(response.data.data);
+        } else {
+          toast.error('No products found.');
+          setProducts([]); // Reset product list
+        }
+      } catch (error) {
+        setLoading(false);
+        if (error.response) {
+          console.error('Error fetching product data:', error.response.data.message);
+          toast.error(error.response.data.message || 'Something went wrong.');
+        } else {
+          console.error('Network error:', error);
+          toast.error('Network error. Please try again.');
+        }
+        setProducts([]);
+      }
+    } else {
+      setProducts([]);
+    }
+  };
+
+  const handleInputChange = (rowId, field, value) => {
+    setSelectedRows(prevRows => {
+      return prevRows.map(row => {
+        if (row.row_id === rowId) {
+          const updatedRow = { ...row, [field]: value };
+
+          // Calculate amount if rate is provided
+          if (field === 'rate' || field === 'out_pcs' || field === 'length') {
+            const rate = parseFloat(field === 'rate' ? value : row.rate || 0);
+            let quantity = 0;
+
+            if (updatedRow.type === 0) { // PCS type
+              quantity = parseFloat(updatedRow.out_pcs || 0);
+            } else { // Dimension type
+              quantity = parseFloat(updatedRow.length || 0);
+            }
+
+            if (!isNaN(rate) && !isNaN(quantity)) {
+              updatedRow.amount = (rate * quantity).toFixed(2);
+            }
+          }
+
+          return updatedRow;
+        }
+        return row;
       });
-      setAllStockCodes((prev) => ({ ...prev, [accessoryId]: stockCodesRes.data.data }));
-    } catch (error) {
-      toast.error("Failed to fetch stock codes");
-    }
-  };
-
-  const handleAddRow = () => {
-    setItems((prev) => [
-      ...prev,
-      {
-        stockout_details_id: id,
-        accessory_id: "",
-        stock_code_id: "",
-        lot_no: "",
-        length: "",
-        length_unit: "",
-        items: "",
-        rate: 0,
-        gst: 0,
-        amount: 0,
-        box_bundle: "",
-        out_quantity: "0",
-      },
-    ]);
-  };
-
-  const handleDeleteRow = (index) => {
-    if (items.length > 1) {
-      setItems((prev) => prev.filter((_, i) => i !== index));
-    }
-  };
-
-  const handleAccessoryChange = (index, event) => {
-    const selectedAccessoryId = event.target.value;
-    setItems((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], accessory_id: selectedAccessoryId, stock_code_id: "" };
-      return updated;
     });
-    fetchStockCodes(selectedAccessoryId, index);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (selectedRows.length === 0) {
+      toast.error('Please select at least one item to proceed.');
+      return;
+    }
+
     const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to create the new field?",
-      icon: "question",
+      title: 'Are you sure?',
+      text: 'Do you want to create a new Invoice?',
+      icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: "#20B2AA",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, create it!",
+      confirmButtonColor: '#20B2AA',
+      confirmButtonText: 'Yes, create it!'
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownaccessoryout`, items, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}`, "Content-Type": "application/json" },
+      // Transform the selected rows into the format expected by the API
+      const formattedData = selectedRows.map(row => {
+        return {
+          stockout_details_id: id,
+          godown_accessory_id: row.godown_id || row.id,
+          product_accessory_id: row.product_accessory_id || row.accessory_id,
+          stock_code: row.stock_code || "",
+          lot_no: row.lot_no || "",
+          length: row.type === 1 ? row.length : null,
+          length_unit: row.type === 1 ? row.length_unit : null,
+          items: row.items || "",
+          rate: parseFloat(row.rate) || 0,
+          gst: parseFloat(row.gst) || 0,
+          amount: parseFloat(row.amount) || 0,
+          box_bundle: row.box_bundle || "",
+          out_quantity: row.type === 0 ? parseFloat(row.out_pcs) : 0,
+          quantity: parseFloat(row.quantity) || 0,
+        };
       });
-      toast.success("Stock added successfully");
-      navigate("/operator_invoice");
-    } catch (error) {
-      toast.error("Error adding stock");
-    }
-  };
-  const handleStockCodeChange = async (index, event) => {
-    setLoading(true);
-    const selectedStock = event.target.value;
 
-    setItems((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], stock_code_id: selectedStock };
-      return updated;
-    });
-
-    if (selectedStock) {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/godownAccessory/${selectedStock}`,
-          {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      console.log('Sending API Request with data:', formattedData);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/godownaccessoryout`,
+        formattedData, // Send as array
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
           }
-        );
-
-        setLoading(false);
-        if (response.data.data) {
-          setItems((prev) => {
-            const updated = [...prev];
-            updated[index] = { ...updated[index], ...response.data.data };
-            return updated;
-          });
         }
-      } catch (error) {
-        setLoading(false);
-        toast.error("Error fetching stock details");
-      }
+      );
+
+      console.log('Response:', response.data);
+      toast.success('Invoice created successfully!');
+      navigate('/all-invoices-out');
+    } catch (error) {
+      console.error('API Error:', error.response?.data || error);
+      toast.error(error.response?.data?.message || 'Error processing request');
     }
   };
-  const handleChange = (index, field, event) => {
-    const newValue = event.target.value;
-    setItems((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], [field]: newValue };
-      return updated;
+
+  const columns = [
+    { id: 'product_category', label: 'Product Category' },
+    { id: 'product_accessory_name', label: 'Accessory' },
+    { id: 'lot_no', label: 'LOT No' },
+    { id: 'stock_code', label: 'Stock Code' },
+    { id: 'items', label: 'Items' },
+    { id: 'length', label: 'Length' },
+    { id: 'length_unit', label: 'L Unit' },
+    { id: 'quantity', label: 'Pcs' },
+    { id: 'box_bundle', label: 'Rack' }
+  ];
+
+  const handleCheckboxChange = (id) => {
+    setSelectedRows((prevSelected) => {
+      const isAlreadySelected = prevSelected.some((row) => row.id === id);
+      if (!isAlreadySelected) {
+        const selectedProduct = products.find((p) => p.id === id);
+        if (selectedProduct) {
+          return [...prevSelected, {
+            ...selectedProduct,
+            row_id: new Date().getTime(),
+            type: 0, // Default to PCS type
+            out_pcs: 0,
+            rate: 0,
+            amount: 0
+          }];
+        }
+      }
+      return prevSelected;
     });
   };
 
+  const mainColor = '#3f4d67';
+
+  const handleAddRow = (originalRow) => {
+    const newRow = { ...originalRow, row_id: new Date().getTime() };
+    setSelectedRows(prevRows => [...prevRows, newRow]);
+  };
+
+  const handleDeleteRow = (rowId) => {
+    setSelectedRows(prevRows => prevRows.filter(row => row.row_id !== rowId));
+  };
+
+  const handleToggleType = (rowId) => {
+    setSelectedRows((prevRows) => prevRows.map((row) => {
+      if (row.row_id === rowId) {
+        const newType = row.type === 0 ? 1 : 0;
+
+        // Reset the values that are not applicable to the new type
+        if (newType === 0) {
+          // PCS type
+          return { ...row, type: newType, length: "", length_unit: "" };
+        } else {
+          // Dimension type
+          return { ...row, type: newType, out_pcs: "" };
+        }
+      }
+      return row;
+    }));
+  };
 
   return (
-    <Container fluid className="pt-4 px-4" style={{ border: "3px dashed #14ab7f", borderRadius: "8px", background: "#ff9d0014" }}>
-      <Row className="justify-content-center g-4">
-        <h2 className="text-center mb-4 fw-bold">Accessory Out</h2>
-        <Col md={12}>
-          <div className="card shadow border-0 rounded-lg">
-            <div className="card-body p-4">
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                <h4><FaPlus className="me-2" />Add Manually</h4>
-                <Button variant="success" onClick={handleAddRow}>Add Row</Button>
-              </div>
-              <Table bordered responsive className="align-middle">
-                <thead className="text-white" style={{ backgroundColor: mainColor }}>
-                  <tr>
-                    <th>Accessory</th>
-                    <th>Stock Code</th>
-                    <th>Lot No</th>
-                    <th>Length</th>
-                    <th>Length Unit</th>
-                    <th>Quantity</th>
-                    <th>Rate</th>
-                    <th>GST</th>
-                    <th>Amount</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((item, index) => (
-                    <tr key={index}>
-                      <td>
-                        <Form.Select value={item.accessory_id} onChange={(e) => handleAccessoryChange(index, e)} required>
-                          <option value="">Select Accessory</option>
-                          {allAccessories.map((acc) => (
-                            <option key={acc.id} value={acc.id}>{acc.accessory_name}</option>
-                          ))}
-                        </Form.Select>
-                      </td>
-                      <td>
-                        <Form.Select value={item.stock_code_id} onChange={(e) => handleStockCodeChange(index, e)} required>
-                          <option value="">Select Stock Code</option>
-                          {(allStockCodes[item.accessory_id] || []).map((stock) => (
-                            <option key={stock.id} value={stock.id}>{stock.stock_code}</option>
-                          ))}
-                        </Form.Select>
-                      </td>
-                      <td><Form.Control type="text" value={item.lot_no} readOnly /></td>
-                      <td><Form.Control type="text" value={item.length} onChange={(e) => handleChange(index, "length", e)} />
-
-                      </td>
-                      <td>
-                        <Form.Select value={item.length_unit} onChange={(e) => handleChange(index, 'length_unit', e)}>
-                          <option value="">Unit</option>
-                          <option value="m">Meter</option>
-                          <option value="ft">Feet</option>
-                        </Form.Select>
-                      </td>
-
-                      <td>
-                        <Form.Control
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleChange(index, "quantity", e)}
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="number"
-                          value={item.rate}
-                          onChange={(e) => handleChange(index, "rate", e)}
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="number"
-                          value={item.gst}
-                          onChange={(e) => handleChange(index, "gst", e)}
-                        />
-                      </td>
-                      <td>
-                        <Form.Control
-                          type="number"
-                          value={item.amount}
-                          onChange={(e) => handleChange(index, "amount", e)}
-                        />
-                      </td>
-                      <td>
-                        <Button variant="danger" onClick={() => handleDeleteRow(index)} disabled={items.length === 1}>
-                          <FaTrash />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-              <div className="text-center mt-4">
-                <Button type="submit" style={{ backgroundColor: mainColor, borderColor: mainColor }} size="lg" onClick={handleSubmit}>
-                  Submit Stock
-                </Button>
-              </div>
+    <Container
+      fluid
+      className="pt-1 px-2"
+      style={{
+        border: '3px dashed #14ab7f',
+        borderRadius: '8px',
+        background: '#ff9d0014'
+      }}
+    >
+      <Row className="justify-content-center">
+        <Col md={12} lg={12}>
+          <Card className="shadow-lg border-0" style={{ borderRadius: '15px' }}>
+            <div
+              className="p-4 text-white text-center"
+              style={{
+                backgroundColor: '#20B2AA',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <FaUserPlus size={40} className="me-3" />
+              <h2 className="m-0 text-white">Accessory Stock Out</h2>
             </div>
-          </div>
+            <Card.Body className="p-5">
+              <Form onSubmit={handleSubmit}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'start' }}>
+                    <Form.Group>
+                      <Form.Label>Select Category:</Form.Label>
+                      <Form.Control
+                        as="select"
+                        id="category"
+                        className="form-select px-2"
+                        style={{ width: '8rem', minWidth: 'fit-content', color: 'black' }}
+                        onChange={handleCategoryChange}
+                      >
+                        <option value="">Select</option>
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.id} style={{ color: 'black' }}>
+                            {category.product_category}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+
+                    <Form.Group style={{ marginLeft: '20px' }}>
+                      <Form.Label>Select Shade Number:</Form.Label>
+                      <Form.Control
+                        as="select"
+                        id="accessories"
+                        className="form-select px-2"
+                        style={{ width: '8rem', minWidth: 'fit-content' }}
+                        disabled={!selectedCategoryId}
+                        onChange={handleaccessoriesChange}
+                      >
+                        <option value="">Select</option>
+                        {accessories.map((accessorie) => (
+                          <option key={accessorie.id} value={accessorie.id}>
+                            {accessorie.accessory_name}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+                  </div>
+                  <hr />
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="card rounded-lg shadow-none" style={{ background: '#f5f0e6' }}>
+                        {loading ? (
+                          <div>
+                            {[...Array(8)].map((_, index) => (
+                              <div key={index} style={{ display: 'flex', gap: '10px', padding: '10px' }}>
+                                <Skeleton width={50} height={20} />
+                                <Skeleton width={200} height={20} />
+                                <Skeleton width={200} height={20} />
+                                <Skeleton width={200} height={20} />
+                                <Skeleton width={200} height={20} />
+                                <Skeleton width={200} height={20} />
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+                            <div className="table-responsive">
+                              <table className="table table-hover table-bordered align-middle">
+                                <thead className="table-dark">
+                                  <tr>
+                                    <th scope="col" style={{ width: '50px' }}>
+                                      <input type="checkbox" />
+                                    </th>
+                                    {columns.map((column) => (
+                                      <th key={column.id} scope="col">
+                                        {column.label}
+                                      </th>
+                                    ))}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {products.map((row) => (
+                                    <tr key={row.godown_id || row.id}>
+                                      <td>
+                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.id)} />
+                                      </td>
+                                      {columns.map((column) => (
+                                        <td key={column.id}>{row[column.id]} </td>
+                                      ))}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        )}
+                        <div className="mt-3">
+                          <h4 className="ms-4 mb-3">Selected Rows:</h4>
+                        </div>
+                        <div className="card-body p-0" style={{ borderRadius: '8px' }}>
+                          <div className="table-responsive">
+                            <table className="table table-hover table-bordered align-middle">
+                              <thead className="table-dark">
+                                <tr>
+                                  <th>Type</th>
+                                  {columns.map((column) => (
+                                    <th key={column.id} scope="col">
+                                      {column.label}
+                                    </th>
+                                  ))}
+                                  <th>Rate</th>
+                                  <th>Amount</th>
+                                  <th>Add</th>
+                                  <th>Delete</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {selectedRows.map((row) => (
+                                  <tr key={row.row_id}>
+                                    <td key="type">
+                                      <div
+                                        onClick={() => handleToggleType(row.row_id)}
+                                        className="relative w-14 h-7 flex flex-col items-center justify-center rounded-full transition-all duration-300"
+                                      >
+                                        {/* Toggle Switch */}
+                                        <label style={{ position: 'relative', display: 'inline-block', width: '34px', height: '20px' }}>
+                                          <input
+                                            type="checkbox"
+                                            checked={row.type === 1}
+                                            onChange={() => handleToggleType(row.row_id)}
+                                            style={{ opacity: 0, width: 0, height: 0 }}
+                                          />
+                                          <span
+                                            style={{
+                                              position: 'absolute',
+                                              cursor: 'pointer',
+                                              top: 0,
+                                              left: 0,
+                                              right: 0,
+                                              bottom: 0,
+                                              backgroundColor: row.type === 1 ? '#4caf50' : '#ccc', // Green for Dimension, Gray for PCS
+                                              transition: '0.4s',
+                                              borderRadius: '20px',
+                                            }}
+                                          ></span>
+                                          <span
+                                            style={{
+                                              position: 'absolute',
+                                              content: '',
+                                              height: '14px',
+                                              width: '14px',
+                                              left: row.type === 1 ? '18px' : '3px',
+                                              bottom: '3px',
+                                              backgroundColor: 'white',
+                                              transition: '0.4s',
+                                              borderRadius: '50%',
+                                            }}
+                                          ></span>
+                                        </label>
+                                      </div>
+                                    </td>
+                                    <td key="product_category">{row.product_category}</td>
+                                    <td key="product_accessory_name">{row.product_accessory_name}</td>
+                                    <td key="lot_no">{row.lot_no}</td>
+                                    <td key="stock_code">{row.stock_code}</td>
+                                    <td key="items">
+                                      {row.items}
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="text"
+                                        value={row.length || ''}
+                                        className="py-2 border border-gray-300 px-2 w-full"
+                                        onChange={(e) => handleInputChange(row.row_id, 'length', e.target.value)}
+                                        disabled={row.type === 0}
+                                      />
+                                    </td>
+                                    <td>
+                                      <select
+                                        value={row.length_unit || ''}
+                                        className="py-2"
+                                        onChange={(e) => handleInputChange(row.row_id, 'length_unit', e.target.value)}
+                                        disabled={row.type === 0}
+                                      >
+                                        <option value="Meter">Meter</option>
+                                        <option value="Inch">Inch</option>
+                                        <option value="cm">cm</option>
+                                        <option value="ft">Feet</option>
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="number"
+                                        value={row.quantity || ''}
+                                        className="py-2 border border-gray-300 px-2 w-full"
+                                        onChange={(e) => handleInputChange(row.row_id, 'quantity', e.target.value)}
+                                        disabled={row.type === 1} // Properly disable when type is 1
+                                      />
+                                    </td>
+                                    <td>{row.box_bundle}</td>
+                                    <td>
+                                      <input
+                                        type="number"
+                                        value={row.rate || ''}
+                                        className="py-2 border border-gray-300 px-2 w-full"
+                                        onChange={(e) => handleInputChange(row.row_id, 'rate', e.target.value)}
+                                      />
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="text"
+                                        value={row.amount || '0.00'}
+                                        className="py-2 border border-gray-300 px-2 w-full bg-gray-100"
+                                        readOnly
+                                      />
+                                    </td>
+                                    <td>
+                                      <div>
+                                        <FaPlus
+                                          className="text-green-500 cursor-pointer"
+                                          onClick={() => handleAddRow(row)}
+                                          style={{ fontSize: '20px' }}
+                                        />
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div>
+                                        <FaTrash
+                                          className="text-red-500 cursor-pointer"
+                                          onClick={() => handleDeleteRow(row.row_id)}
+                                          style={{ fontSize: '20px' }}
+                                        />
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-center mt-4">
+                        <Button type="submit" style={{ backgroundColor: mainColor, borderColor: mainColor }} size="lg">
+                          Submit Stock
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Form>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </Container>
   );
 };
 
-export default AccessoryOut;
+export default Invoice_out;

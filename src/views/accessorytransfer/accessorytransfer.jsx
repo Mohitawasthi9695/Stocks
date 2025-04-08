@@ -158,13 +158,8 @@ const Invoice_out = () => {
         }
       } catch (error) {
         setLoading(false);
-        if (error.response) {
-          console.error('Error fetching product data:', error.response.data.message);
-          toast.error(error.response.data.message || 'Something went wrong.');
-        } else {
-          console.error('Network error:', error);
-          toast.error('Network error. Please try again.');
-        }
+        console.log("eroro",error);
+        toast.error('Error fetching products. Please try again later.');
         setProducts([]);
       }
     } else {

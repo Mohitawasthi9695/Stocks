@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
+import { MdEdit, MdDelete } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -12,7 +12,7 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { FaFileCsv } from 'react-icons/fa';
+import { FaFileCsv, FaPlusCircle } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 // import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -120,7 +120,7 @@ const SuppliersPage = () => {
       name: 'Product Category',
       selector: (row) => row.product_category.toUpperCase(),
       sortable: true,
-      
+
     },
     {
       name: 'Accessory Name',
@@ -229,39 +229,39 @@ const SuppliersPage = () => {
   //   }
   // };
 
-const handleUpdateUser  = async () => {
-  try {
-    if (!selectedSupplier || !selectedSupplier.id) {
-      toast.error('Invalid supplier selected for update!');
-      return;
-    }
-
-    // Log the selected supplier to check its state
-    console.log('Updating supplier:', selectedSupplier);
-
-    const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json'
+  const handleUpdateUser = async () => {
+    try {
+      if (!selectedSupplier || !selectedSupplier.id) {
+        toast.error('Invalid supplier selected for update!');
+        return;
       }
-    });
 
-    if (response.status === 200) {
-      toast.success('Supplier updated successfully!');
+      // Log the selected supplier to check its state
+      console.log('Updating supplier:', selectedSupplier);
 
-      // Update the suppliers state
-      setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
-      setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${selectedSupplier.id}`, selectedSupplier, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
-      setShowEditModal(false);
-    } else {
-      throw new Error('Unexpected response status');
+      if (response.status === 200) {
+        toast.success('Supplier updated successfully!');
+
+        // Update the suppliers state
+        setSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
+        setFilteredSupplier((prev) => prev.map((sup) => (sup.id === selectedSupplier.id ? { ...sup, ...selectedSupplier } : sup)));
+
+        setShowEditModal(false);
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (error) {
+      console.error('Error during update:', error);
+      toast.error('Error updating supplier!');
     }
-  } catch (error) {
-    console.error('Error during update:', error);
-    toast.error('Error updating supplier!');
-  }
-};
+  };
   const handleAddUser = () => {
     navigate('/add_accessories');
   };
@@ -273,7 +273,7 @@ const handleUpdateUser  = async () => {
       [name]: value
     }));
   };
- 
+
 
   const customStyles = {
     table: {
@@ -369,20 +369,20 @@ const handleUpdateUser  = async () => {
 
   const exportToPDF = () => {
     const doc = new jsPDF('potrait');
-    
 
-    
+
+
 
     doc.autoTable({
-      head: [['S no.','Date','Product Category', 'Accessory', 'Status']],
-      body: filteredSuppliers.map((row, index) => [ index+1,  row.date,row.product_category, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
+      head: [['S no.', 'Date', 'Product Category', 'Accessory', 'Status']],
+      body: filteredSuppliers.map((row, index) => [index + 1, row.date, row.product_category, row.accessory_name, row.status === 1 ? 'Active' : 'Inactive']),
       styles: {
         fontSize: 10, // Smaller font size to fit more data
         overflow: 'linebreak', // Wrap text within cells
         cellPadding: 1 // Reduce padding for tighter fit
       },
       columnStyles: {
-        0: { cellWidth: 10}, // Auto-adjust column widths
+        0: { cellWidth: 10 }, // Auto-adjust column widths
         1: { cellWidth: 30 },
         2: { cellWidth: 40 },
         3: { cellWidth: 70 },
@@ -395,7 +395,7 @@ const handleUpdateUser  = async () => {
       },
       pageBreak: 'auto' // Automatically breaks into new pages if needed
     });
-  
+
     doc.save('accessory_list.pdf');
   };
 
@@ -418,15 +418,11 @@ const handleUpdateUser  = async () => {
             style={{
               marginRight: isMobile ? "25px" : "auto",
               marginBottom: isMobile ? "-10px" : "auto",
-      
-              
             }}
           >
-            <MdPersonAdd className="me-2" style={{
-              height: '25px',
-              width :'23px'            }}/> 
+            <FaPlusCircle className="me-2" />
             <span className='d-none d-md-inline'>
-            Add Product Accessory
+              Add Accessory
             </span>
           </Button>
         </div>
@@ -437,19 +433,19 @@ const handleUpdateUser  = async () => {
             <div className="card-body p-0" style={{ borderRadius: '8px' }}>
               <div className="d-flex justify-content-end">
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToCSV}>
-                  <FaFileCsv className="w-5 h-5 me-1"  style={{
+                  <FaFileCsv className="w-5 h-5 me-1" style={{
                     height: '25px',
-                    width :'15px'
-                  }}/>
+                    width: '15px'
+                  }} />
                   <span className='d-none d-md-inline'>
-                  Export as CSV
+                    Export as CSV
                   </span>
                 </button>
                 <button type="button" className="btn btn-sm btn-info" onClick={exportToPDF}>
-                  <AiOutlineFilePdf className="w-5 h-5 me-1"  style={{
+                  <AiOutlineFilePdf className="w-5 h-5 me-1" style={{
                     height: '25px',
-                    width :'20px'
-                  }}/>
+                    width: '20px'
+                  }} />
                   <span className='d-none d-md-inline'>Export as PDF</span>
                 </button>
               </div>

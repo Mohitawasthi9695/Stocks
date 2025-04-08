@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 import { BiBorderLeft } from 'react-icons/bi';
 import { text } from 'd3';
 import * as XLSX from 'xlsx';
-import { MdFileDownload, MdAdd } from 'react-icons/md';
+import { MdFileDownload,MdAdd } from 'react-icons/md';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Papa from 'papaparse';
@@ -34,39 +34,15 @@ const Show_product = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getStockgatepass/${id}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/getallgatepassStock`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
 
-        console.log(response.data.data);
-        const godownData = response.data.data.flatMap((item) =>
-          item.all_stocks.map((all_stocks) => {
-            const width = parseFloat(all_stocks.width).toFixed(2);
-            const length = parseFloat(all_stocks.length).toFixed(2);
-            return {
-              id: all_stocks.id,
-              gate_pass_no: item.gate_pass_no,
-              gate_pass_date: item.gate_pass_date,
-              lot_no: all_stocks.lot_no,
-              stock_code: all_stocks.stock_code,
-              stockin_code: all_stocks.stockin_code,
-              godown_supervisor: item.godown_supervisor.name,
-              warehouse_supervisor: item.warehouse_supervisor.name,
-              width: width || 'N/A',
-              length: length || 'N/A',
-              pcs: all_stocks.pcs,
-              type: all_stocks.type,
-              length_unit: all_stocks.length_unit,
-              width_unit: all_stocks.width_unit || 'N/A',
-              type: all_stocks.type,
-              rack: all_stocks.rack || 'N/A'
-            };
-          })
-        );
-
+        console.log(response.data);
+        const godownData = response.data;
         setProducts(godownData);
         setFilteredProducts(godownData);
       } catch (err) {
@@ -93,7 +69,9 @@ const Show_product = () => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = products.filter(
       (product) =>
-        product.lot_no.toLowerCase().includes(lowercasedQuery)
+        product.lot_no.toLowerCase().includes(lowercasedQuery) ||
+        product.type.toLowerCase().includes(lowercasedQuery) ||
+        product.unit.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
@@ -108,36 +86,16 @@ const Show_product = () => {
     { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
     { name: 'Gate Pass No', selector: (row) => row.gate_pass_no, sortable: true },
     { name: 'Gate Pass Date', selector: (row) => row.gate_pass_date, sortable: true },
-    { name: 'Warehouse Code', selector: (row) => row.stockin_code, sortable: true },
-    { name: 'Sender', selector: (row) => row.warehouse_supervisor, sortable: true },
+    { name: 'Warehouse Supervisor', selector: (row) => row.warehouse_supervisor, sortable: true },
+    { name: 'Godown Supervisor', selector: (row) => row.godown_supervisor, sortable: true },
+    { name: 'Warehouse Code', selector: (row) => row.warehouse_stock_code, sortable: true },
+    { name: 'Sender', selector: (row) => row.warehouse_supervisor, sortable: true},
     { name: 'Stock Code', selector: (row) => row.stock_code, sortable: true },
     { name: 'Receiver', selector: (row) => row.godown_supervisor, sortable: true },
     { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
     { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     { name: 'Pcs', selector: (row) => row.pcs ?? 1, sortable: true },
-    {
-      name: 'Action',
-      cell: (row) => (
-        <div className="d-flex">
-          {row.type === 'gatepass' ? (
-            <>
-              <Button
-                variant="outline-warning"
-                size="sm"
-                className="me-2"
-                onClick={() => navigate(`/add_vertical_product/${row.id}`)}
-              >
-                <MdAdd />
-              </Button>
-            </>
-          ) : (
-            <></>
-          )}
-        </div>
-      ),
-      width: '150px'
-    }
   ];
 
   const handleEdit = (product) => {
@@ -297,14 +255,14 @@ const Show_product = () => {
       toast.error('No data available for export.');
       return;
     }
-
+  
     const doc = new jsPDF();
     doc.setFontSize(14); // Heading size adjusted
     doc.text('Stock List', 80, 10);
-
+  
     doc.autoTable({
       head: [['Sr No', 'Gate Pass No', 'Gate Pass Date', 'Warehouse Code', 'Stock Code',
-        'Lot No', 'Length', 'Width', 'Pcs', 'Quantity',]],
+         'Lot No', 'Length', 'Width', 'Pcs', 'Quantity',]],
       body: filteredProducts.map((row, index) => [
         index + 1,
         row.gate_pass_no || 'N/A',
@@ -316,7 +274,7 @@ const Show_product = () => {
         `${row.width} ${row.width_unit}` || 'N/A',
         row.pcs ?? 1,
         row.quantity || 'N/A',
-
+    
       ]),
       startY: 20,
       theme: 'grid',
@@ -325,12 +283,12 @@ const Show_product = () => {
       alternateRowStyles: { fillColor: [240, 240, 240] },
       margin: { top: 20 },
     });
-
+  
     doc.save('stock_list.pdf');
     toast.success('PDF exported successfully!');
   };
-
-
+  
+  
 
   return (
     <div className="container-fluid pt-4 " style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>

@@ -23,14 +23,10 @@ const ShowProduct = () => {
   const [rackInputs, setRackInputs] = useState({});
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 const navigate = useNavigate();
-  const categoryId = 1; // Hardcoded for now
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/transferstocks`, {
-          params: {
-            category_id: categoryId
-          },
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'

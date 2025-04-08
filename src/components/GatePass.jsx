@@ -185,7 +185,7 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                     <View key={index} style={styles.tableRow}>
                       <Text style={styles.tableCell}>{accessory.lot_no}</Text>
                       <Text style={styles.tableCell}>{accessory.accessory?.accessory_name}</Text>
-                      <Text style={styles.tableCell}>{accessory.warehouse_accessory.stock_code}</Text>
+                      <Text style={styles.tableCell}>{accessory.warehouse_accessory?.stock_code ?? 0}</Text>
                       <Text style={styles.tableCell}>{accessory.stock_code}</Text>
                       <Text style={styles.tableCell}>
                         {accessory.length}
