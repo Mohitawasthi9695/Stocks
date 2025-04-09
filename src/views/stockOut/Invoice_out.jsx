@@ -331,84 +331,68 @@ const Invoice_out = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const handleInputChange = (id, field, value) => {
     setSelectedRows((prevSelectedRows) => {
-      const updatedRows = prevSelectedRows.map((row) => {
-        if (row.row_id === id) {
-          // Use row_id for matching
-          const updatedRow = { ...row, [field]: value };
-
-          // Ensure `amount` updates when `rate` or dimensions change
-          if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
-            updatedRow.amount = calculateAmount(updatedRow);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          }
-
-          return updatedRow; // Return the updated row
+      const editedRowIndex = prevSelectedRows.findIndex((row) => row.row_id === id);
+      const updatedRows = [...prevSelectedRows];
+  
+      // Update the specific field
+      updatedRows[editedRowIndex] = {
+        ...updatedRows[editedRowIndex],
+        [field]: value,
+      };
+  
+      // Only validate if field is 'width'
+      if (field === 'width') {
+        const editedRow = updatedRows[editedRowIndex];
+        const { stock_code } = editedRow;
+  
+        const sameStockRows = updatedRows
+          .filter((row) => row.stock_code === stock_code)
+          .sort((a, b) => a.row_id - b.row_id);
+  
+        const indexInGroup = sameStockRows.findIndex((row) => row.row_id === id);
+        const prevRow = sameStockRows[indexInGroup - 1];
+        const nextRow = sameStockRows[indexInGroup + 1];
+  
+        const currentWidth = parseFloat(value);
+  
+        if (isNaN(currentWidth)) {
+          toast.error("Please enter a valid width.");
+          return prevSelectedRows;
         }
-        return row; // Return unchanged rows
+  
+        if (
+          (prevRow && currentWidth > parseFloat(prevRow.width)) ||
+          (nextRow && currentWidth < parseFloat(nextRow.width))
+        ) {
+          toast.error("Width must be ≤ previous and ≥ next duplicate row.");
+          return prevSelectedRows;
+        }
+      }
+  
+      // Update amount calculation
+      const finalRows = updatedRows.map((row) => {
+        if (
+          row.row_id === id &&
+          ['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)
+        ) {
+          return { ...row, amount: calculateAmount({ ...row, [field]: value }) };
+        }
+        return row;
       });
-
-      // Update `out_products` in formData
-
-
-
-
+  
+      // Update formData.out_products
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedRows
+        out_products: finalRows,
       }));
-
-      // Update total amount whenever selected rows change
-      updateTotalAmount(updatedRows);
-
-      return updatedRows; // Return the updated rows
+  
+      updateTotalAmount(finalRows);
+      return finalRows;
     });
   };
-
+  
 
 
   const updateTotalAmount = (rows, updatedForm = formData) => {
