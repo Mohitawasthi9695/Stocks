@@ -108,12 +108,16 @@ const ProductsPage = () => {
 
     const filtered = products.filter((product) => {
       return (
+        (product.date &&  new Date(product.date)
+        .toLocaleDateString('en-IN').toLowerCase().includes(lowercasedQuery)) ||
+        (product.name && product.name.toLowerCase().includes(lowercasedQuery)) ||
         (product.shadeNo && product.shadeNo.toLowerCase().includes(lowercasedQuery)) ||
         (product.code && product.code.toLowerCase().includes(lowercasedQuery)) ||
         (product.purchase_shade_no && product.purchase_shade_no.toLowerCase().includes(lowercasedQuery)) ||
         (product.product_category?.product_category && product.product_category.product_category.toLowerCase().includes(lowercasedQuery))
       );
     });
+    
 
     setFilteredProducts(filtered.length > 0 ? filtered : []);
   }, [searchQuery, products]);
@@ -134,7 +138,7 @@ const ProductsPage = () => {
     },
     {
       name: 'Date',
-      selector: (row) => row.date,
+      selector: (row) => new Date(row.date).toLocaleDateString('en-IN'),
       sortable: true,
       width: '100px',
       center: true

@@ -89,18 +89,31 @@ const Show_product = () => {
   // Update filtered Products when the search query changes
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = products.filter(
-      (product) =>
-        product.lot_no.toLowerCase().includes(lowercasedQuery) ||
-        product.type.toLowerCase().includes(lowercasedQuery) ||
-        product.unit.toLowerCase().includes(lowercasedQuery)
-    );
+    const filtered = products.filter((product) => {
+      const valuesToSearch = [
+        product.lot_no,
+        product.type,
+        product.stock_code,
+        product.gate_pass_date,
+        product.gate_pass_no,
+        product.stockin_code,
+        `${product.length} ${product.length_unit}`,
+        `${product.width} ${product.width_unit}`
+      ];
+    
+      return valuesToSearch.some((val) =>
+        val?.toString().toLowerCase().includes(lowercasedQuery)
+      );
+    });
+    
     setFilteredProducts(filtered);
   }, [searchQuery, products]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
+
+  // 
 
   const navigate = useNavigate();
   const unitText = '4 feet';

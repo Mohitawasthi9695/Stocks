@@ -1,4 +1,4 @@
-import React, { useEffect,useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
@@ -7,6 +7,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
+import Select from 'react-select';
 
 const AddProduct = () => {
   const { id, no } = useParams();
@@ -79,13 +80,12 @@ const AddProduct = () => {
             product_category_id: categoryId,
             product_id: '',
             purchase_shadeNo: '',
-            products: [...response.data.data], 
+            products: [...response.data.data]
           };
-        
-          console.log("Updated Products in State:", updatedItems[index].products);
+
+          console.log('Updated Products in State:', updatedItems[index].products);
           return updatedItems;
         });
-        
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -125,11 +125,9 @@ const AddProduct = () => {
   const handleRowChange = (index, field, value) => {
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
-  
+
       if (field === 'product_id') {
-        const selectedProduct = updatedItems[index].products.find(
-          (product) => product.id === parseInt(value) 
-        );
+        const selectedProduct = updatedItems[index].products.find((product) => product.id === parseInt(value));
         updatedItems[index].product_id = value;
         updatedItems[index].purchase_shadeNo = selectedProduct ? selectedProduct.purchase_shade_no : '';
       } else {
@@ -138,7 +136,6 @@ const AddProduct = () => {
       return updatedItems;
     });
   };
-  
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -169,7 +166,7 @@ const AddProduct = () => {
       }
       navigate('/stocks');
     }
-    
+
     const formData = new FormData();
     formData.append('csv_file', file);
 
@@ -361,7 +358,7 @@ const AddProduct = () => {
                               ))}
                             </Form.Control>
                           </td>
-                          <td>
+                          {/* <td>
                             <Form.Control
                               as="select"
                               value={item.product_id}
@@ -376,7 +373,49 @@ const AddProduct = () => {
                               ))}
 
                             </Form.Control>
+                          </td> */}
+                          <td>
+                            <Select
+                              options={(item.products || []).map((product) => ({
+                                value: product.id,
+                                label: `${product.shadeNo} / ${product.purchase_shade_no}`
+                              }))}
+                              value={
+                                item.products?.find((p) => p.id === parseInt(item.product_id))
+                                  ? {
+                                      value: item.product_id,
+                                      label: `${item.products.find((p) => p.id === parseInt(item.product_id)).shadeNo} / ${item.products.find((p) => p.id === parseInt(item.product_id)).purchase_shade_no}`
+                                    }
+                                  : null
+                              }
+                              onChange={(selectedOption) => {
+                                const selectedProduct = item.products.find((p) => p.id === selectedOption.value);
+                                handleRowChange(index, 'product_id', selectedOption.value);
+                                handleRowChange(index, 'purchase_shadeNo', selectedProduct?.purchase_shade_no || '');
+                              }}
+                              isSearchable
+                              placeholder="Select Shade No"
+                              menuPortalTarget={document.body} // 👈 renders dropdown outside scroll
+                              styles={{
+                                control: (base) => ({
+                                  ...base,
+                                  minHeight: '3rem',
+                                  fontSize: '0.9rem'
+                                }),
+                                menu: (base) => ({
+                                  ...base,
+                                  zIndex: 9999
+                                }),
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999
+                                })
+                              }}
+                            />
                           </td>
+
+
+                          
                           <td>
                             <Form.Control
                               type="text"
@@ -471,7 +510,11 @@ const AddProduct = () => {
                             />
                           </td>
                           <td>
-                            <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem', padding: '0rem 1rem', paddingBottom: '0.2rem' }}>
+                            <Button
+                              variant="danger"
+                              onClick={() => handleDeleteRow(index)}
+                              style={{ fontSize: '0.8rem', height: '2rem', padding: '0rem 1rem', paddingBottom: '0.2rem' }}
+                            >
                               <FaTrash />
                             </Button>
                           </td>
