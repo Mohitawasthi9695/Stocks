@@ -93,23 +93,30 @@ const Index = () => {
     {
       name: 'Date',
       selector: (row) => new Date(row.date).toLocaleDateString('en-GB'), // Format: DD/MM/YYYY
-      sortable: true
+      sortable: true, 
+      center: true, 
+      width: '100px'
     },
     {
       name: 'Invoice Number',
       selector: (row) => row.invoice_no,
-      sortable: true
+      sortable: true, 
+      center: true,
     },
     {
       name: 'Supplier Name',
       selector: (row) => row.supplier_name,
-      sortable: true
+      sortable: true, 
+      center: true,
+      wrap: true
     },
 
     {
       name: 'Receiver Name',
       selector: (row) => row.agent,
-      sortable: true
+      sortable: true, 
+      center: true,
+      wrap: true
     },
 
     {
@@ -149,7 +156,6 @@ const Index = () => {
               setShowThermalPdfModal(true);
               console.log(row.id);
             }}
-          
           >
             <MdPrint />
           </Button>

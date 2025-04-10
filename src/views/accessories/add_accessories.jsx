@@ -10,6 +10,9 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { date } from 'yup';
 import 'react-toastify/dist/ReactToastify.css';
+import { MdDateRange } from "react-icons/md";
+import { FaBookmark } from "react-icons/fa";
+import { FaShoppingCart } from "react-icons/fa";
 
 const AddAccessory = () => {
   const [formData, setFormData] = useState({
@@ -191,7 +194,7 @@ const AddAccessory = () => {
 
   const handleDownloads = async () => {
     try {
-      const filePath = `${window.location.origin}/StockIN.csv`; // Ensure file is in 'public' folder
+      const filePath = `${window.location.origin}/Accessory.csv`; // Ensure file is in 'public' folder
       const response = await fetch(filePath);
 
       if (!response.ok) throw new Error('File not found');
@@ -202,7 +205,7 @@ const AddAccessory = () => {
       // Convert CSV to Excel
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'StockIN');
+      XLSX.utils.book_append_sheet(wb, ws, 'Accessory');
 
       const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const excelBlob = new Blob([excelBuffer], {
@@ -210,7 +213,7 @@ const AddAccessory = () => {
       });
 
       // Save Excel file only
-      FileSaver.saveAs(excelBlob, 'StockIN.xlsx');
+      FileSaver.saveAs(excelBlob, 'Accessory.xlsx');
 
       console.log('Excel file downloaded successfully!');
     } catch (error) {
@@ -313,18 +316,18 @@ const AddAccessory = () => {
                         marginTop: '23px'
                       }}
                     >
-                      <FormField icon={FaUser} label="Remark" name="remark" value={formData.remark} onChange={handleChange} />
+                      <FormField icon={FaBookmark} label="Remark" name="remark" value={formData.remark} onChange={handleChange} />
                     </div>
                   </Col>
                   <Col>
                     <FormField
-                      icon={FaUser}
+                      icon={FaShoppingCart}
                       label="Accessory Name"
                       name="accessory_name"
                       value={formData.accessory_name}
                       onChange={handleChange}
                     />
-                    <FormField icon={FaUser} label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
+                    <FormField icon={MdDateRange } label="Date" type="date" name="date" value={formData.date} onChange={handleChange} />
                   </Col>
                 </Row>
                 {/* Submit Button */}

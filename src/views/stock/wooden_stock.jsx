@@ -191,7 +191,8 @@ const ShowProduct = () => {
       selector: (row) => row.remark,
       sortable: true,
       center: true
-    }
+    },
+    
   ];
 
   useEffect(() => {

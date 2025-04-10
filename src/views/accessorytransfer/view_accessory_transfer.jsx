@@ -52,6 +52,7 @@ const Index = () => {
           godown_supervisor: gatepass.godown_supervisors.name,
           warehouse_supervisor: gatepass.warehouse_supervisors.name,
           date: gatepass.gate_pass_date,
+          accept_pass_date: gatepass.accept_pass_date,
           total_amount: gatepass.total_amount,
           status: gatepass.status
         }));
@@ -107,17 +108,22 @@ const Index = () => {
       sortable: true
     },
     {
+      name: 'Accept Date',
+      selector: (row) => new Date(row.accept_pass_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      sortable: true
+    },
+    {
       name: 'Invoice Number',
       selector: (row) => row.gatepass_no,
       sortable: true
     },
     {
-      name: 'Godown Supervisor Name',
+      name: 'Receiver Name',
       selector: (row) => row.godown_supervisor,
       sortable: true
     },
     {
-      name: 'WareHouser Supervisor',
+      name: 'Sender Name',
       selector: (row) => row.warehouse_supervisor,
       sortable: true
     },
@@ -126,7 +132,7 @@ const Index = () => {
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
       cell: (row) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} >
+        < div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} >
           <span
             className={`badge ${row.status === 1 ? 'bg-success' : 'bg-danger'}`}
             style={{

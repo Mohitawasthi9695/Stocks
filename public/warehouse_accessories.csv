@@ -1,0 +1,47 @@
+SrNo,product_accessory,lot_no,length,length_unit,items,box_bundle,box_bundle_unit,remark,rack,date
+1,honey comb top channel ,LOT1,12,ft,12,2,box,No remark,R32,23-03-2025
+2,honey comb bottom channel ,LOT2,12,ft,12,3,box,1 pcs extra  ,Re,23-03-2026
+3,honey comb ATR single ,LOT3,12,ft,12,4,box,No remark,,23-03-2027
+4,honey comb ATR double,LOT4,12,ft,12,2,Packets,1 pcs extra  ,,23-03-2028
+5,honey comb cap,LOT5,,,12,3,Bundle,No remark,,23-03-2029
+6,honey comb control unit,LOT6,12,ft,12,4,box,2 pcs extra  ,,23-03-2030
+7,honey comb iron rod ,LOT7,12,ft,12,2,box,No remark,,23-03-2031
+8,honey comb chain,LOT8,12,ft,10,2,box,3 pcs extra  ,,23-03-2032
+9,wooden double doori 50MM AND 35 MM ,LOT9,12,ft,12,2,box,No remark,,23-03-2033
+10,top channel headrail normal,LOT10,12,ft,5,2,box,4 pcs extra  ,,23-03-2034
+11,channel group ,LOT11,12,ft,12,2,box,No remark,,23-03-2035
+12,ATR SET,LOT12,,,12,2,Packets,5 pcs extra  ,,23-03-2036
+13,LOCK ,LOT13,,,12,2,Bundle,No remark,,23-03-2037
+14,TILTER,LOT14,12,ft,12,3,box,6 pcs extra  ,,23-03-2038
+15,IRON ROD Wood,LOT15,12,ft,12,4,box,No remark,,23-03-2039
+16,CHANNEL CAP,LOT16,,,12,2,box,7 pcs extra  ,,23-03-2040
+17,MOTERISED TUBE ,LOT17,,,12,2,box,No remark,,23-03-2041
+18,TUSSEL ,LOT18,12,ft,12,2,box,8 pcs extra  ,,23-03-2042
+19,TRACK CHANNEL,LOT19,12,ft,12,2,box,No remark,,23-03-2043
+20,CHANNEL LOCK ,LOT20,,,12,3,Packets,9 pcs extra  ,,23-03-2044
+21,RUNNER ,LOT21,12,ft,12,4,Bundle,No remark,,23-03-2045
+22,OVERLAPER,LOT22,12,ft,12,2,box,10 pcs extra  ,,23-03-2046
+23,DRY UNIT,LOT23,12,ft,12,2,box,No remark,,23-03-2047
+24,BELT ,LOT24,12,ft,12,2,box,11 pcs extra  ,,23-03-2048
+25,JOINTER ,LOT25,12,ft,12,2,box,No remark,,23-03-2049
+26,MOTAR ,LOT26,,,12,2,box,12 pcs extra  ,,23-03-2050
+27,REMOTE ,LOT27,,,12,2,Packets,No remark,,23-03-2051
+28,CONTROL UNIT + DOORI ,LOT28,12,ft,12,2,Bundle,13 pcs extra  ,,23-03-2052
+29,ATR,LOT29,12,ft,12,2,box,No remark,,23-03-2053
+30,IRON ROD ,LOT30,,,12,2,box,14 pcs extra  ,,23-03-2054
+31,Roller End Cap White,LOT31,,,12,2,box,No remark,,23-03-2055
+32,New Roller End Cap White,LOT32,,,12,2,Packets,15 pcs extra  ,,23-03-2056
+33, Heavy Roller End Cap White,LOT33,,,12,2,Bundle,No remark,,23-03-2057
+34,Roller End Cap Brown,LOT34,,,12,2,box,16 pcs extra  ,,23-03-2058
+35,New RollerEnd  Cap Brown,LOT35,,,12,2,box,No remark,,23-03-2059
+36,Heavy Roller End Cap Brown,LOT36,,,12,2,box,17 pcs extra  ,,23-03-2060
+37,Zebra End Cap Brown,LOT37,,,12,2,box,No remark,,23-03-2061
+38,Zebra End Cap White,LOT38,,,12,2,Packets,18 pcs extra  ,,23-03-2062
+39,R TRACK CHANNEL,LOT39,12,ft,12,2,Bundle,No remark,,23-03-2063
+40,R CHANNEL LOCK ,LOT40,,,12,2,box,19 pcs extra  ,,23-03-2064
+41,R RUNNER ,LOT41,12,ft,12,2,box,No remark,,23-03-2065
+42,R OVERLAPER,LOT42,12,ft,12,2,Packets,20 pcs extra  ,,23-03-2066
+43,R DRY UNIT,LOT43,12,ft,12,2,Bundle,No remark,,23-03-2067
+44,R BELT ,LOT44,12,ft,12,2,box,21 pcs extra  ,,23-03-2068
+45,R JOINTER ,LOT45,12,ft,12,2,box,No remark,,23-03-2069
+46,R MOTAR ,LOT46,12,ft,12,2,box,22 pcs extra  ,,23-03-2070

@@ -66,6 +66,18 @@ const Index = () => {
     fetchInvoices();
   }, []);
   const handleApprove = async (id) => {
+
+    const result  = await Swal.fire({
+      title: 'Are you sure?',
+    text: 'Do you really want to approve this gate pass?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#14ab7f',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, approve it!'
+    })
+
+    if(result.isConfirmed) {
     try {
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/api/godowns/gatepass/${id}/approve`,
@@ -82,6 +94,7 @@ const Index = () => {
     } catch (error) {
       toast.error('Failed to approve gate pass');
     }
+  }
   };
   const handleReject = async (id) => {
     try {
@@ -340,32 +353,6 @@ const Index = () => {
     saveAs(blob, 'gate_pass_list.csv');
     toast.success('CSV exported successfully!');
   };
-
-  // Export PDF
-  // const exportToPDF = () => {
-  //   if (!filteredInvoices || filteredInvoices.length === 0) {
-  //     toast.error('No data available for export.');
-  //     return;
-  //   }
-
-  //   const doc = new jsPDF();
-  //   doc.text('Gate Pass List', 20, 10);
-
-  //   doc.autoTable({
-  //     head: [['Sr No', 'Gate Pass No', 'Godown Supervisor', 'Warehouse Supervisor', 'Date', 'Status']],
-  //     body: filteredInvoices.map((row, index) => [
-  //       index + 1,
-  //       row.gatepass_no,
-  //       row.godownSupervisor,
-  //       row.warehouseSupervisor,
-  //       row.date || 'N/A',
-  //       row.status === 1 ? 'Approved' : 'Pending'
-  //     ])
-  //   });
-
-  //   doc.save('gate_pass_list.pdf');
-  //   toast.success('PDF exported successfully!');
-  // };
 
   const exportToPDF = () => {
     if (filteredInvoices.length === 0) {

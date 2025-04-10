@@ -29,6 +29,8 @@ const Invoice_out = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [selectedRows, setSelectedRows] = useState([]);
   const [type, setType] = useState(0);
+  // Track which rows are checked
+  const [checkedRows, setCheckedRows] = useState({});
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -52,6 +54,7 @@ const Invoice_out = () => {
     const categoryId = event.target.value;
     setSelectedCategoryId(categoryId);
     setAccessories([]);
+    setCheckedRows({}); // Reset checked rows when changing category
     if (categoryId) {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/category/${categoryId}`, {
@@ -72,6 +75,7 @@ const Invoice_out = () => {
   const handleaccessoriesChange = async (event) => {
     setLoading(true);
     const selectedProductId = event.target.value;
+    setCheckedRows({}); // Reset checked rows when changing accessory
     if (selectedProductId) {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godown/getaccessory/${selectedProductId}`, {
@@ -111,12 +115,12 @@ const Invoice_out = () => {
           const updatedRow = { ...row, [field]: value };
 
           // Calculate amount if rate is provided
-          if (field === 'rate' || field === 'out_pcs' || field === 'length') {
+          if (field === 'rate' || field === 'quantity' || field === 'length') {
             const rate = parseFloat(field === 'rate' ? value : row.rate || 0);
             let quantity = 0;
 
             if (updatedRow.type === 0) { // PCS type
-              quantity = parseFloat(updatedRow.out_pcs || 0);
+              quantity = parseFloat(updatedRow.quantity || 0);
             } else { // Dimension type
               quantity = parseFloat(updatedRow.length || 0);
             }
@@ -156,22 +160,26 @@ const Invoice_out = () => {
       // Transform the selected rows into the format expected by the API
       const formattedData = selectedRows.map(row => {
         return {
-          stockout_details_id: id,
+          stockout_details_id: parseInt(id),
           godown_accessory_id: row.godown_id || row.id,
           product_accessory_id: row.product_accessory_id || row.accessory_id,
+          hsn_sac_code: row.hsn_sac_code || null,
+          lot_no: row.lot_no || null,
+          date: row.date || null,
           stock_code: row.stock_code || "",
-          lot_no: row.lot_no || "",
-          length: row.type === 1 ? row.length : null,
-          length_unit: row.type === 1 ? row.length_unit : null,
+          length: row.type === 1 ? parseFloat(row.length) || null : null,
+          length_unit: row.type === 1 ? row.length_unit || null : null,
           items: row.items || "",
-          rate: parseFloat(row.rate) || 0,
-          gst: parseFloat(row.gst) || 0,
-          amount: parseFloat(row.amount) || 0,
+          rate: row.rate ? parseFloat(row.rate) : null,
+          gst: row.gst ? parseFloat(row.gst) : null,
+          amount: row.amount ? parseFloat(row.amount) : null,
           box_bundle: row.box_bundle || "",
-          out_quantity: row.type === 0 ? parseFloat(row.out_pcs) : 0,
-          quantity: parseFloat(row.quantity) || 0,
+          out_quantity: row.type === 0 ? parseFloat(row.quantity) || null : null,
+          quantity: row.quantity ? parseFloat(row.quantity) : null,
         };
       });
+
+      console.log('Sending API Request with data:', JSON.stringify(formattedData, null, 2));
 
       console.log('Sending API Request with data:', formattedData);
       const response = await axios.post(
@@ -187,9 +195,9 @@ const Invoice_out = () => {
 
       console.log('Response:', response.data);
       toast.success('Invoice created successfully!');
-      navigate('/all-invoices-out');
+      navigate('/operator_invoice');
     } catch (error) {
-      console.error('API Error:', error.response?.data || error);
+      console.error('API Error:', error);
       toast.error(error.response?.data?.message || 'Error processing request');
     }
   };
@@ -207,29 +215,41 @@ const Invoice_out = () => {
   ];
 
   const handleCheckboxChange = (id) => {
-    setSelectedRows((prevSelected) => {
-      const isAlreadySelected = prevSelected.some((row) => row.id === id);
-      if (!isAlreadySelected) {
-        const selectedProduct = products.find((p) => p.id === id);
-        if (selectedProduct) {
-          return [...prevSelected, {
-            ...selectedProduct,
-            row_id: new Date().getTime(),
-            type: 0, // Default to PCS type
-            out_pcs: 0,
-            rate: 0,
-            amount: 0
-          }];
+    setCheckedRows(prev => {
+      const newCheckedRows = { ...prev };
+      newCheckedRows[id] = !prev[id];
+      return newCheckedRows;
+    });
+    if (!checkedRows[id]) {
+      const selectedProduct = products.find(p => p.godown_id === id || p.id === id);
+      if (selectedProduct) {
+        const isAlreadySelected = selectedRows.some(row =>
+          (row.godown_id && row.godown_id === selectedProduct.godown_id) ||
+          row.id === selectedProduct.id
+        );
+        if (!isAlreadySelected) {
+          setSelectedRows(prevSelected => [
+            ...prevSelected,
+            {
+              ...selectedProduct,
+              row_id: new Date().getTime() + Math.random(),
+              type: 0,
+              rate: 0,
+              amount: 0
+            }
+          ]);
         }
       }
-      return prevSelected;
-    });
+    }
   };
 
   const mainColor = '#3f4d67';
 
   const handleAddRow = (originalRow) => {
-    const newRow = { ...originalRow, row_id: new Date().getTime() };
+    const newRow = {
+      ...originalRow,
+      row_id: new Date().getTime() + Math.random()
+    };
     setSelectedRows(prevRows => [...prevRows, newRow]);
   };
 
@@ -241,14 +261,10 @@ const Invoice_out = () => {
     setSelectedRows((prevRows) => prevRows.map((row) => {
       if (row.row_id === rowId) {
         const newType = row.type === 0 ? 1 : 0;
-
-        // Reset the values that are not applicable to the new type
         if (newType === 0) {
-          // PCS type
-          return { ...row, type: newType, length: "", length_unit: "" };
+          return { ...row, type: newType };
         } else {
-          // Dimension type
-          return { ...row, type: newType, out_pcs: "" };
+          return { ...row, type: newType };
         }
       }
       return row;
@@ -345,7 +361,7 @@ const Invoice_out = () => {
                                 <thead className="table-dark">
                                   <tr>
                                     <th scope="col" style={{ width: '50px' }}>
-                                      <input type="checkbox" />
+                                      Select
                                     </th>
                                     {columns.map((column) => (
                                       <th key={column.id} scope="col">
@@ -355,16 +371,23 @@ const Invoice_out = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {products.map((row) => (
-                                    <tr key={row.godown_id || row.id}>
-                                      <td>
-                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.id)} />
-                                      </td>
-                                      {columns.map((column) => (
-                                        <td key={column.id}>{row[column.id]} </td>
-                                      ))}
-                                    </tr>
-                                  ))}
+                                  {products.map((row) => {
+                                    const rowId = row.godown_id || row.id;
+                                    return (
+                                      <tr key={rowId}>
+                                        <td>
+                                          <input
+                                            type="checkbox"
+                                            onChange={() => handleCheckboxChange(rowId)}
+                                            checked={!!checkedRows[rowId]}
+                                          />
+                                        </td>
+                                        {columns.map((column) => (
+                                          <td key={column.id}>{row[column.id]} </td>
+                                        ))}
+                                      </tr>
+                                    );
+                                  })}
                                 </tbody>
                               </table>
                             </div>
@@ -470,7 +493,7 @@ const Invoice_out = () => {
                                         value={row.quantity || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
                                         onChange={(e) => handleInputChange(row.row_id, 'quantity', e.target.value)}
-                                        disabled={row.type === 1} // Properly disable when type is 1
+                                        disabled={row.type === 1} 
                                       />
                                     </td>
                                     <td>{row.box_bundle}</td>

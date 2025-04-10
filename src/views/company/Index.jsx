@@ -84,14 +84,16 @@ const ReceiversPage = () => {
       name: 'Company Name',
       selector: (row) => row.name,
       sortable: true,
-      width: '230px',
+      width: '200px',
+      center: true,
+      wrap: true
       
     },
     {
       name: 'Code',
       selector: (row) => row.code,
       sortable: true,
-      width: '100px'
+      width: '150px'
     },
     {
       name: 'GST No',
@@ -102,76 +104,99 @@ const ReceiversPage = () => {
     {
       name: 'CIN No',
       selector: (row) => row.cin_no,
-      sortable: true
+      sortable: true,
+      center: true,
+      wrap: true,
+      width: '150px'
     },
     {
       name: 'PAN No',
       selector: (row) => row.pan_no,
-      sortable: true
+      sortable: true,
+      center: true,
+      wrap: true,
+      width: '150px'
     },
     {
       name: 'MSME No',
       selector: (row) => row.msme_no,
       sortable: true,
-      width: '150px'
+      width: '150px',
+      center: true,
+      wrap: true
     },
     {
       name: 'Phone',
       selector: (row) => row.tel_no,
       sortable: true,
-      width: '150px'
+      width: '150px',
+      center: true,
+      wrap: true
     },
     {
       name: 'Email',
       selector: (row) => row.email,
       sortable: true,
-      width: '220px'
+      width: '220px',
+      center: true,
+      wrap: true
     },
     {
       name: 'Owner Mobile',
       selector: (row) => row.owner_mobile,
-      sortable: true
+      sortable: true,
+      center: true,
+      wrap: true,
+      width: '150px'
     },
     {
       name: 'Registered Address',
       selector: (row) => row.reg_address,
       sortable: true,
-      cell: (row) => (
-        <details>
-          <summary
-            style={{
-              cursor: 'pointer'
-            }}
-          >
-            {row.reg_address.replace('\n', ', ').slice(0, 20)} {/* Show first 50 characters truncated */}
-          </summary>
-          <span>{row.reg_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
-        </details>
-      )
+      center: true,
+      wrap: true,
+      width: '200px'
+      // cell: (row) => (
+      //   <details>
+      //     <summary
+      //       style={{
+      //         cursor: 'pointer'
+      //       }}
+      //     >
+      //       {row.reg_address.replace('\n', ', ').slice(0, 20)} {/* Show first 50 characters truncated */}
+      //     </summary>
+      //     <span>{row.reg_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
+      //   </details>
+      // )
     },
     {
       name: 'Work Address',
       selector: (row) => row.work_address,
       sortable: true,
-      cell: (row) => (
-        <details>
-          <summary
-            style={{
-              cursor: 'pointer'
-            }}
-          >
-            {row.work_address.replace('\n', ', ').slice(0, 20)} {/* Show first 50 characters truncated */}
-          </summary>
-          <span>{row.work_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
-        </details>
-      )
+      center: true,
+      wrap: true,
+      width: '200px'
+      // cell: (row) => (
+      //   <details>
+      //     <summary
+      //       style={{
+      //         cursor: 'pointer'
+      //       }}
+      //     >
+      //       {row.work_address.replace('\n', ', ').slice(0, 20)} {/* Show first 50 characters truncated */}
+      //     </summary>
+      //     <span>{row.work_address.replace('\n', ', ')}</span> {/* Show full address when expanded */}
+      //   </details>
+      // )
     },
 
     {
       name: 'Area',
       selector: (row) => row.area,
       sortable: true,
-      width: '200px'
+      width: '200px',
+      center: true,
+      wrap: true
     },
     {
       name: 'Action',

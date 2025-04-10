@@ -22,7 +22,9 @@ const AddProduct = () => {
       items: '',
       box_bundle: '',
       box_bundle_unit: '',
-      quantity: '0'
+      quantity: '0',
+      rack: '',
+      remark: ''
     }
   ]);
 
@@ -105,6 +107,7 @@ const AddProduct = () => {
       box_bundle_unit: item.box_bundle_unit,
       quantity: item.quantity,
       remark: item.remark,
+      rack: item.rack,
     }));
     console.log(payload);
     try {
@@ -115,7 +118,7 @@ const AddProduct = () => {
         }
       });
       toast.success('Stock added successfully');
-      navigate('/godown_accessories');
+      navigate('/godown_accessory');
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'Error adding stock');
@@ -163,7 +166,7 @@ const AddProduct = () => {
           text: 'Stock added successfully!'
         }).then(() => {
           setFile(null);
-          navigate('/godown_accessories');
+          navigate('/godown_accessory');
         });
       }
     } catch (error) {
@@ -289,6 +292,7 @@ const AddProduct = () => {
                       <th>Box/Bundle</th>
                       <th>Type</th>
                       <th>Total Quantity</th>
+                      <th>Rack</th>
                       <th>Remark</th>
                       <th>Action</th>
                     </tr>
@@ -395,6 +399,16 @@ const AddProduct = () => {
                             readOnly
                             disabled
                             style={{ fontSize: '0.9rem', width: '6rem',padding: '0.5rem' }}
+
+                          />
+                        </td>
+                        <td style={{ minWidth: "100px" }}>
+                          <Form.Control
+                            size="sm"
+                            type="text"
+                            value={item.rack}
+                            onChange={(e) => handleRowChange(index, 'rack', e.target.value)}
+                            style={{ fontSize: '0.9rem', width: '10rem',padding: '0.5rem' }}
 
                           />
                         </td>
