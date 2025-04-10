@@ -48,6 +48,7 @@ const Index = () => {
             supplier_name: invoice.supplier.name,
             agent: invoice.agent,
             date: invoice.date,
+            ack_date: invoice.ack_date,
             total_amount: invoice.total_amount
           }));
         };
@@ -95,6 +96,13 @@ const Index = () => {
       selector: (row) => new Date(row.date).toLocaleDateString('en-GB'), // Format: DD/MM/YYYY
       sortable: true, 
       center: true, 
+      width: '100px'
+    },
+    {
+      name: 'Ack Date',
+      selector: (row) => new Date(row.ack_date).toLocaleDateString('en-GB'), // Format: DD/MM/YYYY,
+      sortable: true,
+      center: true,
       width: '100px'
     },
     {

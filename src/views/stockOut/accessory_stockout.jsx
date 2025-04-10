@@ -20,7 +20,6 @@ import { FaExchangeAlt } from 'react-icons/fa';
 
 const Invoice_out = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [products, setProducts] = useState([]);
@@ -31,7 +30,7 @@ const Invoice_out = () => {
   const [type, setType] = useState(0);
   // Track which rows are checked
   const [checkedRows, setCheckedRows] = useState({});
-
+  const { id } = useParams();
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -136,7 +135,6 @@ const Invoice_out = () => {
       });
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -493,7 +491,7 @@ const Invoice_out = () => {
                                         value={row.quantity || ''}
                                         className="py-2 border border-gray-300 px-2 w-full"
                                         onChange={(e) => handleInputChange(row.row_id, 'quantity', e.target.value)}
-                                        disabled={row.type === 1} 
+                                        disabled={row.type === 1}
                                       />
                                     </td>
                                     <td>{row.box_bundle}</td>

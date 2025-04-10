@@ -68,7 +68,15 @@ const Index = () => {
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = invoices.filter((invoice) => invoice.godownSupervisor.toLowerCase().includes(lowercasedQuery));
+    const filtered = invoices.filter((invoice) => {
+      return (
+        invoice.gatepass_no.toLowerCase().includes(lowercasedQuery) ||
+      invoice.godownSupervisor.toLowerCase().includes(lowercasedQuery) ||
+      invoice.warehouseSupervisor.toLowerCase().includes(lowercasedQuery) ||
+      new Date(invoice.date).toLocaleDateString('en-GB').includes(lowercasedQuery) ||
+      invoice.date.toLowerCase().includes(lowercasedQuery)
+      );
+    });
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
 

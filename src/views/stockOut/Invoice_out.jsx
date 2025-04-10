@@ -217,25 +217,15 @@ const Invoice_out = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     console.log('Submitting Invoice with Data:', formData);
-  
+
     if (formData.out_products.length === 0) {
       toast.error('Please select at least one product.');
       return;
     }
-  
-    // Sorting validation - check if lengths are in non-increasing order
-    for (let i = 0; i < formData.out_products.length - 1; i++) {
-      const currentLength = parseFloat(formData.out_products[i].length) || 0;
-      const nextLength = parseFloat(formData.out_products[i + 1].length) || 0;
-  
-      if (currentLength < nextLength) {
-        toast.error(`Row ${i + 1} length should be greater than or equal to Row ${i + 2}`);
-        return;
-      }
-    }
-  
+
+
     for (let product of formData.out_products) {
       if (!product.rate || isNaN(product.rate)) {
         toast.error('Each product must have a valid rate.');
@@ -246,7 +236,7 @@ const Invoice_out = () => {
         return;
       }
     }
-  
+
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to create a new Invoice?',
@@ -255,9 +245,9 @@ const Invoice_out = () => {
       confirmButtonColor: '#20B2AA',
       confirmButtonText: 'Yes, create it!'
     });
-  
+
     if (!result.isConfirmed) return;
-  
+
     try {
       console.log('Sending API Request...');
       const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/godownstockout`, formData, {
@@ -266,7 +256,7 @@ const Invoice_out = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
-  
+
       console.log('Response:', response.data);
       toast.success('Invoice created successfully!');
       navigate('/all-invoices-out');
@@ -274,27 +264,6 @@ const Invoice_out = () => {
       console.error('API Error:', error.response?.data?.message || error);
       toast.error(error.response?.data?.message || 'Error processing request');
     }
-  };
-  
-  const convertLengthAndWidth = (length, width, lengthUnit, widthUnit) => {
-    const conversionFactors = {
-      Meter: 1,
-      Inch: 0.0254,
-      Feet: 0.3048
-    };
-
-    let convertedLength = length * conversionFactors[lengthUnit];
-    let convertedWidth = width * conversionFactors[widthUnit];
-
-    // Convert to the base unit (Meter)
-    if (lengthUnit !== 'Meter') {
-      convertedLength = convertedLength / conversionFactors[lengthUnit];
-    }
-    if (widthUnit !== 'Meter') {
-      convertedWidth = convertedWidth / conversionFactors[widthUnit];
-    }
-
-    return { convertedLength, convertedWidth };
   };
 
   const columns = [
@@ -329,84 +298,42 @@ const Invoice_out = () => {
   console.log('data', formData.invoice_no);
   const mainColor = '#3f4d67';
 
-  // const handleInputChange = (id, field, value) => {
-  //   setSelectedRows((prevSelectedRows) => {
-  //     const updatedRows = prevSelectedRows.map((row) => {
-  //       if (row.row_id === id) {
-  //         // Use row_id for matching
-  //         const updatedRow = { ...row, [field]: value };
 
-  //         // Ensure `amount` updates when `rate` or dimensions change
-  //         if (['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)) {
-  //           updatedRow.amount = calculateAmount(updatedRow);
-  //         }
 
-  //         return updatedRow; // Return the updated row
-  //       }
-  //       return row; // Return unchanged rows
-  //     });
-
-  //     // Update `out_products` in formData
-  //     setFormData((prevFormData) => ({
-  //       ...prevFormData,
-  //       out_products: updatedRows
-  //     }));
-
-  //     // Update total amount whenever selected rows change
-  //     updateTotalAmount(updatedRows);
-
-  //     return updatedRows; // Return the updated rows
-  //   });
-  // };
   const handleInputChange = (id, field, value) => {
     setSelectedRows((prevSelectedRows) => {
-      const updatedRows = prevSelectedRows.map((row) => ({ ...row })); // Clone array to avoid mutation
-      const rowIndex = updatedRows.findIndex((row) => row.row_id === id);
+      const editedRowIndex = prevSelectedRows.findIndex((row) => row.row_id === id);
+      const updatedRows = [...prevSelectedRows];
   
-      if (rowIndex !== -1) {
-        if (field === "product_category") {
-          // If category changes, reset length validation only for that category
-          updatedRows[rowIndex][field] = value;
-          updatedRows[rowIndex]["length"] = ""; // Reset length field
-          return updatedRows;
+      // Update the specific field
+      updatedRows[editedRowIndex] = {
+        ...updatedRows[editedRowIndex],
+        [field]: value,
+      };
+      // Update amount calculation
+      const finalRows = updatedRows.map((row) => {
+        if (
+          row.row_id === id &&
+          ['rate', 'width', 'length', 'out_pcs', 'width_unit', 'length_unit'].includes(field)
+        ) {
+          return { ...row, amount: calculateAmount({ ...row, [field]: value }) };
         }
+        return row;
+      });
   
-        if (field === "length") {
-          const newLength = parseFloat(value);
-          const prevRow = updatedRows[rowIndex - 1];
-          const nextRow = updatedRows[rowIndex + 1];
-  
-          // Ensure length validation applies only within the same category
-          if (prevRow && prevRow.product_category === updatedRows[rowIndex].product_category && newLength >= parseFloat(prevRow.length)) {
-            toast.error("Length must be less than the previous row for the same product category!");
-            return prevSelectedRows; // Keep previous state (prevent update)
-          }
-  
-          if (nextRow && nextRow.product_category === updatedRows[rowIndex].product_category && newLength <= parseFloat(nextRow.length)) {
-            toast.error("Length must be greater than the next row for the same product category!");
-            return prevSelectedRows; // Keep previous state (prevent update)
-          }
-        }
-  
-        updatedRows[rowIndex][field] = value; // Allow valid updates
-  
-        // Update amount calculation if needed
-        updatedRows[rowIndex].amount = calculateAmount(updatedRows[rowIndex]);
-      }
-  
-      // Update state
+      // Update formData.out_products
       setFormData((prevFormData) => ({
         ...prevFormData,
-        out_products: updatedRows
+        out_products: finalRows,
       }));
   
-      updateTotalAmount(updatedRows);
-      return updatedRows;
+      updateTotalAmount(finalRows);
+      return finalRows;
     });
   };
   
 
-  
+
   const updateTotalAmount = (rows, updatedForm = formData) => {
     let totalAmount = 0;
 
@@ -828,9 +755,10 @@ const Invoice_out = () => {
                                     </td>
                                     <td key="product_category">{row.product_category}</td>
                                     <td key="shadeNo">{row.product_shadeNo}</td>
-                                    <td key="pur_shadeNo">{row.product_shadeNo}</td> <td key="lot_no">{row.lot_no}</td>
+                                    <td key="pur_shadeNo">{row.product_purchase_shade_no
+                                    }</td> <td key="lot_no">{row.lot_no}</td>
                                     <td key="stock_code">{row.stock_code}</td>
-                                   
+
                                     <td>
                                       <input
                                         type="text"
@@ -851,7 +779,6 @@ const Invoice_out = () => {
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
                                         <option value="cm">cm</option>
-                                        <option value="ft">Feet</option>
                                       </select>
                                     </td>
                                     <td>
@@ -874,7 +801,6 @@ const Invoice_out = () => {
                                         <option value="Meter">Meter</option>
                                         <option value="Inch">Inch</option>
                                         <option value="cm">cm</option>
-                                        <option value="ft">Feet</option>
                                       </select>
                                     </td>
                                     <td>

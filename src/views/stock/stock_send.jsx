@@ -8,6 +8,7 @@ import Skeleton from 'react-loading-skeleton';
 import DataTable from 'react-data-table-component';
 import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import Swal from 'sweetalert2';
+import Select from 'react-select';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import {
@@ -133,6 +134,12 @@ const Invoice_out = () => {
     };
     fetchInvoiceNo();
   }, []);
+
+  const shadeOptions = shadeNo.map((shade) => ({
+    value: shade.id,
+    label: `${shade.shadeNo} / ${shade.purchase_shade_no}`,
+    purchase_shade_no: shade.purchase_shade_no
+  }));
 
   const handleShadeNoChange = async (event) => {
     setLoading(true);
@@ -410,6 +417,24 @@ const Invoice_out = () => {
                           </option>
                         ))}
                       </Form.Control>
+
+                      {/* <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        isDisabled={!selectedCategoryId}
+                        placeholder="Search Shade No"
+                        options={shadeOptions}
+                        onChange={handleShadeNoChange}
+                       
+                        styles={{
+                          menuList: (provided) => ({
+                            ...provided,
+                            maxHeight: '200px', // Adjust this value to control the visible height
+                            overflowY: 'auto'
+                          })
+                        }}
+                      /> */}
+                     
                     </Form.Group>
                   </div>
 
@@ -449,10 +474,7 @@ const Invoice_out = () => {
                                   {products.map((row) => (
                                     <tr key={row.stock_available_id}>
                                       <td>
-                                        <input
-                                          type="checkbox"
-                                          onChange={() => handleCheckboxChange(row.stock_available_id)}
-                                        />
+                                        <input type="checkbox" onChange={() => handleCheckboxChange(row.stock_available_id)} />
                                       </td>
                                       {columns.map((column) => (
                                         <td key={column.id}>
@@ -492,8 +514,12 @@ const Invoice_out = () => {
                                     <td key="shadeNo">{row.product_shadeNo}</td>
                                     <td key="pur_shadeNo">{row.product_shadeNo}</td>
                                     <td key="lot_no">{row.lot_no}</td>
-                                    <td key="width">{row.width} {row.width_unit}</td>
-                                    <td key="length">{row.length} {row.length_unit}</td>
+                                    <td key="width">
+                                      {row.width} {row.width_unit}
+                                    </td>
+                                    <td key="length">
+                                      {row.length} {row.length_unit}
+                                    </td>
                                     <td key="pcs">{row.pcs}</td>
                                     <td key="out_quantity">
                                       <input
@@ -507,7 +533,7 @@ const Invoice_out = () => {
                                     <td key="type">
                                       <input
                                         type="checkbox"
-                                        checked={row.type === 'gatepass'} 
+                                        checked={row.type === 'gatepass'}
                                         onChange={(e) =>
                                           handleInputChange(row.stock_available_id, 'type', e.target.checked ? 'gatepass' : 'stock')
                                         }

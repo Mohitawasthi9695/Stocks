@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { Table, Form, Button, Container, Row, Col } from 'react-bootstrap';
@@ -7,6 +7,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
+import Select from 'react-select';
 
 const AddProduct = () => {
   const { id, no } = useParams();
@@ -50,6 +51,8 @@ const AddProduct = () => {
     };
     fetchCategories();
   }, []);
+
+  const fileInputRef = useRef(null);
 
   const handleCategoryChange = async (event, index) => {
     const categoryId = event.target.value;
@@ -124,6 +127,7 @@ const AddProduct = () => {
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
 
+
       if (field === 'product_id') {
         const selectedProduct = updatedItems[index].products.find(
           (product) => product.id === parseInt(value)
@@ -157,6 +161,15 @@ const AddProduct = () => {
     if (!file) {
       toast.error('Please select a file to upload.');
       return;
+    }
+
+    if (response.status === 201) {
+      toast.success('Stock added successfully');
+      setFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''; // 🔄 Reset file input field
+      }
+      navigate('/stocks');
     }
 
     const formData = new FormData();
@@ -283,6 +296,7 @@ const AddProduct = () => {
                         id="excel"
                         onChange={handleFileChange}
                         style={{ fontSize: '0.9rem' }}
+                        ref={fileInputRef}
                       />
                       <button
                         type="submit"
@@ -362,6 +376,7 @@ const AddProduct = () => {
                               ))}
                             </Form.Control>
                           </td>
+                         
                           <td className="p-1">
                             <Form.Control
                               type="date"
@@ -453,14 +468,9 @@ const AddProduct = () => {
                               style={{ fontSize: '1rem', width: '5rem' }}
                             />
                           </td>
-                          <td className="p-1">
-                            <Button
-                              variant="danger"
-                              onClick={() => handleDeleteRow(index)}
-                              size="sm"
-                              className="py-1 px-2"
-                            >
-                              <FaTrash size={12} />
+                          <td>
+                            <Button variant="danger" onClick={() => handleDeleteRow(index)} style={{ fontSize: '0.8rem', height: '2rem' }}>
+                              <FaTrash />
                             </Button>
                           </td>
                         </tr>

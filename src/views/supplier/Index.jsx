@@ -72,7 +72,8 @@ const SuppliersPage = () => {
       name: 'Sr No',
       selector: (_, index) => index + 1,
       sortable: true,
-      width: '85px'
+      width: '85px',
+      wrap: true
     },
     {
       name: 'Supplier Name',
@@ -85,7 +86,8 @@ const SuppliersPage = () => {
       name: 'Code',
       selector: (row) => row.code,
       sortable: true,
-      width: '120px'
+      width: '120px',
+      wrap: true
    
 
     },
@@ -93,42 +95,51 @@ const SuppliersPage = () => {
       name: 'GST No',
       selector: (row) => row.gst_no,
       sortable: true,
-      width: '150px'
+      width: '150px',
+      wrap: true
     },
     {
       name: 'CIN No',
       selector: (row) => row.cin_no,
       sortable: true,
-      width: '150px'
+      width: '150px',
+      wrap: true
     },
     {
       name: 'PAN No',
       selector: (row) => row.pan_no,
       sortable: true,
-      width: '120px'
+      width: '120px',
+      wrap: true
     },
     {
       name: 'MSME No',
       selector: (row) => row.msme_no,
       sortable: true,
-      width: '150px'
+      width: '150px',
+      wrap: true
     },
     {
       name: 'Phone',
       selector: (row) => row.tel_no,
-      sortable: true
+      sortable: true,
+      wrap: true,
+      width: '120px'
     },
     {
       name: 'Email',
       selector: (row) => row.email,
       sortable: true,
-      width: '190px'
+      width: '190px',
+      wrap: true
     },
     {
       name: 'Owner Mobile',
       width: '150px',
       selector: (row) => row.owner_mobile,
-      sortable: true
+      sortable: true,
+      wrap: true,
+      width: '120px'
     },
     {
       name: 'Registered Address',

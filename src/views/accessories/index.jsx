@@ -49,6 +49,7 @@ const SuppliersPage = () => {
     const filtered = suppliers.filter((supplier) => {
       const statusText = supplier.status === 1 ? 'active' : 'inactive';
       return (
+        (supplier.date && new Date(supplier.date).toLocaleDateString('en-IN').toLowerCase().includes(lowercasedQuery)) ||
         (supplier.product_category && supplier.product_category.toLowerCase().includes(lowercasedQuery)) ||
         (supplier.accessory_name && typeof supplier.accessory_name === 'string' && supplier.accessory_name.toLowerCase().includes(lowercasedQuery)) ||
         (supplier.accessory_name && typeof supplier.accessory_name === 'object' && supplier.accessory_name.code && supplier.accessory_name.code.toLowerCase().includes(lowercasedQuery)) ||
