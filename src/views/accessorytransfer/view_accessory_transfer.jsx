@@ -32,7 +32,7 @@ const Index = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/?type=transfer`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/getStockgatepass?type=accessoryTransfer`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -40,8 +40,7 @@ const Index = () => {
         });
 
         const invoicesDetails = response.data.data;
-
-        console.log(response.data.data);
+        console.log(invoicesDetails);
         setInvoiceAllDetails(invoicesDetails);
 
         const filteredFields = invoicesDetails.map((gatepass) => ({
