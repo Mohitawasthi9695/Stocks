@@ -102,7 +102,6 @@ const AddProduct = () => {
       items: item.items,
       box_bundle: item.box_bundle,
       box_bundle_unit: item.box_bundle_unit,
-      quantity: item.quantity
     }));
     console.log(payload);
     try {

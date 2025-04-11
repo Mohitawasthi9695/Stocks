@@ -318,7 +318,9 @@ const Index = () => {
     }
 
     // Extract column headers dynamically from `columns` array
+
     const headers = columns.map((col) => col.name);
+    
 
     // Prepare CSV data dynamically
     const csvData = filteredInvoices.map((row, index) => {
@@ -340,24 +342,63 @@ const Index = () => {
     toast.success('CSV exported successfully!');
   };
 
+  // const exportToPDF = () => {
+  //   if (!filteredInvoices || filteredInvoices.length === 0) {
+  //     toast.error('No data available for export.');
+  //     return;
+  //   }
+
+  //   const doc = new jsPDF();
+  //   doc.setFontSize(14);
+  //   doc.text('Gate Pass Data', 80, 10);
+
+  //   // Extract headers from `columns` array
+  //   const headers = columns.map((col) => col.name);
+
+  //   // Prepare data dynamically
+  //   const body = filteredInvoices.map((row, index) => {
+  //     return columns.map((col) => (typeof col.selector === 'function' ? col.selector(row) : 'N/A'));
+  //   });
+
+  //   doc.autoTable({
+  //     head: [headers],
+  //     body: body,
+  //     startY: 20,
+  //     theme: 'grid',
+  //     styles: { fontSize: 9, cellPadding: 3 },
+  //     headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 8 },
+  //     alternateRowStyles: { fillColor: [240, 240, 240] },
+  //     margin: { top: 20 }
+  //   });
+
+  //   doc.save('gatepass_data.pdf');
+  //   toast.success('PDF exported successfully!');
+  // };
+
+
   const exportToPDF = () => {
     if (!filteredInvoices || filteredInvoices.length === 0) {
       toast.error('No data available for export.');
       return;
     }
-
+  
     const doc = new jsPDF();
     doc.setFontSize(14);
     doc.text('Gate Pass Data', 80, 10);
-
-    // Extract headers from `columns` array
-    const headers = columns.map((col) => col.name);
-
-    // Prepare data dynamically
-    const body = filteredInvoices.map((row, index) => {
-      return columns.map((col) => (typeof col.selector === 'function' ? col.selector(row) : 'N/A'));
+  
+    // Filter out 'Status' column
+    const columnsWithoutStatus = columns.filter((col) => col.name !== 'Status' && col.name !== 'Action');
+  
+    // Extract headers excluding 'Status'
+    const headers = columnsWithoutStatus.map((col) => col.name && col.name !== 'Action');
+  
+    // Prepare data excluding 'Status'
+    const body = filteredInvoices.map((row) => {
+      return columnsWithoutStatus.map((col) =>
+        typeof col.selector === 'function' ? col.selector(row) : 'N/A'
+      );
     });
-
+  
     doc.autoTable({
       head: [headers],
       body: body,
@@ -368,11 +409,14 @@ const Index = () => {
       alternateRowStyles: { fillColor: [240, 240, 240] },
       margin: { top: 20 }
     });
-
+  
     doc.save('gatepass_data.pdf');
     toast.success('PDF exported successfully!');
   };
 
+  
+
+  
   return (
     <div className="container-fluid pt-4" style={{ border: '3px dashed #14ab7f', borderRadius: '8px', background: '#ff9d0014' }}>
       <div className="row mb-3">

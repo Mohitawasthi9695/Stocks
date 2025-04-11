@@ -123,11 +123,12 @@ const SuppliersPage = () => {
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`<span class="math-inline">\{import\.meta\.env\.VITE\_API\_BASE\_URL\}/api/accessory/</span>{supplierId}`, {
+        await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/${supplierId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         });
+        
         setSupplier((prevSuppliers) => prevSuppliers.filter((supplier) => supplier.id !== supplierId));
         setFilteredSupplier((prevFilteredSuppliers) => prevFilteredSuppliers.filter((supplier) => supplier.id !== supplierId));
         toast.success('Accessory deleted successfully');

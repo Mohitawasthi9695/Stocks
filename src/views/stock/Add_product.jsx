@@ -150,44 +150,40 @@ const AddProduct = () => {
     }
   };
 
-  const handleFileUpload = async (e) => {
-    e.preventDefault();
+const handleFileUpload = async (e) => {
+  e.preventDefault();
 
-    if (!file) {
-      toast.error('Please select a file to upload.');
-      return;
-    }
+  if (!file) {
+    toast.error('Please select a file to upload.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('csv_file', file);
+
+  try {
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/import-csv`, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
 
     if (response.status === 201) {
       toast.success('Stock added successfully');
       setFile(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ''; // 🔄 Reset file input field
+        fileInputRef.current.value = '';
       }
       navigate('/stocks');
     }
+  } catch (error) {
+    console.error(error);
+    const errorMessage = error.response?.data?.error || 'Error adding stock';
+    toast.error(errorMessage);
+  }
+};
 
-    const formData = new FormData();
-    formData.append('csv_file', file);
-
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/stocks/import-csv`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      if (response.status === 201) {
-        toast.success('Stock added successfully');
-        setFile(null);
-        navigate('/stocks');
-      }
-    } catch (error) {
-      console.error(error);
-      const errorMessage = error.response?.data?.error || 'Error adding stock';
-      toast.error(errorMessage);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
