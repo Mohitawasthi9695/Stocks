@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
+import { Button, Modal, Form } from 'react-bootstrap';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
 import axios from 'axios';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
@@ -30,9 +32,9 @@ const ShowProduct = () => {
             'Content-Type': 'application/json'
           }
         });
-    
+
         console.log('Stocks Data:', response.data);
-    
+
         // Process Data and Compute Areas
         const productsWithArea = response.data.data.map((product) => {
           const areaM2 = parseFloat(product.length) * parseFloat(product.width);
@@ -73,7 +75,42 @@ const ShowProduct = () => {
       [id]: value
     }));
   };
-  const handleRackUpdate = async (id, currentRack) => {
+  const handleDelete = async (id) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(
+            `${import.meta.env.VITE_API_BASE_URL}/api/godownstock/cutstock/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+
+          if (response.status === 200) {
+            setProducts((prevProducts) =>
+              prevProducts.map((product) => (product.id === id ? { ...product } : product))
+            );
+            toast.success('Rack Delete successfully!');
+          }
+        } catch (error) {
+          console.error('Error Delete rack:', error);
+          toast.error('Failed to update rack. Please try again.');
+        }
+      }
+    });
+  };
+  const handleRackUpdate = async (id) => {
     Swal.fire({
       title: 'Update Rack',
       input: 'text',
@@ -90,6 +127,7 @@ const ShowProduct = () => {
       }
     }).then(async (result) => {
       if (result.isConfirmed) {
+       
         try {
           const response = await axios.put(
             `${import.meta.env.VITE_API_BASE_URL}/api/godownstock/${id}`,
@@ -151,6 +189,19 @@ const ShowProduct = () => {
           </span>
         </div>
       )
+    },
+    {
+      name: 'Action',
+      cell: (row) => (
+        <div className="d-flex">
+          <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
+            <MdEdit />
+          </Button>
+          <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+            <MdDelete />
+          </Button>
+        </div>
+      )
     }
   ];
   const exportToCSV = () => {
@@ -178,7 +229,7 @@ const ShowProduct = () => {
     saveAs(blob, 'stocks_list.csv');
   };
 
-  
+
 
   const exportToPDF = () => {
     if (filteredProducts.length === 0) {

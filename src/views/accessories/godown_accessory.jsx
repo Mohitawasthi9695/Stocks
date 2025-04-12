@@ -11,7 +11,7 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import Swal from 'sweetalert2';
 import { BiBorderLeft } from 'react-icons/bi';
 import { text } from 'd3';
-import { FaFileCsv, FaPlusCircle } from 'react-icons/fa';
+import { FaFileCsv,FaPlus, FaEye ,FaPlusCircle } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
@@ -20,7 +20,7 @@ import 'jspdf-autotable';
 
 const Show_product = () => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]); // For search
+  const [filteredProducts, setFilteredProducts] = useState([]); 
   const [searchQuery, setSearchQuery] = useState(''); // Search query
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -86,7 +86,7 @@ const Show_product = () => {
     { name: 'Available Quantity', selector: (row) => (row.quantity - row.out_quantity), sortable: true },
     {
       name: 'Status',
-      selector: (row) => row.status, // Keep it numeric for sorting
+      selector: (row) => row.status,
       sortable: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -100,6 +100,19 @@ const Show_product = () => {
           >
             {row.status === 1 ? 'Approved' : row.status === 2 ? 'Stock Out' : 'Pending'}
           </span>
+        </div>
+      )
+    },
+    {
+      name: 'Cut Stock',
+      cell: (row) => (
+        <div className="d-flex">
+          <Button variant="outline-success" size="sm" className="me-2">
+            <FaPlus onClick={() => navigate(`/add_cut_accessory/${row.id}`)} />
+          </Button>
+          <Button variant="outline-success" size="sm" className="me-2">
+            <FaEye onClick={() => navigate(`/cut_accessory/${row.id}`)} />
+          </Button>
         </div>
       )
     },

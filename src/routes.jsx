@@ -202,6 +202,18 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/cut_accessory/:id',
+        element: lazy(() => import('./views/accessories/cut_accessory')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
+        path: '/add_cut_accessory/:id',
+        element: lazy(() => import('./views/accessories/add_cut_accessory')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator', 'sub_supervisor']
+      },
+      {
+        exact: 'true',
         path: '/invoices',
         element: lazy(() => import('./views/stock/Index')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']

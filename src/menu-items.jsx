@@ -494,21 +494,21 @@ const menuItems = {
           children: [
             {
               id: 'accessory_transfer',
-              title: 'accessory Transfer',
+              title: 'Transfer',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/accessory-tranfer'
             },
             {
               id: 'view_accessory_transfer',
-              title: 'View accessory Transfer',
+              title: 'View Transfer',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/view_accessory_transfer'
             },
             {
               id: 'view_get_transfer',
-              title: 'View Get Transfer',
+              title: 'View All Transfer',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/view_accessory_get_transfer'

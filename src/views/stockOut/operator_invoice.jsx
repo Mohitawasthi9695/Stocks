@@ -119,15 +119,19 @@ const OperatorInvoice = () => {
       selector: (row) => row.date,
       sortable: true
     },
-    {
-      name: 'Width',
-      selector: (row) => row.out_width,
-      sortable: true
+      {
+      id: 'length',
+      name: 'Length',
+      selector: (row) => `${Number(row.out_length).toFixed(2)} ${row.length_unit}`,
+      sortable: true,
+      center: true,
     },
     {
-      name: 'Length',
-      selector: (row) => row.out_length,
-      sortable: true
+      id: 'width',
+      name: 'Width',
+      selector: (row) => `${Number(row.out_width).toFixed(2)} ${row.width_unit}`,
+      sortable: true,
+      center: true,
     },
     {
       name: 'PCS',

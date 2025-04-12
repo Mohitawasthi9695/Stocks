@@ -53,7 +53,7 @@ const Invoice_out = () => {
     const categoryId = event.target.value;
     setSelectedCategoryId(categoryId);
     setAccessories([]);
-    setCheckedRows({}); // Reset checked rows when changing category
+    setCheckedRows({}); 
     if (categoryId) {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/category/${categoryId}`, {
@@ -118,7 +118,7 @@ const Invoice_out = () => {
             const rate = parseFloat(field === 'rate' ? value : row.rate || 0);
             let quantity = 0;
 
-            if (updatedRow.type === 0) { // PCS type
+            if (updatedRow.type === 0) { 
               quantity = parseFloat(updatedRow.quantity || 0);
             } else { // Dimension type
               quantity = parseFloat(updatedRow.length || 0);

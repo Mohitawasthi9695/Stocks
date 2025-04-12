@@ -414,6 +414,7 @@ const AddProduct = () => {
                                 <option value="">Unit</option>
                                 <option selected value="m">m</option>
                                 <option value="in">in</option>
+                                <option value="mm">mm</option>
                                 <option value="ft">ft</option>
                               </Form.Control>
                             </div>

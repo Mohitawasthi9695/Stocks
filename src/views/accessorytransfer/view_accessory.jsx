@@ -32,10 +32,7 @@ const Show_product = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godownAccessory`, {
-          params:{
-            type: 'transfer'
-          },
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/gettranferaccessory`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -74,15 +71,15 @@ const Show_product = () => {
     { name: 'Sr No', selector: (_, index) => index + 1, sortable: true },
     { name: 'Gate Pass No', selector: (row) => row.gate_pass_no, sortable: true },
     { name: 'Date', selector: (row) => row.date, sortable: true },
+    { name: 'From Main', selector: (row) => row.main_stock_code, sortable: true },
     { name: 'Stock Code', selector: (row) => row.stock_code, sortable: true },
     { name: 'Accessory Name', selector: (row) => row.product_accessory_name, sortable: true },
     { name: 'Lot No', selector: (row) => row.lot_no, sortable: true },
     { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
-    { name: 'Pcs', selector: (row) => row.items, sortable: true },
-    { name: 'Box/Bundle', selector: (row) => row.box_bundle, sortable: true },
     { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
     { name: 'Out Quantity', selector: (row) => row.out_quantity, sortable: true },
     { name: 'Available Quantity', selector: (row) => (row.quantity-row.out_quantity), sortable: true },
+    { name: 'Type', selector: (row) => (row.action), sortable: true },
     {
       name: 'Status',
       selector: (row) => row.status, // Keep it numeric for sorting
