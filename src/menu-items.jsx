@@ -494,7 +494,7 @@ const menuItems = {
             },
             {
               id: 'view_accessory_transfer',
-              title: 'View accessory Transfer',
+              title: 'View accessory ',
               icon: 'feather icon-file-plus',
               type: 'item',
               url: '/view_accessory_transfer'
