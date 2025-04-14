@@ -13,7 +13,9 @@ import BarChartData from 'components/BarChart';
 
 const DashDefault = () => {
 
-  const [stockOutCustomer, setStockOut] = useState({});
+  const [stockOut, setStockOut] = useState([]);
+  const [filterType, setFilterType] = useState("today");
+  const [ratingproduct, setRatingproduct] = useState([]);
   const [stockData, setStockData] = useState({
     today: { total_quantity: 0, total_out_quantity: 0 },
     week: { total_quantity: 0, total_out_quantity: 0 },
@@ -45,6 +47,9 @@ const DashDefault = () => {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
+          params: {
+            filter: filterType,
+          },
         });
         console.log(response.data.data);
         setStockOut(response.data.data);
@@ -53,25 +58,61 @@ const DashDefault = () => {
       }
     };
     fetchStockOut();
+  }, [filterType]);
+  useEffect(() => {
+    const fetchRatingData = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/rating`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log(response.data);
+        setRatingproduct(response.data.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchRatingData();
   }, []);
-  const tabContent = (
-    <React.Fragment>
-      <div className="d-flex friendlist-box align-items-center justify-content-center m-b-20">
-        <div className="m-r-10 photo-table flex-shrink-0">
-          <Link to="#">
-            <img className="rounded-circle" style={{ width: '40px' }} src={avatar1} alt="activity-user" />
-          </Link>
-        </div>
-        <div className="flex-grow-1 ms-3">
-          <h6 className="m-0 d-inline">Silje Larsen</h6>
-          <span className="float-end d-flex  align-items-center">
-            <i className="fa fa-caret-up f-22 m-r-10 text-c-green" />
-            3784
-          </span>
-        </div>
-      </div>
-    </React.Fragment>
-  );
+  const renderTabContent = () => {
+    return (
+      <>
+        {stockOut.length === 0 ? (
+          <div className="text-center p-3">No data available</div>
+        ) : (
+          stockOut.map((customer, index) => (
+            <div
+              key={index}
+              className="d-flex friendlist-box align-items-center justify-content-center m-b-20"
+            >
+              <div className="m-r-10 photo-table flex-shrink-0">
+                <Link to="#">
+                  <img
+                    className="rounded-circle"
+                    style={{ width: "40px" }}
+                    src={avatar2} 
+                    alt="customer-avatar"
+                  />
+                </Link>
+              </div>
+              <div className="flex-grow-1 ms-3">
+                <h6 className="m-0 d-inline">{customer.name}</h6>|
+                <h6 className="m-0 d-inline">{customer.email}</h6>|
+                <h6 className="m-0 d-inline">{customer.code}</h6>
+                <span className="float-end d-flex align-items-center">
+                  <i className="fa fa-phone f-22 m-r-10 text-c-green" />
+                  {customer.tel_no}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+      </>
+    );
+  };
+
 
   const dashStockData = [
     {
@@ -173,48 +214,48 @@ const DashDefault = () => {
             </Col>
           );
         })}
-      
-      <Col md={6} xl={8}>
-        <Card className="Recent-Users widget-focus-lg">
-          <Card.Header>
-            <Card.Title as="h5">Recent Supplier</Card.Title>
-          </Card.Header>
-          <Card.Body className="p-0">
-            <div className="table-container">
-              <Table responsive hover className="recent-users no-scroll">
-                <thead>
-                  <tr>
-                    <th>Sr.No</th>
-                    <th>Supplier Name</th>
-                    {/* <th>GST Number</th> */}
-                    <th>Owner Mobile</th>
-                    <th>Invoice No</th>
-                    <th>Total Amount</th>
-                    <th>Date</th>
-                    {/* <th>Actions</th> */}
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentSupplier.map((supplier) => (
-                    <tr key={supplier.id}>
-                      <td>{ 1}</td>
-                      <td>
-                        <h6 className="mb-1" style={{ maxWidth: '200px', wordWrap: 'break-word', whiteSpace: 'normal' }}>
-                          {supplier.name}
-                        </h6>
-                      </td>
-                      {/* <td>{supplier.gst_no}</td> */}
-                      <td>{supplier.owner_mobile}</td>
-                      <td>
-                        {supplier.recent_invoice.length > 0 ? supplier.recent_invoice[0].invoice_no : 'No Invoice'}
-                      </td>
-                      <td>
-                        {supplier.recent_invoice.length > 0 ? supplier.recent_invoice[0].total_amount : 'N/A'}
-                      </td>
-                      <td>
-                        {supplier.recent_invoice.length > 0 ? supplier.recent_invoice[0].date : 'N/A'}
-                      </td>
-                      {/* <td>
+
+        <Col md={6} xl={8}>
+          <Card className="Recent-Users widget-focus-lg">
+            <Card.Header>
+              <Card.Title as="h5">Recent Supplier</Card.Title>
+            </Card.Header>
+            <Card.Body className="p-0">
+              <div className="table-container">
+                <Table responsive hover className="recent-users no-scroll">
+                  <thead>
+                    <tr>
+                      <th>Sr.No</th>
+                      <th>Supplier Name</th>
+                      {/* <th>GST Number</th> */}
+                      <th>Owner Mobile</th>
+                      <th>Invoice No</th>
+                      <th>Total Amount</th>
+                      <th>Date</th>
+                      {/* <th>Actions</th> */}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentSupplier.map((supplier) => (
+                      <tr key={supplier.id}>
+                        <td>{1}</td>
+                        <td>
+                          <h6 className="mb-1" style={{ maxWidth: '200px', wordWrap: 'break-word', whiteSpace: 'normal' }}>
+                            {supplier.name}
+                          </h6>
+                        </td>
+                        {/* <td>{supplier.gst_no}</td> */}
+                        <td>{supplier.owner_mobile}</td>
+                        <td>
+                          {supplier.recent_invoice.length > 0 ? supplier.recent_invoice[0].invoice_no : 'No Invoice'}
+                        </td>
+                        <td>
+                          {supplier.recent_invoice.length > 0 ? supplier.recent_invoice[0].total_amount : 'N/A'}
+                        </td>
+                        <td>
+                          {supplier.recent_invoice.length > 0 ? supplier.recent_invoice[0].date : 'N/A'}
+                        </td>
+                        {/* <td>
                           <Link to="#" className="label theme-bg2 text-white f-12 mr-2">
                             Reject
                           </Link>
@@ -222,176 +263,159 @@ const DashDefault = () => {
                             Approve
                           </Link>
                         </td> */}
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col md={6} xl={4}>
-        <Card className="card-event">
-          <Card.Body className="border-bottom">
-            <div className="row d-flex align-items-center">
-              <div className="col-auto">
-                <i className="feather icon-zap f-30 text-c-green" />
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
               </div>
-              <div className="col">
-                <h3 className="f-w-300">{}</h3>
-                <span className="d-block text-uppercase">Total Out Roles</span>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={6} xl={4}>
+          <Card className="card-event">
+            <Card.Body className="border-bottom">
+              <div className="row d-flex align-items-center">
+                <div className="col-auto">
+                  <i className="feather icon-zap f-30 text-c-green" />
+                </div>
+                <div className="col">
+                  <h3 className="f-w-300">{ }</h3>
+                  <span className="d-block text-uppercase">Total Out Roles</span>
+                </div>
               </div>
-            </div>
-          </Card.Body>
-          <Card.Body>
-            <div className="row d-flex align-items-center">
-              <div className="col-auto">
-                <i className="feather icon-activity f-30 text-c-blue" />
-              </div>
-              <div className="col">
-                <h3 className="f-w-300">{}</h3>
-                <span className="d-block text-uppercase">Today Out Roles</span>
-              </div>
-            </div>
-
-          </Card.Body>
-        </Card>
-
-      </Col>
-      <Col md={6} xl={6}>
-        <Card className="d-flex flex-column align-items-center">
-          <PieChartData />
-        </Card>
-      </Col>
-      <Col md={6} xl={6}>
-        <Card className="d-flex flex-column align-items-center">
-          <BarChartData />
-        </Card>
-      </Col>
-
-      <Col md={6} xl={4}>
-        <Card>
-          <Card.Header>
-            <Card.Title as="h5">Rating</Card.Title>
-          </Card.Header>
-          <Card.Body>
-            <div className="row align-items-center justify-content-center m-b-20">
-              <div className="col-6">
-                <h2 className="f-w-300 d-flex align-items-center float-start m-0">
-                  4.7 <i className="fa fa-star f-10 m-l-10 text-c-yellow" />
-                </h2>
-              </div>
-              <div className="col-6">
-                <h6 className="d-flex  align-items-center float-end m-0">
-                  0.4 <i className="fa fa-caret-up text-c-green f-22 m-l-10" />
-                </h6>
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-xl-12">
-                <h6 className="align-items-center float-start">
-                  <i className="fa fa-star f-10 m-r-10 text-c-yellow" />5
-                </h6>
-                <h6 className="align-items-center float-end">384</h6>
-                <div className="progress m-t-30 m-b-20" style={{ height: '6px' }}>
-                  <div
-                    className="progress-bar progress-c-theme"
-                    role="progressbar"
-                    style={{ width: '70%' }}
-                    aria-valuenow="70"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  />
+            </Card.Body>
+            <Card.Body>
+              <div className="row d-flex align-items-center">
+                <div className="col-auto">
+                  <i className="feather icon-activity f-30 text-c-blue" />
+                </div>
+                <div className="col">
+                  <h3 className="f-w-300">{ }</h3>
+                  <span className="d-block text-uppercase">Today Out Roles</span>
                 </div>
               </div>
 
-              <div className="col-xl-12">
-                <h6 className="align-items-center float-start">
-                  <i className="fa fa-star f-10 m-r-10 text-c-yellow" />4
-                </h6>
-                <h6 className="align-items-center float-end">145</h6>
-                <div className="progress m-t-30  m-b-20" style={{ height: '6px' }}>
-                  <div
-                    className="progress-bar progress-c-theme"
-                    role="progressbar"
-                    style={{ width: '35%' }}
-                    aria-valuenow="35"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  />
-                </div>
-              </div>
+            </Card.Body>
+          </Card>
 
-              <div className="col-xl-12">
-                <h6 className="align-items-center float-start">
-                  <i className="fa fa-star f-10 m-r-10 text-c-yellow" />3
-                </h6>
-                <h6 className="align-items-center float-end">24</h6>
-                <div className="progress m-t-30  m-b-20" style={{ height: '6px' }}>
-                  <div
-                    className="progress-bar progress-c-theme"
-                    role="progressbar"
-                    style={{ width: '25%' }}
-                    aria-valuenow="25"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  />
-                </div>
-              </div>
+        </Col>
+        <Col md={6} xl={6}>
+          <Card className="d-flex flex-column align-items-center">
+            <PieChartData />
+          </Card>
+        </Col>
+        <Col md={6} xl={6}>
+          <Card className="d-flex flex-column align-items-center">
+            <BarChartData />
+          </Card>
+        </Col>
 
-              <div className="col-xl-12">
-                <h6 className="align-items-center float-start">
-                  <i className="fa fa-star f-10 m-r-10 text-c-yellow" />2
-                </h6>
-                <h6 className="align-items-center float-end">1</h6>
-                <div className="progress m-t-30  m-b-20" style={{ height: '6px' }}>
-                  <div
-                    className="progress-bar progress-c-theme"
-                    role="progressbar"
-                    style={{ width: '10%' }}
-                    aria-valuenow="10"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  />
-                </div>
-              </div>
-              <div className="col-xl-12">
-                <h6 className="align-items-center float-start">
-                  <i className="fa fa-star f-10 m-r-10 text-c-yellow" />1
-                </h6>
-                <h6 className="align-items-center float-end">0</h6>
-                <div className="progress m-t-30  m-b-5" style={{ height: '6px' }}>
-                  <div
-                    className="progress-bar"
-                    role="progressbar"
-                    style={{ width: '0%' }}
-                    aria-valuenow="0"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                  />
-                </div>
-              </div>
-            </div>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col md={6} xl={8} className="user-activity">
-        <Card>
-          <Tabs defaultActiveKey="today" id="uncontrolled-tab-example">
-            <Tab eventKey="today" title="Today">
-              {tabContent}
-            </Tab>
-            <Tab eventKey="week" title="This Week">
-              {tabContent}
-            </Tab>
-            <Tab eventKey="all" title="All">
-              {tabContent}
-            </Tab>
-          </Tabs>
-        </Card>
-      </Col>
-    </Row>
+        <Col md={6} xl={4}>
+          <Card>
+            <Card.Header>
+              <Card.Title as="h5">Top Product Ratings</Card.Title>
+            </Card.Header>
+            <Card.Body>
+              {ratingproduct.length > 0 ? (
+                <>
+                  <div className="row align-items-center justify-content-center m-b-20">
+                    <div className="col-6">
+                      <h2 className="f-w-300 d-flex align-items-center float-start m-0">
+                        {ratingproduct[0].rating}{" "}
+                        <i className="fa fa-star f-10 m-l-10 text-c-yellow" />
+                      </h2>
+                    </div>
+                    <div className="col-6">
+                      <h6 className="d-flex align-items-center float-end m-0">
+                        {(
+                          ratingproduct[0].rating - (ratingproduct[1]?.rating || 0)
+                        ).toFixed(1)}{" "}
+                        <i className="fa fa-caret-up text-c-green f-22 m-l-10" />
+                      </h6>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    {[5, 4, 3, 2, 1].map((star) => {
+                      const starData = ratingproduct.filter(
+                        (prod) => Math.round(prod.rating) === star
+                      );
+                      const total = starData.reduce(
+                        (sum, item) => sum + item.stock_out_count,
+                        0
+                      );
+                      const max = ratingproduct.reduce(
+                        (m, item) => (item.stock_out_count > m ? item.stock_out_count : m),
+                        0
+                      );
+                      const width = max ? (total / max) * 100 : 0;
+
+                      return (
+                        <div className="col-xl-12" key={star}>
+                          <h6 className="align-items-center float-start">
+                            <i className="fa fa-star f-10 m-r-10 text-c-yellow" />
+                            {star}
+                          </h6>
+                          <h6 className="align-items-center float-end">{total}</h6>
+                          <div
+                            className="progress m-t-30 m-b-10"
+                            style={{ height: "6px" }}
+                          >
+                            <div
+                              className="progress-bar progress-c-theme"
+                              role="progressbar"
+                              style={{ width: `${width}%` }}
+                              aria-valuenow={width}
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            />
+                          </div>
+
+                          {/* Product Shade No List */}
+                          {starData.map((item, index) => (
+                            <div key={index} className="d-flex justify-content-between mb-1">
+                              <span className="text-muted small">
+                                Shade No: <strong>{item.product_shade_no}</strong>
+                              </span>
+                              <span className="text-muted small">
+                                ({item.stock_out_count} times)
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                </>
+              ) : (
+                <p>Loading...</p>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col md={6} xl={8} className="user-activity">
+          <Card>
+            <Tabs
+              activeKey={filterType}
+              onSelect={(k) => setFilterType(k)}
+              id="stockout-tab"
+            >
+              <Tab eventKey="today" title="Today">
+                {renderTabContent()}
+              </Tab>
+              <Tab eventKey="week" title="This Week">
+                {renderTabContent()}
+              </Tab>
+              <Tab eventKey="all" title="All">
+                {renderTabContent()}
+              </Tab>
+            </Tabs>
+          </Card>
+        </Col>
+
+      </Row>
     </React.Fragment >
   );
 };
