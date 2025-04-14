@@ -83,7 +83,7 @@ const Show_product = () => {
     { name: 'Quantity', selector: (row) => row.quantity, sortable: true },
     { name: 'Out Quantity', selector: (row) => row.out_quantity, sortable: true },
     { name: 'Transfer', selector: (row) => row.transfer, sortable: true },
-    { name: 'Available Quantity', selector: (row) => (row.quantity - row.out_quantity), sortable: true },
+    { name: 'Available Quantity', selector: (row) => (row.quantity - (row.out_quantity+row.transfer)), sortable: true },
     {
       name: 'Status',
       selector: (row) => row.status,

@@ -4,24 +4,27 @@ import { PieChart, Pie, Cell } from "recharts";
 
 const PieChartData = () => {
   const [pieData, setPieData] = useState([]);
-  const [loading, setLoading] = useState(true); // State for loading
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPieData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/barData`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/pieData`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-        // Transform barData to match pie chart format
+        // Response should already have category-wise stock data
         const transformedData = response.data.data.map((item) => ({
-          name: item.shadeNo,
-          value: item.stock_in - item.stock_out, // Use the difference between stock_in and stock_out as an example
+          name: item.category,
+          value: item.total_stock,
         }));
-
+        console.log("Transformed Pie Data:", transformedData);
         setPieData(transformedData);
       } catch (error) {
         console.error("Error fetching pie chart data:", error);
@@ -33,16 +36,19 @@ const PieChartData = () => {
     fetchPieData();
   }, []);
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042","#FF8072","#FF8042","#FF8062","#FF8442","#FF6042","#FF8842"];
+  const COLORS = [
+    "#0088FE", "#00C49F", "#FFBB28", "#FF8042",
+    "#FF8072", "#FF8042", "#FF8062", "#FF8442",
+    "#FF6042", "#FF8842"
+  ];
 
-  // Render loading message while fetching data
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <h3 className="text-center">STOCK IN</h3>
+      <h3 className="text-center p-2">Stocks</h3>
       <PieChart width={600} height={400}>
         <Pie
           data={pieData}
@@ -64,5 +70,3 @@ const PieChartData = () => {
 };
 
 export default PieChartData;
-
-

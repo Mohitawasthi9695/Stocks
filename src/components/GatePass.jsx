@@ -105,18 +105,35 @@ const styles = StyleSheet.create({
 
 const GatePass = ({ show, onHide, invoiceData, id }) => {
   const invoice = invoiceData.find((invoice) => invoice.id === id);
-  console.log(invoice.godown_accessories);
+
+  if (!invoice) {
+    return (
+      <Modal show={show} onHide={onHide} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Gate Pass Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>No invoice data found for the selected ID.</p>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString();
+  };
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Gate Pass Details</Modal.Title>
+        <Modal.Title>Accessory Godown GatePass </Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ height: '80vh' }}>
         <PDFViewer width="100%" height="100%">
           <Document>
             <Page size="A4" style={styles.page}>
-              <Text style={styles.header}>STOCK IN GATE PASS</Text>
+              <Text style={styles.header}>Accessory Godown GatePass</Text>
 
               <View style={styles.flexContainer}>
                 {/* Gate Pass Details */}
@@ -128,16 +145,15 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                   </View>
                   <View style={styles.row}>
                     <Text style={styles.label}>Gate Pass Date:</Text>
-                    <Text style={styles.value}>{invoice.gate_pass_date}</Text>
+                    <Text style={styles.value}>{formatDate(invoice.gate_pass_date)}</Text>
                   </View>
                   <View style={styles.row}>
                     <Text style={styles.label}>Status:</Text>
                     <Text style={styles.value}>{invoice.status == 0 ? 'Pending' : 'Approved'}</Text>
                   </View>
-
                 </View>
 
-                {/* Warehouse Supervisor */}
+                {/* Transport */}
                 <View style={[styles.borderBox, styles.column]}>
                   <Text style={styles.sectionTitle}>Transport:</Text>
                   <View style={styles.row}>
@@ -149,12 +165,12 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                     <Text style={styles.value}>{invoice.driver_phone}</Text>
                   </View>
                   <View style={styles.row}>
-                    <Text style={styles.label}>Vechical No:</Text>
+                    <Text style={styles.label}>Vehicle No:</Text>
                     <Text style={styles.value}>{invoice.vehicle_no}</Text>
                   </View>
                 </View>
 
-                {/* Godown Supervisor */}
+                {/* Authority */}
                 <View style={[styles.borderBox, styles.column]}>
                   <Text style={styles.sectionTitle}>Authority:</Text>
                   <View style={styles.row}>
@@ -198,6 +214,11 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                   ))}
                 </View>
               </View>
+
+              {/* Optional Footer Placeholder */}
+              {/* <View style={styles.footer}>
+                <Text>Footer info or signature area (optional)</Text>
+              </View> */}
             </Page>
           </Document>
         </PDFViewer>

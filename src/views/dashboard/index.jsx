@@ -13,7 +13,7 @@ import BarChartData from 'components/BarChart';
 
 const DashDefault = () => {
 
-  const [stockOut, setStockOut] = useState({});
+  const [stockOutCustomer, setStockOut] = useState({});
   const [stockData, setStockData] = useState({
     today: { total_quantity: 0, total_out_quantity: 0 },
     week: { total_quantity: 0, total_out_quantity: 0 },
@@ -78,7 +78,6 @@ const DashDefault = () => {
       title: 'Today’s Stock',
       quantity: stockData.today.total_quantity,
       outQuantity: stockData.today.total_out_quantity,
-     value: (stockData.today.total_out_quantity/stockData.today.total_quantity*100).toFixed(2),
       iconUp: 'icon-arrow-up text-c-green',
       icondown: 'icon-arrow-down text-c-red',
       class: 'progress-c-theme',
@@ -87,7 +86,6 @@ const DashDefault = () => {
       title: 'This Week’s Stock',
       quantity: stockData.week.total_quantity,
       outQuantity: stockData.week.total_out_quantity,
-      value: (stockData.today.total_out_quantity/stockData.today.total_quantity*100).toFixed(2),
       iconUp: 'icon-arrow-up text-c-green',
       icondown: 'icon-arrow-down text-c-red',
       class: 'progress-c-theme2',
@@ -96,7 +94,6 @@ const DashDefault = () => {
       title: 'This Month’s Stock',
       quantity: stockData.month.total_quantity,
       outQuantity: stockData.month.total_out_quantity,
-     value: (stockData.today.total_out_quantity/stockData.today.total_quantity*100).toFixed(2),
       iconUp: 'icon-arrow-up text-c-green',
       icondown: 'icon-arrow-down text-c-red',
       class: 'progress-c-theme3',
@@ -105,7 +102,6 @@ const DashDefault = () => {
       title: 'This Year’s Stock',
       quantity: stockData.year.total_quantity,
       outQuantity: stockData.year.total_out_quantity,
-     value: (stockData.today.total_out_quantity/stockData.today.total_quantity*100).toFixed(2),
       iconUp: 'icon-arrow-up text-c-green',
       icondown: 'icon-arrow-down text-c-red',
       class: 'progress-c-theme4',
@@ -159,7 +155,7 @@ const DashDefault = () => {
                       </h3>
                     </div>
                     <div className="col-3 text-end">
-                      <p className="m-b-0">{data.value}%</p>
+                      <p className="m-b-0"></p>
                     </div>
                   </div>
                   <div className="progress m-t-30" style={{ height: '7px' }}>

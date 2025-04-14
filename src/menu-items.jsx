@@ -1,3 +1,5 @@
+import { color } from "d3";
+
 const user = JSON.parse(localStorage.getItem('user'));
 const userRole = user?.roles;
 const filterMenuItem = (menu) => {
@@ -212,13 +214,13 @@ const menuItems = {
     },
     {
       id: 'stockin',
-      title: 'Blinds Stocks',
+      title: 'Stock IN',
       type: 'group',
       icon: 'icon-ui',
       children: [
         {
           id: 'stocks',
-          title: 'Blinds Stocks',
+          title: 'Stock IN',
           type: 'collapse',
           icon: 'feather icon-clipboard',
           children: [
@@ -587,7 +589,7 @@ const menuItems = {
     },
     {
       id: 'Warehouse_Accessories',
-      title: 'Warehouse Accessories',
+      title: 'Accessories godown GatePass',
       type: 'group',
       icon: 'icon-ui',
       children: [

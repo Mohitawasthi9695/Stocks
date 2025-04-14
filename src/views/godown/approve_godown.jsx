@@ -129,29 +129,35 @@ const Index = () => {
 
   const columns = [
     {
-      name: 'Invoice Number',
+      name: 'Invoice no.',
       selector: (row) => row.gatepass_no,
-      sortable: true
+      sortable: true,
+      center: true,
     },
     {
-      name: 'Godown Supervisor Name',
-      selector: (row) => row.godownSupervisor,
-      sortable: true
-    },
-    {
-      name: 'WareHouser Supervisor',
+      name: 'Sender',
       selector: (row) => row.warehouseSupervisor,
-      sortable: true
+      sortable: true,
+      center: true,
     },
+    {
+      name: 'Receiver',
+      selector: (row) => row.godownSupervisor,
+      sortable: true,
+      center: true,
+    },
+   
     {
       name: 'Date',
       selector: (row) => (row.date ? new Date(row.date).toLocaleDateString('en-GB') : 'N/A'),
-      sortable: true
+      sortable: true,
+      center: true,
     },
     {
       name: 'Status',
       selector: (row) => (row.status === 1 ? 'inactive' : 'active'),
       sortable: true,
+      center: true,
       cell: (row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span
@@ -169,6 +175,7 @@ const Index = () => {
     },
     {
       name: 'Action',
+      center: true,
       cell: (row) => (
         <div className="d-flex" style={{ flexWrap: 'nowrap', gap: '8px', justifyContent: 'space-evenly', alignItems: 'center' }}>
           {row.status === 0 ? (

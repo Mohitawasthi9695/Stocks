@@ -40,8 +40,8 @@ const BarChartData = () => {
         <YAxis />
         <Tooltip
           formatter={(value, name, props) => {
-            const shadeNo = props.payload?.product_shadeNo || 'N/A';
-            return [`${value} (${shadeNo})`, name];
+            const category = props.payload?.category || 'N/A';
+            return [`${value} (${category})`, name];
           }}
         />
         <Tooltip />

@@ -175,7 +175,7 @@ const navigate = useNavigate();
     },
     {
       name: 'Type',
-      selector: (row) =>  {row.type === 1 ? 'Sent' : 'Received'},
+      selector: (row) => row.action,
       sortable: true
     },
     {
