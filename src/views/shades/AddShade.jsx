@@ -8,6 +8,10 @@ import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload, FaUser,
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import Swal from 'sweetalert2';
+import { IoBagAddSharp } from "react-icons/io5";
+import { BsCalendarDateFill } from "react-icons/bs";
+import { TbCategoryFilled } from "react-icons/tb";
+import { BsFillCreditCard2BackFill } from "react-icons/bs";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -176,7 +180,7 @@ const AddProduct = () => {
     >
       <Row className="justify-content-center">
         <div className="col-md-12 position-relative">
-          <h2 className="text-center mb-3 fw-bold y">Product Shades</h2>
+          <h2 className="text-center mb-3 fw-bold y">Add New Product</h2>
 
           <div className="card shadow-lg border-0 mb-4 mx-auto" style={{ borderRadius: '12px', maxWidth: '700px' }}>
             <div className="card-body p-4 mx-auto">
@@ -245,7 +249,7 @@ const AddProduct = () => {
                 justifyContent: 'center'
               }}
             >
-              <FaUserPlus size={40} className="me-3" />
+              <IoBagAddSharp size={40} className="me-3" />
               <h2 className="m-0 text-white">Add New Product</h2>
             </div>
             <Card.Body className="p-5">
@@ -253,10 +257,10 @@ const AddProduct = () => {
                 <Row>
                   <Col md={6}>
                     {/* Dropdown for Product Category */}
-                    <FormField icon={FaUser} type="date" label="Date" name="date" value={formData.date} onChange={handleChange} />
+                    <FormField icon={BsCalendarDateFill} type="date" label="Date" name="date" value={formData.date} onChange={handleChange} />
                     <Form.Group controlId="productCategory" style={{ marginBottom: '16px' }}>
                       <Form.Label>
-                        <FaIdCard className="me-2" />
+                        <TbCategoryFilled className="me-2" fontSize={18} style={{ color: '#3f4d67' }} />
                         Product Category
                       </Form.Label>
                       <Form.Control
@@ -284,7 +288,7 @@ const AddProduct = () => {
                       </Form.Control>
                     </Form.Group>
                     <FormField
-                      icon={FaIdCard}
+                      icon={BsFillCreditCard2BackFill }
                       label="Purchase Shade Number"
                       name="purchase_shade_no"
                       value={formData.purchase_shade_no}
@@ -307,10 +311,10 @@ const AddProduct = () => {
                     width: '10rem'
                   }}
                 >
-                  <FaUserPlus className="me-2" /> Add Product
+                  <IoBagAddSharp className="me-2" /> Add Product
                 </Button>
               </Form>
-            </Card.Body>
+            </Card.Body>€
           </Card>
         </Col>
       </Row>

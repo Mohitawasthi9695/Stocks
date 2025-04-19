@@ -42,7 +42,14 @@ const NavLeft = () => {
         <ListGroup.Item as="li" bsPrefix=" " className={navItemClass.join(' ')}>
           <Dropdown align={'start'}>
             <Dropdown.Toggle variant={'link'} id="dropdown-basic">
+              <h3 style={{
+                color: 'linear-gradient(90deg,rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 52%, rgba(255, 0, 0, 1) 97%)',
+                fontSize: '25px',
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}>
               Calculator
+              </h3>
             </Dropdown.Toggle>
             <Dropdown.Menu style={{
               backgroundColor: '#fff',
@@ -88,6 +95,8 @@ const NavLeft = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            width: "50px",
+            height: "50px"
           }}
           aria-label="Scroll to Top"
         >

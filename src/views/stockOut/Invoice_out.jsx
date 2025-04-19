@@ -125,7 +125,7 @@ const Invoice_out = () => {
         SetInvoiceNo(response.data.data);
         setFormData((prevData) => ({
           ...prevData,
-          invoice_no: response.data.data || '' // Ensure it's set
+          invoice_no: response.data.data || ''
         }));
       } catch (error) {
         console.error('Error fetching Invoice No:', error);
@@ -226,16 +226,6 @@ const Invoice_out = () => {
     }
 
 
-
-
-
-
-
-
-
-
-
-
     for (let product of formData.out_products) {
       if (!product.rate || isNaN(product.rate)) {
         toast.error('Each product must have a valid rate.');
@@ -274,27 +264,6 @@ const Invoice_out = () => {
       console.error('API Error:', error.response?.data?.message || error);
       toast.error(error.response?.data?.message || 'Error processing request');
     }
-  };
-
-  const convertLengthAndWidth = (length, width, lengthUnit, widthUnit) => {
-    const conversionFactors = {
-      Meter: 1,
-      Inch: 0.0254,
-      Feet: 0.3048
-    };
-
-    let convertedLength = length * conversionFactors[lengthUnit];
-    let convertedWidth = width * conversionFactors[widthUnit];
-
-    // Convert to the base unit (Meter)
-    if (lengthUnit !== 'Meter') {
-      convertedLength = convertedLength / conversionFactors[lengthUnit];
-    }
-    if (widthUnit !== 'Meter') {
-      convertedWidth = convertedWidth / conversionFactors[widthUnit];
-    }
-
-    return { convertedLength, convertedWidth };
   };
 
   const columns = [
@@ -341,36 +310,6 @@ const Invoice_out = () => {
         ...updatedRows[editedRowIndex],
         [field]: value,
       };
-  
-      // Only validate if field is 'width'
-      if (field === 'width') {
-        const editedRow = updatedRows[editedRowIndex];
-        const { stock_code } = editedRow;
-  
-        const sameStockRows = updatedRows
-          .filter((row) => row.stock_code === stock_code)
-          .sort((a, b) => a.row_id - b.row_id);
-  
-        const indexInGroup = sameStockRows.findIndex((row) => row.row_id === id);
-        const prevRow = sameStockRows[indexInGroup - 1];
-        const nextRow = sameStockRows[indexInGroup + 1];
-  
-        const currentWidth = parseFloat(value);
-  
-        if (isNaN(currentWidth)) {
-          toast.error("Please enter a valid width.");
-          return prevSelectedRows;
-        }
-  
-        if (
-          (prevRow && currentWidth > parseFloat(prevRow.width)) ||
-          (nextRow && currentWidth < parseFloat(nextRow.width))
-        ) {
-          toast.error("Width must be ≤ previous and ≥ next duplicate row.");
-          return prevSelectedRows;
-        }
-      }
-  
       // Update amount calculation
       const finalRows = updatedRows.map((row) => {
         if (
@@ -522,7 +461,7 @@ const Invoice_out = () => {
                       value={formData.company_id}
                       onChange={handleChange}
                       options={receivers}
-                      add={'/add-Receiver'}
+                      add={'/company'}
                       required
                     />
                     <FormField
@@ -682,7 +621,7 @@ const Invoice_out = () => {
                         <option value="">Select</option>
                         {shadeNo.map((shade) => (
                           <option key={shade.id} value={shade.id}>
-                            {shade.shadeNo}
+                            {shade.shadeNo}/{shade.purchase_shade_no}
                           </option>
                         ))}
                       </Form.Control>

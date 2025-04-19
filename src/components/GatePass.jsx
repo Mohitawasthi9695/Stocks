@@ -149,7 +149,7 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                   </View>
                   <View style={styles.row}>
                     <Text style={styles.label}>Status:</Text>
-                    <Text style={styles.value}>{invoice.status === 0 ? 'Pending' : 'Completed'}</Text>
+                    <Text style={styles.value}>{invoice.status == 0 ? 'Pending' : 'Approved'}</Text>
                   </View>
                 </View>
 
@@ -174,12 +174,12 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                 <View style={[styles.borderBox, styles.column]}>
                   <Text style={styles.sectionTitle}>Authority:</Text>
                   <View style={styles.row}>
-                    <Text style={styles.label}>Warehouse Supervisor:</Text>
-                    <Text style={styles.value}>{invoice.warehouse_supervisor?.name}</Text>
+                    <Text style={styles.label}>Sender:</Text>
+                    <Text style={styles.value}>{invoice.warehouse_supervisors.name}</Text>
                   </View>
                   <View style={styles.row}>
-                    <Text style={styles.label}>Godown Supervisor:</Text>
-                    <Text style={styles.value}>{invoice.godown_supervisor?.name}</Text>
+                    <Text style={styles.label}>Receiver:</Text>
+                    <Text style={styles.value}>{invoice.godown_supervisors.name}</Text>
                   </View>
                 </View>
               </View>
@@ -190,6 +190,8 @@ const GatePass = ({ show, onHide, invoiceData, id }) => {
                   <View style={styles.tableHeader}>
                     <Text style={styles.tableCell}>Lot No</Text>
                     <Text style={styles.tableCell}>Accessory Name</Text>
+                    <Text style={styles.tableCell}>Warehouse Acc. Code</Text>
+                    <Text style={styles.tableCell}>Godown Acc. Code</Text>
                     <Text style={styles.tableCell}>Length</Text>
                     <Text style={styles.tableCell}>Items</Text>
                     <Text style={styles.tableCell}>Box Bundle</Text>

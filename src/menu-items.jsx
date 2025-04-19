@@ -18,7 +18,7 @@ const filterMenuItem = (menu) => {
               'godownStock',
               'godown-stockout',
               'GodownAccessories',
-              'GoDownGatePass',
+              'GoDownGatePass', 
               'customers',
               'stock_to_godown',
               'approve_operator',
@@ -35,9 +35,10 @@ const filterMenuItem = (menu) => {
             [
               'usersGroup',
               'operator-stockout',
+              'suppliers',
               'products',
-              'Accessory',
               'stockin',
+              'add_warehouse_accessory',
               'Warehouse_Accessories',
               'WarehouseGatePass',
               // 'godown-stockout',
@@ -63,6 +64,7 @@ const filterMenuItem = (menu) => {
               'products',
               'Accessory',
               'stockin',
+              'accessoryTransfer',
               'Warehouse_Accessories',
               'WarehouseGatePass',
               'godownStock',
@@ -161,7 +163,7 @@ const menuItems = {
               title: 'Category',
               type: 'item',
               url: '/product_category',
-              icon: 'feather icon-package'
+              icon: 'feather icon-grid'
             },
             {
               id: 'category1',
@@ -183,7 +185,7 @@ const menuItems = {
         {
           id: 'accessories',
           title: 'Accessories',
-          icon: 'feather icon-package',
+          icon: 'feather icon-link',
           type: 'collapse',
           style: {
             boxShadow: '0px 4px 6px rgba(19, 15, 15, 0.1)',
@@ -197,15 +199,15 @@ const menuItems = {
               title: 'Accessories',
               type: 'item',
               url: '/accessories_record',
-              icon: 'feather icon-package'
+              icon: 'feather icon-inbox'
             },
             {
               id: 'add_warehouse_accessory',
-              title: 'Stocks',
+              title: 'Accessory Stocks',
               type: 'item',
               url: '/warehouse_accessories',
-              icon: 'feather icon-package'
-            }
+              icon: 'feather icon-slack'
+            },
           ]
         }
       ]
@@ -220,7 +222,7 @@ const menuItems = {
           id: 'stocks',
           title: 'Stock IN',
           type: 'collapse',
-          icon: 'feather icon-clipboard',
+          icon: 'feather icon-layers',
           children: [
             {
               id: 'add_invoice',
@@ -245,7 +247,7 @@ const menuItems = {
                 {
                   id: 'all_stock',
                   title: 'All Stocks',
-                  icon: 'feather icon-list',
+                  icon: 'feather icon-align-justify',
                   type: 'item',
                   url: '/all-stock'
                 },
@@ -285,7 +287,14 @@ const menuItems = {
                   url: '/zebra_stock'
                 }
               ]
-            }
+            },
+            {
+              id: 'all_gatepass_out_stock',
+              title: 'All Out Stocks',
+              icon: 'feather icon-airplay',
+              type: 'item',
+              url: '/gatepass-stocks'
+            },
           ]
         }
       ]
@@ -535,7 +544,7 @@ const menuItems = {
               title: 'Stocks',
               icon: 'feather icon-list',
               type: 'item',
-              url: '/view_approve_gatepass'
+              url: '/godown_accessory'
             },
             {
               id: 'all_godown_accessoryout',
@@ -568,7 +577,7 @@ const menuItems = {
               url: '/operator_invoice'
             },
             {
-              id: 'approve_operator',
+              id: 'approve_operator1',
               title: 'view all out Invoice ',
               icon: 'feather icon-file-minus',
               type: 'item',

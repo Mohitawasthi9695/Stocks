@@ -16,17 +16,19 @@ const Signin1 = () => {
     <React.Fragment>
       <Breadcrumb />
       <div className="auth-wrapper">
-        <div className="auth-bg">
-          <span className="r" />
-          <span className="r s" />
-          <span className="r s" />
-          <span className="r" />
-          <span className="r s" />
-          <span className="r" />
-        </div>
+        
         <div className="auth-image">
           <div className='d-flex-flex-column'>
-            <h1 className='text-decoration-underline auth-heading' style={{width:"100%",textAlign:"center"}}>The Stocks</h1>
+            <div style={{
+              textAlign:"center",
+              padding: '20px'
+            }}>
+            <img src="https://5.imimg.com/data5/SELLER/Logo/2024/2/392287203/EW/MK/QX/108300258/ht-90x90.jpg" alt="vishal Sales" style={{
+              width: '80px',
+              borderRadius: '10%'
+            }} />
+            </div>
+            <h1 className='text-none auth-heading' style={{width:"100%",textAlign:"center",}}>High Tech Blinds</h1>
             <img src={Bg} alt="" className='img-login' />
           </div>
           <div className="auth-content">
@@ -38,11 +40,22 @@ const Signin1 = () => {
                 </div>
                 {/* Pass the login component */}
                 <AuthLogin />
-                <p className="mb-2 text-muted">
-                  Forgot password?{' '}
+                <p className="mb-2 text-muted" >
+                  <div style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center'
+                }}>
+                   <div style={{
+                    color: '#fff'
+                  }}>
+                  Forgot password?
+                  </div>{' '}
                   <NavLink to='/signin/forgotPassword' className="f-w-400">
                     Reset
                   </NavLink>
+                </div>
+                 
                 </p>
               </Card.Body>
             </Card>

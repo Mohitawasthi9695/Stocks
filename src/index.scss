@@ -261,7 +261,7 @@ td {
 // changed
 .auth-wrapper {
   background-color: #24674b;
-  background: url('./assets/images/authImage.svg');
+  background: linear-gradient(90deg,rgba(0, 212, 255, 1) 0%, rgb(0, 0, 22) 35%, rgb(0, 0, 0) 100%);
   background-size: cover;
   .card {
     border-radius: 10px;
@@ -295,7 +295,7 @@ td {
   }
 }
 .auth-heading{
-  font-family: 'Condiment', cursive;
+  font-family: 'Pacifico';
   font-weight: 400;
   font-style: normal;
   color: #00ffde;

@@ -84,7 +84,7 @@ const routes = [
         exact: 'true',
         path: '/wooden',
         element: lazy(() => import('./calculator/wooden')),
-        allowedRoles: ['superadmin', 'admin', 'supervisor', , 'sub_supervisor', 'operator']
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'sub_supervisor', 'operator']
       },
       {
         exact: 'true',
@@ -160,6 +160,12 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/gatepass-stocks',
+        element: lazy(() => import('./views/stock/all_gatepass_stock')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
+      },
+      {
+        exact: 'true',
         path: '/accessories_record',
         element: lazy(() => import('./views/accessories/index')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
@@ -178,14 +184,20 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/add_godown_accessories',
+        element: lazy(() => import('./views/accessories/add_godown_accessory')),
+        allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
+      },
+      {
+        exact: 'true',
         path: '/warehouse_accessories',
         element: lazy(() => import('./views/accessories/warehouse_accessory')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator']
       },
       {
         exact: 'true',
-        path: '/view_approve_gatepass',
-        element: lazy(() => import('./views/accessories/view_approve_gatepass')),
+        path: '/godown_accessory',
+        element: lazy(() => import('./views/accessories/godown_accessory')),
         allowedRoles: ['superadmin', 'admin', 'supervisor', 'operator', 'sub_supervisor']
       },
       {

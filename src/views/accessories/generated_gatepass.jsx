@@ -38,6 +38,9 @@ const Index = () => {
     const fetchInvoices = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/accessory/getStockgatepass`, {
+          params: {
+            type:'accessory'
+          },
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -53,8 +56,8 @@ const Index = () => {
           place_of_supply:gatepass.place_of_supply,
           driver_name:gatepass.driver_name,
           driver_phone:gatepass.driver_phone,
-          godownSupervisor: gatepass.godown_supervisors.name,
-          warehouseSupervisor: gatepass.warehouse_supervisors.name,
+          godown_supervisors: gatepass.godown_supervisors.name,
+          warehouse_supervisors: gatepass.warehouse_supervisors.name,
           date: gatepass.gate_pass_date,
           total_amount: gatepass.total_amount,
           status: gatepass.status
@@ -72,7 +75,7 @@ const Index = () => {
 
   useEffect(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = invoices.filter((invoice) => invoice.godownSupervisor.toLowerCase().includes(lowercasedQuery));
+    const filtered = invoices.filter((invoice) => invoice.godown_supervisors.toLowerCase().includes(lowercasedQuery));
     setFilteredInvoices(filtered);
   }, [searchQuery, invoices]);
 
@@ -90,12 +93,12 @@ const Index = () => {
     },
     {
       name: 'Godown Supervisor Name',
-      selector: (row) => row.godownSupervisor,
+      selector: (row) => row.godown_supervisors,
       sortable: true
     },
     {
       name: 'WareHouser Supervisor',
-      selector: (row) => row.warehouseSupervisor,
+      selector: (row) => row.warehouse_supervisors,
       sortable: true
     },
     {
@@ -298,8 +301,8 @@ const Index = () => {
       "Sr No": index + 1,
       "Gate Pass No": row.gatepass_no,
       "Gate Pass Date": row.date,
-      "Warehouse Supervisor": row.warehouseSupervisor,
-      "Godown Supervisor": row.godownSupervisor,
+      "Warehouse Supervisor": row.warehouse_supervisors,
+      "Godown Supervisor": row.godown_supervisors,
       "Status": row.status === 1 ? "Approved" : "Pending"
     }));
   
@@ -326,8 +329,8 @@ const Index = () => {
       index + 1,
       row.gatepass_no || "N/A",
       row.date || "N/A",
-      row.warehouseSupervisor || "N/A",
-      row.godownSupervisor || "N/A",
+      row.warehouse_supervisors || "N/A",
+      row.godown_supervisors || "N/A",
       row.status === 1 ? "Approved" : "Pending"
     ]);
   

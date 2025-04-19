@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdDelete, MdPersonAdd } from 'react-icons/md';
+import { MdEdit, MdDelete, MdPersonAdd, MdOutlineAddTask } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -60,51 +60,75 @@ const WarehouseAccessoriesPage = () => {
       name: 'Sr No',
       selector: (_, index) => index + 1,
       sortable: true,
-      width: '90px'
+      width: '90px',
+      wrap: true,
+      center: true
     },
     {
       name: 'Date',
       selector: (row) => row.date,
       sortable: true,
-      width: '100px'
+      width: '100px',
+      wrap: true,
+      center: true
     },
     {
       name: 'Product Category',
       selector: (row) => row.product_category,
-      sortable: true
+      sortable: true,
+      width: '150px',
+      wrap: true,
+      center: true
     },
     {
       name: 'Product Accessory',
       selector: (row) => row.product_accessory_name,
       sortable: true,
-      width: '200px'
+      width: '200px',
+      wrap: true,
+      center: true
     },
     {
       name: 'Accessory Code',
       selector: (row) => row.stock_code,
-      sortable: true
+      sortable: true,
+      wrap: true,
+      center: true
     },
-    { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true, width: '100px' },
+    { name: 'Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true, width: '100px',
+    wrap: true,
+    center: true },
     {
       name: 'Items',
       selector: (row) => row.items,
       sortable: true,
-      width: '100px'
+      width: '100px',
+      wrap: true,
+      center: true
     },
-    { name: 'Collection', selector: (row) => `${row.box_bundle}  ${row.box_bundle_unit}`, sortable: true },
-    { name: 'Out Collection', selector: (row) => `${row.out_box_bundle}  ${row.box_bundle_unit}`, sortable: true,width: '150px' },
+    { name: 'Collection', selector: (row) => `${row.box_bundle}  ${row.box_bundle_unit}`, sortable: true,
+    wrap: true,
+    center: true },
+    { name: 'Out Collection', selector: (row) => `${row.out_box_bundle}  ${row.box_bundle_unit}`, sortable: true,width: '150px',
+    wrap: true,
+    center: true },
     {
       name: 'Quantity',
       selector: (row) => row.quantity,
-      sortable: true
+      sortable: true,
+      wrap: true,
+      center: true
     },
     {
       name: 'Out Quantity',
       selector: (row) => row.out_quantity,
-      sortable: true
+      sortable: true,
+      wrap: true,
+      center: true
     },
     {
       name: 'Action',
+      center: true,
       cell: (row) => (
         <div className="d-flex">
           <Button variant="outline-success" size="sm" className="me-2" onClick={() => handleEdit(row)}>
@@ -359,7 +383,7 @@ const WarehouseAccessoriesPage = () => {
 
         <div className="col-md-8 text-end mt-3 mt-md-0">
           <Button variant="primary" onClick={() => navigate('/add_warehouse_accessories')}>
-            <MdPersonAdd className="me-2" />
+            <MdOutlineAddTask className="me-2 fw-bold fs-5"  />
             <span className="d-none d-md-inline"> Add Warehouse Accessory</span>
           </Button>
         </div>

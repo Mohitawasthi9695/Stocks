@@ -23,7 +23,7 @@ const ShowProduct = () => {
   const [rackInputs, setRackInputs] = useState({});
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
-  const categoryId = 5; // Hardcoded for now
+  const categoryId = 5;
   useEffect(() => {
     const fetchStocksData = async () => {
       try {

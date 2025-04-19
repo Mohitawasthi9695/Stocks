@@ -3,6 +3,7 @@ import DataTable from 'react-data-table-component';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import { toast } from 'react-toastify';
@@ -21,15 +22,11 @@ const ShowProduct = () => {
   const [loading, setLoading] = useState(true);
   const [rackInputs, setRackInputs] = useState({});
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
-
-  const categoryId = 1; // Hardcoded for now
+const navigate = useNavigate();
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/gettransferstock`, {
-          params: {
-            category_id: categoryId
-          },
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/godowns/transferstocks`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
@@ -141,6 +138,14 @@ const ShowProduct = () => {
     {
       name: 'GatePass no',
       selector: (row) => row.gate_pass_no,
+      cell: (row) => (
+        <span 
+          style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
+          onClick={() => navigate(`/show-gatepass_details/${row.gate_pass_id}`)}
+        >
+          {row.gate_pass_no}
+        </span>
+      ),
       sortable: true
     },
     {
@@ -161,19 +166,16 @@ const ShowProduct = () => {
     { name: 'Width', selector: (row) => `${row.width}  ${row.width_unit}`, sortable: true },
     { name: 'Total Length', selector: (row) => `${row.length}  ${row.length_unit}`, sortable: true },
     { name: 'Length', selector: (row) => `${row.out_length}  ${row.length_unit}`, sortable: true },
-    {
-      name: 'Area (m²)',
-      selector: (row) => row.area,
-      sortable: true
-    },
-    {
-      name: 'Area (sq. ft.)',
-      selector: (row) => row.area_sq_ft,
-      sortable: true
-    },
+    { name: 'Pcs', selector: (row) => `${row.pcs}`, sortable: true },
+    { name: 'Out Pcs', selector: (row) => `${row.out_pcs}`, sortable: true },
     {
       name: 'Wastage',
       selector: (row) => row.wastage,
+      sortable: true
+    },
+    {
+      name: 'Type',
+      selector: (row) =>  {row.type === 1 ? 'Sent' : 'Received'},
       sortable: true
     },
     {

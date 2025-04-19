@@ -506,7 +506,9 @@
 }
 
 .navbar-brand {
-  background: $menu-dark-background;
+  // background: $menu-dark-background;
+  background: linear-gradient(90deg,rgb(1, 7, 65) 0%, rgb(2, 76, 110) 50%, rgb(10, 2, 80) 100%);
+  border-bottom: 0.5px solid#d4d4dd;
   font-size: 1.25rem;
 }
 
@@ -788,11 +790,14 @@
   width: $Menu-width;
   height: 100vh;
   top: 0;
-  background: $menu-dark-background;
+  // background: $menu-dark-background;
+  background: linear-gradient(90deg,rgb(1, 7, 65) 0%, rgb(2, 76, 110) 50%, rgb(10, 2, 80) 100%);
+  // background: linear-gradient(to bottom, #020418 0%, #024180 100%);
+  // background: linear-gradient(90deg,rgb(3, 2, 26) 0%, rgb(1, 1, 20) 50%, rgb(4, 2, 92) 100%);
   color: $menu-dark-text-color;
 
   .pcoded-submenu {
-    background: color.scale($header-dark-background, $lightness: -9.2168674699%);
+    background: linear-gradient(90deg,rgb(1, 7, 65) 0%, rgb(2, 76, 110) 50%, rgb(10, 2, 80) 100%);
     padding: 15px 0;
   }
 
@@ -1048,7 +1053,7 @@
       &.active,
       &:focus,
       &:hover {
-        color: #1dc4e9;
+        color: #f4c22b;
       }
 
       .pcoded-submenu > li {
@@ -1145,7 +1150,7 @@
 
 @media only screen and (max-width: 991px) {
   .pcoded-header {
-    background: $header-dark-background;
+    background: linear-gradient(90deg,rgb(1, 7, 65) 0%, rgb(2, 76, 110) 50%, rgb(10, 2, 80) 100%);
     color: $header-dark-text-color;
 
     .input-group-text,
@@ -1174,7 +1179,7 @@
     .dropdown-menu,
     .dropdown-menu a,
     .search-close .input-group-text {
-      color: $header-dark-background;
+      color: linear-gradient(90deg,rgb(1, 7, 65) 0%, rgb(2, 76, 110) 50%, rgb(10, 2, 80) 100%);
     }
 
     .m-header {

@@ -15,15 +15,38 @@ const Signin1 = () => {
       <div className="auth-wrapper">
         <div className="auth-bg">
           <span className="r" />
-              <span className="r s" />
-              <span className="r s" />
-              <span className="r" />
+          <span className="r s" />
+          <span className="r s" />
+          <span className="r" />
 
-              <span className="r s" />
-              <span className="r" />
+          <span className="r s" />
+          <span className="r" />
         </div>
         <div className="auth-image">
-          <div className='d-flex-flex-column'> <h1 className='text-decoration-underline auth-heading'>The Stocks</h1><img src={Bg} alt="" /></div>
+        <div style={{
+          width: '80%'
+        }}>
+        <div
+            style={{
+              textAlign: 'center',
+              padding: '20px'
+            }}
+          >
+            <img
+              src="https://5.imimg.com/data5/SELLER/Logo/2024/2/392287203/EW/MK/QX/108300258/ht-90x90.jpg"
+              alt="vishal Sales"
+              style={{
+                width: '80px',
+                borderRadius: '10%'
+              }}
+            />
+          </div>
+          <div className="d-flex-flex-column">
+            {' '}
+            <h1 className="text-none auth-heading">High Tech Blinds</h1>
+            <img src={Bg} alt="" />
+          </div>
+        </div>
           <div className="auth-content">
             <Card className="borderless text-center">
               <Card.Body>
@@ -32,9 +55,11 @@ const Signin1 = () => {
                   <i className="feather icon-unlock auth-icon" />
                 </div>
                 <AuthLogin />
-              <button>
-                <Link to="/login" variant="secondary">Back</Link>
-             </button>
+                <button>
+                  <Link to="/login" variant="secondary">
+                    Back
+                  </Link>
+                </button>
               </Card.Body>
             </Card>
           </div>

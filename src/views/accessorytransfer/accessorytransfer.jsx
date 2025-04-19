@@ -40,7 +40,7 @@ const Invoice_out = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [formData, setFormData] = useState({
     invoice_no: '',
-    type: 'transfer',
+    type: 'accessoryTransfer',
     date: today,
     vehicle_no: '',
     place_of_supply: '',
@@ -158,13 +158,8 @@ const Invoice_out = () => {
         }
       } catch (error) {
         setLoading(false);
-        if (error.response) {
-          console.error('Error fetching product data:', error.response.data.message);
-          toast.error(error.response.data.message || 'Something went wrong.');
-        } else {
-          console.error('Network error:', error);
-          toast.error('Network error. Please try again.');
-        }
+        console.log("eroro",error);
+        toast.error('Error fetching products. Please try again later.');
         setProducts([]);
       }
     } else {
@@ -250,7 +245,7 @@ const Invoice_out = () => {
       });
 
       toast.success('Stocks Transfer successfully');
-      navigate('/view_stock_transfer');
+      navigate('/view_accessory_transfer');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error adding stock';
 

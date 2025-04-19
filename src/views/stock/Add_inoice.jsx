@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { FaUser, FaUserPlus, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaUser,FaBookOpen, FaTrash, FaPlus } from 'react-icons/fa';
 import {
   FaFileInvoice,
   FaCalendarAlt,
@@ -221,7 +221,7 @@ const Add_inoice = () => {
                 // borderRadius: '15px 15px 0 0'
               }}
             >
-              <FaUserPlus size={40} className="me-3" />
+              <FaBookOpen size={40} className="me-3" />
               <h2 className="m-0 text-white">Add Invoice</h2>
             </div>
             <Card.Body className="p-5">
@@ -317,7 +317,7 @@ const Add_inoice = () => {
                     width: '10rem'
                   }}
                 >
-                  <FaUserPlus className="me-2" /> Add Invoice
+                  <FaPlus className="me-2" /> Add Invoice
                 </Button>
               </Form>
             </Card.Body>

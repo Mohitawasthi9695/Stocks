@@ -20,6 +20,7 @@ import { AiOutlineFilePdf } from 'react-icons/ai';
 import 'jspdf-autotable';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
 import { FaDisplay } from 'react-icons/fa6';
+import { IoBagAddSharp } from "react-icons/io5";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -441,14 +442,14 @@ const ProductsPage = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end mt-3 mt-md-0">
+        <div className="col-md-8 text-end mt-3 mt-md-0" >
           <Button variant="primary" onClick={handleAddProduct} style={{
             marginRight: isMobile ? "20px" : "auto",
             marginBottom: isMobile ? "-10px" : "auto",
           }}>
-            <MdPersonAdd className="me-2" style={{
-            width: isMobile ? "20px" : "auto",
-            height: isMobile ? "20px" : "auto",
+            <IoBagAddSharp className="me-2" style={{
+            width: isMobile ? "25px" : "auto",
+            height: isMobile ? "25px" : "auto",
           }} /> 
             <span className='d-none d-md-inline'>
             Add Product

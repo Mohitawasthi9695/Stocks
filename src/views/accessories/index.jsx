@@ -15,6 +15,8 @@ import 'jspdf-autotable';
 import { FaFileCsv } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import { FaPlus, FaTrash, FaUserPlus, FaFileExcel, FaUpload, FaDownload } from 'react-icons/fa';
+import { MdAddChart } from "react-icons/md";
+
 
 const SuppliersPage = () => {
   const [suppliers, setSupplier] = useState([]);
@@ -88,12 +90,15 @@ const SuppliersPage = () => {
       name: 'Accessory Name',
       selector: (row) => (typeof row.accessory_name === 'string' ? row.accessory_name?.toUpperCase() : row.accessory_name?.code?.toUpperCase() || ''),
       sortable: true,
-      width: '270px'
+      width: '270px',
+      wrap: true
     },
     {
       name: 'Remarks',
       selector: (row) => row.remark || '',
-      sortable: true
+      sortable: true,
+      width: '200px',
+      wrap: true
     },
     {
       name: 'Action',
@@ -368,14 +373,14 @@ const SuppliersPage = () => {
             style={{ borderRadius: '5px' }}
           />
         </div>
-        <div className="col-md-8 text-end mt-3 mt-md-0">
+        <div className="col-md-8 text-end mt-3 mt-md-0" >
           <Button variant="primary" onClick={handleAddUser}
             style={{
               marginRight: isMobile ? "25px" : "auto",
               marginBottom: isMobile ? "-10px" : "auto",
             }}
           >
-            <MdPersonAdd className="me-2" style={{
+            <MdAddChart className="me-2" style={{
               height: '25px',
               width: '23px'
             }} />

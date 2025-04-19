@@ -25,7 +25,12 @@ const ShowProduct = () => {
   const [loading, setLoading] = useState(true);
   const [rackInputs, setRackInputs] = useState({});
   const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
-  const categoryId = 1; // Hardcoded for now
+  const categoryId = 1; // Hardcoded for now4
+  const unitToMeter = {
+    m: 1,
+    cm: 0.01,
+    ft: 0.3048
+  };
   useEffect(() => {
     const fetchStocksData = async () => {
       try {
@@ -40,8 +45,12 @@ const ShowProduct = () => {
         });
         console.log('stocks data:', response.data);
         const productsWithArea = response.data.map((product) => {
-          const areaM2 = product.length * product.width;
+          const lengthInMeter = product.length * (unitToMeter[product.length_unit] || 1);
+          const widthInMeter = product.width * (unitToMeter[product.width_unit] || 1);
+        
+          const areaM2 = lengthInMeter * widthInMeter;
           const areaSqFt = areaM2 * 10.7639;
+        
           return {
             ...product,
             area: areaM2.toFixed(3),

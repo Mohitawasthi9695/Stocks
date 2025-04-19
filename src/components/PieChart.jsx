@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { PieChart, Pie, Cell } from "recharts";
-import { useMediaQuery } from "react-responsive";
-
 
 const PieChartData = () => {
   const [pieData, setPieData] = useState([]);
@@ -11,7 +9,7 @@ const PieChartData = () => {
   useEffect(() => {
     const fetchPieData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/barData`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/pieData`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
             "Content-Type": "application/json",
@@ -20,10 +18,10 @@ const PieChartData = () => {
 
         // Transform barData to match pie chart format
         const transformedData = response.data.data.map((item) => ({
-          name: item.shadeNo,
-          value: item.stock_in - item.stock_out, // Use the difference between stock_in and stock_out as an example
+          name: item.category,
+          value: item.total_stock,
         }));
-
+        
         setPieData(transformedData);
       } catch (error) {
         console.error("Error fetching pie chart data:", error);
@@ -37,8 +35,6 @@ const PieChartData = () => {
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042","#FF8072","#FF8042","#FF8062","#FF8442","#FF6042","#FF8842"];
 
-  const isMobile = useMediaQuery({ query: '(max-width: 375px)' });
-
   // Render loading message while fetching data
   if (loading) {
     return <div>Loading...</div>;
@@ -46,17 +42,15 @@ const PieChartData = () => {
 
   return (
     <div>
-      <h3 className="text-center" style={{
-        paddingTop: '20px',
-      }}>STOCK IN</h3>
+      <h3 className="text-center pt-3 fw-bold ">STOCK IN</h3>
       <PieChart width={600} height={400}>
         <Pie
           data={pieData}
           cx="50%"
-          cy="50%"
+          cy="40%"
           labelLine={false}
           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-          outerRadius={isMobile ? 79 : 140}
+          outerRadius={100}
           fill="#8884d8"
           dataKey="value"
         >
@@ -70,6 +64,5 @@ const PieChartData = () => {
 };
 
 export default PieChartData;
-
 
 
